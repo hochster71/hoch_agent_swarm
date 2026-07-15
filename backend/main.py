@@ -236,6 +236,11 @@ app.include_router(homemesh_router)
 from backend.routers.app_store import router as app_store_router
 app.include_router(app_store_router)
 
+# HELM Voice Executive (shared with helm_live_api)
+from backend.voice.router import router as voice_router
+app.include_router(voice_router)
+
+
 
 
 @app.get("/api/v1/control-plane/status")

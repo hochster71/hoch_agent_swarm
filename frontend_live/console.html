@@ -36,7 +36,10 @@ code{color:var(--dim);font-size:11px;word-break:break-all}
     <h1>HELM — SINGLE CONSOLE</h1>
     <div class="sub" id="meta">binding to live runtime…</div>
   </div>
-  <div><span class="pill UNKNOWN" id="global">BOOTING</span></div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <a href="/voice" style="color:#58a6ff;font-size:11px">voice</a>
+    <span class="pill UNKNOWN" id="global">BOOTING</span>
+  </div>
 </header>
 
 <div class="banner">
@@ -46,10 +49,15 @@ code{color:var(--dim);font-size:11px;word-break:break-all}
   43 hardcoded dashboards were quarantined so this is the single source.
 </div>
 
+<div style="margin:14px 20px 0;max-width:1500px" id="voice-mount"></div>
 <main id="grid"></main>
 
+<script src="/frontend_live/voice_panel.js"></script>
 <script>
-const API = location.port === '8770' ? '' : 'http://127.0.0.1:8770';
+// ORIGIN-RELATIVE. The old value hardcoded http://127.0.0.1:8770 — which, on a PHONE, means the
+// PHONE's own localhost. The page loaded and every fetch failed. Served from the API itself, an
+// empty base means same-origin, so it works on the Mac, the phone, and over Tailscale identically.
+const API = '';
 const BUDGET = {runtime:120, leases:120, soak:300, factories:300, integrity:300, 'jspace/health':180, authority:900};
 const ENDPOINTS = [
   ['runtime','RUNTIME'], ['soak','SOAK / 24H PROOF'], ['leases','LEASES & CONCURRENCY'],
@@ -120,6 +128,7 @@ async function tick(){
     `live API · ${new Date().toISOString().slice(11,19)}Z · staleness is a failure state`;
 }
 tick(); setInterval(tick,5000);
+if (window.HELMVoice) HELMVoice.mount('#voice-mount');
 </script>
 </body>
 </html>

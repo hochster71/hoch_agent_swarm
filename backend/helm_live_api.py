@@ -52,6 +52,11 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 from backend.instrument_integrity.council_router import council_router
 app.include_router(council_router)
 
+# HELM Voice Executive — orchestration-backed voice agent API (read-only + stage-only)
+from backend.voice.router import router as voice_router
+app.include_router(voice_router)
+
+
 
 def now() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -1441,3 +1446,25 @@ async def founder_decide(req: Request) -> JSONResponse:
     )
     return JSONResponse({"ok": ok, "message": msg})
 
+
+
+# ── VOICE EXECUTIVE DESK ──────────────────────────────────────────────────────
+VOICE_UI = ROOT / "frontend_live" / "voice.html"
+VOICE_JS = ROOT / "frontend_live" / "voice_panel.js"
+
+
+@app.get("/voice", response_class=HTMLResponse)
+def voice_desk() -> str:
+    """HELM Voice Executive desk — briefings + governed commands + local TTS."""
+    if VOICE_UI.exists():
+        return VOICE_UI.read_text(encoding="utf-8")
+    return "<h1>voice.html missing</h1>"
+
+
+@app.get("/frontend_live/voice_panel.js")
+def voice_panel_js():
+    from fastapi.responses import FileResponse, PlainTextResponse
+    if VOICE_JS.exists():
+        return FileResponse(VOICE_JS, media_type="application/javascript",
+                            headers={"Cache-Control": "no-store"})
+    return PlainTextResponse("// voice_panel.js missing", status_code=404)

@@ -1,0 +1,56 @@
+# HELM Voice Executive Policy
+# Doctrine: no_fake_green · Runtime Truth · founder DOORSTEP
+# Speech clients default OFF. API is always available for tool-bound agents.
+
+policy_version: "1.0"
+persona: "HELM Executive Mission Commander"
+
+# Client defaults (UI / local TTS)
+voice_enabled_default: false
+voice_mode: local_tts
+paid_providers_allowed: false
+speak_secrets: false
+require_operator_toggle: true
+max_events_per_hour: 30
+min_severity: INFO
+daily_budget_usd: 0
+
+# Staleness: data older than this is labeled STALE, never LIVE
+freshness_budget_seconds: 300
+
+# Command execution classes
+# READ_ONLY   — observe Runtime Truth, never mutate
+# STAGE_ONLY  — write reversible staging artifacts only (no deploy/spend/keys)
+# DOORSTEP    — founder only; voice never executes
+allowed_modes:
+  - READ_ONLY
+  - STAGE_ONLY
+
+doorstep_blocked_verbs:
+  - deploy
+  - deploy_prod
+  - git_push
+  - spend
+  - stripe_live
+  - provision_keys
+  - rotate_keys
+  - sign
+  - notarize
+  - app_store_submit
+  - move_money
+  - clear_release_go
+  - bypass_approval
+
+# Secret patterns never spoken (also enforced in sanitizer)
+redact_patterns:
+  - 'sk-[A-Za-z0-9]{10,}'
+  - 'pk_[A-Za-z0-9]{10,}'
+  - 'Bearer\s+[A-Za-z0-9._\-]{8,}'
+  - '(?i)(api[_-]?key|password|secret|token)\s*[:=]\s*\S+'
+  - '/Users/[^\s]+'
+  - '-----BEGIN [A-Z ]+PRIVATE KEY-----'
+
+max_speech_chars: 1200
+
+staging_dir: artifacts/voice/staging
+audit_log: data/runtime/voice_command_audit.jsonl

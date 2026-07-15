@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HELM — Voice Executive</title>
+<style>
+:root{--bg:#0b0e13;--card:#141922;--line:#232b38;--tx:#e6edf3;--dim:#8b98a9;
+--live:#2ea043;--stale:#d29922;--unknown:#8b949e;--bad:#f85149;--accent:#58a6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);
+font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;padding:20px}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:15px;letter-spacing:.14em;margin:0 0 4px}
+.sub{color:var(--dim);font-size:11px;margin-bottom:16px}
+.grid{display:grid;gap:12px;grid-template-columns:1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
+.row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.cmds{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{cursor:pointer;padding:6px 12px;border-radius:6px;border:1px solid #30363d;
+background:#21262d;color:inherit;font:inherit;font-size:12px}
+button:hover{border-color:var(--accent)}
+a{color:var(--accent);text-decoration:none}
+.note{font-size:11px;color:var(--dim);border-left:2px solid #5a4520;padding-left:10px;margin-top:12px}
+#cmd-list{font-size:11px;color:var(--dim);max-height:180px;overflow:auto}
+.pill{padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.LIVE{background:rgba(46,160,67,.16);color:var(--live)}
+.UNKNOWN{background:rgba(139,148,158,.16);color:var(--unknown)}
+.DOORSTEP{background:rgba(248,81,73,.16);color:var(--bad)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>HELM · VOICE EXECUTIVE</h1>
+  <div class="sub">Mission Commander interface · Runtime Truth only · no fake green</div>
+
+  <div class="card" id="voice-mount"></div>
+
+  <div class="card">
+    <div class="row">
+      <strong style="font-size:11px;letter-spacing:.1em;color:var(--dim)">QUICK COMMANDS</strong>
+      <span class="pill UNKNOWN" id="api-pill">API</span>
+    </div>
+    <div class="cmds" id="quick"></div>
+    <div style="margin-top:12px;font-size:11px;color:var(--dim)">REGISTERED COMMANDS</div>
+    <div id="cmd-list">loading…</div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">GROK VOICE AGENT BINDING</div>
+    <div style="font-size:12px;line-height:1.6">
+      Persona prompt: <code>docs/prompts/helm_voice_executive_commander.md</code><br/>
+      Tool discovery: <code>GET /api/v1/helm/voice/tools</code><br/>
+      Tool catalog file: <code>config/voice_agent_tools.json</code><br/>
+      When a tool returns UNKNOWN or fails — say UNKNOWN. Never invent a dashboard.
+    </div>
+  </div>
+
+  <div class="note">
+    Local TTS is off by default. Enable the toggle to speak. Deploy / spend / keys / sign / money
+    are DOORSTEP — voice stages or refuses, never executes.
+    Surfaces: <a href="/console">console</a> · <a href="/founder">founder</a> · <a href="/">helm</a>
+  </div>
+</div>
+
+<script src="/frontend_live/voice_panel.js"></script>
+<script>
+const QUICK = [
+  ['executive_brief','Executive brief'],
+  ['highest_priority_mission','Priority mission'],
+  ['founder_approvals','Founder approvals'],
+  ['blocked_factories','Blocked factories'],
+  ['runtime_health','Runtime health'],
+  ['security_posture','Security'],
+  ['overnight_summary','Recent activity'],
+  ['evidence_gaps','Evidence gaps'],
+  ['deploy','Deploy (DOORSTEP test)'],
+];
+
+async function init(){
+  HELMVoice.mount('#voice-mount');
+  const q = document.getElementById('quick');
+  QUICK.forEach(([id,label])=>{
+    const b=document.createElement('button');
+    b.textContent=label;
+    b.onclick=async()=>{
+      try{
+        const s=HELMVoice.getState();
+        await HELMVoice.command(id,null,s.enabled&&!s.muted);
+      }catch(e){
+        alert('UNKNOWN — '+e.message);
+      }
+    };
+    q.appendChild(b);
+  });
+  try{
+    const d=await HELMVoice.listCommands();
+    document.getElementById('api-pill').textContent='API LIVE';
+    document.getElementById('api-pill').className='pill LIVE';
+    document.getElementById('cmd-list').innerHTML =
+      (d.commands||[]).map(c=>
+        `<div><b>${c.id}</b> · <span class="pill ${c.mode==='DOORSTEP'?'DOORSTEP':'UNKNOWN'}">${c.mode}</span> — ${c.description}</div>`
+      ).join('');
+  }catch(e){
+    document.getElementById('api-pill').textContent='API UNKNOWN';
+    document.getElementById('api-pill').className='pill UNKNOWN';
+    document.getElementById('cmd-list').textContent='commands unreachable — UNKNOWN';
+  }
+}
+init();
+</script>
+</body>
+</html>

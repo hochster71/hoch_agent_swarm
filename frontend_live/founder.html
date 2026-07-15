@@ -274,8 +274,16 @@
 <div class="section">Factories</div>
 <div id="facs" class="stagger"></div>
 
+<div class="section">Voice executive
+  <span style="margin-left:auto">
+    <a href="/voice" style="pointer-events:auto;color:var(--accent);text-decoration:none;font-size:10px;letter-spacing:.1em;border:1px solid #2a5c4a;background:var(--accent-dim);padding:4px 10px;border-radius:99px">◎ VOICE DESK</a>
+  </span>
+</div>
+<div id="voice-mount" style="margin-bottom:18px"></div>
+
 <div class="toast" id="toast"></div>
 
+<script src="/frontend_live/voice_panel.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const UNK=v=>v==null||v==='UNKNOWN'||(v&&v.state==='UNKNOWN');
@@ -444,6 +452,7 @@ async function loadJSpace(){
 function tick(){ loadHelm(); loadQueue(); loadJSpace(); }
 tick(); setInterval(tick,8000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){lastQueueSig='';tick();} });
+if (window.HELMVoice) HELMVoice.mount('#voice-mount');
 </script>
 </body>
 </html>

@@ -41,9 +41,10 @@ a{color:#58a6ff;text-decoration:none}
   </div>
 
   <div class="card">
-    <div class="row"><span class="k">single console</span><a href="/frontend_live/console.html">console.html &rarr;</a></div>
-    <div class="row"><span class="k">pert wall</span><a href="/frontend_live/pert.html">pert.html &rarr;</a></div>
-    <div class="row"><span class="k">founder queue</span><a href="/frontend_live/founder.html">founder.html &rarr;</a></div>
+    <div class="row"><span class="k">single console</span><a href="/console">console &rarr;</a></div>
+    <div class="row"><span class="k">pert wall</span><a href="/pert">pert &rarr;</a></div>
+    <div class="row"><span class="k">founder queue</span><a href="/founder">founder &rarr;</a></div>
+    <div class="row"><span class="k">voice executive</span><a href="/voice">voice &rarr;</a></div>
   </div>
 
   <div class="note">
@@ -55,7 +56,7 @@ a{color:#58a6ff;text-decoration:none}
 </div>
 
 <script>
-const API='http://127.0.0.1:8770';
+const API='';   // same-origin
 const BUDGET=120;
 const KNOWN=['LIVE','STALE','UNKNOWN','CONTRADICTED'];
 function set(id,v){document.getElementById(id).textContent=v;}
