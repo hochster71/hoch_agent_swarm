@@ -1,0 +1,19 @@
+{
+  "adapter_selected": "ollama",
+  "direct_provider_bypass": false,
+  "egress_policy": "local loopback only; provider hosts blocked without gateway token",
+  "frontier_required": false,
+  "gateway": "scripts/council/dispatch.py -> spend_gate.SubprocessSpendGate",
+  "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+  "pert_binding": {
+    "pert_node": "TO-003",
+    "requirement": "REQ-TO-003"
+  },
+  "routed_at": "2026-07-15T21:44:28.910917Z",
+  "selection_reason": "LOCAL_FIRST: workload does not declare frontier_required",
+  "spend_policy": {
+    "estimated_usd": 0.0,
+    "per_task_cap_usd": 0.05
+  },
+  "task_id": "TO003-20260715T214428Z-19BF24"
+}

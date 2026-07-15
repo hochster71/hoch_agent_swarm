@@ -1,0 +1,14 @@
+{
+  "FOUNDER_ACTION_REQUIRED": "NO",
+  "PROOF_WORKLOAD_COMPLETE": "YES",
+  "all_non_founder_work_complete": true,
+  "founder_interventions": 0,
+  "generated_at": "2026-07-15T21:46:09.013756Z",
+  "manual_prompt_copy_count": 0,
+  "manual_result_copy_count": 0,
+  "manual_stage_transition_count": 0,
+  "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+  "package_identity_immutable": true,
+  "state": "DOORSTEP_READY",
+  "unresolved_founder_only_actions": []
+}

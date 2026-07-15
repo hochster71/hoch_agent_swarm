@@ -1,0 +1,46 @@
+{
+  "acceptance_criteria": [
+    {
+      "criterion": "artifact file exists and is non-empty",
+      "id": "AC1",
+      "validator": "artifact_exists"
+    },
+    {
+      "criterion": "module imports without error",
+      "id": "AC2",
+      "validator": "module_imports"
+    },
+    {
+      "criterion": "build_manifest is callable and returns a dict",
+      "id": "AC3",
+      "validator": "function_contract"
+    },
+    {
+      "criterion": "manifest digests match an INDEPENDENT hashlib recomputation",
+      "id": "AC4",
+      "validator": "independent_digest_recomputation"
+    }
+  ],
+  "constraints": [
+    "local_only",
+    "no_credentials",
+    "no_spend",
+    "non_destructive",
+    "no_production_deploy",
+    "no_signing",
+    "no_submission"
+  ],
+  "founder_only_actions": [],
+  "goal_contract_id": "HOCH_CANONICAL_GOAL_CONTRACT_v1",
+  "labels": [
+    "TERMINAL_PATH_PROOF_WORKLOAD",
+    "NOT_CHAMPION_PRODUCT",
+    "NOT_PRODUCTION_RELEASE"
+  ],
+  "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+  "request_id": "RQ-CD192DBD",
+  "requested_outcome": "Produce a local-only Python module that builds a sha256 manifest of a directory, verified by INDEPENDENT recomputation.",
+  "source_identity": "helm-council-agent (autonomous; not founder-submitted)",
+  "submitted_at": "2026-07-15T21:44:28.910157Z",
+  "workload_type": "TERMINAL_PATH_PROOF_WORKLOAD"
+}

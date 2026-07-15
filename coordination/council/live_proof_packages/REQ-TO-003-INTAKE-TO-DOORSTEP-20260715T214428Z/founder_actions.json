@@ -1,0 +1,8 @@
+{
+  "founder_action_required": false,
+  "pending_founder_only_requirements_elsewhere": [
+    "REQ-TO-001",
+    "REQ-TO-002"
+  ],
+  "reason": "The neutral proof workload is local-only, unpaid, unsigned and unsubmitted. No founder-only action is reached. A gate was NOT fabricated to exercise the interface."
+}

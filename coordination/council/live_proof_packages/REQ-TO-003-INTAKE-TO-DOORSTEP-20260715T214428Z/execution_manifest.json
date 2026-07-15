@@ -1,0 +1,22 @@
+{
+  "actual_scope": "wrote artifacts/sha256_manifest.py inside the proof package",
+  "adapter": "ollama",
+  "adapter_status": "COMPLETED",
+  "authorized_scope": "write only sha256_manifest.py inside the proof package",
+  "completed_at": "2026-07-15T21:46:09.003253Z",
+  "cost_ledger_hash": "6ea3885da371050c53553fd61e1482fbeadb1af95ed4e77b92a21632b1686761",
+  "critic_verdict": "ACCEPT",
+  "estimated_cost_usd": 0.0,
+  "external_dispatch_count": 0,
+  "files_written": [
+    "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/artifacts/sha256_manifest.py"
+  ],
+  "input_digest": "1acc51b96353c2c42fcec27ce4e478440d78656182ff4c53920aa6688f6a423d",
+  "latency_ms": 100007,
+  "manual_copy_paste_operations": 0,
+  "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+  "output_digest": "7758929d549fbe3047834d8273a3b9b2dcf78c13865c19f97946b581ce76502d",
+  "scope_deviation": false,
+  "started_at": "2026-07-15T21:44:28.911271Z",
+  "task_id": "TO003-20260715T214428Z-19BF24"
+}

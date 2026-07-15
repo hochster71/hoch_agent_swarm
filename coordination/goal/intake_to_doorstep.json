@@ -1,14 +1,17 @@
 {
+  "errors": [],
+  "manual_intervention_metrics": {
+    "founder_actions": [],
+    "founder_interventions": 0,
+    "manual_prompt_copy_count": 0,
+    "manual_result_copy_count": 0,
+    "manual_stage_transition_count": 0
+  },
+  "package": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z",
   "requirement": "REQ-TO-003",
   "stages": {
-    "dispatch_relay": true,
-    "intake": false,
-    "plan": false,
-    "execute": false,
-    "validate": true,
-    "evidence": true,
-    "doorstep": false
+    "of": 7,
+    "proven": 7
   },
-  "status": "FAIL",
-  "reason": "Only the dispatch->validate->evidence segment is proven (H1D). Intake, plan, execute, and DOORSTEP handoff are not yet wired end to end."
+  "status": "PASS"
 }

@@ -1,0 +1,204 @@
+{
+  "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+  "state": "DOORSTEP_READY",
+  "blocked_reason": null,
+  "transitions": [
+    {
+      "from": "INTAKE_RECEIVED",
+      "to": "INTAKE_VALIDATED",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:44:28.910600Z",
+      "evidence": {
+        "validator_name": "validate_intake",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/intake_envelope.json",
+        "evidence_digest": "a81bd91f4e763e143b486b0d7be25d5f5322f5413a01e1ffa53400925d03b75e",
+        "input_digest": "GENESIS",
+        "output_digest": "e82b71ece950871176f5dba818592ab3100ca4028ed6972f618718e40dc34987",
+        "event_timestamp": "2026-07-15T21:44:28.910553Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": ""
+      }
+    },
+    {
+      "from": "INTAKE_VALIDATED",
+      "to": "PLAN_CREATED",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:44:28.910854Z",
+      "evidence": {
+        "validator_name": "plan_created",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/validated_plan.json",
+        "evidence_digest": "01fb7c5207a59763ef96b2491c30c50687a56cad08354be709493e00613616ea",
+        "input_digest": "e82b71ece950871176f5dba818592ab3100ca4028ed6972f618718e40dc34987",
+        "output_digest": "120c53de517043ef3b9c20ed051f9a5567eb7dd899c90508044c1694f27bfc31",
+        "event_timestamp": "2026-07-15T21:44:28.910823Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": ""
+      }
+    },
+    {
+      "from": "PLAN_CREATED",
+      "to": "PLAN_VALIDATED",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:44:28.910910Z",
+      "evidence": {
+        "validator_name": "plan_has_validators_and_bounds",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/validated_plan.json",
+        "evidence_digest": "01fb7c5207a59763ef96b2491c30c50687a56cad08354be709493e00613616ea",
+        "input_digest": "e82b71ece950871176f5dba818592ab3100ca4028ed6972f618718e40dc34987",
+        "output_digest": "120c53de517043ef3b9c20ed051f9a5567eb7dd899c90508044c1694f27bfc31",
+        "event_timestamp": "2026-07-15T21:44:28.910887Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": ""
+      }
+    },
+    {
+      "from": "PLAN_VALIDATED",
+      "to": "ROUTE_SELECTED",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:44:28.911071Z",
+      "evidence": {
+        "validator_name": "route_selected",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/route_decision.json",
+        "evidence_digest": "36b3ab9e2b8c11584a9c8bdf274fda268f55364d4b40017c847f95cceb6c158b",
+        "input_digest": "120c53de517043ef3b9c20ed051f9a5567eb7dd899c90508044c1694f27bfc31",
+        "output_digest": "5653254eb327bdef3467001ddec56d3cae05c851217684429e627d46b7f8598c",
+        "event_timestamp": "2026-07-15T21:44:28.911047Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": ""
+      }
+    },
+    {
+      "from": "ROUTE_SELECTED",
+      "to": "ROUTE_AUTHORIZED",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:44:28.911265Z",
+      "evidence": {
+        "validator_name": "gateway_preflight",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/route_decision.json",
+        "evidence_digest": "36b3ab9e2b8c11584a9c8bdf274fda268f55364d4b40017c847f95cceb6c158b",
+        "input_digest": "120c53de517043ef3b9c20ed051f9a5567eb7dd899c90508044c1694f27bfc31",
+        "output_digest": "5653254eb327bdef3467001ddec56d3cae05c851217684429e627d46b7f8598c",
+        "event_timestamp": "2026-07-15T21:44:28.911241Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": "blocks=[]"
+      }
+    },
+    {
+      "from": "EXECUTION_ACTIVE",
+      "to": "EXECUTION_COMPLETE",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:46:09.003952Z",
+      "evidence": {
+        "validator_name": "execution_completed_in_scope",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/execution_manifest.json",
+        "evidence_digest": "cdbf29963b33f95700e04a59cacd249f43ed63258e68189db8165f8ab77e2f3c",
+        "input_digest": "5653254eb327bdef3467001ddec56d3cae05c851217684429e627d46b7f8598c",
+        "output_digest": "dc66e857e630aeef49884f921143f1c7cd1c8e69e4b718d88c8d119d4b6a3ddd",
+        "event_timestamp": "2026-07-15T21:46:09.003850Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "TO003-20260715T214428Z-19BF24",
+        "detail": "adapter=COMPLETED"
+      }
+    },
+    {
+      "from": "VERIFICATION_ACTIVE",
+      "to": "VERIFICATION_PASS",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:46:09.010396Z",
+      "evidence": {
+        "validator_name": "independent_verification",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/verification_results.json",
+        "evidence_digest": "8f9a6acb1de0f9277a55883f4f9341fa34966f297cacd193a5e0f8bae5e3b2ee",
+        "input_digest": "dc66e857e630aeef49884f921143f1c7cd1c8e69e4b718d88c8d119d4b6a3ddd",
+        "output_digest": "dd2aed4dcde96fc0e999cac2387de56c1cb52bf3a80d7da777a57616148a25df",
+        "event_timestamp": "2026-07-15T21:46:09.010213Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": ""
+      }
+    },
+    {
+      "from": "VERIFICATION_PASS",
+      "to": "PACKAGE_CREATED",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:46:09.012986Z",
+      "evidence": {
+        "validator_name": "package_created",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/artifact_digests.json",
+        "evidence_digest": "f812eb28b65536363144486aa9f40022b52b81526243ff5b88ddd16710e2e966",
+        "input_digest": "dd2aed4dcde96fc0e999cac2387de56c1cb52bf3a80d7da777a57616148a25df",
+        "output_digest": "cd6ce77d578608c91c9d5dcd6f415e1344035aea00e2df06c4ccea65c8d71789",
+        "event_timestamp": "2026-07-15T21:46:09.012939Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": ""
+      }
+    },
+    {
+      "from": "PACKAGE_CREATED",
+      "to": "PACKAGE_VALIDATED",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:46:09.013744Z",
+      "evidence": {
+        "validator_name": "package_complete_and_digest_valid",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/validation.json",
+        "evidence_digest": "89b49e649b53339a74794cde63e62915d4fa6d9053d9a19567fd3baad4633275",
+        "input_digest": "dd2aed4dcde96fc0e999cac2387de56c1cb52bf3a80d7da777a57616148a25df",
+        "output_digest": "cd6ce77d578608c91c9d5dcd6f415e1344035aea00e2df06c4ccea65c8d71789",
+        "event_timestamp": "2026-07-15T21:46:09.013694Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": "missing=[] bad=[]"
+      }
+    },
+    {
+      "from": "PACKAGE_VALIDATED",
+      "to": "DOORSTEP_READY",
+      "verdict": "ADMITTED",
+      "recorded_at": "2026-07-15T21:46:09.013949Z",
+      "evidence": {
+        "validator_name": "zero_founder_transport",
+        "validator_result": true,
+        "validator_exit_code": 0,
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z/doorstep.json",
+        "evidence_digest": "d0c6f3003288cf38cbf64394d0249d1016a310c558a164d6feeaf6943b7296b8",
+        "input_digest": "cd6ce77d578608c91c9d5dcd6f415e1344035aea00e2df06c4ccea65c8d71789",
+        "output_digest": "c0997f8f97b2a6c419a47bff1d75a0fec1cdeddb5cbd1f5a827f708e908fb062",
+        "event_timestamp": "2026-07-15T21:46:09.013917Z",
+        "mission_id": "REQ-TO-003-20260715T214428Z-721053",
+        "task_id": "REQ-TO-003-20260715T214428Z-721053",
+        "detail": ""
+      }
+    }
+  ],
+  "manual_intervention_metrics": {
+    "manual_prompt_copy_count": 0,
+    "manual_result_copy_count": 0,
+    "manual_stage_transition_count": 0,
+    "founder_interventions": 0,
+    "founder_actions": []
+  }
+}
