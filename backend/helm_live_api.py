@@ -612,6 +612,27 @@ def serve_brain() -> str:
     return f.read_text() if f.exists() else "<h1>brain missing</h1>"
 
 
+@app.get("/api/v1/helm/jspace/lens")
+def api_v1_jspace_lens():
+    """Semantic Jacobian Lens — which findings actually hold the promotion gate closed, ranked by how
+    much each one moves the decision, plus fragility (how close the decision is to flipping). Read-only.
+    Fail-closed: no assessments -> UNKNOWN, never promotable."""
+    import time
+    from backend.jspace.lens import SemanticJacobianLens
+    apath = ROOT / "coordination" / "jspace" / "assessments.jsonl"
+    if not apath.exists() or not apath.read_text().strip():
+        return JSONResponse(_truth_response(
+            truth_class="HJOS_LENS_TRUTH", source="coordination/jspace/assessments.jsonl",
+            observed_at=now(), freshness_seconds=None,
+            data={"consensus": "UNKNOWN", "promotable": False, "drivers": [],
+                  "reason": "no HJOS assessments yet"}))
+    out = SemanticJacobianLens.from_ledger(apath).compute()
+    fresh = float(time.time() - apath.stat().st_mtime)
+    return JSONResponse(_truth_response(
+        truth_class="HJOS_LENS_TRUTH", source="coordination/jspace/assessments.jsonl",
+        observed_at=now(), freshness_seconds=fresh, data=out))
+
+
 @app.get("/jspace", response_class=HTMLResponse)
 def serve_jspace_console() -> str:
     """HELM J-SPACE operational console — left status rail, AI Agent Network Map (HJOS observers),
