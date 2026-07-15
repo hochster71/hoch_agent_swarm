@@ -1,6 +1,12 @@
 {
   "requirement": "REQ-TO-002",
-  "shipped": false,
-  "reason": "No champion selected; no release or rollback package signed or submitted.",
-  "status": "FAIL"
+  "shipped": true,
+  "appStoreState": "READY_FOR_SALE",
+  "asc_state": "PASS",
+  "asc_detail": "version 1.0 appStoreState=READY_FOR_SALE",
+  "read_at": "2026-07-15T21:42:20.478620+00:00",
+  "bundle_id": "com.epicfury.dashboard",
+  "evidence": "asc:appStoreVersions (live App Store Connect read)",
+  "reason": "App Store Connect reports appStoreState=READY_FOR_SALE: the champion is live and for sale.",
+  "status": "PASS"
 }

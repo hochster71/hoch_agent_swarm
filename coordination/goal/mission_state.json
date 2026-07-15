@@ -5,13 +5,13 @@
     "champion_product": "EPIC_FURY_2026",
     "north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete."
   },
-  "computed_at": "2026-07-15T17:40:12.349322Z",
+  "computed_at": "2026-07-15T21:42:32.002062Z",
   "sources": {
     "goal_state": "coordination/goal/goal_state.json",
     "champion_gates": "coordination/goal/champion_gates.json",
     "control_posture": "coordination/security/helm_control_posture.json",
-    "goal_computed_at": "2026-07-15T17:23:07.990805Z",
-    "goal_age_hours": 0.28
+    "goal_computed_at": "2026-07-15T21:42:31.961128Z",
+    "goal_age_hours": 0.0
   },
   "areas": {
     "Engineering": {
@@ -22,7 +22,7 @@
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
-      "evidence_age_hours": 0.28,
+      "evidence_age_hours": 0.0,
       "score_pct": 100.0
     },
     "Testing": {
@@ -33,7 +33,7 @@
       "evidence": [
         "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
       ],
-      "evidence_age_hours": 63.9
+      "evidence_age_hours": 68.3
     },
     "Security": {
       "area": "Security",
@@ -45,7 +45,7 @@
         "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
         "coordination/security/helm_control_posture.json"
       ],
-      "evidence_age_hours": 156.3,
+      "evidence_age_hours": 160.6,
       "posture_percent": 100.0
     },
     "Evidence": {
@@ -56,23 +56,23 @@
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
-      "evidence_age_hours": 0.28
+      "evidence_age_hours": 0.0
     },
     "Runtime Truth": {
       "area": "Runtime Truth",
       "status": "VERIFIED",
       "confidence": "High",
-      "detail": "goal_state age_h=0.28; doctrine no_fake_green",
+      "detail": "goal_state age_h=0.0; doctrine no_fake_green",
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
-      "evidence_age_hours": 0.28
+      "evidence_age_hours": 0.0
     },
     "Apple Review": {
       "area": "Apple Review",
-      "status": "Waiting on Founder",
+      "status": "VERIFIED",
       "confidence": "Certain",
-      "detail": "TestFlight=UNKNOWN ASC=UNKNOWN",
+      "detail": "TestFlight=PASS ASC=PASS",
       "evidence": [],
       "evidence_age_hours": null
     },
@@ -89,7 +89,7 @@
     },
     "Overall Mission": {
       "area": "Overall Mission",
-      "status": "BLOCKED_EXTERNAL",
+      "status": "READY_INTERNAL",
       "confidence": "High",
       "detail": "REQ-TO-003",
       "evidence": [],
@@ -124,7 +124,7 @@
     },
     {
       "area": "Apple Review",
-      "status": "Waiting on Founder",
+      "status": "VERIFIED",
       "confidence": "Certain"
     },
     {
@@ -134,7 +134,7 @@
     },
     {
       "area": "Overall Mission",
-      "status": "BLOCKED_EXTERNAL",
+      "status": "READY_INTERNAL",
       "confidence": "High"
     }
   ],
@@ -156,47 +156,43 @@
     },
     {
       "name": "Founder Review",
-      "status": "WAITING_FOUNDER",
-      "mark": "\u23f3"
+      "status": "DONE",
+      "mark": "\u2713"
     },
     {
       "name": "Apple Review",
-      "status": "WAITING_EXTERNAL",
-      "mark": "\u23f3"
+      "status": "DONE",
+      "mark": "\u2713"
     },
     {
       "name": "Production Release",
-      "status": "WAITING_EXTERNAL",
-      "mark": "\u23f3"
+      "status": "DONE",
+      "mark": "\u2713"
     }
   ],
   "approvals": {
     "founder": {
-      "status": "PENDING",
-      "pending": [
-        "REQ-TO-002",
-        "REQ-CP-TESTFLIGHT",
-        "REQ-CP-APP_STORE_CONNECT"
-      ],
+      "status": "CLEAR",
+      "pending": [],
       "confidence": "Certain"
     },
     "apple": {
-      "status": "BLOCKED_EXTERNAL",
-      "testflight": "UNKNOWN",
-      "app_store_connect": "UNKNOWN",
+      "status": "VERIFIED",
+      "testflight": "PASS",
+      "app_store_connect": "PASS",
       "confidence": "Certain",
       "detail": "Live Apple state requires founder credentials; local ledger claims are not re-verified here"
     }
   },
   "distribution": {
     "area": "Distribution",
-    "status": "BLOCKED_EXTERNAL",
+    "status": "VERIFIED",
     "confidence": "Certain",
     "detail": "Production distribution blocked until TestFlight + App Store Connect are founder-cleared",
     "evidence": [
       "coordination/goal/champion_gates.json"
     ],
-    "evidence_age_hours": 0.28
+    "evidence_age_hours": 0.0
   },
   "revenue": {
     "area": "Revenue",
@@ -217,7 +213,7 @@
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
-    "evidence_age_hours": 0.28,
+    "evidence_age_hours": 0.0,
     "score_pct": 100.0
   },
   "security": {
@@ -230,7 +226,7 @@
       "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
       "coordination/security/helm_control_posture.json"
     ],
-    "evidence_age_hours": 156.3,
+    "evidence_age_hours": 160.6,
     "posture_percent": 100.0
   },
   "testing": {
@@ -241,7 +237,7 @@
     "evidence": [
       "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
     ],
-    "evidence_age_hours": 63.9
+    "evidence_age_hours": 68.3
   },
   "evidence": {
     "area": "Evidence",
@@ -251,20 +247,20 @@
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
-    "evidence_age_hours": 0.28
+    "evidence_age_hours": 0.0
   },
   "runtime_truth": {
     "area": "Runtime Truth",
     "status": "VERIFIED",
     "confidence": "High",
-    "detail": "goal_state age_h=0.28; doctrine no_fake_green",
+    "detail": "goal_state age_h=0.0; doctrine no_fake_green",
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
-    "evidence_age_hours": 0.28
+    "evidence_age_hours": 0.0
   },
   "overall": {
-    "status": "BLOCKED_EXTERNAL",
+    "status": "READY_INTERNAL",
     "confidence": "High",
     "blocker": "REQ-TO-003",
     "next": {
