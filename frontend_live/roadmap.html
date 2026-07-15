@@ -141,9 +141,13 @@ async function pull(){
   catch(e){ document.getElementById('ns').innerHTML='<span class="err">goal engine unreachable — UNKNOWN, not last-known-good</span>'; return; }
   const x=d.data||d;
   document.getElementById('ns').textContent = x.north_star || 'UNKNOWN';
-  // overall ring — north_star_completion
-  const m=x.metrics||{}; const nsc=m.north_star_completion;
-  const pct = nsc==null?0:Math.round(nsc*100);
+  // overall ring — the HONEST whole-goal agent progress (0-100), NOT the NS-layer
+  // sub-metric. north_star_completion is the NS layer ONLY (would read a misleading
+  // 100% while a blocking req like TO-003 is FAILED). autonomous_execution_coverage
+  // is the weighted completion across ALL agent-actionable blocking requirements, so
+  // any failure holds it below 100. Values are already 0-100 (no *100).
+  const m=x.metrics||{}; const nsc=m.autonomous_execution_coverage;
+  const pct = nsc==null?0:Math.round(nsc);
   document.getElementById('ring').style.setProperty('--p', pct);
   document.getElementById('ringpct').textContent = nsc==null?'—':pct+'%';
   document.getElementById('ov_sub').textContent = x.hard_constraint ||
@@ -165,12 +169,16 @@ async function pull(){
   }).join('');
   document.getElementById('chain_fresh').textContent = x.soak_24_7_proven ? '24/7 PROVEN' : 'not yet proven';
   // metrics
-  const order=[['north_star_completion','North-Star completion','frac'],
-    ['autonomous_execution_coverage','Autonomous coverage','frac'],
+  // NOTE: north_star_completion, autonomous_execution_coverage and
+  // champion_product_completion are all 0-100 from the goal engine -> 'pct100'.
+  // Labels name exactly what each measures so a 100% sub-metric never reads as
+  // "goal done": NS layer only, and champion is AGENT-scope (founder gates excluded).
+  const order=[['north_star_completion','North-Star LAYER (NS reqs only)','pct100'],
+    ['autonomous_execution_coverage','Autonomous coverage (overall)','pct100'],
     ['evidence_coverage','Evidence coverage','pct100'],
     ['verified_founder_minutes_per_shipped_dollar','Founder-min / $ shipped',''],
     ['founder_intervention_rate','Founder intervention rate','frac'],
-    ['champion_product_completion','Champion (Epic Fury) completion','frac']];
+    ['champion_product_completion','Champion (Epic Fury) · agent-scope','pct100']];
   document.getElementById('metrics').innerHTML = order.map(([k,label,unit])=>{
     let v=m[k], disp, cls='';
     if(v==null){ disp='UNKNOWN'; cls='unk'; }
