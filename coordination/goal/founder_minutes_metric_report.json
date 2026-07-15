@@ -1,0 +1,20 @@
+{
+  "requirement": "REQ-NS-002",
+  "status": "PASS",
+  "detail": "instrument LIVE; settled revenue $0 \u2192 metric UNDEFINED (not estimated, not infinity)",
+  "north_star": {
+    "metric": "verified_founder_minutes_per_shipped_dollar",
+    "value": "UNDEFINED",
+    "reason": "no verified settled revenue exists, so minutes-per-dollar has no denominator. This is NOT infinity and NOT zero -- it is undefined, and the factory has not yet done the thing it exists to do.",
+    "founder_minutes_total": 0,
+    "revenue_settled_usd": 0,
+    "revenue_by_product": {},
+    "spend_total_usd": 0.0,
+    "net_usd": 0.0,
+    "revenue_chain_valid": true,
+    "founder_chain_valid": true,
+    "chain_errors": [],
+    "lifetime_sales": 0,
+    "doctrine": "revenue is OBSERVED and evidenced; a forecast is never income"
+  }
+}

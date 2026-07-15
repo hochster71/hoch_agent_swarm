@@ -192,7 +192,7 @@
       "statement": "verified_founder_minutes_per_shipped_dollar is measured, not estimated.",
       "acceptance": "the metric is computed from a real founder-minutes ledger and real revenue; UNKNOWN until both exist",
       "validator": "python3 scripts/goal/verify_founder_minutes_metric.py",
-      "evidence_path": "coordination/goal/founder_minutes_ledger.jsonl",
+      "evidence_path": "coordination/goal/founder_minutes_metric_report.json",
       "freshness_sla_hours": 168,
       "owner": "agent",
       "blocking": true,

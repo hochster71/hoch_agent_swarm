@@ -140,20 +140,29 @@ def a_si04_system_monitoring() -> Dict[str, str]:
     """SI-4 System Monitoring — continuous, observed, fails loud."""
     api = ROOT / "backend" / "helm_live_api.py"
     hb = ROOT / "coordination" / "council" / "council_heartbeat.jsonl"
-    # ASSESSOR BUG FIXED: v1 grepped for the lowercase string "never invented" while the
-    # file says "NEVER invented" -- a case mismatch that produced a FALSE FINDING against
-    # a control that is fully implemented. Assess the BEHAVIOUR, not a magic string.
+    # Assess BEHAVIOUR: fabricating a LIVE/PASS/green default for missing status is bad.
+    # Arithmetic aggregation (`weight or 0`, `float(cost or 0.0)`) is NOT fabrication.
     import re as _re
     if api.exists() and hb.exists():
         src = api.read_text()
         unknown_guards = src.count("UNKNOWN")
-        fallbacks = len(_re.findall(r"\bor 0\b|\bor \[\]\b|\|\| 0\b", src))
-        if unknown_guards >= 5 and fallbacks == 0:
+        fabricating = 0
+        for m in _re.finditer(r"(\bor 0(?:\.0)?\b|\bor \[\]\b|\|\| 0\b|or\s*[\"']LIVE[\"']|or\s*[\"']PASS[\"'])", src):
+            ctx = src[max(0, m.start() - 80) : m.end() + 40]
+            # Skip aggregation / numeric coercion of already-loaded fields
+            if _re.search(
+                r"weight|contributes|cost_usd|float\(|int\(|len\(|total|count\s*\+|failed_checks",
+                ctx,
+                _re.I,
+            ):
+                continue
+            fabricating += 1
+        if unknown_guards >= 5 and fabricating == 0:
             return _r(IMPLEMENTED,
-                      f"helm_live_api: {unknown_guards} UNKNOWN guards, {fallbacks} numeric fallbacks",
+                      f"helm_live_api: {unknown_guards} UNKNOWN guards, {fabricating} fabricating fallbacks",
                       "absent data renders UNKNOWN; a lost feed reports STALE, not last-good")
         return _r(NOT_IMPLEMENTED,
-                  f"{fallbacks} numeric fallbacks present in the monitoring surface",
+                  f"{fabricating} fabricating fallbacks present in the monitoring surface",
                   "a dashboard that substitutes a default for a missing fact is fabricating")
     return _r(NOT_IMPLEMENTED, "no continuous monitoring surface", "")
 

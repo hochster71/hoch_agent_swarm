@@ -1,30 +1,83 @@
 {
-  "artifact": "Epic Fury 2026 — App Store release ledger",
-  "app": {"name": "Epic Fury 2026", "bundle_id": "com.epicfury.dashboard",
-          "apple_id": "6761866052", "team_id": "K34GR8P326"},
+  "artifact": "Epic Fury 2026 \u2014 App Store release ledger",
+  "app": {
+    "name": "Epic Fury 2026",
+    "bundle_id": "com.epicfury.dashboard",
+    "apple_id": "6761866052",
+    "team_id": "K34GR8P326"
+  },
   "factory": "HASF",
   "launch_candidate_rank": 1,
   "milestone": "FIRST_HASF_PRODUCT_REACHED_APPLE_REVIEW",
   "updated_utc": "2026-07-07T17:36:00Z",
-  "doctrine": ["no_fake_green", "evidence_beats_confidence",
-               "no_external_submission_without_founder_approval"],
-  "version": {"version_string": "1.0", "state": "WAITING_FOR_REVIEW"},
-  "build": {"number": 8, "state": "VALID", "selected": true},
-  "security_gate": {"status": "SIGNED", "by": "Michael Bryan Hoch", "date": "2026-07-07",
-                    "evidence": "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json"},
-  "listing_fields": [
-    {"item": "Category", "status": "DONE", "detail": "primary=NEWS, secondary=REFERENCE", "method": "ASC API"},
-    {"item": "Privacy Policy URL", "status": "DONE", "detail": "https://epic-fury-2026.vercel.app/privacy"},
-    {"item": "Pricing", "status": "DONE", "detail": "Free (USD 0.00)"},
-    {"item": "Content Rights", "status": "DONE", "detail": "DOES_NOT_USE_THIRD_PARTY_CONTENT", "method": "ASC API"},
-    {"item": "App Privacy", "status": "DONE", "detail": "Purchases + User ID + Email declared; published"},
-    {"item": "Age Rating", "status": "DONE", "detail": "4+ (no depicted mature content)"},
-    {"item": "Screenshots", "status": "DONE", "detail": "5.5/6.5/iPad uploaded; 6.5in set built + uploaded via ASC API"}
+  "doctrine": [
+    "no_fake_green",
+    "evidence_beats_confidence",
+    "no_external_submission_without_founder_approval"
   ],
-  "submit_for_review": {"status": "SUBMITTED", "state": "WAITING_FOR_REVIEW",
-                        "submitted_utc": "2026-07-07T17:25:46Z",
-                        "approved_by": "Michael Hoch (explicit founder approval)",
-                        "method": "fastlane submit_existing (build 8)"},
+  "version": {
+    "version_string": "1.0",
+    "state": "WAITING_FOR_REVIEW"
+  },
+  "build": {
+    "number": 8,
+    "state": "VALID",
+    "selected": true,
+    "revalidated_at": "2026-07-15T17:21:48.236078Z",
+    "revalidation_evidence": "docs/evidence/products/epic-fury-2026/BUILD_REVALIDATION_20260715.json"
+  },
+  "security_gate": {
+    "status": "SIGNED",
+    "by": "Michael Bryan Hoch",
+    "date": "2026-07-07",
+    "evidence": "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json"
+  },
+  "listing_fields": [
+    {
+      "item": "Category",
+      "status": "DONE",
+      "detail": "primary=NEWS, secondary=REFERENCE",
+      "method": "ASC API"
+    },
+    {
+      "item": "Privacy Policy URL",
+      "status": "DONE",
+      "detail": "https://epic-fury-2026.vercel.app/privacy"
+    },
+    {
+      "item": "Pricing",
+      "status": "DONE",
+      "detail": "Free (USD 0.00)"
+    },
+    {
+      "item": "Content Rights",
+      "status": "DONE",
+      "detail": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
+      "method": "ASC API"
+    },
+    {
+      "item": "App Privacy",
+      "status": "DONE",
+      "detail": "Purchases + User ID + Email declared; published"
+    },
+    {
+      "item": "Age Rating",
+      "status": "DONE",
+      "detail": "4+ (no depicted mature content)"
+    },
+    {
+      "item": "Screenshots",
+      "status": "DONE",
+      "detail": "5.5/6.5/iPad uploaded; 6.5in set built + uploaded via ASC API"
+    }
+  ],
+  "submit_for_review": {
+    "status": "SUBMITTED",
+    "state": "WAITING_FOR_REVIEW",
+    "submitted_utc": "2026-07-07T17:25:46Z",
+    "approved_by": "Michael Hoch (explicit founder approval)",
+    "method": "fastlane submit_existing (build 8)"
+  },
   "remaining_blockers": [],
   "next": "Await Apple review outcome. On approval -> first HASF launch. Update storybook Scene 10 with this proven record."
 }

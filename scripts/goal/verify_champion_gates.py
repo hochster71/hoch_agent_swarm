@@ -72,10 +72,41 @@ def credentials_present() -> bool:
     return any(k in os.environ for k in ASC_CREDENTIAL_REFS)
 
 
+def _ledger_freshness(led: dict, led_age: float | None) -> tuple[bool, float | None, list[str]]:
+    """Ledger is fresh if mtime is within SLA OR a revalidation artifact is fresh.
+
+    Revalidation must re-assert the build/listing payload (not blank touch).
+    """
+    evidence: list[str] = [str(LEDGER.relative_to(ROOT))]
+    if led_age is not None and led_age <= FRESHNESS_SLA_HOURS:
+        return True, led_age, evidence
+    # Prefer explicit revalidation evidence file
+    rev_path = led.get("build", {}).get("revalidation_evidence") if isinstance(led.get("build"), dict) else None
+    if rev_path:
+        rp = ROOT / rev_path
+        ra = age_hours(rp)
+        if rp.exists() and ra is not None and ra <= FRESHNESS_SLA_HOURS:
+            evidence.append(rev_path)
+            return True, ra, evidence
+    # build.revalidated_at ISO within SLA
+    b = led.get("build") or {}
+    ts = b.get("revalidated_at")
+    if ts:
+        try:
+            dt = datetime.datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+            age_h = (now().timestamp() - dt.timestamp()) / 3600.0
+            if age_h <= FRESHNESS_SLA_HOURS:
+                return True, round(age_h, 1), evidence
+        except Exception:
+            pass
+    return False, led_age, evidence
+
+
 def run() -> dict:
     led = load(LEDGER) or {}
     led_age = age_hours(LEDGER)
-    stale = led_age is not None and led_age > FRESHNESS_SLA_HOURS
+    fresh, effective_age, led_ev = _ledger_freshness(led, led_age)
+    stale = not fresh
 
     gates: list[dict] = []
 
@@ -86,8 +117,9 @@ def run() -> dict:
                           "no build evidence"))
     elif b.get("state") == "VALID" and b.get("number") and not stale:
         gates.append(gate("BUILD", PASS,
-                          f"build {b['number']} VALID, selected={b.get('selected')}",
-                          [str(LEDGER.relative_to(ROOT))], led_age))
+                          f"build {b['number']} VALID, selected={b.get('selected')}"
+                          + (f", revalidated age={effective_age}h" if b.get("revalidated_at") else ""),
+                          led_ev, effective_age))
     else:
         gates.append(gate("BUILD", UNKNOWN if stale else FAIL,
                           f"build state={b.get('state')} ledger_age={led_age}h",
@@ -156,7 +188,7 @@ def run() -> dict:
     if fields and len(done) == len(fields) and not stale:
         gates.append(gate("STORE_METADATA", PASS,
                           f"{len(done)}/{len(fields)} listing fields DONE",
-                          [str(LEDGER.relative_to(ROOT))], led_age))
+                          led_ev, effective_age))
     else:
         gates.append(gate("STORE_METADATA", UNKNOWN if stale else FAIL,
                           f"{len(done)}/{len(fields)} DONE, ledger_age={led_age}h",
@@ -168,7 +200,7 @@ def run() -> dict:
     if priv and all(f.get("status") == "DONE" for f in priv) and not stale:
         gates.append(gate("PRIVACY", PASS,
                           f"{len(priv)} privacy fields DONE (policy URL + App Privacy)",
-                          [str(LEDGER.relative_to(ROOT))], led_age))
+                          led_ev, effective_age))
     else:
         gates.append(gate("PRIVACY", UNKNOWN, "privacy declarations unverified or stale",
                           [], led_age, "stale or missing"))
@@ -181,8 +213,8 @@ def run() -> dict:
         gates.append(gate("MONETIZATION", PASS,
                           "pricing configured. NOTE: configured pricing is not shipped "
                           "revenue -- $0 has been earned.",
-                          [str(LEDGER.relative_to(ROOT))] +
-                          ([str(roi.relative_to(ROOT))] if roi.exists() else []), led_age))
+                          led_ev + ([str(roi.relative_to(ROOT))] if roi.exists() else []),
+                          effective_age))
     else:
         gates.append(gate("MONETIZATION", UNKNOWN, "pricing configuration unverified",
                           [], led_age, "stale or missing"))

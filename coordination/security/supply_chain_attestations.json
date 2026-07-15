@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-14T20:17:44.923292+00:00",
+  "generated_at": "2026-07-15T17:17:52.775788+00:00",
   "models": {
     "GROK_CLI:grok-default": {
       "adapter_id": "GROK_CLI",
@@ -25,13 +25,13 @@
   "schema": "HELM_SUPPLY_CHAIN_ATTESTATION_v1",
   "tools": {
     "GROK_CLI": {
-      "attested_at": "2026-07-14T20:17:44.837287+00:00",
+      "attested_at": "2026-07-15T17:17:52.775318+00:00",
       "attested_by": "michaelhoch",
-      "note": "",
+      "note": "re-attest after binary upgrade (PERT AU-9/SR-3 remediation 2026-07-15)",
       "path": "/Users/michaelhoch/.local/bin/grok",
-      "resolved_path": "/Users/michaelhoch/.grok/downloads/grok-macos-aarch64",
-      "sha256": "2a97ba675bd992aa9b981e2e83776460d94f469b510c0b8efe28b50d236d767c",
-      "size_bytes": 127259280
+      "resolved_path": "/Users/michaelhoch/.grok/downloads/grok-0.2.101-macos-aarch64",
+      "sha256": "8431538dbd99379240f558b48b779c651d668b06d793c87311ad532c4395a4e2",
+      "size_bytes": 128899824
     }
   }
 }

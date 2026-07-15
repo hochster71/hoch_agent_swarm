@@ -1,0 +1,11 @@
+{
+  "schema": "AU9_SPEND_CHAIN_RECOVERY_v1",
+  "repaired_at": "2026-07-15T17:20:13.367413Z",
+  "rows_rebuilt": 9450,
+  "forks_detected_before_repair": 0,
+  "archive_path": "coordination/council/ledger_archives/spend_ledger.pre_au9_repair_20260715T172013Z.jsonl",
+  "archive_sha256": "ee00f2d7693bd23a7b44d53e6bb19fa5877d168279346aa5e66f6c32ed91529f",
+  "chain_valid_after": true,
+  "residual_errors": [],
+  "doctrine": "Historical cost amounts preserved; prev_hash/entry_hash recomputed to restore tamper-evidence after concurrent writers forked the chain pre-flock. Original bytes retained in archive."
+}

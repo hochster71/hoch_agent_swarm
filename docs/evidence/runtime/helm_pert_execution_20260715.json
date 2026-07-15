@@ -1,0 +1,81 @@
+{
+  "schema": "HELM_PERT_EXECUTION_PACK_v1",
+  "executed_at": "2026-07-15T17:23:42.713260Z",
+  "metrics": {
+    "north_star_completion": 100.0,
+    "champion_product_completion": 100.0,
+    "champion_product_completion_state": "COMPUTED_FROM_VALIDATORS:EPIC_FURY_2026",
+    "champion_product": "EPIC_FURY_2026",
+    "autonomous_execution_coverage": 94.1,
+    "founder_intervention_rate": null,
+    "verified_founder_minutes_per_shipped_dollar": null,
+    "evidence_coverage": 100.0,
+    "runtime_truth_freshness": null,
+    "current_critical_path_blocker": "REQ-TO-003",
+    "founder_only_actions_pending": [
+      "REQ-TO-002",
+      "REQ-CP-TESTFLIGHT",
+      "REQ-CP-APP_STORE_CONNECT"
+    ]
+  },
+  "by_layer": {
+    "NS": {
+      "requirements": 2,
+      "satisfied": 2,
+      "completion_pct_agent_scope": 100.0,
+      "founder_only_pending": []
+    },
+    "TO": {
+      "requirements": 3,
+      "satisfied": 1,
+      "completion_pct_agent_scope": 0.0,
+      "founder_only_pending": [
+        "REQ-TO-002"
+      ]
+    },
+    "CP": {
+      "requirements": 10,
+      "satisfied": 8,
+      "completion_pct_agent_scope": 100.0,
+      "founder_only_pending": [
+        "REQ-CP-TESTFLIGHT",
+        "REQ-CP-APP_STORE_CONNECT"
+      ]
+    },
+    "ES": {
+      "requirements": 4,
+      "satisfied": 4,
+      "completion_pct_agent_scope": 100.0,
+      "founder_only_pending": []
+    },
+    "GOV": {
+      "requirements": 6,
+      "satisfied": 6,
+      "completion_pct_agent_scope": 100.0,
+      "founder_only_pending": []
+    }
+  },
+  "critical_path_tip": "REQ-TO-003",
+  "next_recommended_task": {
+    "id": "REQ-TO-003",
+    "statement": "The full autonomous path from intake to DOORSTEP is proven end to end.",
+    "why": "highest-weight unresolved BLOCKING requirement on the canonical critical path that an agent can act on"
+  },
+  "agent_work_done": [
+    "AU-9 spend chain linearize recovery",
+    "SI-4 assessor fix (no false positive on aggregation)",
+    "SR-3 GROK_CLI re-attest",
+    "goal_engine uses sys.executable for validators",
+    "REQ-CP-SECURITY and full agent CP gates revalidated",
+    "ES 100% satisfied",
+    "NS 100% agent scope",
+    "GOV 100%",
+    "Founder doorstep staged for TestFlight/ASC"
+  ],
+  "founder_only_remaining": [
+    "REQ-TO-002",
+    "REQ-CP-TESTFLIGHT",
+    "REQ-CP-APP_STORE_CONNECT"
+  ],
+  "doctrine": "no fake green; FOUNDER_ONLY gates still UNKNOWN/FAILED without Apple credentials"
+}

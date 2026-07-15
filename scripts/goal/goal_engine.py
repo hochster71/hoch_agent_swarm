@@ -109,7 +109,11 @@ def run_validator(req: dict, execute: bool = True) -> dict:
         return result
 
     try:
-        proc = subprocess.run(cmd, shell=True, cwd=str(ROOT), capture_output=True,
+        # Prefer the same interpreter as the engine (.venv) so pytest/deps match CI.
+        run_cmd = cmd
+        if isinstance(cmd, str) and (cmd.startswith("python3 ") or cmd.startswith("python ")):
+            run_cmd = f"{sys.executable} " + cmd.split(" ", 1)[1]
+        proc = subprocess.run(run_cmd, shell=True, cwd=str(ROOT), capture_output=True,
                               text=True, timeout=600)
         result["exit_code"] = proc.returncode
         tail = (proc.stdout or proc.stderr or "").strip().splitlines()

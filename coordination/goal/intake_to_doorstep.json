@@ -1,19 +1,14 @@
 {
-  "errors": [
-    "DIGEST_TARGET_MISSING:artifacts/__pycache__/sha256_manifest.cpython-314.pyc"
-  ],
-  "manual_intervention_metrics": {
-    "founder_actions": [],
-    "founder_interventions": 0,
-    "manual_prompt_copy_count": 0,
-    "manual_result_copy_count": 0,
-    "manual_stage_transition_count": 0
-  },
-  "package": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z",
   "requirement": "REQ-TO-003",
   "stages": {
-    "of": 7,
-    "proven": 7
+    "dispatch_relay": true,
+    "intake": false,
+    "plan": false,
+    "execute": false,
+    "validate": true,
+    "evidence": true,
+    "doorstep": false
   },
-  "status": "FAIL"
+  "status": "FAIL",
+  "reason": "Only the dispatch->validate->evidence segment is proven (H1D). Intake, plan, execute, and DOORSTEP handoff are not yet wired end to end."
 }

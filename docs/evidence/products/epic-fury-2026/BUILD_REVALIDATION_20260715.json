@@ -1,0 +1,11 @@
+{
+  "schema": "EPIC_FURY_BUILD_REVALIDATION_v1",
+  "revalidated_at": "2026-07-15T17:21:48.236078Z",
+  "ledger_build": {
+    "number": 8,
+    "state": "VALID",
+    "selected": true
+  },
+  "method": "re-read release ledger; build state still VALID; no new binary claimed",
+  "tested_commit": "48e195b024f7f5975e16e6fbaecfe44d7d7a266c"
+}

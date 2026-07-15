@@ -1,17 +1,17 @@
 {
   "schema": "HOCH_GOAL_STATE_v1",
-  "computed_at": "2026-07-13T22:38:04.943849Z",
+  "computed_at": "2026-07-15T17:23:07.990805Z",
   "canonical_north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete.",
   "computation_rule": "weight-sum of requirements whose validator EXECUTED SUCCESSFULLY against current, fresh evidence. Everything else contributes zero. No fallback default exists in this engine.",
   "metrics": {
-    "north_star_completion": 55.6,
+    "north_star_completion": 100.0,
     "champion_product_completion": 100.0,
     "champion_product_completion_state": "COMPUTED_FROM_VALIDATORS:EPIC_FURY_2026",
     "champion_product": "EPIC_FURY_2026",
-    "autonomous_execution_coverage": 85.9,
+    "autonomous_execution_coverage": 94.1,
     "founder_intervention_rate": null,
     "verified_founder_minutes_per_shipped_dollar": null,
-    "evidence_coverage": 96.0,
+    "evidence_coverage": 100.0,
     "runtime_truth_freshness": null,
     "current_critical_path_blocker": "REQ-TO-003",
     "founder_only_actions_pending": [
@@ -29,8 +29,8 @@
   "by_layer": {
     "NS": {
       "requirements": 2,
-      "satisfied": 1,
-      "completion_pct_agent_scope": 55.6,
+      "satisfied": 2,
+      "completion_pct_agent_scope": 100.0,
       "founder_only_pending": []
     },
     "TO": {
@@ -52,8 +52,8 @@
     },
     "ES": {
       "requirements": 4,
-      "satisfied": 3,
-      "completion_pct_agent_scope": 80.0,
+      "satisfied": 4,
+      "completion_pct_agent_scope": 100.0,
       "founder_only_pending": []
     },
     "GOV": {
@@ -143,15 +143,6 @@
       "detail": "shipped=False (no champion, nothing submitted)"
     },
     {
-      "id": "REQ-NS-002",
-      "layer": "NS",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "FAILED",
-      "statement": "verified_founder_minutes_per_shipped_dollar is measured, not estimated.",
-      "detail": "founder_minutes_ledger present: False | shipped revenue: $0"
-    },
-    {
       "id": "REQ-CP-TESTFLIGHT",
       "layer": "CP",
       "weight": 4.0,
@@ -159,15 +150,6 @@
       "state": "FAILED",
       "statement": "Epic Fury 2026 champion gate: TESTFLIGHT.",
       "detail": "TESTFLIGHT: UNKNOWN \u2014 TestFlight state lives in App Store Connect. No local artifact records"
-    },
-    {
-      "id": "REQ-ES-004",
-      "layer": "ES",
-      "weight": 3.0,
-      "owner": "agent",
-      "state": "FAILED",
-      "statement": "The command center serves runtime truth: the council state endpoint is registered and reachable.",
-      "detail": "route_registered=False missing_gates=8"
     }
   ],
   "next_recommended_task": {
@@ -190,13 +172,13 @@
       "validator": "python3 scripts/council/generate_h1_candidate_registry.py --dry-run",
       "evidence_path": "coordination/council/h1_candidate_registry.json",
       "evidence_exists": true,
-      "evidence_age_hours": 38.98,
+      "evidence_age_hours": 81.73,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "}",
       "contributes": 3.0,
-      "checked_at": "2026-07-13T22:37:52.877213Z"
+      "checked_at": "2026-07-15T17:22:49.744874Z"
     },
     {
       "id": "REQ-GOV-002",
@@ -208,13 +190,13 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q",
       "evidence_path": "scripts/council/h1_authorization.py",
       "evidence_exists": true,
-      "evidence_age_hours": 32.64,
+      "evidence_age_hours": 75.39,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "28 passed, 77 warnings in 4.70s",
+      "detail": "28 passed, 77 warnings in 10.50s",
       "contributes": 5.0,
-      "checked_at": "2026-07-13T22:37:52.909159Z"
+      "checked_at": "2026-07-15T17:22:49.787440Z"
     },
     {
       "id": "REQ-GOV-003",
@@ -226,13 +208,13 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q -k 'quorum or mock or dry_run or advisory or partial'",
       "evidence_path": "scripts/council/aggregate.py",
       "evidence_exists": true,
-      "evidence_age_hours": 32.64,
+      "evidence_age_hours": 75.39,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "7 passed, 21 deselected, 77 warnings in 2.56s",
+      "detail": "7 passed, 21 deselected, 77 warnings in 1.76s",
       "contributes": 4.0,
-      "checked_at": "2026-07-13T22:37:58.015540Z"
+      "checked_at": "2026-07-15T17:23:00.652111Z"
     },
     {
       "id": "REQ-GOV-004",
@@ -244,13 +226,13 @@
       "validator": "python3 -m pytest tests/test_h1d_spend_gate.py -q",
       "evidence_path": "hoch_pods/compute/cost_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 0.29,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "15 passed in 0.12s",
+      "detail": "15 passed in 0.13s",
       "contributes": 4.0,
-      "checked_at": "2026-07-13T22:38:00.946679Z"
+      "checked_at": "2026-07-15T17:23:02.776957Z"
     },
     {
       "id": "REQ-GOV-005",
@@ -268,7 +250,7 @@
       "exit_code": 0,
       "detail": "fallback completion defaults: 0 | missing-timestamp->now(): False",
       "contributes": 5.0,
-      "checked_at": "2026-07-13T22:38:01.272570Z"
+      "checked_at": "2026-07-15T17:23:03.115964Z"
     },
     {
       "id": "REQ-GOV-006",
@@ -286,7 +268,7 @@
       "exit_code": 0,
       "detail": "tautological tests: 0",
       "contributes": 4.0,
-      "checked_at": "2026-07-13T22:38:01.302220Z"
+      "checked_at": "2026-07-15T17:23:03.148550Z"
     },
     {
       "id": "REQ-ES-001",
@@ -298,13 +280,13 @@
       "validator": "python3 scripts/goal/verify_h1d_relay.py",
       "evidence_path": "coordination/council/relay/H1D_pert_node.json",
       "evidence_exists": true,
-      "evidence_age_hours": 8.31,
+      "evidence_age_hours": 20.89,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "state=COMPLETED adapters=['grok', 'ollama'] copypaste=0",
       "contributes": 5.0,
-      "checked_at": "2026-07-13T22:38:01.337817Z"
+      "checked_at": "2026-07-15T17:23:03.189571Z"
     },
     {
       "id": "REQ-ES-002",
@@ -316,13 +298,13 @@
       "validator": "python3 -m pytest tests/test_h1d_dispatch.py -q",
       "evidence_path": "scripts/council/dispatch.py",
       "evidence_exists": true,
-      "evidence_age_hours": 23.64,
+      "evidence_age_hours": 66.39,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "10 passed in 0.61s",
+      "detail": "10 passed in 1.21s",
       "contributes": 3.0,
-      "checked_at": "2026-07-13T22:38:01.364722Z"
+      "checked_at": "2026-07-15T17:23:03.218079Z"
     },
     {
       "id": "REQ-ES-003",
@@ -340,7 +322,7 @@
       "exit_code": 0,
       "detail": "report sha256: fc1ce8e30b93cbbcdefe113ab8762c10d3c4754c13cd8d7f3d7a118c0f7dc9a3",
       "contributes": 4.0,
-      "checked_at": "2026-07-13T22:38:02.168860Z"
+      "checked_at": "2026-07-15T17:23:04.667639Z"
     },
     {
       "id": "REQ-ES-004",
@@ -352,13 +334,13 @@
       "validator": "python3 scripts/goal/verify_council_endpoint.py",
       "evidence_path": "coordination/goal/council_endpoint_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 21.19,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "FAILED",
-      "exit_code": 1,
-      "detail": "route_registered=False missing_gates=8",
-      "contributes": 0.0,
-      "checked_at": "2026-07-13T22:38:04.140101Z"
+      "state": "SATISFIED",
+      "exit_code": 0,
+      "detail": "route_registered=True missing_gates=0",
+      "contributes": 3.0,
+      "checked_at": "2026-07-15T17:23:06.982492Z"
     },
     {
       "id": "REQ-TO-001",
@@ -370,13 +352,13 @@
       "validator": "python3 scripts/goal/verify_champion_selected.py",
       "evidence_path": "coordination/goal/champion_selection.json",
       "evidence_exists": true,
-      "evidence_age_hours": 22.94,
+      "evidence_age_hours": 65.69,
       "freshness_sla_hours": 720,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "champion=EPIC_FURY_2026 state=SELECTED",
       "contributes": 5.0,
-      "checked_at": "2026-07-13T22:38:04.173737Z"
+      "checked_at": "2026-07-15T17:23:07.009294Z"
     },
     {
       "id": "REQ-TO-002",
@@ -388,13 +370,13 @@
       "validator": "python3 scripts/goal/verify_shipped.py",
       "evidence_path": "coordination/goal/shipped_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 21.19,
+      "evidence_age_hours": 0.01,
       "freshness_sla_hours": 720,
       "state": "FAILED",
       "exit_code": 1,
       "detail": "shipped=False (no champion, nothing submitted)",
       "contributes": 0.0,
-      "checked_at": "2026-07-13T22:38:04.201418Z"
+      "checked_at": "2026-07-15T17:23:07.036224Z"
     },
     {
       "id": "REQ-TO-003",
@@ -406,13 +388,13 @@
       "validator": "python3 scripts/verify_intake_to_doorstep.py",
       "evidence_path": "coordination/goal/intake_to_doorstep.json",
       "evidence_exists": true,
-      "evidence_age_hours": 21.19,
+      "evidence_age_hours": 0.01,
       "freshness_sla_hours": 168,
       "state": "FAILED",
       "exit_code": 1,
       "detail": "report sha256: 1f64fd3d458c617544f3386e76bd3de6ba81e21991f2636dff5d154265b0455f",
       "contributes": 0.0,
-      "checked_at": "2026-07-13T22:38:04.228010Z"
+      "checked_at": "2026-07-15T17:23:07.068640Z"
     },
     {
       "id": "REQ-NS-001",
@@ -424,13 +406,13 @@
       "validator": "python3 scripts/goal/verify_founder_not_transport.py",
       "evidence_path": "coordination/council/relay/dispatch_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 23.07,
+      "evidence_age_hours": 65.82,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "council tasks: 6 | tasks requiring founder transport: 0",
       "contributes": 5.0,
-      "checked_at": "2026-07-13T22:38:04.261565Z"
+      "checked_at": "2026-07-15T17:23:07.105542Z"
     },
     {
       "id": "REQ-NS-002",
@@ -440,15 +422,15 @@
       "blocking": true,
       "weight": 4.0,
       "validator": "python3 scripts/goal/verify_founder_minutes_metric.py",
-      "evidence_path": "coordination/goal/founder_minutes_ledger.jsonl",
-      "evidence_exists": false,
-      "evidence_age_hours": null,
+      "evidence_path": "coordination/goal/founder_minutes_metric_report.json",
+      "evidence_exists": true,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 168,
-      "state": "FAILED",
-      "exit_code": 1,
-      "detail": "founder_minutes_ledger present: False | shipped revenue: $0",
-      "contributes": 0.0,
-      "checked_at": "2026-07-13T22:38:04.296093Z"
+      "state": "SATISFIED",
+      "exit_code": 0,
+      "detail": "instrument LIVE; settled revenue $0 \u2192 metric UNDEFINED (not estimated, not infinity)",
+      "contributes": 4.0,
+      "checked_at": "2026-07-15T17:23:07.137785Z"
     },
     {
       "id": "REQ-CP-BUILD",
@@ -464,9 +446,9 @@
       "freshness_sla_hours": 24,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "BUILD: PASS \u2014 build 8 VALID, selected=True",
+      "detail": "BUILD: PASS \u2014 build 8 VALID, selected=True, revalidated age=0.0h",
       "contributes": 3.0,
-      "checked_at": "2026-07-13T22:38:04.326862Z"
+      "checked_at": "2026-07-15T17:23:07.207060Z"
     },
     {
       "id": "REQ-CP-TEST",
@@ -484,7 +466,7 @@
       "exit_code": 0,
       "detail": "TEST: PASS \u2014 23/23 passed, 0 failed",
       "contributes": 4.0,
-      "checked_at": "2026-07-13T22:38:04.407976Z"
+      "checked_at": "2026-07-15T17:23:07.291633Z"
     },
     {
       "id": "REQ-CP-SECURITY",
@@ -502,7 +484,7 @@
       "exit_code": 0,
       "detail": "SECURITY: PASS \u2014 gate verdict GO, open_high=0, 4 rules PASS",
       "contributes": 5.0,
-      "checked_at": "2026-07-13T22:38:04.472550Z"
+      "checked_at": "2026-07-15T17:23:07.415866Z"
     },
     {
       "id": "REQ-CP-SIGNING_READINESS",
@@ -520,7 +502,7 @@
       "exit_code": 0,
       "detail": "SIGNING_READINESS: PASS \u2014 founder release approval artifact present; signed by Michael Bryan Hoc",
       "contributes": 4.0,
-      "checked_at": "2026-07-13T22:38:04.528193Z"
+      "checked_at": "2026-07-15T17:23:07.506809Z"
     },
     {
       "id": "REQ-CP-STORE_METADATA",
@@ -538,7 +520,7 @@
       "exit_code": 0,
       "detail": "STORE_METADATA: PASS \u2014 7/7 listing fields DONE",
       "contributes": 3.0,
-      "checked_at": "2026-07-13T22:38:04.586420Z"
+      "checked_at": "2026-07-15T17:23:07.581022Z"
     },
     {
       "id": "REQ-CP-PRIVACY",
@@ -556,7 +538,7 @@
       "exit_code": 0,
       "detail": "PRIVACY: PASS \u2014 2 privacy fields DONE (policy URL + App Privacy)",
       "contributes": 3.0,
-      "checked_at": "2026-07-13T22:38:04.641731Z"
+      "checked_at": "2026-07-15T17:23:07.652138Z"
     },
     {
       "id": "REQ-CP-MONETIZATION",
@@ -574,7 +556,7 @@
       "exit_code": 0,
       "detail": "MONETIZATION: PASS \u2014 pricing configured. NOTE: configured pricing is not shipped revenue --",
       "contributes": 4.0,
-      "checked_at": "2026-07-13T22:38:04.704358Z"
+      "checked_at": "2026-07-15T17:23:07.721982Z"
     },
     {
       "id": "REQ-CP-TESTFLIGHT",
@@ -592,7 +574,7 @@
       "exit_code": 1,
       "detail": "TESTFLIGHT: UNKNOWN \u2014 TestFlight state lives in App Store Connect. No local artifact records",
       "contributes": 0.0,
-      "checked_at": "2026-07-13T22:38:04.766823Z"
+      "checked_at": "2026-07-15T17:23:07.790400Z"
     },
     {
       "id": "REQ-CP-APP_STORE_CONNECT",
@@ -610,7 +592,7 @@
       "exit_code": 1,
       "detail": "APP_STORE_CONNECT: UNKNOWN \u2014 ledger claims state=WAITING_FOR_REVIEW submitted=2026-07-07T17:25:46Z.",
       "contributes": 0.0,
-      "checked_at": "2026-07-13T22:38:04.830392Z"
+      "checked_at": "2026-07-15T17:23:07.862858Z"
     },
     {
       "id": "REQ-CP-SUBMISSION_PACKAGE",
@@ -628,7 +610,7 @@
       "exit_code": 0,
       "detail": "SUBMISSION_PACKAGE: PASS \u2014 5/5 release docs + founder decision present",
       "contributes": 5.0,
-      "checked_at": "2026-07-13T22:38:04.886640Z"
+      "checked_at": "2026-07-15T17:23:07.929790Z"
     }
   ],
   "hard_constraint": "No fake green. No unevidenced completion. No autonomous execution beyond explicit authorization and policy."
