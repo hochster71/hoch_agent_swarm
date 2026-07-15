@@ -37,6 +37,16 @@ from fastapi.middleware.cors import CORSMiddleware
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+# Load gitignored env files so ElevenLabs / secrets survive restarts without
+# putting keys in the process command line or the repo.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(ROOT / ".env")
+    load_dotenv(ROOT / ".env.elevenlabs", override=True)
+except Exception:
+    pass
+
 DB = ROOT / "backend" / "swarm_ledger.db"
 LEASES = ROOT / "coordination" / "leases"
 PKGS = ROOT / "coordination" / "council" / "live_proof_packages"
@@ -51,6 +61,16 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 from backend.instrument_integrity.council_router import council_router
 app.include_router(council_router)
+
+# SWARM-1: unified control plane + live service-health map. Real logic lives in
+# backend/helm/health_registry.py — this is the minimal registration block.
+from backend.helm.health_registry import health_router
+app.include_router(health_router)
+
+# SWARM-3: NIST CSF 2.0 x SP 800-53 Rev 5 control-coverage matrix. Real logic lives in
+# backend/helm/nist_matrix.py — this is the minimal registration block.
+from backend.helm.nist_matrix import nist_router
+app.include_router(nist_router)
 
 # HELM Voice Executive — orchestration-backed voice agent API (read-only + stage-only)
 from backend.voice.router import router as voice_router

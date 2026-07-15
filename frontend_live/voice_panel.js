@@ -19,7 +19,7 @@
     enabled: false,
     muted: false,
     policy: { ...DEFAULT_POLICY },
-    ttsProvider: 'local_tts', // local_tts | elevenlabs | auto
+    ttsProvider: 'auto', // local_tts | elevenlabs | auto (prefer ElevenLabs when READY)
     eventCount: 0,
     windowStart: Date.now(),
     lastSpoken: '',
@@ -160,6 +160,12 @@
       state.policy = { ...DEFAULT_POLICY, ...(d.policy || {}) };
       if (state.policy.voice_enabled_default && !state.policy.require_operator_toggle) {
         state.enabled = true;
+      }
+      // Prefer ElevenLabs when policy/voice_mode says so and provider is READY
+      if (state.policy.voice_mode === 'elevenlabs' && state.policy.elevenlabs_ready) {
+        state.ttsProvider = 'elevenlabs';
+      } else if (state.policy.elevenlabs_ready) {
+        state.ttsProvider = 'auto';
       }
       _emit();
       return state.policy;
@@ -394,7 +400,14 @@
       }
     });
 
-    loadPolicy().then(() => { paint(); paintTtsReady(); loadTtsStatus(); });
+    loadPolicy().then(() => {
+      // Sync dropdown to resolved provider
+      const sel = $('#hv-tts');
+      if (sel) sel.value = state.ttsProvider || 'auto';
+      paint();
+      paintTtsReady();
+      loadTtsStatus();
+    });
     paint();
   }
 

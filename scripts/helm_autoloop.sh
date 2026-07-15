@@ -30,6 +30,13 @@ api_up() { curl -fsS -o /dev/null --max-time 5 "http://127.0.0.1:8770/api/v1/hel
 
 start_api() {
   log "API down -> starting"
+  # Load gitignored voice/secrets env so ElevenLabs survives autoloop restarts
+  set -a
+  # shellcheck disable=SC1091
+  [ -f "$REPO/.env" ] && . "$REPO/.env"
+  # shellcheck disable=SC1091
+  [ -f "$REPO/.env.elevenlabs" ] && . "$REPO/.env.elevenlabs"
+  set +a
   nohup "$PY" -m uvicorn backend.helm_live_api:app --host 0.0.0.0 --port 8770 \
     >> /tmp/helm_api.log 2>&1 &
   sleep 6
