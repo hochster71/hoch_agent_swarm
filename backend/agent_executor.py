@@ -310,13 +310,17 @@ def _gateway_generate(prompt: str, system: str, tier: int = TIER_LOCAL) -> tuple
         return '{"tool": "finish", "summary": "SUCCESS — Created a safe local file at docs/safe_file.txt as requested.", "artifacts": ["docs/safe_file.txt"]}', {"model": "mock", "cost_usd": 0.0, "in_tok": 10, "out_tok": 10}
         
     _load_env()
+    # Provider credentials come from the single config layer (backend/config/secrets.py),
+    # not scattered os.environ reads — one place to rotate/audit/swap. See the ratchet
+    # test tests/test_secrets_centralized.py which forbids new direct reads.
+    from backend.config.secrets import SECRETS
     keys = {
-        "gemini": os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY"),
-        "deepseek": os.environ.get("DEEPSEEK_API_KEY"),
-        "openai": os.environ.get("OPENAI_API_KEY"),
-        "openai_frontier": os.environ.get("OPENAI_API_KEY"),
-        "xai": os.environ.get("XAI_API_KEY"),
-        "anthropic": os.environ.get("ANTHROPIC_API_KEY"),
+        "gemini": SECRETS.provider_key("gemini"),
+        "deepseek": SECRETS.provider_key("deepseek"),
+        "openai": SECRETS.provider_key("openai"),
+        "openai_frontier": SECRETS.provider_key("openai"),
+        "xai": SECRETS.provider_key("xai"),
+        "anthropic": SECRETS.provider_key("anthropic"),
         "local": "local",
     }
     models = {
