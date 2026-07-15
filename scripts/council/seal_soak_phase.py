@@ -56,6 +56,19 @@ if __name__ == "__main__":
         print(f"SOAK_PHASE_{args.phase}_INCONCLUSIVE — package not found: {args.package}")
         sys.exit(2)
 
+    # PHASE DERIVATION FIX (2026-07-15): the package is the single source of truth for its own phase.
+    # The old default (--phase A) meant a caller that forgot the flag sealed an 8h Phase-B package with
+    # 'SOAK_PHASE_A_PASS' — so the phase-strict auto-chainer correctly refused to advance (a real B PASS
+    # blocked by a mislabel). Read the phase from the package's soak_config.json; fall back to --phase.
+    _cfg = PKG / "soak_config.json"
+    if _cfg.exists():
+        try:
+            _p = json.loads(_cfg.read_text()).get("phase")
+            if _p:
+                args.phase = str(_p)
+        except Exception:
+            pass
+
 
     def jl(name):
         p = PKG / name

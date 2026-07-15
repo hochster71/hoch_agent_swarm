@@ -53,8 +53,8 @@ if [ -n "$PHASE_SINCE" ] && [ -n "$PKG_START" ] && [[ "$PKG_START" < "$PHASE_SIN
 fi
 
 if [ ! -f "$PKG/seal_verdict.json" ]; then
-  echo "  sealing $PKG"
-  $VENV scripts/council/seal_soak_phase.py --package "$PKG" >/dev/null 2>&1
+  echo "  sealing $PKG (phase $PHASE)"
+  $VENV scripts/council/seal_soak_phase.py --package "$PKG" --phase "$PHASE" >/dev/null 2>&1
 fi
 VERDICT=$($VENV -c "import json,os;p='$PKG/seal_verdict.json';print(json.load(open(p)).get('verdict','NONE') if os.path.exists(p) else 'NONE')")
 echo "  phase=$PHASE pkg=$(basename "$PKG") verdict=$VERDICT"

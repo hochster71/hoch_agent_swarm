@@ -1,7 +1,7 @@
 {
-  "phase": "B",
+  "phase": "C",
   "status": "RUNNING",
-  "prev": "A SOAK_PHASE_A_PASS",
-  "phase_started_at": "2026-07-14T23:37:32Z",
-  "24_7_status": "NOT PROVEN \u2014 B(8h) running, C(24h) pending"
+  "prev": "B SOAK_PHASE_B_PASS",
+  "phase_started_at": "2026-07-15T11:36:22Z",
+  "24_7_status": "NOT PROVEN \u2014 A+B sealed PASS, C(24h) running"
 }
