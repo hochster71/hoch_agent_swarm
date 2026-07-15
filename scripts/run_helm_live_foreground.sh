@@ -16,4 +16,6 @@ set -a
 set +a
 
 export PATH="${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:${PATH}"
-exec "${PY}" -m uvicorn backend.helm_live_api:app --host 0.0.0.0 --port "${PORT}"
+# Zero-Trust: bind loopback only (SC-7). This launcher is RETIRED (its launchd job
+# com.hoch.helm.voice is disabled); the hardened autoloop is the live supervisor.
+exec "${PY}" -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port "${PORT}"

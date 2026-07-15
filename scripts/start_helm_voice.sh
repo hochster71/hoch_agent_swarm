@@ -45,8 +45,8 @@ if [[ ! -x "${PY}" ]]; then
   exit 1
 fi
 
-echo "Starting HELM LIVE voice on 0.0.0.0:${PORT}"
-nohup "${PY}" -m uvicorn backend.helm_live_api:app --host 0.0.0.0 --port "${PORT}" \
+echo "Starting HELM LIVE voice on 127.0.0.1:${PORT}"
+nohup "${PY}" -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port "${PORT}" \
   >"${LOG_OUT}" 2>"${LOG_ERR}" &
 echo "pid $!"
 
