@@ -219,24 +219,29 @@ def run() -> dict:
         gates.append(gate("MONETIZATION", UNKNOWN, "pricing configuration unverified",
                           [], led_age, "stale or missing"))
 
-    # 8. TESTFLIGHT --------------------------------------------------------
+    # 8-9. TESTFLIGHT + APP_STORE_CONNECT — LIVE read from Apple, fail-closed.
+    # A local JSON is not evidence; scripts/goal/asc_client.py reads the real state
+    # from the App Store Connect API using the provisioned creds (never logged). Any
+    # missing credential / no build / network / auth error -> UNKNOWN, never a PASS.
+    try:
+        from scripts.goal.asc_client import read_distribution_state
+        _asc = read_distribution_state()
+    except Exception as e:  # module/import failure -> fail closed
+        _reason = f"live ASC read unavailable: {str(e)[:100]}"
+        _asc = {"testflight": {"state": UNKNOWN, "detail": _reason, "evidence": "asc:none"},
+                "app_store": {"state": UNKNOWN, "detail": _reason, "evidence": "asc:none"}}
+    _tf = _asc.get("testflight", {})
     gates.append(gate(
-        "TESTFLIGHT", UNKNOWN,
-        "TestFlight state lives in App Store Connect. No local artifact records a "
-        "current TestFlight build/tester state, and ASC credentials are NOT_PROVISIONED.",
-        [], None, "requires App Store Connect access (founder-only credential)"))
-
-    # 9. APP_STORE_CONNECT -------------------------------------------------
-    sub = led.get("submit_for_review") or {}
-    creds = credentials_present()
-    claim = f"ledger claims state={sub.get('state')} submitted={sub.get('submitted_utc')}"
+        "TESTFLIGHT", _tf.get("state", UNKNOWN),
+        f"live App Store Connect read: {_tf.get('detail', 'no read')}",
+        [_tf.get("evidence", "asc:none")], None,
+        None if _tf.get("state") == PASS else "TestFlight build state read from App Store Connect"))
+    _av = _asc.get("app_store", {})
     gates.append(gate(
-        "APP_STORE_CONNECT", UNKNOWN,
-        f"{claim}. This is a {led_age}h-old CLAIM in a local file, not a live reading. "
-        f"ASC credentials present: {creds}. Apple may have approved or rejected since. "
-        f"The truthful state is UNKNOWN until App Store Connect is read.",
-        [str(LEDGER.relative_to(ROOT))], led_age,
-        "requires App Store Connect read (founder-only credential)"))
+        "APP_STORE_CONNECT", _av.get("state", UNKNOWN),
+        f"live App Store Connect read: {_av.get('detail', 'no read')}",
+        [_av.get("evidence", "asc:none")], None,
+        None if _av.get("state") == PASS else "App Store review state read from App Store Connect"))
 
     # 10. SUBMISSION_PACKAGE ------------------------------------------------
     required_docs = ["RELEASE_CHECKLIST.md", "FOUNDER_RELEASE_DECISION.md",
