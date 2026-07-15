@@ -75,4 +75,13 @@ def post_relay_verify(authorization: str = Header(None)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8010)
+    # SC-7: default to LOOPBACK. A real cross-machine deployment must opt in explicitly
+    # via RELAY_BIND_HOST=0.0.0.0 AND set a strong RELAY_AUTH_TOKEN — binding a public
+    # interface with the default/empty token is refused (fail-closed).
+    host = os.getenv("RELAY_BIND_HOST", "127.0.0.1")
+    if host not in ("127.0.0.1", "localhost", "::1") and AUTH_TOKEN in ("", "change-me"):
+        raise SystemExit(
+            "REFUSING to bind a public interface with the default/empty RELAY_AUTH_TOKEN. "
+            "Set a strong RELAY_AUTH_TOKEN before exposing the relay."
+        )
+    uvicorn.run(app, host=host, port=int(os.getenv("RELAY_PORT", "8010")))
