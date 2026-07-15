@@ -255,6 +255,39 @@ class TtsSpeakRequest(BaseModel):
     )
 
 
+@router.get("/mission")
+def voice_mission_state():
+    """Executive mission state for voice / Grok (same Mission State Engine)."""
+    from backend.mission_control.mission_state import (
+        render_speech,
+        write_mission_state,
+    )
+
+    try:
+        st = write_mission_state()
+        return JSONResponse(
+            {
+                "truth_class": "HELM_MISSION_STATE",
+                "status": (st.get("overall") or {}).get("status") or "UNKNOWN",
+                "speech_text": render_speech(st),
+                "dashboard": st.get("dashboard"),
+                "critical_path": st.get("critical_path"),
+                "overall": st.get("overall"),
+                "mission": st.get("mission"),
+                "revenue": st.get("revenue"),
+            }
+        )
+    except Exception as e:
+        return JSONResponse(
+            {
+                "truth_class": "HELM_MISSION_STATE",
+                "status": "UNKNOWN",
+                "speech_text": f"Mission state UNKNOWN — {e}",
+            },
+            status_code=500,
+        )
+
+
 @router.get("/origins")
 def voice_origins():
     """Known HELM origins for phone / Grok binding (observed config, not invented reachability)."""

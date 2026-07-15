@@ -1,0 +1,288 @@
+{
+  "schema": "HELM_MISSION_STATE_v1",
+  "mission": {
+    "id": "EPIC-FURY-2026",
+    "champion_product": "EPIC_FURY_2026",
+    "north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete."
+  },
+  "computed_at": "2026-07-15T17:40:12.349322Z",
+  "sources": {
+    "goal_state": "coordination/goal/goal_state.json",
+    "champion_gates": "coordination/goal/champion_gates.json",
+    "control_posture": "coordination/security/helm_control_posture.json",
+    "goal_computed_at": "2026-07-15T17:23:07.990805Z",
+    "goal_age_hours": 0.28
+  },
+  "areas": {
+    "Engineering": {
+      "area": "Engineering",
+      "status": "VERIFIED",
+      "confidence": "High",
+      "detail": "agent CP 100.0% \u00b7 ES 100.0% (goal engine)",
+      "evidence": [
+        "coordination/goal/goal_state.json"
+      ],
+      "evidence_age_hours": 0.28,
+      "score_pct": 100.0
+    },
+    "Testing": {
+      "area": "Testing",
+      "status": "VERIFIED",
+      "confidence": "High",
+      "detail": "23/23 passed, 0 failed",
+      "evidence": [
+        "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
+      ],
+      "evidence_age_hours": 63.9
+    },
+    "Security": {
+      "area": "Security",
+      "status": "VERIFIED",
+      "confidence": "High",
+      "detail": "champion SECURITY=PASS; NIST posture 100.0% open=0 high=0",
+      "evidence": [
+        "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
+        "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
+        "coordination/security/helm_control_posture.json"
+      ],
+      "evidence_age_hours": 156.3,
+      "posture_percent": 100.0
+    },
+    "Evidence": {
+      "area": "Evidence",
+      "status": "VERIFIED",
+      "confidence": "High",
+      "detail": "GOV agent 100.0% \u00b7 evidence_coverage field 100.0",
+      "evidence": [
+        "coordination/goal/goal_state.json"
+      ],
+      "evidence_age_hours": 0.28
+    },
+    "Runtime Truth": {
+      "area": "Runtime Truth",
+      "status": "VERIFIED",
+      "confidence": "High",
+      "detail": "goal_state age_h=0.28; doctrine no_fake_green",
+      "evidence": [
+        "coordination/goal/goal_state.json"
+      ],
+      "evidence_age_hours": 0.28
+    },
+    "Apple Review": {
+      "area": "Apple Review",
+      "status": "Waiting on Founder",
+      "confidence": "Certain",
+      "detail": "TestFlight=UNKNOWN ASC=UNKNOWN",
+      "evidence": [],
+      "evidence_age_hours": null
+    },
+    "Revenue": {
+      "area": "Revenue",
+      "status": "NOT_STARTED",
+      "confidence": "Certain",
+      "detail": "$0 verified settled revenue (expected until release earns)",
+      "evidence": [
+        "coordination/council/revenue_ledger.jsonl"
+      ],
+      "evidence_age_hours": null,
+      "settled_usd": 0.0
+    },
+    "Overall Mission": {
+      "area": "Overall Mission",
+      "status": "BLOCKED_EXTERNAL",
+      "confidence": "High",
+      "detail": "REQ-TO-003",
+      "evidence": [],
+      "evidence_age_hours": null
+    }
+  },
+  "dashboard": [
+    {
+      "area": "Engineering",
+      "status": "100.0%",
+      "confidence": "High"
+    },
+    {
+      "area": "Testing",
+      "status": "VERIFIED",
+      "confidence": "High"
+    },
+    {
+      "area": "Security",
+      "status": "VERIFIED",
+      "confidence": "High"
+    },
+    {
+      "area": "Evidence",
+      "status": "VERIFIED",
+      "confidence": "High"
+    },
+    {
+      "area": "Runtime Truth",
+      "status": "VERIFIED",
+      "confidence": "High"
+    },
+    {
+      "area": "Apple Review",
+      "status": "Waiting on Founder",
+      "confidence": "Certain"
+    },
+    {
+      "area": "Revenue",
+      "status": "NOT_STARTED",
+      "confidence": "Certain"
+    },
+    {
+      "area": "Overall Mission",
+      "status": "BLOCKED_EXTERNAL",
+      "confidence": "High"
+    }
+  ],
+  "critical_path": [
+    {
+      "name": "Engineering",
+      "status": "DONE",
+      "mark": "\u2713"
+    },
+    {
+      "name": "Security",
+      "status": "DONE",
+      "mark": "\u2713"
+    },
+    {
+      "name": "Evidence",
+      "status": "DONE",
+      "mark": "\u2713"
+    },
+    {
+      "name": "Founder Review",
+      "status": "WAITING_FOUNDER",
+      "mark": "\u23f3"
+    },
+    {
+      "name": "Apple Review",
+      "status": "WAITING_EXTERNAL",
+      "mark": "\u23f3"
+    },
+    {
+      "name": "Production Release",
+      "status": "WAITING_EXTERNAL",
+      "mark": "\u23f3"
+    }
+  ],
+  "approvals": {
+    "founder": {
+      "status": "PENDING",
+      "pending": [
+        "REQ-TO-002",
+        "REQ-CP-TESTFLIGHT",
+        "REQ-CP-APP_STORE_CONNECT"
+      ],
+      "confidence": "Certain"
+    },
+    "apple": {
+      "status": "BLOCKED_EXTERNAL",
+      "testflight": "UNKNOWN",
+      "app_store_connect": "UNKNOWN",
+      "confidence": "Certain",
+      "detail": "Live Apple state requires founder credentials; local ledger claims are not re-verified here"
+    }
+  },
+  "distribution": {
+    "area": "Distribution",
+    "status": "BLOCKED_EXTERNAL",
+    "confidence": "Certain",
+    "detail": "Production distribution blocked until TestFlight + App Store Connect are founder-cleared",
+    "evidence": [
+      "coordination/goal/champion_gates.json"
+    ],
+    "evidence_age_hours": 0.28
+  },
+  "revenue": {
+    "area": "Revenue",
+    "status": "NOT_STARTED",
+    "confidence": "Certain",
+    "detail": "$0 verified settled revenue (expected until release earns)",
+    "evidence": [
+      "coordination/council/revenue_ledger.jsonl"
+    ],
+    "evidence_age_hours": null,
+    "settled_usd": 0.0
+  },
+  "engineering": {
+    "area": "Engineering",
+    "status": "VERIFIED",
+    "confidence": "High",
+    "detail": "agent CP 100.0% \u00b7 ES 100.0% (goal engine)",
+    "evidence": [
+      "coordination/goal/goal_state.json"
+    ],
+    "evidence_age_hours": 0.28,
+    "score_pct": 100.0
+  },
+  "security": {
+    "area": "Security",
+    "status": "VERIFIED",
+    "confidence": "High",
+    "detail": "champion SECURITY=PASS; NIST posture 100.0% open=0 high=0",
+    "evidence": [
+      "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
+      "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
+      "coordination/security/helm_control_posture.json"
+    ],
+    "evidence_age_hours": 156.3,
+    "posture_percent": 100.0
+  },
+  "testing": {
+    "area": "Testing",
+    "status": "VERIFIED",
+    "confidence": "High",
+    "detail": "23/23 passed, 0 failed",
+    "evidence": [
+      "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
+    ],
+    "evidence_age_hours": 63.9
+  },
+  "evidence": {
+    "area": "Evidence",
+    "status": "VERIFIED",
+    "confidence": "High",
+    "detail": "GOV agent 100.0% \u00b7 evidence_coverage field 100.0",
+    "evidence": [
+      "coordination/goal/goal_state.json"
+    ],
+    "evidence_age_hours": 0.28
+  },
+  "runtime_truth": {
+    "area": "Runtime Truth",
+    "status": "VERIFIED",
+    "confidence": "High",
+    "detail": "goal_state age_h=0.28; doctrine no_fake_green",
+    "evidence": [
+      "coordination/goal/goal_state.json"
+    ],
+    "evidence_age_hours": 0.28
+  },
+  "overall": {
+    "status": "BLOCKED_EXTERNAL",
+    "confidence": "High",
+    "blocker": "REQ-TO-003",
+    "next": {
+      "id": "REQ-TO-003",
+      "statement": "The full autonomous path from intake to DOORSTEP is proven end to end.",
+      "why": "highest-weight unresolved BLOCKING requirement on the canonical critical path that an agent can act on"
+    }
+  },
+  "metrics_snapshot": {
+    "north_star_completion": 100.0,
+    "champion_product_completion": 100.0,
+    "autonomous_execution_coverage": 94.1,
+    "evidence_coverage": 100.0
+  },
+  "doctrine": [
+    "no_fake_green",
+    "monetization_is_not_revenue",
+    "founder_and_apple_gates_are_external",
+    "single_mission_state_for_all_interfaces"
+  ]
+}

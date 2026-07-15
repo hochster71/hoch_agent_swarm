@@ -28,6 +28,23 @@ def grok_voice_tools() -> List[Dict[str, Any]]:
         {
             "type": "function",
             "function": {
+                "name": "helm_mission_state",
+                "description": (
+                    "Authoritative mission operational state (engineering, security, evidence, "
+                    "founder/Apple approvals, revenue, overall). Prefer this over inventing status. "
+                    "Answers: what is the current operational state of the mission?"
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {"method": "GET", "path": "/api/v1/helm/voice/mission"},
+            },
+        },
+        {
+            "type": "function",
+            "function": {
                 "name": "helm_voice_command",
                 "description": (
                     "Execute a governed HELM voice command. "

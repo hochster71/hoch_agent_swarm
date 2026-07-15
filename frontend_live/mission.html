@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#0b0e13"/>
+<title>HELM — Mission State</title>
+<style>
+:root{--bg:#0b0e13;--card:#141922;--line:#232b38;--tx:#e6edf3;--dim:#8b98a9;
+--live:#2ea043;--stale:#d29922;--unknown:#8b949e;--bad:#f85149;--wait:#58a6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);
+font:15px/1.5 -apple-system,system-ui,Menlo,monospace;
+padding:max(16px,env(safe-area-inset-top)) 16px 32px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:15px;letter-spacing:.12em;margin:0 0 4px}
+.sub{color:var(--dim);font-size:12px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid #1c2230}
+th{color:var(--dim);font-weight:600;font-size:11px;letter-spacing:.06em}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.VERIFIED,.PASS,.LIVE,.DONE{background:rgba(46,160,67,.16);color:var(--live)}
+.PARTIAL,.IN_PROGRESS,.STALE{background:rgba(210,153,34,.16);color:var(--stale)}
+.UNKNOWN,.NOT_STARTED{background:rgba(139,148,158,.16);color:var(--unknown)}
+.BLOCKED_EXTERNAL,.BLOCKED_FOUNDER,.WAITING_EXTERNAL,.WAITING_FOUNDER,.PENDING{background:rgba(88,166,255,.14);color:var(--wait)}
+.cp{font-size:14px;line-height:1.9}
+a{color:var(--wait);text-decoration:none}
+.err{color:var(--bad);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>HELM · MISSION STATE</h1>
+  <div class="sub" id="sub">Operational state of the mission — not a coding log</div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <strong id="mid">—</strong>
+      <span class="pill UNKNOWN" id="overall">…</span>
+    </div>
+    <table>
+      <thead><tr><th>Area</th><th>Status</th><th>Confidence</th></tr></thead>
+      <tbody id="dash"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div style="font-size:11px;color:var(--dim);letter-spacing:.1em;margin-bottom:8px">CRITICAL PATH</div>
+    <div class="cp" id="cp">—</div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:11px;color:var(--dim);letter-spacing:.1em;margin-bottom:8px">NEXT</div>
+    <div id="next" style="font-size:13px">—</div>
+    <div style="margin-top:10px;font-size:12px;color:var(--dim)">
+      <a href="/voice">voice</a> · <a href="/founder">founder</a> · <a href="/console">console</a> ·
+      <a href="/api/v1/helm/mission/executive">plain text</a>
+    </div>
+  </div>
+  <div class="err" id="err"></div>
+</div>
+<script>
+function pill(s){
+  const k=String(s||'UNKNOWN').replace(/[^A-Za-z0-9_]/g,'');
+  return `<span class="pill ${k}">${s}</span>`;
+}
+async function load(){
+  try{
+    const r=await fetch('/api/v1/helm/mission',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const wrap=await r.json();
+    const d=wrap.dashboard?wrap: (wrap.data||wrap);
+    const dash=d.dashboard||(d.data&&d.data.dashboard)||[];
+    const overall=(d.overall||(d.data&&d.data.overall)||{});
+    const mission=(d.mission||(d.data&&d.data.mission)||{});
+    const cp=d.critical_path||(d.data&&d.data.critical_path)||[];
+    document.getElementById('mid').textContent=mission.id||'MISSION';
+    document.getElementById('overall').textContent=overall.status||'UNKNOWN';
+    document.getElementById('overall').className='pill '+(overall.status||'UNKNOWN').replace(/[^A-Za-z0-9_]/g,'');
+    document.getElementById('sub').textContent=
+      `computed ${d.computed_at||wrap.observed_at||'—'} · single source for voice/UI/CLI`;
+    document.getElementById('dash').innerHTML=dash.map(row=>
+      `<tr><td>${row.area}</td><td>${pill(row.status)}</td><td style="color:var(--dim)">${row.confidence||'—'}</td></tr>`
+    ).join('');
+    document.getElementById('cp').innerHTML=cp.map(s=>
+      `<div>${s.mark||'·'} ${s.name} <span style="color:var(--dim);font-size:12px">${s.status}</span></div>`
+    ).join('')||'—';
+    const n=overall.next||{};
+    document.getElementById('next').textContent=
+      (n.id? n.id+': ':'')+(n.statement||n.why||'—');
+  }catch(e){
+    document.getElementById('err').textContent='UNKNOWN — '+e.message+' (not last-known-good)';
+  }
+}
+load(); setInterval(load,15000);
+</script>
+</body>
+</html>

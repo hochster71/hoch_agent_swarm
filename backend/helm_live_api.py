@@ -637,6 +637,48 @@ def serve_brain() -> str:
     return f.read_text() if f.exists() else "<h1>brain missing</h1>"
 
 
+@app.get("/api/v1/helm/mission")
+@app.get("/api/v1/helm/mission/state")
+def api_v1_mission_state():
+    """Mission State Engine — single operational view for all interfaces.
+
+    Derived from goal_state + champion_gates + conmon + revenue ledger.
+    Executive dashboard + critical path; no fake green.
+    """
+    from backend.mission_control.mission_state import write_mission_state
+
+    try:
+        state = write_mission_state()
+        return JSONResponse(_truth_response(
+            truth_class="HELM_MISSION_STATE",
+            source="coordination/goal/mission_state.json",
+            observed_at=now(),
+            freshness_seconds=0.0,
+            data=state,
+        ))
+    except Exception as e:
+        return JSONResponse(_truth_response(
+            truth_class="HELM_MISSION_STATE",
+            source="backend.mission_control.mission_state",
+            observed_at=now(),
+            freshness_seconds=None,
+            data={"state": UNKNOWN, "reason": str(e)},
+        ))
+
+
+@app.get("/api/v1/helm/mission/executive")
+def api_v1_mission_executive():
+    """Plain-text executive dashboard for humans and paste into chat."""
+    from fastapi.responses import PlainTextResponse
+    from backend.mission_control.mission_state import render_executive_text, write_mission_state
+
+    try:
+        st = write_mission_state()
+        return PlainTextResponse(render_executive_text(st), media_type="text/plain; charset=utf-8")
+    except Exception as e:
+        return PlainTextResponse(f"MISSION STATE UNKNOWN\n{e}\n", status_code=500)
+
+
 @app.get("/api/v1/helm/goal")
 def api_v1_goal():
     """Roadmap to GOAL HELM: the weighted requirement registry (goal_state.json, computed ONLY from
@@ -1479,6 +1521,17 @@ def voice_desk() -> str:
     if VOICE_UI.exists():
         return VOICE_UI.read_text(encoding="utf-8")
     return "<h1>voice.html missing</h1>"
+
+
+MISSION_UI = ROOT / "frontend_live" / "mission.html"
+
+
+@app.get("/mission", response_class=HTMLResponse)
+def mission_desk() -> str:
+    """Executive mission state dashboard — operational status, not a coding log."""
+    if MISSION_UI.exists():
+        return MISSION_UI.read_text(encoding="utf-8")
+    return "<h1>mission.html missing</h1>"
 
 
 @app.get("/frontend_live/voice_panel.js")

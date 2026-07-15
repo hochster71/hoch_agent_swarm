@@ -225,6 +225,21 @@ COMMAND_REGISTRY: Dict[str, Dict[str, Any]] = {
         ],
         "priority": 1,
     },
+    "mission_ops": {
+        "id": "mission_ops",
+        "mode": "READ_ONLY",
+        "description": "Executive mission state dashboard (operational status of the mission)",
+        "utterance_patterns": [
+            r"mission status",
+            r"mission state",
+            r"operational state",
+            r"executive dashboard",
+            r"where is (the )?mission",
+            r"overall mission",
+            r"are we ready to (ship|release)",
+        ],
+        "priority": 0,
+    },
     "stage_mission": {
         "id": "stage_mission",
         "mode": "STAGE_ONLY",

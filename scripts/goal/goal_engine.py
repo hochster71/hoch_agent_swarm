@@ -270,6 +270,13 @@ def compute(execute: bool = True) -> dict:
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     STATE_PATH.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    # Mission State Engine — single operational view for voice/UI/CLI
+    try:
+        from backend.mission_control.mission_state import write_mission_state
+
+        write_mission_state()
+    except Exception:
+        pass
     return state
 
 
@@ -310,6 +317,17 @@ def main() -> int:
     nxt = s["next_recommended_task"]
     print(f"  NEXT TASK: {nxt['id'] if nxt else 'NONE'} — {nxt['statement'][:70] if nxt else ''}")
     print(f"\n  written: coordination/goal/goal_state.json")
+    try:
+        from backend.mission_control.mission_state import render_executive_text
+
+        print()
+        print("=" * 74)
+        print("HELM MISSION STATE (executive)")
+        print("=" * 74)
+        print(render_executive_text())
+        print("\n  written: coordination/goal/mission_state.json")
+    except Exception as e:
+        print(f"\n  mission_state skipped: {e}")
     return 0
 
 

@@ -942,6 +942,31 @@ def execute_voice_command(
                 "rate_limit": se.get("rate_limit"),
             },
         }
+    elif cmd["id"] == "mission_ops":
+        from backend.mission_control.mission_state import (
+            build_mission_state,
+            render_speech,
+            write_mission_state,
+        )
+
+        try:
+            st = write_mission_state()
+        except Exception:
+            st = build_mission_state()
+        body = {
+            "status": (st.get("overall") or {}).get("status") or "UNKNOWN",
+            "speech_text": sanitize_for_speech(render_speech(st)),
+            "labels": {
+                "mission": (st.get("overall") or {}).get("status") or "UNKNOWN",
+                "revenue": (st.get("revenue") or {}).get("status") or "UNKNOWN",
+            },
+            "data": {
+                "dashboard": st.get("dashboard"),
+                "critical_path": st.get("critical_path"),
+                "overall": st.get("overall"),
+                "mission": st.get("mission"),
+            },
+        }
     elif cmd["id"] == "security_posture":
         sec = src.get("security")
         if isinstance(sec, dict) and sec.get("state") == UNKNOWN:
