@@ -281,9 +281,41 @@ def test_grok_pack_export():
     assert "helm_revenue" in names
     assert "helm_security_events" in names
     assert "helm_executive_brief" in names
+    assert "helm_tts_speak" in names
     md = render_grok_pack_markdown(pack)
     assert "helm_revenue" in md
     assert "http://127.0.0.1:8770" in md
+
+
+def test_elevenlabs_fail_closed_without_key(monkeypatch):
+    from backend.voice import elevenlabs_tts as el
+    from backend.voice.policy import reload_voice_policy
+
+    monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
+    monkeypatch.delenv("ELEVEN_LABS_API_KEY", raising=False)
+    monkeypatch.delenv("HELM_ELEVENLABS_TTS", raising=False)
+    reload_voice_policy()
+    st = el.elevenlabs_config_status()
+    assert st["ready"] is False
+    assert st["status"] == "BLOCKED"
+    ok, meta, audio = el.synthesize_speech("Hello HELM")
+    assert ok is False
+    assert audio is None
+    assert meta.get("fallback") == "local_tts"
+
+
+def test_elevenlabs_blocked_even_with_key_if_paid_false(monkeypatch):
+    from backend.voice import elevenlabs_tts as el
+    from backend.voice.policy import reload_voice_policy
+
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "sk_test_fake_key_for_unit_test_only")
+    monkeypatch.setenv("HELM_ELEVENLABS_TTS", "1")
+    reload_voice_policy()
+    st = el.elevenlabs_config_status()
+    # policy paid_providers_allowed defaults false
+    assert st["key_present"] is True
+    assert st["ready"] is False
+    assert any("paid_providers" in r for r in st.get("blocked_reasons") or [])
 
 
 def test_role_briefs_all_known():
@@ -327,6 +359,16 @@ def test_api_factory_and_role_routes():
     )
     assert md.status_code == 200
     assert "helm_revenue" in md.text
+    tts = c.get("/api/v1/helm/voice/tts/status")
+    assert tts.status_code == 200
+    assert "elevenlabs" in tts.json().get("providers", {})
+    # Without key/policy, speak is blocked (503)
+    sp = c.post(
+        "/api/v1/helm/voice/tts/speak",
+        json={"text": "test", "format": "json"},
+    )
+    assert sp.status_code in (503, 502)
+    assert sp.json().get("fallback") == "local_tts"
     assert c.get("/api/v1/helm/voice/roles").status_code == 200
     assert c.get("/api/v1/helm/voice/role/ciso").status_code == 200
     assert c.get("/api/v1/helm/voice/role/cfo").json()["role"] == "cfo"

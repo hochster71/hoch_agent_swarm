@@ -216,4 +216,53 @@ def grok_voice_tools() -> List[Dict[str, Any]]:
                 },
             },
         },
+        {
+            "type": "function",
+            "function": {
+                "name": "helm_tts_status",
+                "description": (
+                    "TTS provider status. local_tts always available; "
+                    "ElevenLabs READY only when key + paid policy allow. "
+                    "Use when Grok Voice Agents has no built-in voice."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {"method": "GET", "path": "/api/v1/helm/voice/tts/status"},
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "helm_tts_speak",
+                "description": (
+                    "Synthesize speech via HELM ElevenLabs (premium). "
+                    "Pass format=json for base64 audio when Grok has no built-in TTS. "
+                    "Fails closed to local_tts if not configured — do not invent audio."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "text": {"type": "string", "description": "Text to speak"},
+                        "voice_id": {
+                            "type": "string",
+                            "description": "Optional ElevenLabs voice id",
+                        },
+                        "format": {
+                            "type": "string",
+                            "enum": ["json", "audio"],
+                            "description": "json returns base64; audio returns mpeg",
+                        },
+                    },
+                    "required": ["text"],
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {
+                    "method": "POST",
+                    "path": "/api/v1/helm/voice/tts/speak",
+                },
+            },
+        },
     ]

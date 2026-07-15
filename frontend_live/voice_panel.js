@@ -19,10 +19,13 @@
     enabled: false,
     muted: false,
     policy: { ...DEFAULT_POLICY },
+    ttsProvider: 'local_tts', // local_tts | elevenlabs | auto
     eventCount: 0,
     windowStart: Date.now(),
     lastSpoken: '',
     lastResult: null,
+    lastTtsStatus: null,
+    _audio: null,
   };
 
   const SECRET_RES = [
@@ -58,14 +61,7 @@
     return state.eventCount < max;
   }
 
-  function speak(text) {
-    if (!state.enabled || state.muted) return false;
-    if (!rateOk()) return false;
-    if (state.policy.paid_providers_allowed !== true && state.policy.voice_mode !== 'local_tts') {
-      return false;
-    }
-    const clean = sanitize(text);
-    if (!clean || clean === '[REDACTED]') return false;
+  function speakLocal(clean) {
     if (!global.speechSynthesis) return false;
     try {
       global.speechSynthesis.cancel();
@@ -73,12 +69,78 @@
       u.rate = 1.0;
       u.pitch = 1.0;
       global.speechSynthesis.speak(u);
-      state.lastSpoken = clean;
-      state.eventCount += 1;
-      _emit();
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  async function speakElevenLabs(clean) {
+    const r = await fetch(apiBase() + '/api/v1/helm/voice/tts/speak', {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'audio/mpeg, application/json' },
+      body: JSON.stringify({ text: clean, format: 'audio' }),
+    });
+    if (!r.ok) {
+      // fail closed to local
+      return speakLocal(clean);
+    }
+    const ct = r.headers.get('Content-Type') || '';
+    if (ct.indexOf('audio') === -1) {
+      return speakLocal(clean);
+    }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      if (state._audio) {
+        state._audio.pause();
+        state._audio = null;
+      }
+      const audio = new Audio(url);
+      state._audio = audio;
+      audio.onended = () => { try { URL.revokeObjectURL(url); } catch (_) {} };
+      await audio.play();
+      return true;
+    } catch (e) {
+      try { URL.revokeObjectURL(url); } catch (_) {}
+      return speakLocal(clean);
+    }
+  }
+
+  function speak(text) {
+    if (!state.enabled || state.muted) return false;
+    if (!rateOk()) return false;
+    const clean = sanitize(text);
+    if (!clean || clean === '[REDACTED]') return false;
+
+    const preferEl =
+      state.ttsProvider === 'elevenlabs' ||
+      (state.ttsProvider === 'auto' && state.policy.elevenlabs_ready) ||
+      state.policy.voice_mode === 'elevenlabs';
+
+    state.lastSpoken = clean;
+    state.eventCount += 1;
+    _emit();
+
+    if (preferEl && state.policy.paid_providers_allowed && state.policy.elevenlabs_ready) {
+      speakElevenLabs(clean).then((ok) => { if (!ok) speakLocal(clean); _emit(); });
+      return true;
+    }
+    // local_tts path (default) — free, no network
+    return speakLocal(clean);
+  }
+
+  async function loadTtsStatus() {
+    try {
+      const d = await fetchJSON('/api/v1/helm/voice/tts/status');
+      state.lastTtsStatus = d;
+      _emit();
+      return d;
+    } catch (e) {
+      state.lastTtsStatus = { status: 'UNKNOWN', error: String(e.message || e) };
+      _emit();
+      return state.lastTtsStatus;
     }
   }
 
@@ -149,14 +211,22 @@
   function _emit() { listeners.forEach((fn) => { try { fn(getState()); } catch (_) {} }); }
 
   function getState() {
+    const mode =
+      !state.enabled ? 'DISABLED'
+      : state.muted ? 'MUTED'
+      : (state.ttsProvider === 'elevenlabs' || state.policy.voice_mode === 'elevenlabs')
+        ? (state.policy.elevenlabs_ready ? 'ELEVENLABS' : 'ELEVENLABS_BLOCKED')
+        : 'LOCAL_TTS';
     return {
       enabled: state.enabled,
       muted: state.muted,
       policy: state.policy,
+      ttsProvider: state.ttsProvider,
       lastSpoken: state.lastSpoken,
       lastResult: state.lastResult,
+      lastTtsStatus: state.lastTtsStatus,
       eventCount: state.eventCount,
-      policyStatus: !state.enabled ? 'DISABLED' : (state.muted ? 'MUTED' : 'LOCAL_TTS'),
+      policyStatus: mode,
     };
   }
 
@@ -177,11 +247,20 @@
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px">
           <label style="display:flex;gap:6px;align-items:center;cursor:pointer">
-            <input type="checkbox" id="hv-enabled"/> Enable local TTS
+            <input type="checkbox" id="hv-enabled"/> Enable speech
           </label>
           <label style="display:flex;gap:6px;align-items:center;cursor:pointer">
             <input type="checkbox" id="hv-mute"/> Mute
           </label>
+          <label style="display:flex;gap:6px;align-items:center;font-size:11px">
+            TTS
+            <select id="hv-tts" style="background:#0d1117;color:inherit;border:1px solid #30363d;border-radius:6px;padding:2px 6px">
+              <option value="local_tts">Local (free)</option>
+              <option value="auto">Auto (ElevenLabs if ready)</option>
+              <option value="elevenlabs">ElevenLabs</option>
+            </select>
+          </label>
+          <span id="hv-tts-ready" style="font-size:10px;color:var(--dim,#8b98a9)">tts…</span>
           <button id="hv-brief" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Brief</button>
           <button id="hv-approvals" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Approvals</button>
           <button id="hv-blocked" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Blocked</button>
@@ -231,6 +310,21 @@
 
     $('#hv-enabled').addEventListener('change', (e) => setEnabled(e.target.checked));
     $('#hv-mute').addEventListener('change', (e) => setMuted(e.target.checked));
+    $('#hv-tts').addEventListener('change', (e) => {
+      state.ttsProvider = e.target.value;
+      _emit();
+    });
+    const ttsReadyEl = $('#hv-tts-ready');
+    function paintTtsReady() {
+      const p = state.policy || {};
+      const ready = !!p.elevenlabs_ready;
+      const key = !!p.elevenlabs_key_present;
+      if (ready) ttsReadyEl.textContent = 'ElevenLabs READY';
+      else if (key) ttsReadyEl.textContent = 'ElevenLabs key set · policy blocks paid';
+      else ttsReadyEl.textContent = 'ElevenLabs BLOCKED · use Local or set key+policy';
+      ttsReadyEl.style.color = ready ? '#2ea043' : '#8b949e';
+    }
+    onChange(paintTtsReady);
     $('#hv-brief').addEventListener('click', async () => {
       try {
         await brief(state.enabled && !state.muted);
@@ -300,7 +394,7 @@
       }
     });
 
-    loadPolicy().then(paint);
+    loadPolicy().then(() => { paint(); paintTtsReady(); loadTtsStatus(); });
     paint();
   }
 
@@ -311,6 +405,7 @@
     command,
     listCommands,
     loadPolicy,
+    loadTtsStatus,
     setEnabled,
     setMuted,
     getState,

@@ -17,6 +17,8 @@ _DEFAULTS: Dict[str, Any] = {
     "voice_enabled_default": False,
     "voice_mode": "local_tts",
     "paid_providers_allowed": False,
+    "elevenlabs_enabled": False,
+    "elevenlabs_model_id": "eleven_multilingual_v2",
     "speak_secrets": False,
     "require_operator_toggle": True,
     "max_events_per_hour": 30,
@@ -119,12 +121,23 @@ def reload_voice_policy() -> Dict[str, Any]:
 def get_policy_public() -> Dict[str, Any]:
     """Safe subset for clients and Grok Voice tool discovery."""
     p = load_voice_policy()
+    # ElevenLabs readiness without exposing secrets
+    try:
+        from backend.voice.elevenlabs_tts import elevenlabs_config_status
+
+        el = elevenlabs_config_status()
+    except Exception:
+        el = {"ready": False, "status": "UNKNOWN", "key_present": False}
     return {
         "policy_version": p["policy_version"],
         "persona": p["persona"],
         "voice_enabled_default": bool(p["voice_enabled_default"]),
         "voice_mode": p["voice_mode"],
         "paid_providers_allowed": bool(p["paid_providers_allowed"]),
+        "elevenlabs_enabled": bool(p.get("elevenlabs_enabled")),
+        "elevenlabs_ready": bool(el.get("ready")),
+        "elevenlabs_status": el.get("status"),
+        "elevenlabs_key_present": bool(el.get("key_present")),
         "speak_secrets": bool(p["speak_secrets"]),
         "require_operator_toggle": bool(p["require_operator_toggle"]),
         "max_events_per_hour": int(p["max_events_per_hour"]),
@@ -134,12 +147,25 @@ def get_policy_public() -> Dict[str, Any]:
         "allowed_modes": list(p["allowed_modes"]),
         "doorstep_blocked_verbs": list(p["doorstep_blocked_verbs"]),
         "max_speech_chars": int(p["max_speech_chars"]),
+        "tts_providers": {
+            "local_tts": {"status": "AVAILABLE", "cost": 0},
+            "elevenlabs": {
+                "status": el.get("status"),
+                "ready": el.get("ready"),
+                "blocked_reasons": el.get("blocked_reasons"),
+            },
+            "grok_builtin": {
+                "status": "EXTERNAL",
+                "note": "Grok Voice Agents may provide its own TTS; HELM ElevenLabs is the fallback premium path",
+            },
+        },
         "doctrine": [
             "no_fake_green",
             "unknown_is_unknown",
             "stale_is_not_live",
             "doorstep_founder_only",
             "evidence_before_green",
+            "paid_tts_fail_closed",
         ],
     }
 

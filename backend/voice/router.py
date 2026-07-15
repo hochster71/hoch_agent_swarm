@@ -244,3 +244,94 @@ def voice_grok_pack(base_url: str = "https://YOUR-HELM-ORIGIN", format: str = "j
             media_type="text/markdown; charset=utf-8",
         )
     return JSONResponse(pack)
+
+
+class TtsSpeakRequest(BaseModel):
+    text: str = Field(..., description="Text to speak (will be sanitized)")
+    voice_id: Optional[str] = Field(None, description="Optional ElevenLabs voice id")
+    format: str = Field(
+        "audio",
+        description="audio = raw mpeg stream; json = base64 payload for tool agents",
+    )
+
+
+@router.get("/tts/status")
+def voice_tts_status():
+    """TTS provider status: local_tts always available; ElevenLabs fail-closed until configured."""
+    from backend.voice.elevenlabs_tts import elevenlabs_config_status
+
+    el = elevenlabs_config_status()
+    return JSONResponse(
+        {
+            "truth_class": "HELM_VOICE_TTS",
+            "status": "LIVE",
+            "providers": {
+                "local_tts": {
+                    "status": "AVAILABLE",
+                    "cost_usd": 0,
+                    "note": "Browser SpeechSynthesis on /voice desk",
+                },
+                "elevenlabs": el,
+                "grok_builtin": {
+                    "status": "EXTERNAL",
+                    "note": (
+                        "If Grok Voice Agents has built-in voices, use them. "
+                        "If not, call POST /api/v1/helm/voice/tts/speak (ElevenLabs) "
+                        "or use local_tts on the HELM desk."
+                    ),
+                },
+            },
+            "recommended": (
+                "elevenlabs"
+                if el.get("ready")
+                else "grok_builtin_or_local_tts"
+            ),
+        }
+    )
+
+
+@router.post("/tts/speak")
+def voice_tts_speak(body: TtsSpeakRequest):
+    """Synthesize speech via ElevenLabs when READY; otherwise JSON BLOCKED + local_tts fallback.
+
+    - format=audio → audio/mpeg bytes (for browser Audio)
+    - format=json  → base64 audio for Grok/tool agents without built-in TTS
+    """
+    from fastapi.responses import Response
+
+    from backend.voice.elevenlabs_tts import synthesize_speech
+
+    want_json = (body.format or "audio").lower() in ("json", "base64", "data")
+    ok, meta, audio = synthesize_speech(
+        body.text,
+        voice_id=body.voice_id,
+        as_base64=want_json,
+    )
+    if not ok:
+        return JSONResponse(
+            {
+                "truth_class": "HELM_VOICE_TTS_SPEAK",
+                "status": meta.get("status") or "BLOCKED",
+                "fallback": "local_tts",
+                **meta,
+            },
+            status_code=503 if meta.get("status") == "BLOCKED" else 502,
+        )
+    if want_json:
+        return JSONResponse(
+            {
+                "truth_class": "HELM_VOICE_TTS_SPEAK",
+                "status": "LIVE",
+                "provider": "elevenlabs",
+                **meta,
+            }
+        )
+    return Response(
+        content=audio,
+        media_type=meta.get("content_type") or "audio/mpeg",
+        headers={
+            "X-HELM-TTS-Provider": "elevenlabs",
+            "X-HELM-TTS-Bytes": str(meta.get("bytes") or 0),
+            "Cache-Control": "no-store",
+        },
+    )

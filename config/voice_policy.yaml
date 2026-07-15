@@ -6,9 +6,14 @@ policy_version: "1.0"
 persona: "HELM Executive Mission Commander"
 
 # Client defaults (UI / local TTS)
+# voice_mode: local_tts | elevenlabs
+# ElevenLabs requires: paid_providers_allowed=true AND ELEVENLABS_API_KEY
+#   AND (elevenlabs_enabled=true OR HELM_ELEVENLABS_TTS=1 OR voice_mode=elevenlabs)
 voice_enabled_default: false
 voice_mode: local_tts
 paid_providers_allowed: false
+elevenlabs_enabled: false
+elevenlabs_model_id: eleven_multilingual_v2
 speak_secrets: false
 require_operator_toggle: true
 max_events_per_hour: 30

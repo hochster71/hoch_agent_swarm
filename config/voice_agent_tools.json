@@ -20,7 +20,9 @@
     "revenue": "GET /api/v1/helm/voice/revenue",
     "security_events": "GET /api/v1/helm/voice/security/events",
     "security_ack": "POST /api/v1/helm/voice/security/events/ack",
-    "grok_pack": "GET /api/v1/helm/voice/grok-pack"
+    "grok_pack": "GET /api/v1/helm/voice/grok-pack",
+    "tts_status": "GET /api/v1/helm/voice/tts/status",
+    "tts_speak": "POST /api/v1/helm/voice/tts/speak"
   },
   "doctrine": [
     "no_fake_green",
@@ -29,6 +31,7 @@
     "doorstep_founder_only",
     "revenue_only_from_verified_settled_ledger",
     "security_speech_high_only_rate_limited",
+    "paid_tts_fail_closed",
     "voice_is_interface_not_intelligence"
   ]
 }

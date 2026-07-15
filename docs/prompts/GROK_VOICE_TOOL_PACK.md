@@ -75,7 +75,42 @@ Roles: `founder`, `ops`, `ciso`, `cfo`, `qa`
 
 ## 5. Local desk (optional)
 
-Open `{HELM_ORIGIN}/voice` — enable local TTS, use **Revenue**, **Sec HIGH**, and **Poll security** (60s interval, rate-limited).
+Open `{HELM_ORIGIN}/voice` — enable speech, use **Revenue**, **Sec HIGH**, and **Poll security** (60s interval, rate-limited).
+
+### TTS: Grok built-in vs ElevenLabs vs Local
+
+| Provider | When to use | Cost |
+|----------|-------------|------|
+| **Grok Voice built-in** | Prefer if the Grok Voice Agents product already speaks | Per Grok plan |
+| **HELM local_tts** | Browser SpeechSynthesis on `/voice` — always free, default | $0 |
+| **HELM ElevenLabs** | When Grok has no suitable voice, or you want a fixed founder voice | Paid API |
+
+**ElevenLabs setup (founder DOORSTEP for paid spend):**
+
+```bash
+export ELEVENLABS_API_KEY=...          # from elevenlabs.io
+export ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM   # optional
+export HELM_ELEVENLABS_TTS=1           # or set elevenlabs_enabled + voice_mode in policy
+
+# In config/voice_policy.yaml (requires restart / policy reload):
+#   paid_providers_allowed: true
+#   elevenlabs_enabled: true
+#   voice_mode: elevenlabs   # optional force
+```
+
+Then:
+
+```bash
+curl -s "$HELM/api/v1/helm/voice/tts/status" | python3 -m json.tool
+# When READY:
+curl -s -X POST "$HELM/api/v1/helm/voice/tts/speak" \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"HELM executive briefing.","format":"json"}' | head -c 200
+```
+
+Grok tools: `helm_tts_status`, `helm_tts_speak` (format=json → base64 audio).
+
+If ElevenLabs is **BLOCKED**, HELM falls back to **local_tts** — never invents audio.
 
 ---
 
