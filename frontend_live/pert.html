@@ -493,5 +493,10 @@ async function bindWallState(){
 }
 bindWallState(); setInterval(bindWallState, 4000);
 </script>
+
+<div id="voice-mount" style="margin:12px;max-width:900px"></div>
+<script src="/frontend_live/voice_panel.js"></script>
+<script>if(window.HELMVoice)HELMVoice.mount("#voice-mount");</script>
+
 </body>
 </html>

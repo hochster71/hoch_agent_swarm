@@ -207,15 +207,29 @@ def test_factory_brief_hasf_registered():
     assert "gates" in (r.get("data") or {})
 
 
-def test_factory_brief_hsf_planned_not_live():
+def test_factory_brief_hsf_observable_partial():
     from backend.voice.factory_agents import observe_factory
 
     r = observe_factory("HSF")
-    assert r["status"] == "PLANNED"
-    assert r["registry"] == "PLANNED"
-    assert "not invent" in (r.get("speech_text") or "").lower() or "PLANNED" in (
+    assert r["code"] == "HSF"
+    assert r["registry"] == "DECLARED_OBSERVABLE"
+    assert r["status"] in ("PARTIAL", "UNKNOWN", "LIVE")
+    # Must not invent settled revenue
+    assert (r.get("labels") or {}).get("revenue") == "UNKNOWN"
+    assert "not invent" in (r.get("speech_text") or "").lower() or "UNKNOWN" in (
         r.get("speech_text") or ""
     )
+
+
+def test_factory_brief_hcf_and_hff():
+    from backend.voice.factory_agents import observe_factory
+
+    hcf = observe_factory("HCF")
+    assert hcf["code"] == "HCF"
+    assert hcf["status"] in ("PARTIAL", "UNKNOWN", "LIVE", "STALE")
+    hff = observe_factory("HFF")
+    assert hff["code"] == "HFF"
+    assert (hff.get("labels") or {}).get("revenue") == "UNKNOWN"
 
 
 def test_role_briefs_all_known():
@@ -244,7 +258,10 @@ def test_api_factory_and_role_routes():
     c = TestClient(api.app)
     assert c.get("/api/v1/helm/voice/factories").status_code == 200
     assert c.get("/api/v1/helm/voice/factory/HASF").status_code == 200
-    assert c.get("/api/v1/helm/voice/factory/HSF").json()["status"] == "PLANNED"
+    hsf = c.get("/api/v1/helm/voice/factory/HSF").json()
+    assert hsf["code"] == "HSF"
+    assert hsf["status"] in ("PARTIAL", "UNKNOWN", "LIVE")
+    assert c.get("/api/v1/helm/voice/factory/HCF").status_code == 200
     assert c.get("/api/v1/helm/voice/roles").status_code == 200
     assert c.get("/api/v1/helm/voice/role/ciso").status_code == 200
     assert c.get("/api/v1/helm/voice/role/cfo").json()["role"] == "cfo"

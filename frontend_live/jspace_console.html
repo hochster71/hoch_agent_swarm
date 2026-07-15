@@ -213,8 +213,7 @@ async function pullBrain(){
   if(x.state==='UNKNOWN'){ document.getElementById('map_stale').style.display='block'; return; }
   document.getElementById('map_stale').style.display='none';
   document.getElementById('map_meta').textContent=
-    `${x.observer_total||0} agents · ${x.subject_total||0} subjects · ${x.consensus||'—'}`;
-  document.getElementById('m_agents').textContent=(x.observer_total||0)+(x.subject_total||0)+1;
+    `${x.observer_total||0} observers · ${x.subject_total||0} subjects · ${x.consensus||'—'}`;
   renderMap(x);
 }
 function renderMap(x){
@@ -282,17 +281,30 @@ async function pullChain(){
   if(broken){ set('s_js','RECONCILING','contra'); }
 }
 
-// SYSTEM_INTEGRITY = real verified pass-rate from the accountability endpoint (fail-closed)
+// SYSTEM_INTEGRITY = real verified pass-rate from the accountability endpoint (fail-closed).
+// AGENT_COUNT = the real accountability-ledger total from the SAME endpoint (fail-closed) —
+// it must NEVER be derived from HJOS observer/subject counts (that was a fabricated
+// observer_total+subject_total+1 that always rendered 20 regardless of the real agent count).
 async function pullIntegrity(){
   try{ const d=await (await fetch(API+'/api/v1/helm/agents',{cache:'no-store'})).json();
     const x=d.data||d; const pr=x.pass_rate;
     document.getElementById('m_integ').textContent = pr!=null ? pr.toFixed(1)+'%' : 'UNKNOWN';
     document.getElementById('m_integ').style.color = pr!=null && pr>=95 ? 'var(--green)' : 'var(--amber)';
-  }catch(e){ document.getElementById('m_integ').textContent='UNKNOWN'; }
+    const agentTotal = (x.state && x.state === 'UNKNOWN') ? null : x.total;
+    document.getElementById('m_agents').textContent = agentTotal!=null ? agentTotal : 'UNKNOWN';
+  }catch(e){
+    document.getElementById('m_integ').textContent='UNKNOWN';
+    document.getElementById('m_agents').textContent='UNKNOWN';
+  }
 }
 function tick(){ pullHealth(); pullBrain(); pullChain(); pullIntegrity(); }
 tick(); setInterval(tick,5000);
 addEventListener('resize',()=>{ /* re-layout map on next tick */ });
 </script>
+
+<div id="voice-mount" style="margin:12px;max-width:900px"></div>
+<script src="/frontend_live/voice_panel.js"></script>
+<script>if(window.HELMVoice)HELMVoice.mount("#voice-mount");</script>
+
 </body>
 </html>

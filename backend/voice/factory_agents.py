@@ -19,28 +19,13 @@ from backend.voice.sanitizer import sanitize_for_speech
 ROOT = Path(__file__).resolve().parents[2]
 UNKNOWN = "UNKNOWN"
 
-# Documented factories not yet in code registry — honest PLANNED surface
-_PLANNED_FACTORIES: Dict[str, Dict[str, str]] = {
-    "HSF": {
-        "title": "Hoch Storybook Factory",
-        "reason": "Documented product path (Story Studio) but not in backend/factory/registry.py",
-    },
-    "HCF": {
-        "title": "Hoch Cybersecurity Factory",
-        "reason": "Security control-plane exists; not first-class factory registry entry",
-    },
-    "HFF": {
-        "title": "Hoch Finance Factory",
-        "reason": "Spend/Stripe surfaces partial; not factory-registry entry",
-    },
-    "HHF": {
-        "title": "Hoch Home Factory",
-        "reason": "HomeMesh APIs exist; not factory-registry entry",
-    },
-    "HPF": {
-        "title": "Hoch Prompt Factory",
-        "reason": "prompt_brain is rich; not separate factory-registry entry",
-    },
+# Declared factories with dedicated observers (not full BRAIN registry)
+_EXTENDED_META: Dict[str, Dict[str, str]] = {
+    "HSF": {"title": "Hoch Storybook Factory", "kind": "DECLARED_OBSERVABLE"},
+    "HCF": {"title": "Hoch Cybersecurity Factory", "kind": "DECLARED_OBSERVABLE"},
+    "HFF": {"title": "Hoch Finance Factory", "kind": "DECLARED_OBSERVABLE"},
+    "HHF": {"title": "Hoch Home Factory", "kind": "DECLARED_OBSERVABLE"},
+    "HPF": {"title": "Hoch Prompt Factory", "kind": "DECLARED_OBSERVABLE"},
 }
 
 _CODE_ALIASES = {
@@ -92,7 +77,7 @@ def resolve_factory(code_or_domain: str) -> Optional[Factory]:
 
 
 def list_factory_voice_roster() -> List[Dict[str, Any]]:
-    """All factories voice can talk about: registered LIVE-capable + planned."""
+    """All factories voice can talk about: BRAIN-registered + declared-observable."""
     out: List[Dict[str, Any]] = []
     for f in list_factories():
         out.append(
@@ -105,15 +90,14 @@ def list_factory_voice_roster() -> List[Dict[str, Any]]:
                 "path": f"/api/v1/helm/voice/factory/{f.code}",
             }
         )
-    for code, meta in _PLANNED_FACTORIES.items():
+    for code, meta in _EXTENDED_META.items():
         out.append(
             {
                 "code": code,
                 "domain": UNKNOWN,
                 "title": meta["title"],
-                "registry": "PLANNED",
-                "voice_status": "PLANNED",
-                "reason": meta["reason"],
+                "registry": meta["kind"],
+                "voice_status": "OBSERVABLE_PARTIAL",
                 "path": f"/api/v1/helm/voice/factory/{code}",
             }
         )
@@ -126,32 +110,15 @@ def observe_factory(code_or_domain: str) -> Dict[str, Any]:
     fac = resolve_factory(code_or_domain)
 
     if fac is None:
-        planned = _PLANNED_FACTORIES.get(code_raw)
-        if planned:
-            speech = (
-                f"{code_raw} — {planned['title']}. Status PLANNED. "
-                f"{planned['reason']}. "
-                f"I will not invent LIVE metrics for an unregistered factory."
-            )
-            return {
-                "truth_class": "HELM_VOICE_FACTORY",
-                "status": "PLANNED",
-                "code": code_raw,
-                "title": planned["title"],
-                "registry": "PLANNED",
-                "observed_at": _now(),
-                "speech_text": sanitize_for_speech(speech),
-                "labels": {
-                    "factory": "PLANNED",
-                    "convergence": "UNKNOWN",
-                    "champions": "UNKNOWN",
-                    "genes": "UNKNOWN",
-                },
-                "data": {"reason": planned["reason"]},
-                "doorstep": ["T3_publish", "deploy", "spend"],
-            }
+        # Extended declared factories (HSF/HCF/HFF/HPF/HHF)
+        if code_raw in _EXTENDED_META:
+            from backend.voice.extended_factories import EXTENDED_OBSERVERS
+
+            observer = EXTENDED_OBSERVERS.get(code_raw)
+            if observer:
+                return observer()
         speech = (
-            f"Factory '{code_or_domain}' is not registered and not in the planned roster. "
+            f"Factory '{code_or_domain}' is not registered and not in the observable roster. "
             f"Status UNKNOWN."
         )
         return {
@@ -281,10 +248,16 @@ def observe_factory(code_or_domain: str) -> Dict[str, Any]:
 
 def observe_all_registered_factories() -> Dict[str, Any]:
     briefs = [observe_factory(f.code) for f in list_factories()]
+    # Include extended declared factories in roster speech (compact)
+    for code in _EXTENDED_META:
+        try:
+            briefs.append(observe_factory(code))
+        except Exception:
+            continue
     lines = [b["speech_text"] for b in briefs]
     statuses = [b["status"] for b in briefs]
     overall = "LIVE"
-    if any(s == "UNKNOWN" for s in statuses):
+    if any(s in ("UNKNOWN", "PARTIAL", "PLANNED") for s in statuses):
         overall = "PARTIAL"
     if all(s == "UNKNOWN" for s in statuses):
         overall = "UNKNOWN"
@@ -295,6 +268,6 @@ def observe_all_registered_factories() -> Dict[str, Any]:
         "status": overall,
         "observed_at": _now(),
         "factories": briefs,
-        "speech_text": sanitize_for_speech(" ".join(lines)),
+        "speech_text": sanitize_for_speech(" ".join(lines)[:2000]),
         "roster": list_factory_voice_roster(),
     }

@@ -392,5 +392,10 @@ function drawLat(rows){
 function tick(){ pull(); pullChain(); pullCtrl(); pullAgents(); }
 tick(); setInterval(tick,5000);
 </script>
+
+<div id="voice-mount" style="margin:12px;max-width:900px"></div>
+<script src="/frontend_live/voice_panel.js"></script>
+<script>if(window.HELMVoice)HELMVoice.mount("#voice-mount");</script>
+
 </body>
 </html>

@@ -108,8 +108,9 @@ def grok_voice_tools() -> List[Dict[str, Any]]:
             "function": {
                 "name": "helm_factory_brief",
                 "description": (
-                    "Per-factory voice brief. Registered: HASF, HMF, HRF. "
-                    "Planned (not LIVE): HSF, HCF, HFF, HHF, HPF. Never invent metrics."
+                    "Per-factory voice brief. BRAIN-registered: HASF, HMF, HRF. "
+                    "Declared-observable (PARTIAL): HSF, HCF, HFF, HHF, HPF. "
+                    "Never invent revenue or secure posture."
                 ),
                 "parameters": {
                     "type": "object",

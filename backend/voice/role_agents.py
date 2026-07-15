@@ -145,37 +145,53 @@ def _role_ciso(src: Dict[str, Any]) -> Dict[str, Any]:
     parts = ["CISO lens. Security claims only from observed sources."]
     labels: Dict[str, str] = {"role": "LIVE"}
 
+    # Deep-bind HCF observe (posture + cyber swarm + conmon)
+    hcf = observe_factory("HCF")
+    parts.append(hcf.get("speech_text") or "HCF: UNKNOWN.")
+    labels["hcf"] = hcf.get("status") or "UNKNOWN"
+    for k, v in (hcf.get("labels") or {}).items():
+        labels[f"hcf_{k}"] = v
+
     if isinstance(sec, dict) and sec.get("state") == UNKNOWN:
-        parts.append(f"Security posture: UNKNOWN — {sec.get('reason')}.")
+        parts.append(f"live_security helper: UNKNOWN — {sec.get('reason')}.")
         labels["security"] = "UNKNOWN"
     elif isinstance(sec, dict):
-        parts.append(f"Security posture observed: {str(sec)[:350]}")
+        pct = sec.get("posture_percent")
+        high = sec.get("high_findings")
+        open_f = sec.get("open_findings")
+        parts.append(
+            f"API security posture percent {pct}, high findings {high}, open {open_f}."
+        )
         labels["security"] = "LIVE"
     else:
-        parts.append("Security posture: UNKNOWN.")
-        labels["security"] = "UNKNOWN"
+        labels["security"] = labels.get("hcf_posture") or "UNKNOWN"
 
     blocker = gdata.get("critical_path_blocker")
     if blocker:
         parts.append(f"Goal critical path blocker: {blocker}.")
         if "SECURITY" in str(blocker).upper():
-            parts.append("Security is on the critical path — prioritize evidence for this blocker.")
+            parts.append(
+                "REQ-CP-SECURITY (or security-class blocker) is binding — "
+                "close open NIST gaps and HIGH findings before claiming secure."
+            )
     labels["goal"] = glabel
 
-    # HASF gates mention audit / runtime truth as security-adjacent
     hasf = observe_factory("HASF")
-    parts.append(f"HASF gate list: {', '.join((hasf.get('data') or {}).get('gates') or [])}.")
+    parts.append(f"HASF gates: {', '.join((hasf.get('data') or {}).get('gates') or [])}.")
     parts.append("I will not disable controls or bypass approval by voice.")
 
-    status = "LIVE" if labels.get("security") == "LIVE" else "PARTIAL"
-    if labels.get("security") == "UNKNOWN" and glabel == "UNKNOWN":
+    status = "PARTIAL"
+    if labels.get("security") == "LIVE" or labels.get("hcf") in ("LIVE", "PARTIAL", "STALE"):
+        status = "PARTIAL" if "STALE" in str(labels.values()) or labels.get("hcf") == "PARTIAL" else "LIVE"
+    if labels.get("security") == "UNKNOWN" and labels.get("hcf") == "UNKNOWN":
         status = "UNKNOWN"
     return {
         "status": status,
         "speech_text": sanitize_for_speech(" ".join(parts)),
         "labels": labels,
         "data": {
-            "security": sec if not (isinstance(sec, dict) and sec.get("state") == UNKNOWN) else None,
+            "hcf": hcf.get("data"),
+            "security_api": sec if not (isinstance(sec, dict) and sec.get("state") == UNKNOWN) else None,
             "critical_path_blocker": blocker,
             "hasf_gates": (hasf.get("data") or {}).get("gates"),
         },
@@ -208,10 +224,18 @@ def _role_cfo(src: Dict[str, Any]) -> Dict[str, Any]:
     # North star money metric
     parts.append(" ".join([ln for ln in glines if "dollar" in ln.lower() or "north star" in ln.lower()][:3])
                 or "Founder-minutes per shipped dollar: UNKNOWN.")
+    hsf = observe_factory("HSF")
+    hff = observe_factory("HFF")
     parts.append(
-        "Revenue and founder-minutes-per-dollar stay UNKNOWN until verified ledgers and real dollars exist. "
-        "Voice will not move money or enable live Stripe."
+        f"HSF revenue path: stripe env {(hsf.get('labels') or {}).get('stripe', 'UNKNOWN')}; "
+        f"revenue label {(hsf.get('labels') or {}).get('revenue', 'UNKNOWN')}."
     )
+    parts.append(
+        "Verified revenue dollars: UNKNOWN until a payment ledger shows a real dollar. "
+        "Null is not zero-green. Voice will not move money or enable live Stripe."
+    )
+    labels["hsf_stripe"] = (hsf.get("labels") or {}).get("stripe") or "UNKNOWN"
+    labels["revenue"] = "UNKNOWN"
 
     census = src.get("census")
     if isinstance(census, dict) and census.get("state") != UNKNOWN:
@@ -228,6 +252,8 @@ def _role_cfo(src: Dict[str, Any]) -> Dict[str, Any]:
         "data": {
             "spend": spend if spend_label == "LIVE" else None,
             "north_star_completion": gdata.get("north_star_completion"),
+            "hsf": hsf.get("data"),
+            "hff_status": hff.get("status"),
             "verified_founder_minutes_per_shipped_dollar": None,
             "note": "null money metrics are UNKNOWN, not zero-green",
         },
