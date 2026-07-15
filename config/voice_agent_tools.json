@@ -1,23 +1,34 @@
 {
-  "schema": "helm-voice-agent-tools-v1",
+  "schema": "helm-voice-agent-tools-v2",
   "persona_prompt_path": "docs/prompts/helm_voice_executive_commander.md",
+  "grok_pack_markdown": "docs/prompts/GROK_VOICE_TOOL_PACK.md",
   "architecture_path": "docs/architecture/HELM_VOICE_EXECUTIVE_INTERFACE.md",
-  "base_url_note": "Point tools at the HELM LIVE API origin (same host that serves /api/v1/helm/*). Never invent metrics when a tool returns UNKNOWN or fails.",
+  "base_url_note": "Point tools at the HELM LIVE API origin. Live export: GET /api/v1/helm/voice/grok-pack?base_url=...",
   "discovery_endpoint": "/api/v1/helm/voice/tools",
+  "grok_pack_endpoint": "/api/v1/helm/voice/grok-pack",
   "endpoints": {
     "policy": "GET /api/v1/helm/voice/policy",
     "commands": "GET /api/v1/helm/voice/commands",
     "brief": "GET /api/v1/helm/voice/brief",
     "command": "POST /api/v1/helm/voice/command",
-    "command_get": "GET /api/v1/helm/voice/command?command=executive_brief",
     "sanitize": "POST /api/v1/helm/voice/sanitize",
-    "health": "GET /api/v1/helm/voice/health"
+    "health": "GET /api/v1/helm/voice/health",
+    "factory": "GET /api/v1/helm/voice/factory/{code}",
+    "factories": "GET /api/v1/helm/voice/factories",
+    "role": "GET /api/v1/helm/voice/role/{role}",
+    "roles": "GET /api/v1/helm/voice/roles",
+    "revenue": "GET /api/v1/helm/voice/revenue",
+    "security_events": "GET /api/v1/helm/voice/security/events",
+    "security_ack": "POST /api/v1/helm/voice/security/events/ack",
+    "grok_pack": "GET /api/v1/helm/voice/grok-pack"
   },
   "doctrine": [
     "no_fake_green",
     "unknown_is_unknown",
     "stale_is_not_live",
     "doorstep_founder_only",
+    "revenue_only_from_verified_settled_ledger",
+    "security_speech_high_only_rate_limited",
     "voice_is_interface_not_intelligence"
   ]
 }

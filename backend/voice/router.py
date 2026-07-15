@@ -204,3 +204,43 @@ def voice_role_brief(role: str):
     from backend.voice.role_agents import observe_role
 
     return JSONResponse(observe_role(role))
+
+
+@router.get("/revenue")
+def voice_revenue():
+    """Verified settled revenue from HochLedger only (fail-closed)."""
+    from backend.voice.revenue import observe_revenue
+
+    return JSONResponse(observe_revenue())
+
+
+@router.get("/security/events")
+def voice_security_events(mark_spoken: bool = False):
+    """HIGH security findings for speech; rate-limited. mark_spoken advances cursor."""
+    from backend.voice.security_events import security_events_for_speech
+
+    return JSONResponse(security_events_for_speech(mark_spoken=mark_spoken))
+
+
+@router.post("/security/events/ack")
+def voice_security_events_ack():
+    """Mark currently pending HIGH events as spoken (rate-limit cursor)."""
+    from backend.voice.security_events import security_events_for_speech
+
+    return JSONResponse(security_events_for_speech(mark_spoken=True))
+
+
+@router.get("/grok-pack")
+def voice_grok_pack(base_url: str = "https://YOUR-HELM-ORIGIN", format: str = "json"):
+    """Founder Grok Voice tool pack — JSON or markdown for paste."""
+    from fastapi.responses import PlainTextResponse
+
+    from backend.voice.grok_pack import build_grok_tool_pack, render_grok_pack_markdown
+
+    pack = build_grok_tool_pack(base_url=base_url)
+    if (format or "json").lower() in ("md", "markdown", "text"):
+        return PlainTextResponse(
+            render_grok_pack_markdown(pack),
+            media_type="text/markdown; charset=utf-8",
+        )
+    return JSONResponse(pack)

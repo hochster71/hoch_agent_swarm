@@ -546,6 +546,19 @@ def build_executive_brief() -> Dict[str, Any]:
     speech_parts.append(rlines[0] if rlines else "Repository: UNKNOWN.")
     data["repo"] = rdata
 
+    # Verified revenue (ledger only)
+    try:
+        from backend.voice.revenue import observe_revenue
+
+        rev = observe_revenue()
+        labels["revenue"] = (rev.get("labels") or {}).get("revenue") or "UNKNOWN"
+        labels["earning"] = (rev.get("labels") or {}).get("earning") or "NONE"
+        speech_parts.append(rev.get("speech_text") or "Revenue: UNKNOWN.")
+        data["revenue"] = rev.get("data")
+    except Exception as e:
+        labels["revenue"] = "UNKNOWN"
+        speech_parts.append(f"Revenue: UNKNOWN — {e}.")
+
     # Next move
     speech_parts.append(_next_move_line(src))
     labels["next_move"] = (
@@ -903,6 +916,31 @@ def execute_voice_command(
             "speech_text": rb.get("speech_text"),
             "labels": rb.get("labels") or {},
             "data": rb,
+        }
+    elif cmd["id"] == "revenue_status":
+        from backend.voice.revenue import observe_revenue
+
+        rev = observe_revenue()
+        body = {
+            "status": rev.get("status"),
+            "speech_text": rev.get("speech_text"),
+            "labels": rev.get("labels") or {},
+            "data": rev.get("data"),
+        }
+    elif cmd["id"] == "security_alerts":
+        from backend.voice.security_events import security_events_for_speech
+
+        se = security_events_for_speech(mark_spoken=False)
+        body = {
+            "status": se.get("status"),
+            "speech_text": se.get("speech_text"),
+            "labels": se.get("labels") or {},
+            "data": {
+                "emit_count": se.get("emit_count"),
+                "findings_total": se.get("findings_total"),
+                "events": se.get("events"),
+                "rate_limit": se.get("rate_limit"),
+            },
         }
     elif cmd["id"] == "security_posture":
         sec = src.get("security")

@@ -154,4 +154,66 @@ def grok_voice_tools() -> List[Dict[str, Any]]:
                 },
             },
         },
+        {
+            "type": "function",
+            "function": {
+                "name": "helm_revenue",
+                "description": (
+                    "Verified settled revenue from hash-chained HochLedger only. "
+                    "Zero settled dollars is observed zero — not green earning. "
+                    "Never invent Stripe dashboard balances."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {"method": "GET", "path": "/api/v1/helm/voice/revenue"},
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "helm_security_events",
+                "description": (
+                    "HIGH-severity security findings eligible for speech (rate-limited). "
+                    "Does not speak secrets. Use for incident awareness, not auto-remediation."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "mark_spoken": {
+                            "type": "boolean",
+                            "description": "If true, advances rate-limit cursor after emit",
+                        }
+                    },
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {
+                    "method": "GET",
+                    "path": "/api/v1/helm/voice/security/events",
+                },
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "helm_grok_tool_pack",
+                "description": "Export founder Grok Voice tool pack (JSON) for binding tools to HELM.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "base_url": {
+                            "type": "string",
+                            "description": "HELM LIVE origin, e.g. https://host:port",
+                        }
+                    },
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {
+                    "method": "GET",
+                    "path": "/api/v1/helm/voice/grok-pack",
+                },
+            },
+        },
     ]

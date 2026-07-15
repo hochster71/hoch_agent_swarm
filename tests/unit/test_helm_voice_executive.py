@@ -76,7 +76,17 @@ def test_executive_brief_has_labels():
     # Must not claim release authority
     assert "speech_text" in brief and brief["speech_text"]
     for label in brief["labels"].values():
-        assert label in ("LIVE", "STALE", "UNKNOWN", "PARTIAL", "BLOCKED", "PLANNED")
+        assert label in (
+            "LIVE",
+            "STALE",
+            "UNKNOWN",
+            "PARTIAL",
+            "BLOCKED",
+            "PLANNED",
+            "NONE",
+            "UNDEFINED",
+            "CONTRADICTED",
+        )
 
 
 def test_stage_route_writes_artifact(tmp_path, monkeypatch):
@@ -214,11 +224,14 @@ def test_factory_brief_hsf_observable_partial():
     assert r["code"] == "HSF"
     assert r["registry"] == "DECLARED_OBSERVABLE"
     assert r["status"] in ("PARTIAL", "UNKNOWN", "LIVE")
-    # Must not invent settled revenue
-    assert (r.get("labels") or {}).get("revenue") == "UNKNOWN"
-    assert "not invent" in (r.get("speech_text") or "").lower() or "UNKNOWN" in (
-        r.get("speech_text") or ""
-    )
+    # Must not invent earning when no verified dollars
+    earning = (r.get("labels") or {}).get("earning")
+    rev_label = (r.get("labels") or {}).get("revenue")
+    assert earning in (None, "NONE", "UNKNOWN", "LIVE")
+    if earning == "LIVE":
+        # only if ledger has real settled dollars
+        assert (r.get("data") or {}).get("revenue_settled_usd", 0) > 0
+    assert rev_label in ("LIVE", "UNKNOWN", "CONTRADICTED", "NONE")
 
 
 def test_factory_brief_hcf_and_hff():
@@ -229,7 +242,48 @@ def test_factory_brief_hcf_and_hff():
     assert hcf["status"] in ("PARTIAL", "UNKNOWN", "LIVE", "STALE")
     hff = observe_factory("HFF")
     assert hff["code"] == "HFF"
-    assert (hff.get("labels") or {}).get("revenue") == "UNKNOWN"
+    # earning green only with verified settled dollars
+    assert (hff.get("labels") or {}).get("earning") in (None, "NONE", "UNKNOWN", "LIVE")
+
+
+def test_revenue_observe_ledger_not_invented():
+    from backend.voice.revenue import observe_revenue
+
+    r = observe_revenue()
+    assert r["truth_class"] == "HELM_VOICE_REVENUE"
+    assert r["status"] in ("LIVE", "UNKNOWN", "CONTRADICTED")
+    data = r.get("data") or {}
+    if r["status"] == "LIVE" and (r.get("labels") or {}).get("earning") != "LIVE":
+        assert float(data.get("revenue_settled_usd") or 0) == 0.0
+        assert "UNDEFINED" in str(data.get("north_star_value")) or data.get(
+            "north_star_value"
+        ) == "UNDEFINED" or "zero" in (r.get("speech_text") or "").lower()
+
+
+def test_security_events_high_only():
+    from backend.voice.security_events import security_events_for_speech, collect_high_security_findings
+
+    findings = collect_high_security_findings()
+    for f in findings:
+        assert f["severity"] == "HIGH"
+    r = security_events_for_speech(mark_spoken=False)
+    assert r["truth_class"] == "HELM_VOICE_SECURITY_EVENTS"
+    assert r["severity_filter"] == "HIGH"
+    assert "rate_limit" in r
+
+
+def test_grok_pack_export():
+    from backend.voice.grok_pack import build_grok_tool_pack, render_grok_pack_markdown
+
+    pack = build_grok_tool_pack(base_url="http://127.0.0.1:8770")
+    assert pack["schema"].startswith("helm-grok-voice-tool-pack")
+    names = {t["name"] for t in pack["tools"]}
+    assert "helm_revenue" in names
+    assert "helm_security_events" in names
+    assert "helm_executive_brief" in names
+    md = render_grok_pack_markdown(pack)
+    assert "helm_revenue" in md
+    assert "http://127.0.0.1:8770" in md
 
 
 def test_role_briefs_all_known():
@@ -262,6 +316,17 @@ def test_api_factory_and_role_routes():
     assert hsf["code"] == "HSF"
     assert hsf["status"] in ("PARTIAL", "UNKNOWN", "LIVE")
     assert c.get("/api/v1/helm/voice/factory/HCF").status_code == 200
+    assert c.get("/api/v1/helm/voice/revenue").status_code == 200
+    assert c.get("/api/v1/helm/voice/security/events").status_code == 200
+    pack = c.get("/api/v1/helm/voice/grok-pack", params={"base_url": "http://x"})
+    assert pack.status_code == 200
+    assert "tools" in pack.json()
+    md = c.get(
+        "/api/v1/helm/voice/grok-pack",
+        params={"base_url": "http://x", "format": "md"},
+    )
+    assert md.status_code == 200
+    assert "helm_revenue" in md.text
     assert c.get("/api/v1/helm/voice/roles").status_code == 200
     assert c.get("/api/v1/helm/voice/role/ciso").status_code == 200
     assert c.get("/api/v1/helm/voice/role/cfo").json()["role"] == "cfo"

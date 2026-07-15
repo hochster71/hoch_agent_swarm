@@ -200,6 +200,31 @@ COMMAND_REGISTRY: Dict[str, Dict[str, Any]] = {
         "priority": 2,
         "args": ["role"],
     },
+    "revenue_status": {
+        "id": "revenue_status",
+        "mode": "READ_ONLY",
+        "description": "Verified settled revenue from HochLedger only",
+        "utterance_patterns": [
+            r"\brevenue\b",
+            r"how much (did we|have we) (make|made|earn)",
+            r"are we earning",
+            r"settled (dollars|revenue|sales)",
+            r"north.?star metric",
+        ],
+        "priority": 1,
+    },
+    "security_alerts": {
+        "id": "security_alerts",
+        "mode": "READ_ONLY",
+        "description": "HIGH security findings for speech (rate-limited)",
+        "utterance_patterns": [
+            r"security (alert|alerts|findings|high)",
+            r"high findings",
+            r"any security (issues|incidents)",
+            r"speak security",
+        ],
+        "priority": 1,
+    },
     "stage_mission": {
         "id": "stage_mission",
         "mode": "STAGE_ONLY",

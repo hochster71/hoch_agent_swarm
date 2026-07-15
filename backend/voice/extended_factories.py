@@ -155,12 +155,37 @@ def observe_hsf() -> Dict[str, Any]:
             + "."
         )
 
-    # Revenue: only if spend/northstar or explicit ledger — default UNKNOWN
-    parts.append(
-        "Settled revenue: UNKNOWN until a verified payment ledger shows a real dollar. "
-        "I will not invent EARNING."
-    )
-    labels["revenue"] = "UNKNOWN"
+    # Revenue: HochLedger SETTLED verified only
+    try:
+        from backend.voice.revenue import observe_revenue
+
+        rev = observe_revenue()
+        rd = rev.get("data") or {}
+        settled = rd.get("revenue_settled_usd")
+        by_prod = rd.get("revenue_by_product") or {}
+        labels["revenue"] = (rev.get("labels") or {}).get("revenue") or "UNKNOWN"
+        labels["earning"] = (rev.get("labels") or {}).get("earning") or "NONE"
+        if settled and float(settled) > 0:
+            hsf_amt = None
+            for k, v in by_prod.items():
+                if "hsf" in str(k).lower() or "story" in str(k).lower():
+                    hsf_amt = v
+            parts.append(
+                f"Verified settled revenue (ledger): ${float(settled):.2f} total"
+                + (f"; HSF-related ${float(hsf_amt):.2f}" if hsf_amt is not None else "")
+                + ". Stripe dashboard is not used as truth."
+            )
+            data["revenue_settled_usd"] = settled
+            data["revenue_by_product"] = by_prod
+        else:
+            parts.append(
+                "Verified settled revenue: $0.00 observed (or none). "
+                "EARNING not claimed. I will not invent Stripe balances."
+            )
+            data["revenue_settled_usd"] = 0.0 if settled == 0 or settled == 0.0 else None
+    except Exception as e:
+        labels["revenue"] = "UNKNOWN"
+        parts.append(f"Revenue ledger: UNKNOWN — {e}.")
 
     parts.append(
         "DOORSTEP: live Stripe keys, production deploy, and money moves require founder. "
@@ -337,16 +362,22 @@ def observe_hff() -> Dict[str, Any]:
     except Exception as e:
         parts.append(f"North-star ledger: UNKNOWN — {e}.")
 
-    # HSF stripe readiness as revenue *path* not revenue
     hsf = observe_hsf()
     stripe = (hsf.get("labels") or {}).get("stripe")
     parts.append(f"HSF Stripe env path status: {stripe}.")
-    parts.append(
-        "Verified revenue dollars: UNKNOWN. Zero is not green. "
-        "Voice will not move money or flip Stripe live."
-    )
-    labels["revenue"] = "UNKNOWN"
     data["hsf_stripe"] = stripe
+    try:
+        from backend.voice.revenue import observe_revenue
+
+        rev = observe_revenue()
+        parts.append(rev.get("speech_text") or "Revenue: UNKNOWN.")
+        labels["revenue"] = (rev.get("labels") or {}).get("revenue") or "UNKNOWN"
+        labels["earning"] = (rev.get("labels") or {}).get("earning") or "NONE"
+        data["revenue"] = rev.get("data")
+    except Exception as e:
+        labels["revenue"] = "UNKNOWN"
+        parts.append(f"Revenue: UNKNOWN — {e}.")
+    parts.append("Voice will not move money or flip Stripe live.")
 
     status = "PARTIAL" if labels["spend"] == "LIVE" or labels["northstar"] == "LIVE" else "UNKNOWN"
     if status == "UNKNOWN":

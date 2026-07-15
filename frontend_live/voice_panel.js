@@ -185,6 +185,11 @@
           <button id="hv-brief" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Brief</button>
           <button id="hv-approvals" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Approvals</button>
           <button id="hv-blocked" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Blocked</button>
+          <button id="hv-revenue" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Revenue</button>
+          <button id="hv-sec" type="button" style="cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Sec HIGH</button>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer;font-size:11px">
+            <input type="checkbox" id="hv-sec-poll"/> Poll security
+          </label>
         </div>
         <div style="display:flex;gap:6px;margin-bottom:8px">
           <input id="hv-utter" type="text" placeholder="Say a command… e.g. highest priority mission"
@@ -248,6 +253,40 @@
         paint();
       } catch (e) {
         outEl.textContent = 'UNKNOWN — ' + e.message;
+      }
+    });
+    $('#hv-revenue').addEventListener('click', async () => {
+      try {
+        const d = await fetchJSON('/api/v1/helm/voice/revenue');
+        state.lastResult = d;
+        if (state.enabled && !state.muted && d.speech_text) speak(d.speech_text);
+        paint();
+      } catch (e) {
+        outEl.textContent = 'UNKNOWN — ' + e.message;
+      }
+    });
+    let secTimer = null;
+    async function pollSecurity(andAck) {
+      try {
+        const q = andAck ? '?mark_spoken=true' : '';
+        const d = await fetchJSON('/api/v1/helm/voice/security/events' + q);
+        state.lastResult = d;
+        if (state.enabled && !state.muted && d.emit_count > 0 && d.speech_text) {
+          speak(d.speech_text);
+          // advance cursor so we don't re-speak the same HIGH forever
+          if (!andAck) await fetchJSON('/api/v1/helm/voice/security/events?mark_spoken=true');
+        }
+        paint();
+      } catch (e) {
+        outEl.textContent = 'UNKNOWN — ' + e.message;
+      }
+    }
+    $('#hv-sec').addEventListener('click', () => pollSecurity(false));
+    $('#hv-sec-poll').addEventListener('change', (e) => {
+      if (secTimer) { clearInterval(secTimer); secTimer = null; }
+      if (e.target.checked) {
+        pollSecurity(false);
+        secTimer = setInterval(() => pollSecurity(false), 60000);
       }
     });
     $('#hv-run').addEventListener('click', async () => {

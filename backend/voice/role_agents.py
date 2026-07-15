@@ -225,17 +225,17 @@ def _role_cfo(src: Dict[str, Any]) -> Dict[str, Any]:
     parts.append(" ".join([ln for ln in glines if "dollar" in ln.lower() or "north star" in ln.lower()][:3])
                 or "Founder-minutes per shipped dollar: UNKNOWN.")
     hsf = observe_factory("HSF")
-    hff = observe_factory("HFF")
+    from backend.voice.revenue import observe_revenue
+
+    rev = observe_revenue()
     parts.append(
-        f"HSF revenue path: stripe env {(hsf.get('labels') or {}).get('stripe', 'UNKNOWN')}; "
-        f"revenue label {(hsf.get('labels') or {}).get('revenue', 'UNKNOWN')}."
+        f"HSF Stripe env: {(hsf.get('labels') or {}).get('stripe', 'UNKNOWN')}."
     )
-    parts.append(
-        "Verified revenue dollars: UNKNOWN until a payment ledger shows a real dollar. "
-        "Null is not zero-green. Voice will not move money or enable live Stripe."
-    )
+    parts.append(rev.get("speech_text") or "Revenue: UNKNOWN.")
     labels["hsf_stripe"] = (hsf.get("labels") or {}).get("stripe") or "UNKNOWN"
-    labels["revenue"] = "UNKNOWN"
+    labels["revenue"] = (rev.get("labels") or {}).get("revenue") or "UNKNOWN"
+    labels["earning"] = (rev.get("labels") or {}).get("earning") or "NONE"
+    parts.append("Voice will not move money or enable live Stripe.")
 
     census = src.get("census")
     if isinstance(census, dict) and census.get("state") != UNKNOWN:
@@ -253,9 +253,8 @@ def _role_cfo(src: Dict[str, Any]) -> Dict[str, Any]:
             "spend": spend if spend_label == "LIVE" else None,
             "north_star_completion": gdata.get("north_star_completion"),
             "hsf": hsf.get("data"),
-            "hff_status": hff.get("status"),
-            "verified_founder_minutes_per_shipped_dollar": None,
-            "note": "null money metrics are UNKNOWN, not zero-green",
+            "revenue": rev.get("data"),
+            "note": "revenue from verified SETTLED ledger only; zero is not green earning",
         },
     }
 
