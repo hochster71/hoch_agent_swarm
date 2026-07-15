@@ -21,11 +21,9 @@ BACKEND = ROOT / "backend"
 # Known legacy direct-readers still to be migrated onto SECRETS. This list may only
 # SHRINK. agent_executor.py is intentionally NOT here — it was migrated; if it
 # regresses, this test must fail.
-LEGACY_ALLOWLIST = {
-    "backend/main.py",                          # bool(os.getenv("GOOGLE_API_KEY")) health flag
-    "backend/model_router/google_frontier.py",  # direct google key read
-    "backend/voice/elevenlabs_tts.py",          # ELEVENLABS_* read
-}
+LEGACY_ALLOWLIST = set()  # fully migrated — every backend provider-key read now goes
+                          # through backend.config.secrets.SECRETS. This may only stay
+                          # empty or (if new debt ever lands) list files to migrate.
 
 _READ = re.compile(
     r"""os\.(?:environ\.get|getenv)\(\s*["'](%s)["']"""

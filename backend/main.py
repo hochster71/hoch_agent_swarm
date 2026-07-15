@@ -4,6 +4,7 @@ load_dotenv()
 from pathlib import Path
 import time
 from backend.runtime_paths import project_root, data_root, evidence_root, optional_ag_scratch_root, optional_ag_brain_root
+from backend.config.secrets import SECRETS  # single provider-credential reader
 import json
 import uuid
 import sys
@@ -11662,7 +11663,7 @@ def production_readiness():
         "provider": "google_gemini",
         "approval_required": gf_policy.get("require_human_approval", True),
         "budget_required": True,
-        "api_key_configured": bool(os.getenv("GOOGLE_API_KEY")),
+        "api_key_configured": SECRETS.has("gemini"),
         "status": "ACTIVE" if gf_enabled else "DISABLED_BY_DEFAULT"
     }
 

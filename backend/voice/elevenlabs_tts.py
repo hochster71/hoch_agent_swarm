@@ -35,7 +35,8 @@ def _now() -> str:
 
 
 def _api_key() -> str:
-    return (os.environ.get("ELEVENLABS_API_KEY") or os.environ.get("ELEVEN_LABS_API_KEY") or "").strip()
+    from backend.config.secrets import SECRETS  # single provider-credential reader
+    return SECRETS.provider_key("elevenlabs") or ""
 
 
 def _voice_id() -> str:

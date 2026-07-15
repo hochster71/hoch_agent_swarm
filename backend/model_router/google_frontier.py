@@ -42,8 +42,9 @@ def call_google_frontier(
     if not gf_cfg.get("enabled", False):
         raise GoogleFrontierException("Google frontier escalation is disabled.")
 
-    # 2. Check environment variable
-    api_key = os.getenv("GOOGLE_API_KEY")
+    # 2. Provider credential via the single config layer (backend/config/secrets.py)
+    from backend.config.secrets import SECRETS
+    api_key = SECRETS.provider_key("gemini")
     if not api_key:
         bus.emit(
             RuntimeProcessType.GOOGLE_FRONTIER_CALL,
