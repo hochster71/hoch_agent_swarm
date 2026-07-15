@@ -166,8 +166,11 @@ def _observe_sources() -> Dict[str, Any]:
                 if isinstance(lane, dict):
                     for item in lane.get("doorstep_for_founder") or []:
                         door.append({"lane": lane_name, "item": item})
+            import time as _t
             sources["bus_doorstep"] = {"count": len(door), "items": door[:20]}
-            freshness["bus_doorstep"] = 0.0
+            # Freshness computed from the file mtime like every other source — NOT
+            # hardcoded fresh. A stale bus must be flagged STALE, never spoken as current.
+            freshness["bus_doorstep"] = float(_t.time() - bus_path.stat().st_mtime)
         else:
             sources["bus_doorstep"] = _as_unknown("coordination bus missing")
             freshness["bus_doorstep"] = None
@@ -340,12 +343,21 @@ def _count_pending_approvals(src: Dict[str, Any]) -> tuple:
                 )
 
     bus = src.get("bus_doorstep") or {}
+    bus_fresh = (src.get("_freshness") or {}).get("bus_doorstep")
+    bus_stale = bus_fresh is not None and bus_fresh > 300  # freshness budget (seconds)
     if isinstance(bus, dict) and bus.get("state") != UNKNOWN:
         observed = True
-        n += int(bus.get("count") or 0)
-        for item in (bus.get("items") or [])[:5]:
-            if isinstance(item, dict):
-                lines.append(f"Doorstep ({item.get('lane')}): {str(item.get('item'))[:120]}")
+        if bus_stale:
+            # Do NOT count or read stale coordination-bus items as current founder actions.
+            lines.append(
+                f"Coordination-bus doorstep: STALE — {int(bus.get('count') or 0)} item(s) older "
+                "than the freshness budget; not spoken as current founder actions."
+            )
+        else:
+            n += int(bus.get("count") or 0)
+            for item in (bus.get("items") or [])[:5]:
+                if isinstance(item, dict):
+                    lines.append(f"Doorstep ({item.get('lane')}): {str(item.get('item'))[:120]}")
 
     if not observed:
         return None, "UNKNOWN", ["Founder approvals: UNKNOWN — authority sources unreadable."]
@@ -528,6 +540,14 @@ def build_executive_brief() -> Dict[str, Any]:
     elif isinstance(sec, dict):
         labels["security"] = "LIVE"
         posture = sec.get("posture") or sec.get("overall") or sec.get("status") or sec.get("state")
+        # live_security() reports posture_percent + control counts (no 'posture' key) —
+        # read those so a perfect posture is spoken as 100%, not "None".
+        if posture is None and sec.get("posture_percent") is not None:
+            pct = sec.get("posture_percent"); impl = sec.get("implemented")
+            assessed = sec.get("controls_assessed"); hi = sec.get("high_findings")
+            opn = sec.get("open_findings"); fw = sec.get("framework") or "controls"
+            posture = (f"{pct:.0f}% implemented ({impl} of {assessed} {fw} controls, "
+                       f"{opn} open findings, {hi} high)")
         speech_parts.append(f"Security posture: {posture}.")
     else:
         labels["security"] = "UNKNOWN"

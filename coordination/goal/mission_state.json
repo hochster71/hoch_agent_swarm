@@ -5,12 +5,12 @@
     "champion_product": "EPIC_FURY_2026",
     "north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete."
   },
-  "computed_at": "2026-07-15T21:49:30.995180Z",
+  "computed_at": "2026-07-15T22:11:04.965826Z",
   "sources": {
     "goal_state": "coordination/goal/goal_state.json",
     "champion_gates": "coordination/goal/champion_gates.json",
     "control_posture": "coordination/security/helm_control_posture.json",
-    "goal_computed_at": "2026-07-15T21:49:30.952759Z",
+    "goal_computed_at": "2026-07-15T22:11:04.925723Z",
     "goal_age_hours": 0.0
   },
   "areas": {
@@ -33,7 +33,7 @@
       "evidence": [
         "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
       ],
-      "evidence_age_hours": 68.4
+      "evidence_age_hours": 68.7
     },
     "Security": {
       "area": "Security",
@@ -45,7 +45,7 @@
         "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
         "coordination/security/helm_control_posture.json"
       ],
-      "evidence_age_hours": 160.7,
+      "evidence_age_hours": 161.1,
       "posture_percent": 100.0
     },
     "Evidence": {
@@ -226,7 +226,7 @@
       "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
       "coordination/security/helm_control_posture.json"
     ],
-    "evidence_age_hours": 160.7,
+    "evidence_age_hours": 161.1,
     "posture_percent": 100.0
   },
   "testing": {
@@ -237,7 +237,7 @@
     "evidence": [
       "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
     ],
-    "evidence_age_hours": 68.4
+    "evidence_age_hours": 68.7
   },
   "evidence": {
     "area": "Evidence",

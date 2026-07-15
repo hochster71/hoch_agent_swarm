@@ -1,0 +1,9 @@
+{
+  "archived_at": "2026-07-15T22:07:03.093516+00:00",
+  "reason": "Obsolete Stripe/Vercel web-deploy gates superseded by App Store ship (READY_FOR_SALE); founder_only_actions_pending=[] in fresh goal_state.",
+  "lane": "cowork_helm",
+  "cleared_items": [
+    "GATE 2: Add 5 Stripe env vars in Vercel dashboard \u2014 AG IDE hands you the exact table; you paste them; it detects and advances",
+    "GATE 3: Run deploy command + make one test purchase + drop GATE3_FOUNDER_CONFIRMED.txt \u2014 AG IDE hands you the checklist; pipeline completes"
+  ]
+}

@@ -2,7 +2,7 @@
   "artifact": "helm_coordination_bus",
   "purpose": "Two-lane coordination channel between Cowork/HELM and the AG (Antigravity) IDE. Each side owns its lane, reads the other's, and stages cross-side handoffs. Doctrine: no_fake_green, DOORSTEP gates \u2014 anything that deploys/spends/keys/signs stays a founder gate.",
   "protocol_version": "1.0",
-  "updated": "2026-07-09T13:49:20Z",
+  "updated": "2026-07-15T22:07:03.094207+00:00",
   "link_status": "ESTABLISHED \u2014 cowork-helm ONLINE (14:10:00Z); ag-ide wake signal posted",
   "transports": {
     "local_file": "coordination/coordination_bus.json (this file \u2014 both sides R/W on the Mac)",
@@ -22,10 +22,7 @@
         "GAP + PERT analysis (truthful)",
         "AG IDE: Stripe webhook verified 13/13 + 6/6"
       ],
-      "doorstep_for_founder": [
-        "GATE 2: Add 5 Stripe env vars in Vercel dashboard \u2014 AG IDE hands you the exact table; you paste them; it detects and advances",
-        "GATE 3: Run deploy command + make one test purchase + drop GATE3_FOUNDER_CONFIRMED.txt \u2014 AG IDE hands you the checklist; pipeline completes"
-      ]
+      "doorstep_for_founder": []
     },
     "ag_ide": {
       "identity": "AG / Antigravity IDE (local, controlled Mac access)",
