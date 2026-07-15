@@ -37,6 +37,7 @@ Michael runs three books, and they must never be silently mixed:
 from __future__ import annotations
 
 import datetime
+import fcntl
 import hashlib
 import json
 import os
@@ -83,16 +84,25 @@ class _Chain:
         return out
 
     def append(self, entry: dict) -> dict:
-        e = self.entries()
-        body = dict(entry)
-        body["prev_hash"] = e[-1]["entry_hash"] if e else "GENESIS"
-        body["entry_hash"] = hashlib.sha256(
-            json.dumps(body, sort_keys=True).encode()).hexdigest()
+        # AU-9 continuity fix: the read-last + append must be atomic across
+        # processes, else concurrent writers fork the chain (link discontinuity).
+        # Serialize the critical section under an exclusive cross-process flock.
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(body, sort_keys=True) + "\n")
-            f.flush()
-            os.fsync(f.fileno())
+        lock_path = self.path.with_suffix(self.path.suffix + ".wlock")
+        with open(lock_path, "w") as _lock:
+            fcntl.flock(_lock.fileno(), fcntl.LOCK_EX)
+            try:
+                e = self.entries()
+                body = dict(entry)
+                body["prev_hash"] = e[-1]["entry_hash"] if e else "GENESIS"
+                body["entry_hash"] = hashlib.sha256(
+                    json.dumps(body, sort_keys=True).encode()).hexdigest()
+                with open(self.path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(body, sort_keys=True) + "\n")
+                    f.flush()
+                    os.fsync(f.fileno())
+            finally:
+                fcntl.flock(_lock.fileno(), fcntl.LOCK_UN)
         return body
 
     def verify(self) -> tuple[bool, List[str]]:

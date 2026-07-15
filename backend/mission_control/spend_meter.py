@@ -33,6 +33,7 @@ treated as OVER the cap (fail closed), not as free.
 from __future__ import annotations
 
 import datetime
+import fcntl
 import hashlib
 import json
 import os
@@ -100,15 +101,24 @@ class SpendMeter:
         return e[-1]["entry_hash"] if e else "GENESIS"
 
     def _append(self, entry: dict) -> dict:
-        body = dict(entry)
-        body["prev_hash"] = self._last_hash()
-        body["entry_hash"] = hashlib.sha256(
-            json.dumps(body, sort_keys=True).encode()).hexdigest()
+        # AU-9 continuity fix: read-last-hash + append must be atomic across
+        # processes, else concurrent writers compute the same prev_hash and the
+        # chain forks (link discontinuity). Serialize under an exclusive flock.
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(body, sort_keys=True) + "\n")
-            f.flush()
-            os.fsync(f.fileno())
+        lock_path = self.path.with_suffix(self.path.suffix + ".wlock")
+        with open(lock_path, "w") as _lock:
+            fcntl.flock(_lock.fileno(), fcntl.LOCK_EX)
+            try:
+                body = dict(entry)
+                body["prev_hash"] = self._last_hash()
+                body["entry_hash"] = hashlib.sha256(
+                    json.dumps(body, sort_keys=True).encode()).hexdigest()
+                with open(self.path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(body, sort_keys=True) + "\n")
+                    f.flush()
+                    os.fsync(f.fileno())
+            finally:
+                fcntl.flock(_lock.fileno(), fcntl.LOCK_UN)
         return body
 
     def verify_chain(self) -> tuple[bool, list[str]]:

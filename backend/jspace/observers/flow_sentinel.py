@@ -124,5 +124,19 @@ class FlowSentinel(ObserverBase):
                 recommended_action="THROTTLE_OR_INVESTIGATE",
                 detail="Unusually high number of simultaneous lease locks.",
             ))
+        else:
+            # Clearing verdict: without an all-clear branch this subject can only ever
+            # LATCH BLOCKED in the ledger-latest brain view, staying red long after the
+            # lock count falls back within capacity. Report the true, current state.
+            result.assessments.append(self._assessment(
+                subject="concurrency_pressure",
+                assessment=TruthAssessment.CONFIRMED_LIVE,
+                claimed_state="WITHIN_CAPACITY",
+                observed_state=f"active_locks={len(locks)}",
+                evidence=["coordination/leases"],
+                confidence=0.8,
+                recommended_action="NONE",
+                detail="Simultaneous lease locks within capacity.",
+            ))
 
         return result

@@ -132,5 +132,23 @@ class TruthSentinel(ObserverBase):
                 recommended_action=a.recommended_action,
                 evidence=a.evidence,
             ))
+        elif locks:
+            # No foreign locks observed for this cycle. A sentinel that can only ever
+            # LATCH red (emit CONTRADICTED but never a clearing verdict) makes the
+            # ledger-latest brain view permanently stale after the condition resolves.
+            # Emit an explicit all-clear so a superseding cycle records the true state.
+            labeled = [lk for lk in locks if lk.get("scheduler_instance_id")]
+            matching = [lk for lk in labeled if lk.get("scheduler_instance_id") == inst]
+            result.assessments.append(self._assessment(
+                subject="scheduler_instance_consistency",
+                assessment=TruthAssessment.CONFIRMED_LIVE,
+                claimed_state=str(inst) if inst else "UNPUBLISHED",
+                observed_state=(f"no_foreign_locks matching={len(matching)} "
+                                f"unlabeled={len(locks) - len(labeled)}"),
+                evidence=evidence_paths + ["coordination/leases/*.lock"],
+                confidence=0.88,
+                recommended_action="NONE",
+                detail="No active lock references a scheduler_instance_id foreign to the runtime pointer.",
+            ))
 
         return result
