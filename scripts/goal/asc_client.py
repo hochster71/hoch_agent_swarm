@@ -63,9 +63,10 @@ def _bearer_token() -> str:
 
 def _get(path: str, params: Optional[dict] = None) -> dict:
     import requests
+    token = _bearer_token()  # credential/JWT errors surface as themselves, not "network error"
     try:
         r = requests.get(f"{ASC_BASE}{path}", params=params or {},
-                         headers={"Authorization": f"Bearer {_bearer_token()}"}, timeout=20)
+                         headers={"Authorization": f"Bearer {token}"}, timeout=20)
     except Exception as e:
         raise ASCUnavailable(f"network error: {str(e)[:120]}")
     if r.status_code == 401:
