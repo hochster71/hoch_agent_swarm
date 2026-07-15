@@ -612,6 +612,86 @@ def serve_brain() -> str:
     return f.read_text() if f.exists() else "<h1>brain missing</h1>"
 
 
+@app.get("/api/v1/helm/goal")
+def api_v1_goal():
+    """Roadmap to GOAL HELM: the weighted requirement registry (goal_state.json, computed ONLY from
+    validators that executed successfully — no fake green) PLUS the live soak phase chain A->B->C->
+    DOORSTEP computed fresh from the independent seals. Read-only, fail-closed."""
+    import time
+    gp = ROOT / "coordination" / "goal" / "goal_state.json"
+    goal = {}
+    if gp.exists():
+        try:
+            goal = json.loads(gp.read_text())
+        except Exception:
+            goal = {}
+    # live soak phase chain — the part that moves in real time toward the DOORSTEP
+    def _phase(pref, phase, secs):
+        pkgs = sorted(PKGS.glob(f"HELM-SOAK-{pref}-*Z"), key=lambda p: p.name, reverse=True)
+        for pk in pkgs:
+            seal = pk / "seal_verdict.json"
+            cfg = pk / "soak_config.json"
+            if seal.exists():
+                try:
+                    v = json.loads(seal.read_text()).get("verdict", "")
+                except Exception:
+                    v = ""
+                if v == f"SOAK_PHASE_{phase}_PASS":
+                    return {"phase": phase, "state": "SEALED_PASS", "package": pk.name,
+                            "hours": round(secs / 3600, 1)}
+                if v.endswith("_FAIL"):
+                    return {"phase": phase, "state": "FAILED", "package": pk.name}
+            # unsealed + fresh evidence => running
+            led = pk / "daemon" / "task_lease_ledger.jsonl"
+            if cfg.exists() and led.exists() and (time.time() - led.stat().st_mtime) < 600:
+                try:
+                    start = json.loads(cfg.read_text()).get("started_at", "")
+                    import datetime
+                    el = (datetime.datetime.now(datetime.timezone.utc) -
+                          datetime.datetime.fromisoformat(start.replace("Z", "+00:00"))).total_seconds()
+                    return {"phase": phase, "state": "RUNNING", "package": pk.name,
+                            "progress_pct": round(min(100, 100 * el / secs), 1),
+                            "elapsed_h": round(el / 3600, 2), "hours": round(secs / 3600, 1)}
+                except Exception:
+                    return {"phase": phase, "state": "RUNNING", "package": pk.name}
+        return {"phase": phase, "state": "PENDING", "hours": round(secs / 3600, 1)}
+    chain = [_phase("2H", "A", 7200), _phase("8H", "B", 28800), _phase("24H", "C", 86400)]
+    done = all(p["state"] == "SEALED_PASS" for p in chain)
+    chain.append({"phase": "DOORSTEP", "state": "READY" if done else "PENDING",
+                  "detail": "founder gate — 24/7 baseline proven" if done else "awaiting A+B+C seals"})
+    # per-layer rollup from the requirement registry
+    reqs = goal.get("requirements", [])
+    from collections import defaultdict
+    layers = defaultdict(lambda: {"total": 0, "passed": 0, "weight": 0.0, "contributes": 0.0})
+    for r in reqs:
+        L = layers[r.get("layer", "?")]
+        L["total"] += 1; L["weight"] += r.get("weight", 0) or 0
+        L["contributes"] += r.get("contributes", 0) or 0
+        if str(r.get("state", "")).upper() in ("PASS", "SATISFIED", "VALIDATED"):
+            L["passed"] += 1
+    fresh = float(time.time() - gp.stat().st_mtime) if gp.exists() else None
+    return JSONResponse(_truth_response(
+        truth_class="HELM_GOAL_TRUTH", source="coordination/goal/goal_state.json",
+        observed_at=now(), freshness_seconds=fresh,
+        data={"north_star": goal.get("canonical_north_star"),
+              "computed_at": goal.get("computed_at"),
+              "hard_constraint": goal.get("hard_constraint"),
+              "metrics": goal.get("metrics", {}),
+              "layers": {k: dict(v) for k, v in layers.items()},
+              "requirements": reqs,
+              "critical_path": goal.get("critical_path", []),
+              "next_recommended_task": goal.get("next_recommended_task"),
+              "soak_chain": chain,
+              "soak_24_7_proven": done}))
+
+
+@app.get("/roadmap", response_class=HTMLResponse)
+def serve_roadmap() -> str:
+    """Live roadmap to GOAL HELM — dark theme, auto-updating from the goal registry + soak chain."""
+    f = ROOT / "frontend_live" / "roadmap.html"
+    return f.read_text() if f.exists() else "<h1>roadmap missing</h1>"
+
+
 @app.get("/api/v1/helm/jspace/lens")
 def api_v1_jspace_lens():
     """Semantic Jacobian Lens — which findings actually hold the promotion gate closed, ranked by how
