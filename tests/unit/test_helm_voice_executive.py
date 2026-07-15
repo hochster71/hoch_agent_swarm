@@ -294,6 +294,8 @@ def test_elevenlabs_fail_closed_without_key(monkeypatch):
     monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
     monkeypatch.delenv("ELEVEN_LABS_API_KEY", raising=False)
     monkeypatch.delenv("HELM_ELEVENLABS_TTS", raising=False)
+    monkeypatch.delenv("HELM_VOICE_PAID_PROVIDERS", raising=False)
+    monkeypatch.delenv("HELM_VOICE_MODE", raising=False)
     reload_voice_policy()
     st = el.elevenlabs_config_status()
     assert st["ready"] is False
@@ -310,12 +312,14 @@ def test_elevenlabs_blocked_even_with_key_if_paid_false(monkeypatch):
 
     monkeypatch.setenv("ELEVENLABS_API_KEY", "sk_test_fake_key_for_unit_test_only")
     monkeypatch.setenv("HELM_ELEVENLABS_TTS", "1")
+    monkeypatch.delenv("HELM_VOICE_PAID_PROVIDERS", raising=False)
+    monkeypatch.delenv("HELM_VOICE_MODE", raising=False)
     reload_voice_policy()
     st = el.elevenlabs_config_status()
-    # policy paid_providers_allowed defaults false
+    # policy paid_providers_allowed defaults false; env paid not set
     assert st["key_present"] is True
     assert st["ready"] is False
-    assert any("paid_providers" in r for r in st.get("blocked_reasons") or [])
+    assert any("paid" in r.lower() for r in st.get("blocked_reasons") or [])
 
 
 def test_role_briefs_all_known():
@@ -338,8 +342,20 @@ def test_role_unknown():
     assert r["status"] == "UNKNOWN"
 
 
-def test_api_factory_and_role_routes():
+def test_api_factory_and_role_routes(monkeypatch):
     import backend.helm_live_api as api
+    from backend.voice.policy import reload_voice_policy
+
+    # Isolate from founder machine env so TTS stay fail-closed in CI/local shared shells
+    for k in (
+        "ELEVENLABS_API_KEY",
+        "ELEVEN_LABS_API_KEY",
+        "HELM_ELEVENLABS_TTS",
+        "HELM_VOICE_PAID_PROVIDERS",
+        "HELM_VOICE_MODE",
+    ):
+        monkeypatch.delenv(k, raising=False)
+    reload_voice_policy()
 
     c = TestClient(api.app)
     assert c.get("/api/v1/helm/voice/factories").status_code == 200
