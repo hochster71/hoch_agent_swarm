@@ -48,7 +48,17 @@ class HardenedConfig:
     # (so a health probe and the login-less HTML shell can still load). Fetches the
     # page then makes are still gated.
     read_auth_allowlist: List[str] = field(
-        default_factory=lambda: ["/api/v1/helm/wall"]
+        # The HTML console shells + the read-auth helper JS + the health probe load
+        # WITHOUT a token so the page can render and then attach the token to its data
+        # fetches. The shells carry no sensitive data — that comes from the gated
+        # /api/* endpoints. Everything not listed here requires the read token.
+        default_factory=lambda: [
+            "/api/v1/helm/wall",
+            "/", "/brain", "/roadmap", "/jspace", "/command", "/console",
+            "/arch", "/pert", "/founder", "/voice", "/mission", "/control", "/nist",
+            "/frontend_live/voice_panel.js", "/frontend_live/helm_auth.js",
+            "/favicon.ico",
+        ]
     )
     read_token_header: str = "x-helm-read-token"
 

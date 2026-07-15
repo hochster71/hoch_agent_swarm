@@ -1541,3 +1541,15 @@ def voice_panel_js():
         return FileResponse(VOICE_JS, media_type="application/javascript",
                             headers={"Cache-Control": "no-store"})
     return PlainTextResponse("// voice_panel.js missing", status_code=404)
+
+
+@app.get("/frontend_live/helm_auth.js")
+def helm_auth_js():
+    """Read-auth client helper (AC-3/IA-2). Allowlisted so it loads before the token
+    is required, so the consoles can attach the token to their /api fetches."""
+    from fastapi.responses import FileResponse, PlainTextResponse
+    f = ROOT / "frontend_live" / "helm_auth.js"
+    if f.exists():
+        return FileResponse(f, media_type="application/javascript",
+                            headers={"Cache-Control": "no-store"})
+    return PlainTextResponse("// helm_auth.js missing", status_code=404)
