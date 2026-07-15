@@ -140,7 +140,9 @@ def read_distribution_state(bundle_id: Optional[str] = None) -> Dict[str, Any]:
             st = a.get("appStoreState") or a.get("state")
             vs = a.get("versionString")
             # 'shipped to production' == live/approved states; in-review is progress but not shipped.
-            LIVE = {"READY_FOR_SALE", "PENDING_DEVELOPER_RELEASE", "PROCESSING_FOR_APP_STORE"}
+            # Apple renamed "Ready for Sale" -> "Ready for Distribution"; accept both.
+            LIVE = {"READY_FOR_SALE", "READY_FOR_DISTRIBUTION",
+                    "PENDING_DEVELOPER_RELEASE", "PROCESSING_FOR_APP_STORE"}
             REJECTED = {"REJECTED", "DEVELOPER_REJECTED", "METADATA_REJECTED", "INVALID_BINARY"}
             if st in LIVE:
                 out["app_store"] = {"state": "PASS", "detail": f"version {vs} appStoreState={st}",
