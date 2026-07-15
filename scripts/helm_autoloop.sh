@@ -26,7 +26,7 @@ export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 log() { printf '%s  %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*" >> "$LOG"; }
 
-api_up() { curl -fsS -o /dev/null --max-time 5 "http://127.0.0.1:8770/api/v1/helm/wall" 2>/dev/null; }
+api_up() { curl -fsSk -o /dev/null --max-time 5 "https://127.0.0.1:8770/api/v1/helm/wall" 2>/dev/null; }
 
 start_api() {
   log "API down -> starting"
@@ -37,7 +37,15 @@ start_api() {
   # shellcheck disable=SC1091
   [ -f "$REPO/.env.elevenlabs" ] && . "$REPO/.env.elevenlabs"
   set +a
-  nohup "$PY" -m uvicorn backend.helm_live_api:app --host 0.0.0.0 --port 8770 \
+  # ZERO-TRUST CUTOVER (Option A, founder-approved DEC-ZT-CUTOVER-001):
+  #   - bind 127.0.0.1 (loopback only) instead of 0.0.0.0      -> SC-7 / AC-4
+  #   - terminate TLS with the self-signed dev cert            -> SC-8
+  # Read-auth (AC-3/IA-2) is intentionally DEFERRED until the console JS carries
+  # the read token; Tailscale (tailnet-only) is the authenticated external ingress.
+  HELM_CERT="$HOME/.helm/dev_certs/helm_dev_cert.pem"
+  HELM_KEY="$HOME/.helm/dev_certs/helm_dev_key.pem"
+  nohup "$PY" -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770 \
+    --ssl-certfile "$HELM_CERT" --ssl-keyfile "$HELM_KEY" \
     >> /tmp/helm_api.log 2>&1 &
   sleep 6
   if api_up; then log "API up (pid $!)"; else log "API FAILED to start"; fi
@@ -47,7 +55,7 @@ ensure_tailscale() {
   # the founder gate must stay reachable from his phone on standard HTTPS
   if ! tailscale serve status 2>/dev/null | grep -q "127.0.0.1:8770"; then
     log "tailscale route missing -> restoring :443 -> 8770"
-    tailscale serve --bg --https=443 http://127.0.0.1:8770 >/dev/null 2>&1 || true
+    tailscale serve --bg --https=443 https+insecure://127.0.0.1:8770 >/dev/null 2>&1 || true
   fi
 }
 
