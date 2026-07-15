@@ -50,20 +50,23 @@ def _model_id() -> str:
     ).strip()
 
 
+def _env_truthy(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in ("1", "true", "yes", "on")
+
+
 def elevenlabs_config_status() -> Dict[str, Any]:
     """Public status — never includes API key material."""
     p = load_voice_policy()
     key = _api_key()
-    paid = bool(p.get("paid_providers_allowed"))
+    # Env can authorize paid TTS without committing paid=true to the repo policy file
+    paid = bool(p.get("paid_providers_allowed")) or _env_truthy("HELM_VOICE_PAID_PROVIDERS")
     # Explicit enable: policy flag OR env HELM_ELEVENLABS_TTS=1
-    env_on = os.environ.get("HELM_ELEVENLABS_TTS", "").strip().lower() in (
-        "1",
-        "true",
-        "yes",
-        "on",
-    )
+    env_on = _env_truthy("HELM_ELEVENLABS_TTS")
     policy_on = bool(p.get("elevenlabs_enabled"))
-    mode = str(p.get("voice_mode") or "local_tts")
+    mode = (
+        os.environ.get("HELM_VOICE_MODE")
+        or str(p.get("voice_mode") or "local_tts")
+    ).strip()
     key_present = bool(key) and len(key) > 8
     # Ready only if key + (paid allowed) + (enabled via policy/env/mode)
     enabled_request = policy_on or env_on or mode == "elevenlabs"
@@ -72,7 +75,9 @@ def elevenlabs_config_status() -> Dict[str, Any]:
     if not key_present:
         blocked_reasons.append("ELEVENLABS_API_KEY not set")
     if not paid:
-        blocked_reasons.append("paid_providers_allowed=false in voice policy")
+        blocked_reasons.append(
+            "paid TTS not authorized (set paid_providers_allowed=true or HELM_VOICE_PAID_PROVIDERS=1)"
+        )
     if not enabled_request:
         blocked_reasons.append(
             "elevenlabs not enabled (set elevenlabs_enabled=true or HELM_ELEVENLABS_TTS=1 or voice_mode=elevenlabs)"

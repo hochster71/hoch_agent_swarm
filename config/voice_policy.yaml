@@ -10,16 +10,20 @@ persona: "HELM Executive Mission Commander"
 # ElevenLabs requires: paid_providers_allowed=true AND ELEVENLABS_API_KEY
 #   AND (elevenlabs_enabled=true OR HELM_ELEVENLABS_TTS=1 OR voice_mode=elevenlabs)
 voice_enabled_default: false
-voice_mode: elevenlabs
-# Founder authorized paid TTS for ElevenLabs (key lives in gitignored .env only)
-paid_providers_allowed: true
-elevenlabs_enabled: true
+voice_mode: local_tts
+# Repo default is fail-closed. Enable paid TTS via gitignored env:
+#   HELM_VOICE_PAID_PROVIDERS=1
+#   HELM_ELEVENLABS_TTS=1
+#   ELEVENLABS_API_KEY=...
+#   (optional) HELM_VOICE_MODE=elevenlabs
+paid_providers_allowed: false
+elevenlabs_enabled: false
 elevenlabs_model_id: eleven_multilingual_v2
 speak_secrets: false
 require_operator_toggle: true
 max_events_per_hour: 30
 min_severity: INFO
-daily_budget_usd: 5
+daily_budget_usd: 0
 
 # Staleness: data older than this is labeled STALE, never LIVE
 freshness_budget_seconds: 300
