@@ -78,6 +78,8 @@ const QUICK = [
   ['repo_status','Repo (local git)'],
   ['deploy','Deploy (DOORSTEP test)'],
 ];
+const FACTORIES = ['HASF','HMF','HRF','HSF','HCF','HFF'];
+const ROLES = ['founder','ops','ciso','cfo','qa'];
 
 async function init(){
   HELMVoice.mount('#voice-mount');
@@ -92,6 +94,34 @@ async function init(){
       }catch(e){
         alert('UNKNOWN — '+e.message);
       }
+    };
+    q.appendChild(b);
+  });
+  FACTORIES.forEach(code=>{
+    const b=document.createElement('button');
+    b.textContent='Factory '+code;
+    b.onclick=async()=>{
+      try{
+        const s=HELMVoice.getState();
+        const d=await fetch('/api/v1/helm/voice/factory/'+code,{cache:'no-store'}).then(r=>r.json());
+        if(s.enabled&&!s.muted&&d.speech_text) HELMVoice.speak(d.speech_text);
+        const out=document.querySelector('#hv-out');
+        if(out) out.textContent=(d.status||'')+'\n'+(d.speech_text||'');
+      }catch(e){ alert('UNKNOWN — '+e.message); }
+    };
+    q.appendChild(b);
+  });
+  ROLES.forEach(role=>{
+    const b=document.createElement('button');
+    b.textContent='Role '+role;
+    b.onclick=async()=>{
+      try{
+        const s=HELMVoice.getState();
+        const d=await fetch('/api/v1/helm/voice/role/'+role,{cache:'no-store'}).then(r=>r.json());
+        if(s.enabled&&!s.muted&&d.speech_text) HELMVoice.speak(d.speech_text);
+        const out=document.querySelector('#hv-out');
+        if(out) out.textContent=(d.status||'')+' · '+role+'\n'+(d.speech_text||'');
+      }catch(e){ alert('UNKNOWN — '+e.message); }
     };
     q.appendChild(b);
   });

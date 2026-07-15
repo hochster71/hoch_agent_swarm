@@ -194,3 +194,57 @@ def test_brief_includes_goal_and_repo_labels():
     assert "repo" in brief["labels"]
     assert brief["labels"]["goal"] in ("LIVE", "STALE", "UNKNOWN")
     assert brief["labels"]["repo"] in ("LIVE", "STALE", "UNKNOWN")
+
+
+def test_factory_brief_hasf_registered():
+    from backend.voice.factory_agents import observe_factory
+
+    r = observe_factory("HASF")
+    assert r["code"] == "HASF"
+    assert r["registry"] == "REGISTERED"
+    assert r["status"] in ("LIVE", "STALE", "PARTIAL", "UNKNOWN")
+    assert "speech_text" in r
+    assert "gates" in (r.get("data") or {})
+
+
+def test_factory_brief_hsf_planned_not_live():
+    from backend.voice.factory_agents import observe_factory
+
+    r = observe_factory("HSF")
+    assert r["status"] == "PLANNED"
+    assert r["registry"] == "PLANNED"
+    assert "not invent" in (r.get("speech_text") or "").lower() or "PLANNED" in (
+        r.get("speech_text") or ""
+    )
+
+
+def test_role_briefs_all_known():
+    from backend.voice.role_agents import observe_role, list_roles
+
+    roles = {r["id"] for r in list_roles()}
+    assert roles == {"founder", "ops", "ciso", "cfo", "qa"}
+    for rid in roles:
+        r = observe_role(rid)
+        assert r["truth_class"] == "HELM_VOICE_ROLE"
+        assert r["role"] == rid
+        assert r.get("speech_text")
+        assert "doorstep" in r
+
+
+def test_role_unknown():
+    from backend.voice.role_agents import observe_role
+
+    r = observe_role("astronaut")
+    assert r["status"] == "UNKNOWN"
+
+
+def test_api_factory_and_role_routes():
+    import backend.helm_live_api as api
+
+    c = TestClient(api.app)
+    assert c.get("/api/v1/helm/voice/factories").status_code == 200
+    assert c.get("/api/v1/helm/voice/factory/HASF").status_code == 200
+    assert c.get("/api/v1/helm/voice/factory/HSF").json()["status"] == "PLANNED"
+    assert c.get("/api/v1/helm/voice/roles").status_code == 200
+    assert c.get("/api/v1/helm/voice/role/ciso").status_code == 200
+    assert c.get("/api/v1/helm/voice/role/cfo").json()["role"] == "cfo"

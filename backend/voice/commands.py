@@ -163,12 +163,42 @@ COMMAND_REGISTRY: Dict[str, Dict[str, Any]] = {
         "mode": "STAGE_ONLY",
         "description": "Stage a task route recommendation to a factory (does not execute)",
         "utterance_patterns": [
+            r"\broute\b.+\bto\b",
             r"route (this |the )?task to (?P<factory>.+)",
             r"send (this |the )?to (?P<factory>.+ factory)",
             r"launch (?P<factory>.+) (on|for) (?P<topic>.+)",
         ],
-        "priority": 2,
+        "priority": 1,
         "args": ["factory", "topic"],
+    },
+    "factory_brief": {
+        "id": "factory_brief",
+        "mode": "READ_ONLY",
+        "description": "Per-factory brief (HASF/HMF/HRF registered; HSF/HCF/HFF/HHF/HPF planned)",
+        "utterance_patterns": [
+            r"brief (me on )?(the )?(?P<factory>hasf|hmf|hrf|hsf|hcf|hff|hhf|hpf)\b",
+            r"\b(?P<factory>hasf|hmf|hrf|hsf|hcf|hff|hhf|hpf) (factory|status|brief)\b",
+            r"\b(?P<factory>software|music|research) factory\b",
+            r"^factory (?P<factory>hasf|hmf|hrf|hsf|hcf|hff|hhf|hpf)\b",
+        ],
+        "priority": 2,
+        "args": ["factory"],
+    },
+    "role_brief": {
+        "id": "role_brief",
+        "mode": "READ_ONLY",
+        "description": "Leadership role brief: founder, ops, ciso, cfo, qa",
+        "utterance_patterns": [
+            r"(?P<role>ciso|cfo) (officer|brief|status|lens)",
+            r"founder (brief|status|lens|executive)",
+            r"(?P<role>qa|ops) (brief|status|lens)",
+            r"security (officer|brief|status)",
+            r"finance (officer|brief|status)",
+            r"mission control",
+            r"final verifier",
+        ],
+        "priority": 2,
+        "args": ["role"],
     },
     "stage_mission": {
         "id": "stage_mission",
@@ -235,10 +265,11 @@ def resolve_command(
     if not text:
         return None, args
 
-    # Prefer DOORSTEP matches first so dangerous phrasing cannot be reclassified
+    # Prefer DOORSTEP, then STAGE_ONLY (mutations), then lower priority numbers
+    _mode_rank = {"DOORSTEP": 0, "STAGE_ONLY": 1, "READ_ONLY": 2}
     ordered = sorted(
         COMMAND_REGISTRY.values(),
-        key=lambda c: (0 if c["mode"] == "DOORSTEP" else 1, c.get("priority", 9)),
+        key=lambda c: (_mode_rank.get(c["mode"], 9), c.get("priority", 9)),
     )
     for cmd in ordered:
         for pat in cmd.get("utterance_patterns") or []:

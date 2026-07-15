@@ -124,6 +124,10 @@ def voice_tools_schema():
                 "brief": "/api/v1/helm/voice/brief",
                 "command": "/api/v1/helm/voice/command",
                 "sanitize": "/api/v1/helm/voice/sanitize",
+                "factory": "/api/v1/helm/voice/factory/{code}",
+                "factories": "/api/v1/helm/voice/factories",
+                "role": "/api/v1/helm/voice/role/{role}",
+                "roles": "/api/v1/helm/voice/roles",
             },
             "doctrine": [
                 "Call tools for LIVE claims; never invent metrics",
@@ -144,5 +148,59 @@ def voice_health():
             "subsystem": "voice_executive",
             "note": "Voice API is up. Swarm state requires /brief or /command.",
             "persona": get_policy_public().get("persona"),
+            "v1": {
+                "factory": "/api/v1/helm/voice/factory/{code}",
+                "factories": "/api/v1/helm/voice/factories",
+                "role": "/api/v1/helm/voice/role/{role}",
+                "roles": "/api/v1/helm/voice/roles",
+            },
         }
     )
+
+
+@router.get("/factories")
+def voice_factories_roster():
+    """Roster: registered factories (AVAILABLE) + planned (PLANNED, not LIVE)."""
+    from backend.voice.factory_agents import list_factory_voice_roster, observe_all_registered_factories
+
+    all_reg = observe_all_registered_factories()
+    return JSONResponse(
+        {
+            "truth_class": "HELM_VOICE_FACTORY_ROSTER",
+            "status": all_reg.get("status"),
+            "observed_at": all_reg.get("observed_at"),
+            "roster": list_factory_voice_roster(),
+            "registered_briefs": all_reg.get("factories"),
+            "speech_text": all_reg.get("speech_text"),
+        }
+    )
+
+
+@router.get("/factory/{code}")
+def voice_factory_brief(code: str):
+    """Per-factory voice brief. Registered = observe BRAIN; planned = PLANNED not LIVE."""
+    from backend.voice.factory_agents import observe_factory
+
+    return JSONResponse(observe_factory(code))
+
+
+@router.get("/roles")
+def voice_roles_list():
+    """Leadership role agents catalog."""
+    from backend.voice.role_agents import list_roles
+
+    return JSONResponse(
+        {
+            "truth_class": "HELM_VOICE_ROLES",
+            "status": "LIVE",
+            "roles": list_roles(),
+        }
+    )
+
+
+@router.get("/role/{role}")
+def voice_role_brief(role: str):
+    """Leadership role brief (founder, ops, ciso, cfo, qa)."""
+    from backend.voice.role_agents import observe_role
+
+    return JSONResponse(observe_role(role))

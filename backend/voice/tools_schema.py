@@ -103,4 +103,54 @@ def grok_voice_tools() -> List[Dict[str, Any]]:
                 "x_helm_http": {"method": "POST", "path": "/api/v1/helm/voice/sanitize"},
             },
         },
+        {
+            "type": "function",
+            "function": {
+                "name": "helm_factory_brief",
+                "description": (
+                    "Per-factory voice brief. Registered: HASF, HMF, HRF. "
+                    "Planned (not LIVE): HSF, HCF, HFF, HHF, HPF. Never invent metrics."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "string",
+                            "description": "Factory code e.g. HASF, HMF, HRF, HSF",
+                        }
+                    },
+                    "required": ["code"],
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {
+                    "method": "GET",
+                    "path": "/api/v1/helm/voice/factory/{code}",
+                },
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "helm_role_brief",
+                "description": (
+                    "Leadership role brief: founder, ops, ciso, cfo, qa. "
+                    "Role-specific lens over Runtime Truth; DOORSTEP never auto-executed."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "role": {
+                            "type": "string",
+                            "enum": ["founder", "ops", "ciso", "cfo", "qa"],
+                        }
+                    },
+                    "required": ["role"],
+                    "additionalProperties": False,
+                },
+                "x_helm_http": {
+                    "method": "GET",
+                    "path": "/api/v1/helm/voice/role/{role}",
+                },
+            },
+        },
     ]

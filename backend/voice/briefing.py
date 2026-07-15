@@ -863,6 +863,47 @@ def execute_voice_command(
             "labels": {"repo": rlabel, "github_remote": "UNKNOWN"},
             "data": rdata,
         }
+    elif cmd["id"] == "factory_brief":
+        from backend.voice.factory_agents import observe_factory
+
+        fac = str(
+            merged_args.get("factory")
+            or (utterance or "").strip()
+            or ""
+        )
+        body = observe_factory(fac)
+        # normalize to command body shape
+        body = {
+            "status": body.get("status"),
+            "speech_text": body.get("speech_text"),
+            "labels": body.get("labels") or {},
+            "data": body,
+        }
+    elif cmd["id"] == "role_brief":
+        from backend.voice.role_agents import observe_role
+
+        role = str(merged_args.get("role") or "")
+        utt = (utterance or "").lower()
+        if not role:
+            if "ciso" in utt or "security" in utt:
+                role = "ciso"
+            elif "cfo" in utt or "finance" in utt:
+                role = "cfo"
+            elif "qa" in utt or "verifier" in utt:
+                role = "qa"
+            elif "mission control" in utt or "ops" in utt:
+                role = "ops"
+            elif "founder" in utt:
+                role = "founder"
+            else:
+                role = "founder"
+        rb = observe_role(role)
+        body = {
+            "status": rb.get("status"),
+            "speech_text": rb.get("speech_text"),
+            "labels": rb.get("labels") or {},
+            "data": rb,
+        }
     elif cmd["id"] == "security_posture":
         sec = src.get("security")
         if isinstance(sec, dict) and sec.get("state") == UNKNOWN:
