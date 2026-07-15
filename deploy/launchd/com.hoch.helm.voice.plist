@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  HELM LIVE + Voice Executive (port 8770)
+  Loads gitignored .env / .env.elevenlabs via run_helm_live_foreground.sh
+  Install:
+    cp deploy/launchd/com.hoch.helm.voice.plist ~/Library/LaunchAgents/
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.hoch.helm.voice.plist
+    launchctl kickstart -k gui/$(id -u)/com.hoch.helm.voice
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.hoch.helm.voice</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/michaelhoch/hoch_agent_swarm/scripts/run_helm_live_foreground.sh</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/michaelhoch/hoch_agent_swarm</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>StandardOutPath</key>
+  <string>/Users/michaelhoch/hoch_agent_swarm/logs/helm_live_voice.launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/michaelhoch/hoch_agent_swarm/logs/helm_live_voice.launchd.err.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm/.venv/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>HELM_VOICE_PORT</key>
+    <string>8770</string>
+  </dict>
+</dict>
+</plist>

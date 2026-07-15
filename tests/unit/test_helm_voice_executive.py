@@ -362,6 +362,9 @@ def test_api_factory_and_role_routes():
     tts = c.get("/api/v1/helm/voice/tts/status")
     assert tts.status_code == 200
     assert "elevenlabs" in tts.json().get("providers", {})
+    origins = c.get("/api/v1/helm/voice/origins")
+    assert origins.status_code == 200
+    assert "urls" in origins.json()
     # Without key/policy, speak is blocked (503)
     sp = c.post(
         "/api/v1/helm/voice/tts/speak",

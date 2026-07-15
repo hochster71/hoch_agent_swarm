@@ -255,6 +255,43 @@ class TtsSpeakRequest(BaseModel):
     )
 
 
+@router.get("/origins")
+def voice_origins():
+    """Known HELM origins for phone / Grok binding (observed config, not invented reachability)."""
+    import os
+    import socket
+
+    host = socket.gethostname()
+    tail = os.environ.get("HELM_TAILNET_ORIGIN") or "https://michaels-macbook-pro.tail826763.ts.net"
+    local = os.environ.get("HELM_LOCAL_ORIGIN") or "http://127.0.0.1:8770"
+    return JSONResponse(
+        {
+            "truth_class": "HELM_VOICE_ORIGINS",
+            "status": "LIVE",
+            "hostname": host,
+            "origins": {
+                "local": local,
+                "tailnet": tail,
+                "voice_path": "/voice",
+                "founder_path": "/founder",
+                "console_path": "/console",
+            },
+            "urls": {
+                "local_voice": f"{local}/voice",
+                "tailnet_voice": f"{tail}/voice",
+                "local_health": f"{local}/api/v1/helm/voice/health",
+                "tailnet_health": f"{tail}/api/v1/helm/voice/health",
+                "grok_pack_tailnet": f"{tail}/api/v1/helm/voice/grok-pack?base_url={tail}&format=md",
+                "grok_pack_local": f"{local}/api/v1/helm/voice/grok-pack?base_url={local}&format=md",
+            },
+            "note": (
+                "tailnet URL requires Tailscale serve → 8770 and Mac online. "
+                "Grok cloud may not reach Tailscale unless network path exists."
+            ),
+        }
+    )
+
+
 @router.get("/tts/status")
 def voice_tts_status():
     """TTS provider status: local_tts always available; ElevenLabs fail-closed until configured."""

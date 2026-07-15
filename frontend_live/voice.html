@@ -2,37 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="HELM Voice"/>
+<meta name="theme-color" content="#0b0e13"/>
 <title>HELM — Voice Executive</title>
 <style>
 :root{--bg:#0b0e13;--card:#141922;--line:#232b38;--tx:#e6edf3;--dim:#8b98a9;
 --live:#2ea043;--stale:#d29922;--unknown:#8b949e;--bad:#f85149;--accent:#58a6ff}
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--tx);
-font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;padding:20px}
+font:15px/1.5 -apple-system,system-ui,ui-monospace,Menlo,monospace;
+padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom))}
 .wrap{max-width:900px;margin:0 auto}
 h1{font-size:15px;letter-spacing:.14em;margin:0 0 4px}
-.sub{color:var(--dim);font-size:11px;margin-bottom:16px}
+.sub{color:var(--dim);font-size:12px;margin-bottom:14px}
 .grid{display:grid;gap:12px;grid-template-columns:1fr}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
-.row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
 .cmds{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-button{cursor:pointer;padding:6px 12px;border-radius:6px;border:1px solid #30363d;
-background:#21262d;color:inherit;font:inherit;font-size:12px}
+button{cursor:pointer;padding:10px 14px;border-radius:10px;border:1px solid #30363d;
+background:#21262d;color:inherit;font:inherit;font-size:13px;min-height:44px}
 button:hover{border-color:var(--accent)}
 a{color:var(--accent);text-decoration:none}
-.note{font-size:11px;color:var(--dim);border-left:2px solid #5a4520;padding-left:10px;margin-top:12px}
-#cmd-list{font-size:11px;color:var(--dim);max-height:180px;overflow:auto}
-.pill{padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.note{font-size:12px;color:var(--dim);border-left:2px solid #5a4520;padding-left:10px;margin-top:12px}
+#cmd-list{font-size:12px;color:var(--dim);max-height:180px;overflow:auto}
+.pill{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
 .LIVE{background:rgba(46,160,67,.16);color:var(--live)}
 .UNKNOWN{background:rgba(139,148,158,.16);color:var(--unknown)}
 .DOORSTEP{background:rgba(248,81,73,.16);color:var(--bad)}
+#phone-urls{font-size:12px;color:var(--dim);word-break:break-all;margin-top:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>HELM · VOICE EXECUTIVE</h1>
-  <div class="sub">Mission Commander interface · Runtime Truth only · no fake green</div>
+  <div class="sub">Mission Commander · Runtime Truth · ElevenLabs when READY · no fake green</div>
+
+  <div class="card" id="origins-card">
+    <div class="row">
+      <strong style="font-size:11px;letter-spacing:.1em;color:var(--dim)">ORIGINS</strong>
+      <span class="pill UNKNOWN" id="origin-pill">…</span>
+    </div>
+    <div id="phone-urls">loading…</div>
+  </div>
 
   <div class="card" id="voice-mount"></div>
 
@@ -84,6 +98,19 @@ const FACTORIES = ['HASF','HMF','HRF','HSF','HCF','HFF'];
 const ROLES = ['founder','ops','ciso','cfo','qa'];
 
 async function init(){
+  try{
+    const o=await (await fetch('/api/v1/helm/voice/origins',{cache:'no-store'})).json();
+    const u=o.urls||{};
+    document.getElementById('origin-pill').textContent='LIVE';
+    document.getElementById('origin-pill').className='pill LIVE';
+    document.getElementById('phone-urls').innerHTML =
+      `<div><b>Phone (Tailscale)</b><br><a href="${u.tailnet_voice||'#'}">${u.tailnet_voice||'—'}</a></div>`
+      + `<div style="margin-top:8px"><b>Local</b><br><a href="${u.local_voice||'/voice'}">${u.local_voice||'/voice'}</a></div>`
+      + `<div style="margin-top:8px"><b>Grok pack</b><br><a href="${u.grok_pack_tailnet||'#'}">download MD (tailnet base)</a></div>`;
+  }catch(e){
+    document.getElementById('origin-pill').textContent='UNKNOWN';
+    document.getElementById('phone-urls').textContent='origins unreachable';
+  }
   HELMVoice.mount('#voice-mount');
   const q = document.getElementById('quick');
   QUICK.forEach(([id,label])=>{
