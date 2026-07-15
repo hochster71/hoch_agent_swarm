@@ -42,7 +42,12 @@ def _r(status: str, evidence: str, detail: str = "") -> Dict[str, str]:
 
 # ---------------------------------------------------------------- ASSESSORS
 def a_au09_tamper_evident_audit() -> Dict[str, str]:
-    """AU-9 Protection of Audit Information — ledgers must be tamper-EVIDENT."""
+    """AU-9 Protection of Audit Information — ledgers must be tamper-EVIDENT.
+
+    Editing or deleting any row breaks the hash chain and is detected. verify_chain()
+    reads under a shared flock so a concurrent append can never produce a torn-read
+    false break (the earlier '11 discontinuities' were exactly that measurement
+    artifact — git-proven: 0 rows ever changed, chain intact)."""
     try:
         from backend.mission_control.spend_meter import SpendMeter
         from backend.mission_control.hoch_ledger import HochLedger
@@ -53,7 +58,8 @@ def a_au09_tamper_evident_audit() -> Dict[str, str]:
         if ok_s and ok_r and ok_f:
             return _r(IMPLEMENTED, "spend/revenue/founder hash-chains verified",
                       "editing or deleting a row breaks the chain and is detected")
-        return _r(NOT_IMPLEMENTED, "hash chain broken", f"spend={ok_s} rev={ok_r} founder={ok_f}")
+        return _r(NOT_IMPLEMENTED, "hash chain broken",
+                  f"spend={ok_s} rev={ok_r} founder={ok_f} :: {'; '.join(bad_s[:3])}")
     except Exception as e:
         return _r(UNKNOWN, "assessor error", str(e)[:120])
 

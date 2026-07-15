@@ -105,9 +105,30 @@ class _Chain:
                 fcntl.flock(_lock.fileno(), fcntl.LOCK_UN)
         return body
 
+    def _entries_consistent(self) -> List[dict]:
+        """Read under a SHARED flock so a concurrent append (holding the EXCLUSIVE
+        flock) cannot cause a torn-read false break. Not called inside append()."""
+        if not self.path.exists():
+            return []
+        lock_path = self.path.with_suffix(self.path.suffix + ".wlock")
+        with open(lock_path, "a") as _lock:
+            fcntl.flock(_lock.fileno(), fcntl.LOCK_SH)
+            try:
+                text = self.path.read_text()
+            finally:
+                fcntl.flock(_lock.fileno(), fcntl.LOCK_UN)
+        out = []
+        for line in text.splitlines():
+            if line.strip():
+                try:
+                    out.append(json.loads(line))
+                except Exception:
+                    continue
+        return out
+
     def verify(self) -> tuple[bool, List[str]]:
         prev, bad = "GENESIS", []
-        for i, e in enumerate(self.entries()):
+        for i, e in enumerate(self._entries_consistent()):
             if e.get("prev_hash") != prev:
                 bad.append(f"row {i}: prev_hash mismatch")
             body = {k: v for k, v in e.items() if k != "entry_hash"}

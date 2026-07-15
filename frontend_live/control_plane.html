@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#08090c"/>
+<title>HELM · CONTROL PLANE</title>
+<style>
+:root{
+  --bg:#08090c; --panel:#0d0e13; --panel2:#111319; --line:#1b1e26; --line2:#282d38;
+  --ink:#dbe0e6; --dim:#79818d; --dim2:#565d69;
+  --amber:#f5b942; --amber2:#c8901f; --green:#43b581; --greendim:#12241b;
+  --red:#e5484d; --reddim:#2a1416; --grey:#464d5b; --violet:#a371f7; --sky:#6fb3ff;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:
+  radial-gradient(120% 60% at 50% -10%, #101319 0%, transparent 55%), var(--bg);
+  color:var(--ink);font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace;
+  -webkit-font-smoothing:antialiased;padding-bottom:40px}
+a{color:inherit}
+header{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);
+  background:linear-gradient(180deg,rgba(8,9,12,.94),rgba(8,9,12,.66));
+  border-bottom:1px solid var(--line);padding:12px 20px;display:flex;
+  justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+h1{font-size:13px;letter-spacing:.34em;font-weight:700}
+h1 .g{color:var(--amber);text-shadow:0 0 16px rgba(245,185,66,.5)}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav a{text-decoration:none;color:var(--dim);border:1px solid var(--line2);padding:4px 9px;
+  border-radius:7px;font-size:10px;letter-spacing:.1em}
+.nav a.self{color:var(--amber);border-color:#3a2f18}
+main{max-width:1300px;margin:0 auto;padding:18px 20px}
+.section{font-size:11px;letter-spacing:.18em;color:var(--dim2);text-transform:uppercase;
+  margin:26px 2px 12px;display:flex;align-items:center;gap:10px}
+.section::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.fresh{font-size:9.5px;color:var(--dim2);letter-spacing:.06em}
+.err{color:var(--red)}
+
+/* overview strip */
+.overview{display:flex;gap:12px;flex-wrap:wrap}
+.ocard{flex:1;min-width:150px;border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel)}
+.ocard .ot{font-size:9.5px;letter-spacing:.12em;color:var(--dim2);text-transform:uppercase}
+.ocard .ov{font-size:24px;font-weight:800;margin-top:7px}
+.ov.good{color:var(--green)} .ov.warn{color:var(--amber)} .ov.bad{color:var(--red)} .ov.unk{color:var(--dim2)}
+
+/* console tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.tile{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+.tile .th{padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel2);
+  display:flex;justify-content:space-between;align-items:center}
+.tile .tn{font-size:12px;font-weight:800;letter-spacing:.06em}
+.tile .tr{font-size:9.5px;color:var(--dim2);margin-top:3px}
+.tile .td{padding:11px 14px;font-size:10.5px;color:var(--dim);line-height:1.5}
+.tile .tb{display:flex;gap:8px;padding:0 14px 12px}
+.btn{flex:1;text-align:center;text-decoration:none;font-size:10px;letter-spacing:.08em;
+  padding:7px 8px;border-radius:7px;border:1px solid var(--line2);color:var(--dim);cursor:pointer;
+  background:var(--panel2)}
+.btn.primary{color:var(--amber);border-color:#3a2f18}
+.btn.active{color:#1e1706;background:var(--amber);border-color:var(--amber)}
+.linkstate{font-size:9px;font-weight:800;letter-spacing:.06em;padding:2px 6px;border-radius:5px;
+  white-space:nowrap;color:var(--dim);background:#161922}
+.linkstate.up{color:#0c1e15;background:var(--green)}
+.linkstate.down{color:#fff;background:var(--red)}
+.linkstate.unk{color:var(--dim2);background:#161922}
+
+/* embed */
+.embedwrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);
+  display:none}
+.embedwrap.show{display:block}
+.embedbar{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;
+  border-bottom:1px solid var(--line);background:var(--panel2);font-size:10px;color:var(--dim);
+  letter-spacing:.08em}
+.embedbar .close{cursor:pointer;color:var(--dim2)}
+iframe{width:100%;height:72vh;border:0;display:block;background:#050506}
+
+/* health board */
+.hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.hcard{border:1px solid var(--line);border-radius:10px;padding:11px;background:var(--panel)}
+.hcard .ht{font-size:9px;letter-spacing:.1em;color:var(--dim2);text-transform:uppercase}
+.hcard .hv{font-size:19px;font-weight:800;margin-top:5px}
+.tblwrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+table{width:100%;border-collapse:collapse;font-size:10.5px}
+thead th{position:sticky;top:0;background:#0b0c10;color:var(--dim);text-align:left;font-weight:600;
+  letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid var(--line);font-size:9px;
+  text-transform:uppercase}
+tbody td{padding:7px 12px;border-bottom:1px solid #14161c;color:#aeb6c0;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:340px}
+tbody tr:hover{background:#0f1116}
+.badge{font-size:8.5px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:5px;
+  white-space:nowrap;color:var(--dim);background:#161922}
+.badge.CONFIRMED_LIVE{color:#0c1e15;background:var(--green)}
+.badge.DOWN{color:#fff;background:var(--red)}
+.badge.UNKNOWN{color:#1e1706;background:var(--amber)}
+.mono{font-variant-numeric:tabular-nums}
+.dim{color:var(--dim2)}
+
+/* cross-link strip */
+.xlink{display:flex;flex-wrap:wrap;gap:8px}
+.xchip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;
+  padding:8px 12px;background:var(--panel);font-size:10.5px}
+.xchip .xr{color:var(--ink);font-weight:600}
+.xchip .xt{color:var(--dim2);font-size:9px}
+
+@media(max-width:700px){ .nav{display:none} }
+</style>
+</head>
+<body>
+<header>
+  <h1>HELM <span class="g">CONTROL PLANE</span></h1>
+  <div class="nav">
+    <a class="self" href="/control">⬡ CONTROL</a>
+    <a href="/roadmap">◎ ROADMAP</a><a href="/command">◈ COMMAND</a>
+    <a href="/jspace">◱ J-SPACE</a><a href="/brain">◇ BRAIN</a><a href="/founder">⬢ FOUNDER</a>
+  </div>
+</header>
+<main>
+  <div class="section">System overview <span class="fresh" id="ov_fresh"></span></div>
+  <div class="overview" id="overview">
+    <div class="ocard"><div class="ot">Services confirmed live</div><div class="ov unk" id="ov_live">—</div></div>
+    <div class="ocard"><div class="ot">Services down</div><div class="ov unk" id="ov_down">—</div></div>
+    <div class="ocard"><div class="ot">Services unknown</div><div class="ov unk" id="ov_unk">—</div></div>
+    <div class="ocard"><div class="ot">Consoles reachable</div><div class="ov unk" id="ov_links">—</div></div>
+  </div>
+
+  <div class="section">Consoles</div>
+  <div class="tiles" id="tiles"></div>
+  <div class="embedwrap" id="embedwrap">
+    <div class="embedbar"><span id="embedlabel">—</span><span class="close" id="embedclose">✕ close</span></div>
+    <iframe id="embedframe" src="about:blank"></iframe>
+  </div>
+
+  <div class="section">Live connectivity / health board · /api/v1/helm/health
+    <span class="fresh" id="health_fresh"></span></div>
+  <div class="hgrid">
+    <div class="hcard"><div class="ht">Total tracked</div><div class="hv" id="h_total">—</div></div>
+    <div class="hcard"><div class="ht">Confirmed live</div><div class="hv" id="h_live" style="color:var(--green)">—</div></div>
+    <div class="hcard"><div class="ht">Down</div><div class="hv" id="h_down" style="color:var(--red)">—</div></div>
+    <div class="hcard"><div class="ht">Unknown</div><div class="hv" id="h_unk" style="color:var(--amber)">—</div></div>
+    <div class="hcard"><div class="ht">lsof discovery</div><div class="hv" id="h_lsof" style="font-size:13px">—</div></div>
+  </div>
+  <div class="tblwrap">
+    <table>
+      <thead><tr>
+        <th>Port</th><th>Service</th><th>Description</th><th>Process</th>
+        <th>State</th><th>HTTP</th><th>Source</th><th>Detail</th>
+      </tr></thead>
+      <tbody id="health_rows"><tr><td colspan="8" class="dim">binding to health registry…</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section">Cross-link integrity strip · every console route fetched live
+    <span class="fresh" id="xlink_fresh"></span></div>
+  <div class="xlink" id="xlink"></div>
+</main>
+
+<script>
+const API='';
+const esc=s=>String(s==null?'':s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+const rel=s=>{ if(s==null)return 'UNKNOWN'; const m=Math.round(s/60); return m<1?'just now':m<90?m+'m ago':Math.round(m/60)+'h ago'; };
+
+const CONSOLES=[
+  {id:'roadmap', name:'ROADMAP', route:'/roadmap', desc:'Live path to GOAL HELM — soak A→B→C, requirement registry.'},
+  {id:'command', name:'COMMAND', route:'/command', desc:'Cinematic wall + flow charts + evidence chain + controls.'},
+  {id:'jspace', name:'J-SPACE', route:'/jspace', desc:'HJOS operational console — agent network map, AU-9 hash table.'},
+  {id:'brain', name:'BRAIN', route:'/brain', desc:'Cinematic animated neural view of the HJOS observers.'},
+  {id:'founder', name:'FOUNDER', route:'/founder', desc:'iPhone founder cockpit — live HELM state + approval gate.'},
+];
+
+function renderTiles(){
+  document.getElementById('tiles').innerHTML = CONSOLES.map(c=>`
+    <div class="tile" id="tile_${c.id}">
+      <div class="th"><div><div class="tn">${c.name}</div><div class="tr">${c.route}</div></div>
+        <span class="linkstate unk" id="ls_${c.id}">…</span></div>
+      <div class="td">${esc(c.desc)}</div>
+      <div class="tb">
+        <a class="btn primary" href="${c.route}" target="_blank" rel="noopener">open ↗</a>
+        <span class="btn" id="embedbtn_${c.id}" onclick="embed('${c.id}')">embed</span>
+      </div>
+    </div>`).join('');
+}
+renderTiles();
+
+function embed(id){
+  const c=CONSOLES.find(x=>x.id===id); if(!c) return;
+  document.querySelectorAll('[id^="embedbtn_"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('embedbtn_'+id).classList.add('active');
+  document.getElementById('embedlabel').textContent = c.name+' · '+c.route;
+  document.getElementById('embedframe').src = c.route;
+  document.getElementById('embedwrap').classList.add('show');
+  document.getElementById('embedwrap').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+document.getElementById('embedclose').onclick=()=>{
+  document.getElementById('embedwrap').classList.remove('show');
+  document.getElementById('embedframe').src='about:blank';
+  document.querySelectorAll('[id^="embedbtn_"]').forEach(b=>b.classList.remove('active'));
+};
+
+// ---------- live health board ----------
+async function pullHealth(){
+  let d;
+  try{ d=await (await fetch(API+'/api/v1/helm/health',{cache:'no-store'})).json(); }
+  catch(e){
+    document.getElementById('health_rows').innerHTML =
+      '<tr><td colspan="8" class="err">health registry unreachable — UNKNOWN, not last-known-good</td></tr>';
+    ['h_total','h_live','h_down','h_unk','h_lsof'].forEach(id=>document.getElementById(id).textContent='UNKNOWN');
+    ['ov_live','ov_down','ov_unk'].forEach(id=>{const e=document.getElementById(id); e.textContent='UNKNOWN'; e.className='ov unk';});
+    return;
+  }
+  const x=d.data||d;
+  const svc=x.services||[];
+  const sum=x.summary||{};
+  document.getElementById('health_fresh').textContent =
+    'observed ' + rel(d.freshness_seconds) + (d.tested_commit && d.tested_commit!=='UNKNOWN' ? ' · '+d.tested_commit.slice(0,8) : '');
+  document.getElementById('h_total').textContent = sum.total ?? svc.length ?? 'UNKNOWN';
+  document.getElementById('h_live').textContent = sum.confirmed_live ?? 'UNKNOWN';
+  document.getElementById('h_down').textContent = sum.down ?? 'UNKNOWN';
+  document.getElementById('h_unk').textContent = sum.unknown ?? 'UNKNOWN';
+  document.getElementById('h_lsof').textContent = x.lsof_available ? 'AVAILABLE' : ('UNAVAILABLE'+(x.lsof_error?(' — '+x.lsof_error):''));
+  document.getElementById('h_lsof').style.color = x.lsof_available ? 'var(--green)' : 'var(--amber)';
+
+  document.getElementById('ov_fresh').textContent = 'last probe ' + rel(d.freshness_seconds);
+  const setOv=(id,val,cls)=>{ const e=document.getElementById(id); e.textContent=val; e.className='ov '+cls; };
+  setOv('ov_live', sum.confirmed_live ?? 'UNKNOWN', sum.confirmed_live ? 'good' : 'unk');
+  setOv('ov_down', sum.down ?? 'UNKNOWN', (sum.down||0) > 0 ? 'bad' : 'good');
+  setOv('ov_unk', sum.unknown ?? 'UNKNOWN', (sum.unknown||0) > 0 ? 'warn' : 'good');
+
+  document.getElementById('health_rows').innerHTML = svc.length ? svc.map(s=>`
+    <tr>
+      <td class="mono">${esc(s.port)}</td>
+      <td>${esc(s.name)}${s.curated===false?' <span class="badge">UNDOCUMENTED</span>':''}</td>
+      <td>${esc(s.description)}</td>
+      <td class="dim">${esc(s.process||'—')}</td>
+      <td><span class="badge ${esc(s.state)}">${esc(s.state)}</span></td>
+      <td class="mono">${s.http_status!=null?esc(s.http_status):'—'}</td>
+      <td class="dim">${s.discovered_via_lsof?'lsof+probe':'probe only'}</td>
+      <td class="dim">${esc(s.detail||'')}</td>
+    </tr>`).join('') : '<tr><td colspan="8" class="dim">no services returned</td></tr>';
+}
+
+// ---------- cross-link integrity strip ----------
+async function checkLink(route){
+  const t0=performance.now();
+  try{
+    const r=await fetch(API+route,{cache:'no-store'});
+    const ms=Math.round(performance.now()-t0);
+    return {route, ok:r.ok, status:r.status, ms};
+  }catch(e){
+    return {route, ok:false, status:null, ms:null, error:String(e && e.message || e)};
+  }
+}
+async function pullXlinks(){
+  const routes = CONSOLES.map(c=>({id:c.id, name:c.name, route:c.route}))
+    .concat([{id:'control', name:'CONTROL (self)', route:'/control'},
+             {id:'health_api', name:'HEALTH API', route:'/api/v1/helm/health'}]);
+  const results = await Promise.all(routes.map(r=>checkLink(r.route)));
+  let upCount=0;
+  document.getElementById('xlink').innerHTML = routes.map((r,i)=>{
+    const res=results[i];
+    const up = res.ok && res.status===200;
+    if(up) upCount++;
+    const cls = res.status==null ? 'unk' : up ? 'up' : 'down';
+    const label = res.status==null ? 'UNREACHABLE' : (up ? '200 OK' : (res.status+' !200'));
+    // reflect into console tile badges too
+    const ls=document.getElementById('ls_'+r.id);
+    if(ls){ ls.textContent = res.status==null?'DOWN':res.status; ls.className='linkstate '+(up?'up':(res.status==null?'down':'down')); }
+    return `<div class="xchip"><span class="xr">${esc(r.name)}</span>
+      <span class="linkstate ${cls}">${esc(label)}</span>
+      <span class="xt">${esc(r.route)}${res.ms!=null?(' · '+res.ms+'ms'):''}</span></div>`;
+  }).join('');
+  document.getElementById('xlink_fresh').textContent = 'checked ' + new Date().toLocaleTimeString();
+  document.getElementById('ov_links').textContent = upCount + '/' + routes.length;
+  const ovl=document.getElementById('ov_links');
+  ovl.className = 'ov ' + (upCount===routes.length ? 'good' : upCount===0 ? 'bad' : 'warn');
+}
+
+function tick(){ pullHealth(); }
+function slowTick(){ pullXlinks(); }
+tick(); slowTick();
+setInterval(tick, 6000);
+setInterval(slowTick, 15000);
+</script>
+</body>
+</html>

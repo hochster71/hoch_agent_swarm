@@ -1,0 +1,99 @@
+{
+  "schema": "spend_ledger_discontinuities_v2_CORRECTED",
+  "generated_at": "2026-07-15T17:55:05.306766+00:00",
+  "ledger": "coordination/council/spend_ledger.jsonl",
+  "verdict": "NO_REAL_BREAKS \u2014 the v1 '11 discontinuities' were a TORN-READ measurement artifact.",
+  "evidence": [
+    "git: 0 lines removed/changed vs HEAD, only appends (history never rewritten)",
+    "committed HEAD ledger verifies with 0 link-breaks",
+    "first N rows byte-identical HEAD vs working tree",
+    "settled file verify_chain(): ok=True, 0 breaks, 0 tampering across all rows",
+    "v1 capture showed out-of-order timestamps (rows 9345/9346) \u2014 signature of reading a file mid-concurrent-append"
+  ],
+  "real_bug_found_and_fixed": "verify_chain()/entries() read without a lock, so a read racing a concurrent append could tear and report a FALSE break (score flapping). FIX: reads now take a SHARED flock; appends hold an EXCLUSIVE flock. Regression: tests/test_au9_torn_read_safety.py + tests/test_spend_ledger_concurrency.py.",
+  "tamper_evidence": {
+    "hash_mismatches": 0,
+    "note": "0 edits/forgeries \u2014 tamper-evidence holds."
+  },
+  "link_discontinuities": 0,
+  "supersedes": "v1 (11 phantom breaks); v1 breaks list retained below for the record",
+  "v1_retained_for_record": [
+    {
+      "row_index": 3904,
+      "ts": "2026-07-14T14:27:27.032156+00:00",
+      "stored_prev_hash": "ba37959cddc1516df556208407a74ffb6d036f3fbb0d11713ede6937e24faded",
+      "expected_prev_hash": "a7eba3ed9671fabfdc8f3d05f22f0988e56e887e959159f08df638d2399c626a",
+      "entry_hash": "bf60c49b9e87c6aaec5ddc4218c4adb109a1b03fb8004faec7fd519e407952e6"
+    },
+    {
+      "row_index": 4037,
+      "ts": "2026-07-14T14:54:56.108279+00:00",
+      "stored_prev_hash": "c7c83632bbc92401adc6ce6b5564e0c62aa127724befefacbc61bab0df3771df",
+      "expected_prev_hash": "256e4314cd7f4dfc5ebe1baa1fd453e6161cd54c3f12d1a80e2f853f656ee366",
+      "entry_hash": "8ca012e9f0d3adbb90df0759d564084082c52641f83d4e450eaff8271e091dcb"
+    },
+    {
+      "row_index": 4055,
+      "ts": "2026-07-14T14:55:40.234625+00:00",
+      "stored_prev_hash": "970e8c1c91cdd604de6066a2ca27521ccff186f560dabc1408f1d10a17960831",
+      "expected_prev_hash": "509f901687bd743c0208d83b0bb5fec29321ae8311e36eedc580c547c02ad378",
+      "entry_hash": "886c39cd6a26c8e8cade47f8eb56ec97312eab2cd864f79a95601238320dabc6"
+    },
+    {
+      "row_index": 4060,
+      "ts": "2026-07-14T14:55:53.452520+00:00",
+      "stored_prev_hash": "230703aa762ca3e55512712042ea96ef45d49ffdb66e69b05d8b7ad5adf6de96",
+      "expected_prev_hash": "75f057db29a8f36918ebe3c9a20d245286a676f8c711e616f2b32abd891bd6ec",
+      "entry_hash": "4f070969bc38421f1e923767abf8283aeefb1d0622235865231c88a67c35dc37"
+    },
+    {
+      "row_index": 4067,
+      "ts": "2026-07-14T14:56:10.524590+00:00",
+      "stored_prev_hash": "d748c9cfbe3682283505664b0c57fdd182e08ab3d5d1754b517697bd1784425b",
+      "expected_prev_hash": "edcd333a1bd556bc94cb9abe24623923326b2cd733003fd49c6cfb22ada378d9",
+      "entry_hash": "e28457188acdd4751de8b13cdb87be4a47f21e73e0ea1a4e14dbccf4d90afc2c"
+    },
+    {
+      "row_index": 4070,
+      "ts": "2026-07-14T14:56:15.683267+00:00",
+      "stored_prev_hash": "0a0c85aa64814b75de9f1ae01194f1686466c9dfcaab8840581b341fabb96821",
+      "expected_prev_hash": "e09d434c193b9dd7ec2a7f6cf089afecc0ec45f565a1acc839ff85d17baf5b1a",
+      "entry_hash": "12c1df45f06ff00d5a272dab8cc7e30c64cd425164e0e62fab7c958aee78a8df"
+    },
+    {
+      "row_index": 4529,
+      "ts": "2026-07-14T16:14:47.915009+00:00",
+      "stored_prev_hash": "63e45bebf9685d35ae226e197c4c0e3c9fc4ea249236d2cde86ecb2e91d13ab0",
+      "expected_prev_hash": "a2c22995cb49f53669451af775be73e8dce401f4c0e5f7a54c3e67209ccdc618",
+      "entry_hash": "c8064b5b0d5802ec2926981b4830248a52179e730d1933483c161fc64441039d"
+    },
+    {
+      "row_index": 9345,
+      "ts": "2026-07-15T15:43:08.514531+00:00",
+      "stored_prev_hash": "b445d0c9622cbb48bd9f50ebdfe20ffdb1139f6be7d4ad40e9c490e95d2906c8",
+      "expected_prev_hash": "c201bb7c7a8a6a4b6a923425345e42d3c59e6a09a4a0bdf6a9ae2118956a6c4f",
+      "entry_hash": "87429d40f0087bfc45a14a2503a8278459a0af9453587ac56ba9189bcf49b0cc"
+    },
+    {
+      "row_index": 9346,
+      "ts": "2026-07-15T15:43:08.483511+00:00",
+      "stored_prev_hash": "b445d0c9622cbb48bd9f50ebdfe20ffdb1139f6be7d4ad40e9c490e95d2906c8",
+      "expected_prev_hash": "87429d40f0087bfc45a14a2503a8278459a0af9453587ac56ba9189bcf49b0cc",
+      "entry_hash": "bc4ce09bdcf44e8b6d4622728e83ed640317bec6c56a8445c616274a5800b27a"
+    },
+    {
+      "row_index": 9349,
+      "ts": "2026-07-15T15:43:14.339535+00:00",
+      "stored_prev_hash": "806c9ad4daee61c59512123f88822a8f0f2c835961d102af66252b6c7514c23e",
+      "expected_prev_hash": "3e9888c9dd6b1e85b908b8f29c9211329841b19d3e8a19b5997d658039982ac3",
+      "entry_hash": "f730aedc1a192e3a01e2a720d3c1074cb6df216f219aa6801d1d80c87effb043"
+    },
+    {
+      "row_index": 9351,
+      "ts": "2026-07-15T15:43:14.376574+00:00",
+      "stored_prev_hash": "f730aedc1a192e3a01e2a720d3c1074cb6df216f219aa6801d1d80c87effb043",
+      "expected_prev_hash": "2c90cdb8ede58bfbbcc718b0bbb9649b16e415c88e723010199163450e55f0a5",
+      "entry_hash": "ea4cecea63334041c9731a4cffc499e307aa8d92e1fec568e88fe05c7aa525ad"
+    }
+  ]
+}

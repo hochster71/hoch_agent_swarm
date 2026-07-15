@@ -121,11 +121,36 @@ class SpendMeter:
                 fcntl.flock(_lock.fileno(), fcntl.LOCK_UN)
         return body
 
+    def _entries_consistent(self) -> list:
+        """Read the whole ledger under a SHARED flock so an in-flight append (which
+        holds the EXCLUSIVE flock) can never produce a torn read. Never called from
+        inside _append, so there is no self-deadlock."""
+        if not self.path.exists():
+            return []
+        lock_path = self.path.with_suffix(self.path.suffix + ".wlock")
+        with open(lock_path, "a") as _lock:
+            fcntl.flock(_lock.fileno(), fcntl.LOCK_SH)
+            try:
+                text = self.path.read_text()
+            finally:
+                fcntl.flock(_lock.fileno(), fcntl.LOCK_UN)
+        out = []
+        for line in text.splitlines():
+            if line.strip():
+                try:
+                    out.append(json.loads(line))
+                except Exception:
+                    continue
+        return out
+
     def verify_chain(self) -> tuple[bool, list[str]]:
-        """A tampered or deleted row breaks the chain and is detectable."""
+        """A tampered or deleted row breaks the chain and is detectable.
+
+        Reads under a shared lock (_entries_consistent) so a concurrent append never
+        yields a false 'break' from a torn read."""
         prev = "GENESIS"
         bad = []
-        for i, e in enumerate(self.entries()):
+        for i, e in enumerate(self._entries_consistent()):
             if e.get("prev_hash") != prev:
                 bad.append(f"row {i}: prev_hash mismatch")
             body = {k: v for k, v in e.items() if k != "entry_hash"}
