@@ -59,6 +59,8 @@ def _observe_sources() -> Dict[str, Any]:
         "orchestrator": _as_unknown("not collected"),
         "approvals_file": _as_unknown("not collected"),
         "bus_doorstep": _as_unknown("not collected"),
+        "goal": _as_unknown("not collected"),
+        "repo": _as_unknown("not collected"),
     }
     freshness: Dict[str, Optional[float]] = {}
 
@@ -173,8 +175,138 @@ def _observe_sources() -> Dict[str, Any]:
         sources["bus_doorstep"] = _as_unknown(f"bus unreadable: {e}")
         freshness["bus_doorstep"] = None
 
+    # Goal registry (weight-sum validators — no invented completion)
+    try:
+        import time
+
+        gpath = ROOT / "coordination" / "goal" / "goal_state.json"
+        if gpath.exists():
+            goal = json.loads(gpath.read_text(encoding="utf-8"))
+            sources["goal"] = goal
+            freshness["goal"] = float(time.time() - gpath.stat().st_mtime)
+        else:
+            sources["goal"] = _as_unknown("coordination/goal/goal_state.json missing")
+            freshness["goal"] = None
+    except Exception as e:
+        sources["goal"] = _as_unknown(f"goal state unreadable: {e}")
+        freshness["goal"] = None
+
+    # Local git repo status (observed; not remote GitHub API)
+    try:
+        import subprocess
+
+        def _git(*args: str) -> str:
+            r = subprocess.run(
+                ["git", *args],
+                cwd=str(ROOT),
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            if r.returncode != 0:
+                return ""
+            return (r.stdout or "").strip()
+
+        branch = _git("rev-parse", "--abbrev-ref", "HEAD") or UNKNOWN
+        head = _git("rev-parse", "--short", "HEAD") or UNKNOWN
+        dirty = _git("status", "--porcelain")
+        dirty_lines = [ln for ln in dirty.splitlines() if ln.strip()] if dirty else []
+        # Count only — never list paths that may include secrets dirs in speech
+        sources["repo"] = {
+            "branch": branch,
+            "head": head,
+            "dirty_count": len(dirty_lines),
+            "clean": len(dirty_lines) == 0,
+            "remote_github": UNKNOWN,
+            "remote_note": "GitHub remote status not observed in this path — local git only",
+        }
+        freshness["repo"] = 0.0
+    except Exception as e:
+        sources["repo"] = _as_unknown(f"git unreadable: {e}")
+        freshness["repo"] = None
+
     sources["_freshness"] = freshness
     return sources
+
+
+def _goal_lines(src: Dict[str, Any]) -> tuple:
+    """Return (label, speech_lines, data)."""
+    goal = src.get("goal") or {}
+    fresh = (src.get("_freshness") or {}).get("goal")
+    if isinstance(goal, dict) and goal.get("state") == UNKNOWN:
+        return "UNKNOWN", [f"Goal state: UNKNOWN — {goal.get('reason')}"], {}
+    if not isinstance(goal, dict) or not goal:
+        return "UNKNOWN", ["Goal state: UNKNOWN."], {}
+
+    label = _label(goal, observed=True, freshness=fresh)
+    metrics = goal.get("metrics") or {}
+    unknown_reasons = goal.get("metric_unknown_reasons") or {}
+    blocker = metrics.get("current_critical_path_blocker")
+    founder_pending = metrics.get("founder_only_actions_pending") or []
+    north = metrics.get("north_star_completion")
+    evidence = metrics.get("evidence_coverage")
+    champion = metrics.get("champion_product")
+    vfm = metrics.get("verified_founder_minutes_per_shipped_dollar")
+
+    lines: List[str] = []
+    if label == "STALE":
+        lines.append("Goal state is STALE — older than freshness budget.")
+    if champion:
+        lines.append(f"Champion product: {champion}.")
+    if north is not None:
+        lines.append(f"North star completion (validator weight-sum): {north}.")
+    else:
+        lines.append("North star completion: UNKNOWN.")
+    if evidence is not None:
+        lines.append(f"Evidence coverage: {evidence}.")
+    if blocker:
+        lines.append(f"Critical path blocker: {blocker}.")
+    else:
+        lines.append("Critical path blocker: UNKNOWN.")
+    if isinstance(founder_pending, list):
+        lines.append(f"Founder-only requirements pending: {len(founder_pending)}.")
+        for item in founder_pending[:4]:
+            lines.append(f"Founder gate: {item}.")
+    if vfm is None:
+        reason = unknown_reasons.get("verified_founder_minutes_per_shipped_dollar") or (
+            "no verified founder-minutes-per-dollar — not fabricated"
+        )
+        lines.append(f"Founder-minutes per shipped dollar: UNKNOWN — {reason}")
+    else:
+        lines.append(f"Founder-minutes per shipped dollar: {vfm}.")
+
+    data = {
+        "champion_product": champion,
+        "north_star_completion": north,
+        "critical_path_blocker": blocker,
+        "founder_only_pending_count": len(founder_pending) if isinstance(founder_pending, list) else None,
+        "evidence_coverage": evidence,
+    }
+    return label, lines, data
+
+
+def _repo_lines(src: Dict[str, Any]) -> tuple:
+    repo = src.get("repo") or {}
+    if isinstance(repo, dict) and repo.get("state") == UNKNOWN:
+        return "UNKNOWN", [f"Repository: UNKNOWN — {repo.get('reason')}"], {}
+    if not isinstance(repo, dict):
+        return "UNKNOWN", ["Repository: UNKNOWN."], {}
+    label = "LIVE"
+    lines = [
+        f"Local git branch {repo.get('branch')}, head {repo.get('head')}.",
+        (
+            "Working tree clean."
+            if repo.get("clean")
+            else f"Working tree dirty: {repo.get('dirty_count')} path(s) observed."
+        ),
+        "GitHub remote status: UNKNOWN — not queried in this voice path.",
+    ]
+    return label, lines, {
+        "branch": repo.get("branch"),
+        "head": repo.get("head"),
+        "dirty_count": repo.get("dirty_count"),
+        "clean": repo.get("clean"),
+    }
 
 
 def _count_pending_approvals(src: Dict[str, Any]) -> tuple:
@@ -400,6 +532,19 @@ def build_executive_brief() -> Dict[str, Any]:
     else:
         labels["security"] = "UNKNOWN"
         speech_parts.append("Security posture: UNKNOWN.")
+
+    # Goal / critical path
+    glabel, glines, gdata = _goal_lines(src)
+    labels["goal"] = glabel
+    speech_parts.extend(glines[:5])
+    data["goal"] = gdata
+    data["sources_present"].append("goal")
+
+    # Local repo (not remote GitHub)
+    rlabel, rlines, rdata = _repo_lines(src)
+    labels["repo"] = rlabel
+    speech_parts.append(rlines[0] if rlines else "Repository: UNKNOWN.")
+    data["repo"] = rdata
 
     # Next move
     speech_parts.append(_next_move_line(src))
@@ -680,8 +825,14 @@ def execute_voice_command(
             "data": {"runtime": rt, "freshness_seconds": fl},
         }
     elif cmd["id"] == "highest_priority_mission":
-        speech = _next_move_line(src)
-        label = (
+        glabel, glines, gdata = _goal_lines(src)
+        parts = []
+        if gdata.get("critical_path_blocker"):
+            parts.append(f"Critical path blocker: {gdata['critical_path_blocker']}.")
+        if gdata.get("champion_product"):
+            parts.append(f"Champion: {gdata['champion_product']}.")
+        parts.append(_next_move_line(src))
+        label = glabel if glabel != "UNKNOWN" else (
             "LIVE"
             if isinstance(src.get("orchestrator"), dict)
             and src["orchestrator"].get("state") != UNKNOWN
@@ -689,9 +840,28 @@ def execute_voice_command(
         )
         body = {
             "status": label,
-            "speech_text": sanitize_for_speech(speech),
-            "labels": {"priority": label},
-            "data": {"orchestrator_next": (src.get("orchestrator") or {}).get("next_move")},
+            "speech_text": sanitize_for_speech(" ".join(parts)),
+            "labels": {"priority": label, "goal": glabel},
+            "data": {
+                "goal": gdata,
+                "orchestrator_next": (src.get("orchestrator") or {}).get("next_move"),
+            },
+        }
+    elif cmd["id"] == "goal_status":
+        glabel, glines, gdata = _goal_lines(src)
+        body = {
+            "status": glabel,
+            "speech_text": sanitize_for_speech(" ".join(glines)),
+            "labels": {"goal": glabel},
+            "data": gdata,
+        }
+    elif cmd["id"] == "repo_status":
+        rlabel, rlines, rdata = _repo_lines(src)
+        body = {
+            "status": rlabel,
+            "speech_text": sanitize_for_speech(" ".join(rlines)),
+            "labels": {"repo": rlabel, "github_remote": "UNKNOWN"},
+            "data": rdata,
         }
     elif cmd["id"] == "security_posture":
         sec = src.get("security")

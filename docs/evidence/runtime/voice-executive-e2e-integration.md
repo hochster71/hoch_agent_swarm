@@ -65,6 +65,12 @@ python -m pytest tests/unit/test_helm_voice_executive.py -q
 
 Proven: policy fail-closed, secret redaction, DOORSTEP block on deploy, stage-only route artifact, brief labels, both FastAPI apps expose `/api/v1/helm/voice/*`, `/voice` desk + `voice_panel.js` served.
 
+## Follow-on (same series)
+
+- Goal registry: `goal_status` + brief labels from `coordination/goal/goal_state.json` (validator weight-sum; founder-minutes-per-dollar stays UNKNOWN when null).
+- Local git: `repo_status` observes branch/head/dirty_count; **GitHub remote remains UNKNOWN** (no fake GH status).
+- Surfaces: voice panel also mounted on `frontend_live/helm.html` wall.
+
 ## Grok Voice binding (founder)
 
 1. Paste persona from `docs/prompts/helm_voice_executive_commander.md`.

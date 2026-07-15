@@ -132,6 +132,32 @@ COMMAND_REGISTRY: Dict[str, Dict[str, Any]] = {
         ],
         "priority": 2,
     },
+    "goal_status": {
+        "id": "goal_status",
+        "mode": "READ_ONLY",
+        "description": "North star / critical path from goal_state.json validators",
+        "utterance_patterns": [
+            r"goal status",
+            r"north star",
+            r"critical path blocker",
+            r"how (close|far).*(goal|north star)",
+            r"champion product",
+        ],
+        "priority": 1,
+    },
+    "repo_status": {
+        "id": "repo_status",
+        "mode": "READ_ONLY",
+        "description": "Local git branch/dirty state (GitHub remote remains UNKNOWN unless observed)",
+        "utterance_patterns": [
+            r"github status",
+            r"repo status",
+            r"git status",
+            r"what branch",
+            r"is the (repo|tree) (clean|dirty)",
+        ],
+        "priority": 1,
+    },
     "route_task": {
         "id": "route_task",
         "mode": "STAGE_ONLY",

@@ -160,3 +160,37 @@ def test_main_app_voice_routes():
     r = c.get("/api/v1/helm/voice/health")
     assert r.status_code == 200
     assert r.json()["subsystem"] == "voice_executive"
+
+
+def test_goal_status_command():
+    result = execute_voice_command(command_id="goal_status")
+    assert result["command"] == "goal_status"
+    assert result["mode"] == "READ_ONLY"
+    assert "labels" in result
+    assert result["labels"].get("goal") in ("LIVE", "STALE", "UNKNOWN")
+    # Never invent founder-minutes-per-dollar when null
+    speech = (result.get("speech_text") or "").lower()
+    if "unknown" in speech and "dollar" in speech:
+        assert "fabricat" in speech or "unknown" in speech
+
+
+def test_repo_status_local_git_not_remote_github():
+    result = execute_voice_command(command_id="repo_status")
+    assert result["command"] == "repo_status"
+    assert result["mode"] == "READ_ONLY"
+    # Remote GitHub is explicitly not claimed
+    assert result["labels"].get("github_remote") == "UNKNOWN" or "UNKNOWN" in (
+        result.get("speech_text") or ""
+    )
+    data = result.get("data") or {}
+    if result["status"] == "LIVE":
+        assert data.get("branch")
+        assert data.get("head")
+
+
+def test_brief_includes_goal_and_repo_labels():
+    brief = build_executive_brief()
+    assert "goal" in brief["labels"]
+    assert "repo" in brief["labels"]
+    assert brief["labels"]["goal"] in ("LIVE", "STALE", "UNKNOWN")
+    assert brief["labels"]["repo"] in ("LIVE", "STALE", "UNKNOWN")

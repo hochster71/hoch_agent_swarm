@@ -44,7 +44,7 @@ def grok_voice_tools() -> List[Dict[str, Any]]:
                                 "blocked_factories, highest_priority_mission, "
                                 "runtime_health, security_posture, overnight_summary, "
                                 "mission_status, evidence_gaps, idle_agents, "
-                                "route_task, stage_mission"
+                                "goal_status, repo_status, route_task, stage_mission"
                             ),
                         },
                         "utterance": {
