@@ -68,10 +68,21 @@ def _observe_sources() -> Dict[str, Any]:
         from backend.truth.runtime_source import concurrency_truth, POINTER
         import time
 
-        sources["runtime"] = concurrency_truth(configured_capacity=4)
-        freshness["runtime"] = (
-            float(time.time() - POINTER.stat().st_mtime) if POINTER.exists() else None
-        )
+        rt = concurrency_truth(configured_capacity=4)
+        sources["runtime"] = rt
+        # Freshness = last write of the CANONICAL LEDGER (the live heartbeat the daemon
+        # appends to every cycle), NOT the POINTER file (written once at daemon start and
+        # therefore always "old"). Fall back to the pointer only if no ledger is resolvable.
+        _lp = rt.get("ledger_path") if isinstance(rt, dict) else None
+        try:
+            if _lp and Path(_lp).exists():
+                freshness["runtime"] = float(time.time() - Path(_lp).stat().st_mtime)
+            elif POINTER.exists():
+                freshness["runtime"] = float(time.time() - POINTER.stat().st_mtime)
+            else:
+                freshness["runtime"] = None
+        except Exception:
+            freshness["runtime"] = None
     except Exception as e:
         sources["runtime"] = _as_unknown(f"runtime unreadable: {e}")
         freshness["runtime"] = None
@@ -370,6 +381,13 @@ def _factory_lines(src: Dict[str, Any]) -> tuple:
     if isinstance(fac, dict) and fac.get("state") == UNKNOWN:
         return "UNKNOWN", ["Factories: UNKNOWN — " + str(fac.get("reason") or "unreadable")]
 
+    # Honor freshness: a stale factory registry must NOT have its last-known runtime_state
+    # spoken as current fact. Report STALE with the age instead of a possibly-obsolete state.
+    if fresh is not None and fresh > 300:
+        cnt = len(fac["factories"]) if isinstance(fac, dict) and isinstance(fac.get("factories"), dict) else 0
+        return "STALE", [f"Factories: STALE — registry last updated {fresh/3600:.1f} hours ago; "
+                         f"{cnt} factories' runtime state not currently verified."]
+
     # canonical_factories shape varies; handle common patterns
     blocked: List[str] = []
     live: List[str] = []
@@ -393,12 +411,13 @@ def _factory_lines(src: Dict[str, Any]) -> tuple:
                 or info.get("status")
                 or info.get("overall")
                 or info.get("scoped_state")
+                or info.get("runtime_state")
                 or UNKNOWN
             ).upper()
             name = str(info.get("name") or info.get("code") or code)
             if st in ("BLOCKED", "NO_GO", "FAIL", "CONTRADICTED"):
                 blocked.append(f"{name}: {st}")
-            elif st in ("LIVE", "PASS", "CONFIRMED_LIVE", "GO", "RUNNING", "IMPROVING", "CONVERGED"):
+            elif st in ("LIVE", "PASS", "CONFIRMED_LIVE", "GO", "RUNNING", "ACTIVE", "IMPROVING", "CONVERGED"):
                 live.append(f"{name}: {st}")
             else:
                 unknown.append(f"{name}: {st}")
@@ -499,13 +518,22 @@ def build_executive_brief() -> Dict[str, Any]:
         speech_parts.append("Runtime health: STALE — data older than freshness budget.")
     else:
         if isinstance(rt, dict):
-            conc = rt.get("effective_concurrency") or rt.get("concurrency") or rt.get("active")
+            # concurrency_truth() reports worker_leases_active / observed_peak /
+            # configured_capacity / status — read those, not invented key names.
+            conc = rt.get("worker_leases_active")
+            if conc is None:
+                conc = rt.get("effective_concurrency") or rt.get("concurrency") or rt.get("active")
             cap = rt.get("configured_capacity") or rt.get("capacity")
-            overall = rt.get("overall") or rt.get("state") or "LIVE"
-            speech_parts.append(
-                f"Runtime {overall}. Concurrency {conc if conc is not None else 'UNKNOWN'}"
-                + (f" of {cap}." if cap is not None else ".")
-            )
+            overall = rt.get("status") or rt.get("overall") or rt.get("state") or "LIVE"
+            peak = rt.get("observed_peak")
+            msg = f"Runtime {overall}. Active workers {conc if conc is not None else 'UNKNOWN'}"
+            if cap is not None:
+                msg += f" of {cap}"
+            if peak not in (None, "UNKNOWN"):
+                msg += f", observed peak {peak}"
+            if rt.get("capacity_violation"):
+                msg += " — CAPACITY VIOLATION"
+            speech_parts.append(msg + ".")
         else:
             speech_parts.append("Runtime: LIVE (details compact).")
     data["sources_present"].append("runtime")
