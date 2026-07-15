@@ -14,6 +14,13 @@ logged). This is a FOUNDER-run action (writes to your Apple account).
 from __future__ import annotations
 
 import sys
+import pathlib
+
+# Allow running as a standalone script (python3 scripts/goal/asc_write_testinfo.py):
+# put the repo root on sys.path so the package import resolves.
+_ROOT = pathlib.Path(__file__).resolve().parents[2]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
 from scripts.goal.asc_client import (ASC_BASE, ASCUnavailable, _app_id,
                                      _bearer_token, _get)

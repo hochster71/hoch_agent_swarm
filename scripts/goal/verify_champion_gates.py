@@ -224,6 +224,10 @@ def run() -> dict:
     # from the App Store Connect API using the provisioned creds (never logged). Any
     # missing credential / no build / network / auth error -> UNKNOWN, never a PASS.
     try:
+        import sys as _sys, pathlib as _pl
+        _r = str(_pl.Path(__file__).resolve().parents[2])
+        if _r not in _sys.path:
+            _sys.path.insert(0, _r)  # allow standalone `python3 scripts/goal/verify_champion_gates.py`
         from scripts.goal.asc_client import read_distribution_state
         _asc = read_distribution_state()
     except Exception as e:  # module/import failure -> fail closed
