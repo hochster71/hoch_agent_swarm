@@ -637,6 +637,15 @@ def serve_brain() -> str:
     return f.read_text() if f.exists() else "<h1>brain missing</h1>"
 
 
+@app.get("/theater", response_class=HTMLResponse)
+def serve_theater() -> str:
+    """The Hoch Pods Theater — cinematic swarm-launch visualization driven by the LIVE factory
+    feed (pods ignite by real runtime_state; agents spin up and route to the lanes). No simulated
+    data. Same-origin so it renders on the Mac, the phone, and over Tailscale."""
+    f = ROOT / "frontend_live" / "theater.html"
+    return f.read_text() if f.exists() else "<h1>theater missing</h1>"
+
+
 @app.get("/api/v1/helm/mission")
 @app.get("/api/v1/helm/mission/state")
 def api_v1_mission_state():
