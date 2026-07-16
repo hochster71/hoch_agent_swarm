@@ -19,10 +19,16 @@
       "stripe_price_monthly": "price_1TsnrvDK7BrrgheoqJxC3QxU",
       "stripe_price_annual": "price_1TsnrvDK7Brrgheo06ZuaCNz",
       "verified_at": "2026-07-14T02:09:19Z",
-      "revenue_usd_total": 20.52,
-      "first_paying_customer_at": "2026-07-14T02:09:19Z",
-      "revenue_trace": "PROVEN",
-      "monetization_rung": "5_EARNING"
+      "revenue_gross_usd": 20.52,
+      "revenue_net_usd": 18.10,
+      "revenue_settled_usd": 0.0,
+      "revenue_state": "PENDING_SETTLEMENT",
+      "settles_at": "2026-07-21",
+      "first_charge_at": "2026-07-14T02:09:19Z",
+      "stripe_charge_id": "ch_3Tsv7qDK7Brrgheo1z3ksuF5",
+      "revenue_trace": "CHARGE_PROVEN_SETTLEMENT_PENDING",
+      "monetization_rung": "4_SELLABLE",
+      "rung_note": "Real livemode charge $20.52 (sub active); net $18.10 held by Stripe, PENDING until 2026-07-21. Promotes to 5_EARNING automatically when the balance transaction settles — verified against the account, not asserted."
     }
   ]
 }
