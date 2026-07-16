@@ -1,0 +1,8 @@
+# Never commit real secrets or local env
+.env
+.env.local
+.env.*.local
+
+# Node / Vercel build artifacts
+node_modules/
+.vercel/

@@ -1,0 +1,189 @@
+{
+  "schema": "HELM_PRODUCTS_MANIFEST_v1",
+  "doctrine": "A product exists when a stranger can name it, see a price, and reach a checkout. Anything less is an artifact. This file is the SINGLE SOURCE OF TRUTH that binds each product to (a) the exact Stripe account+price it charges through and (b) the exact repo/folder a deploy must come from. `source_of_truth` is load-bearing: it exists to PREVENT the scaffold-over-real-app clobber that hit story-studio-live on 2026-07-16.",
+  "generated_at": "2026-07-16T21:02:04Z",
+  "generated_by": "read-only inventory subagent (vercel + stripe MCP, repo cross-reference). NO FAKE GREEN: fields that could not be verified against a live source are marked UNKNOWN, never fabricated.",
+  "field_glossary": {
+    "product_id": "Stable HELM identifier.",
+    "factory": "Owning HELM factory code (HASF/HCF/HRF/HFF/HMF/HSF...).",
+    "stripe_account_id": "acct_... that OWNS the stripe_product_id + price_ids. Stripe object IDs are account-scoped: the suffix after the timestamp encodes the account (e.g. ...DK7Brrgheo => acct_1TPOYkDK7Brrgheo; ...DINF9KNAIC => acct_1Tdge9DINF9KNAIC). A key from any OTHER account returns 'No such price'.",
+    "vercel_project_id": "prj_... the deploy target.",
+    "source_of_truth": "The EXACT repo/folder (and git branch/target) a deploy for this product MUST come from. UNKNOWN means it is not reproducibly present in this repo checkout and must be recovered from the live deploy before any redeploy.",
+    "health_check": "The single request that proves the product is sellable.",
+    "monetization_rung": "0..5 (see rung_scale)."
+  },
+  "rung_scale": {
+    "0": "IDEA",
+    "1": "PROTOTYPE",
+    "2": "BUILT_NOT_SELLABLE",
+    "3": "PRODUCTIZED_DEFINED_ONLY",
+    "4": "SELLABLE (live checkout reachable)",
+    "5": "EARNING (a real charge has settled)"
+  },
+  "stripe_accounts": {
+    "acct_1TPOYkDK7Brrgheo": {
+      "display_name": "Epic Fury",
+      "verified_via": "stripe MCP get_stripe_account_info (this account is what the connected Stripe MCP is authenticated as, 2026-07-16). Owns Epic Fury prices (suffix DK7Brrgheo).",
+      "dashboard_api_keys_link": "https://dashboard.stripe.com/acct_1TPOYkDK7Brrgheo/apikeys"
+    },
+    "acct_1Tdge9DINF9KNAIC": {
+      "display_name": "HOCH APPLICATION SOFTWARE FACTORY",
+      "verified_via": "founder's authenticated Stripe CLI retrieves price_1TqjVN... under this account (per task evidence + go_live.sh). Owns Story Studio prices (suffix DINF9KNAIC). NOTE: this is a DIFFERENT account than the connected Stripe MCP, so the MCP cannot retrieve its prices (reproduced 'No such price' below)."
+    }
+  },
+  "vercel_teams": {
+    "team_4X8iyduLMjjIa4PqDeyMTrgC": "US-IS_IR_War_2026 (slug us-is-ir-war-2026) — hosts epic-fury-2026",
+    "team_9pSFeqlcDqSAGgPH57XD34LF": "HASF (slug hasf) — hosts story-studio-live, hoch-app-hub, hoch-application-software-factory, beyond-tomorrow-cyber-mvp, etc."
+  },
+  "products": [
+    {
+      "product_id": "EPIC_FURY_2026",
+      "factory": "HASF",
+      "owning_factory": "HASF",
+      "name": "Epic Fury 2026 — Conflict-intelligence platform",
+      "buyer": "Geopolitical/defense analysts, risk desks, journalists, wargamers",
+      "price_usd": 19,
+      "billing": "monthly",
+      "annual_price_usd": 190,
+      "stripe_account_id": "acct_1TPOYkDK7Brrgheo",
+      "stripe_account_name": "Epic Fury",
+      "stripe_product_id": "prod_UsYzlrB2MYctkg",
+      "price_ids": [
+        {"id": "price_1TsnrvDK7BrrgheoqJxC3QxU", "mode": "live", "amount_usd": 19, "interval": "month", "verified": "RETRIEVED via stripe MCP 2026-07-16: unit_amount=1900, product=prod_UsYzlrB2MYctkg"},
+        {"id": "price_1TsnrvDK7Brrgheo06ZuaCNz", "mode": "live", "amount_usd": 190, "interval": "year", "verified": "registry-asserted (product_registry.json) — not independently re-retrieved this pass"}
+      ],
+      "vercel_project_id": "prj_eay8GGDe4lOMoyWDA0B9HntyhgyF",
+      "vercel_project_name": "epic-fury-2026",
+      "vercel_team_id": "team_4X8iyduLMjjIa4PqDeyMTrgC",
+      "framework": "nextjs",
+      "live_url": "https://epic-fury-2026.vercel.app",
+      "checkout_url": "https://epic-fury-2026.vercel.app/upgrade",
+      "health_check": "GET https://epic-fury-2026.vercel.app/upgrade returns the priced upgrade page; entitlement grant flows via signed webhook. (Latest prod deploy dpl_EBv5ZyQRwGgqzq2TFsRjxQ2dtNMG READY.)",
+      "source_of_truth": "UNKNOWN-in-this-repo. The Epic Fury Next.js app is NOT present in hoch_agent_swarm (only docs/products/epic-fury-2026 + data/security_scans exist here). It deploys to the epic-fury-2026 project under a SEPARATE Vercel team (us-is-ir-war-2026) from its own linked git source. Do NOT deploy the swarm repo root to this project. Recover exact source from that project's git link before any change.",
+      "monetization_rung": "4_SELLABLE",
+      "notes": "Rung 4 with a real prior livemode charge (ch_3Tsv7qDK7Brrgheo1z3ksuF5, $20.52, PENDING settlement per registry). Lives on its OWN Stripe account (Epic Fury) AND its OWN Vercel team — fully isolated from Story Studio. registry app_commit e92e75a."
+    },
+    {
+      "product_id": "HSF_STORY_STUDIO",
+      "factory": "HSF",
+      "owning_factory": "HSF",
+      "name": "Story Studio — One-Story Export ($19 one-time) + Creators ($12/mo)",
+      "buyer": "Parents, teachers, hobbyist creators wanting a finished shareable animated storybook; Creators tier for repeat makers.",
+      "price_usd": 19,
+      "billing": "one_time",
+      "creators_price_usd": 12,
+      "creators_billing": "monthly",
+      "stripe_account_id": "acct_1Tdge9DINF9KNAIC",
+      "stripe_account_name": "HOCH APPLICATION SOFTWARE FACTORY",
+      "stripe_product_id": "UNKNOWN (not retrieved; prices below live under acct_1Tdge9DINF9KNAIC, not the connected MCP account)",
+      "price_ids": [
+        {"id": "price_1TqjVNDINF9KNAICvsZ4Kl3t", "tier": "onestory", "mode": "live", "amount_usd": 19, "interval": "one_time", "verified": "EXISTS in acct_1Tdge9DINF9KNAIC per founder CLI (go_live.sh) + task. NOT retrievable via connected Stripe MCP (acct_1TPOYkDK7Brrgheo) -> 'No such price' (reproduced 2026-07-16). This account-scoping IS the live mismatch."},
+        {"id": "price_1TqjVNDINF9KNAICsqE8sy0G", "tier": "creators", "mode": "live", "amount_usd": 12, "interval": "month", "verified": "same as above — belongs to acct_1Tdge9DINF9KNAIC; MCP returns 'No such price'."}
+      ],
+      "price_env_mapping": "app reads STRIPE_PRICE_ONESTORY / STRIPE_PRICE_CREATORS (hsf/deploy/pricing.config.json -> api/create-checkout-session.js). No price IDs are hardcoded in the app; they come from Vercel env.",
+      "vercel_project_id": "prj_aIbENFRMPQZ7pwMzzsuR0VTh6QzI",
+      "vercel_project_name": "story-studio-live",
+      "vercel_team_id": "team_9pSFeqlcDqSAGgPH57XD34LF",
+      "framework": null,
+      "live_url": "https://story-studio-live.vercel.app",
+      "checkout_url": "https://story-studio-live.vercel.app (Unlock $19 button -> POST /api/save-story -> POST /api/create-checkout-session -> Stripe Checkout)",
+      "health_check": "POST https://story-studio-live.vercel.app/api/create-checkout-session {\"product\":\"onestory\"} should return {url: checkout.stripe.com/...}. CURRENTLY BROKEN: returns 'No such price: price_1TqjVNDINF9KNAICvsZ4Kl3t' because the live STRIPE_SECRET_KEY set in Vercel is from a different Stripe account than acct_1Tdge9DINF9KNAIC (see story_studio_stripe_mismatch evidence).",
+      "source_of_truth": "UNKNOWN / NOT-IN-REPO — and explicitly NOT hsf/deploy. The LIVE app served at story-studio-live.vercel.app (title 'Story Studio — your life, as a cinematic storybook', loads engine.js, posts /api/save-story) exists NOWHERE in this repo: it is absent from the working tree AND from git (checked helm/h1b-r2-remediation @ 3ed760e2 = the exact deployed SHA). The production deploy carried gitDirty=1, i.e. it was built from uncommitted local files that were never committed. hsf/deploy is the INERT scaffold (different UI: story-studio-v2.html + story-engine.js) and would CLOBBER the live app if deployed. hsf/story-studio-v2.html is ALSO not the live app. CLOBBER-GUARD: do NOT `vercel deploy` from hsf/deploy or from a clean checkout; recover the live source from the story-studio-live Vercel project (redeploy an existing production build / rollback candidate) and commit it before any code change.",
+      "monetization_rung": "3_PRODUCTIZED_DEFINED_ONLY",
+      "notes": "The app IS deployed and the free preview works live (200 OK). It is NOT sellable: checkout throws 'No such price' due to a Stripe key/price account mismatch (root cause in docs/evidence/runtime/story_studio_stripe_mismatch_20260716T210204Z.md). Two blockers to rung 4: (1) fix the key/price account mismatch, (2) durable Vercel KV for entitlements. $0 has settled."
+    },
+    {
+      "product_id": "HCF_CYBERQRG_AI",
+      "factory": "HCF",
+      "owning_factory": "HCF",
+      "name": "CyberQRG-AI — QR safety scanner",
+      "buyer": "Everyday users and small teams who want to know if a QR code / link is safe before tapping.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "sellable": true,
+      "product_summary": "CyberQRG Safe-Scan Pack — $9 one-time, a pack of 100 QR/link safety scans. Offline-first, no tracking, no account.",
+      "stripe_account_id": "UNKNOWN (none wired yet — founder gate)",
+      "stripe_account_name": null,
+      "stripe_product_id": "UNKNOWN (create $9 one-time Price at go-live)",
+      "price_ids": [
+        { "tier": "scanpack", "amount_usd": 9, "interval": "one_time", "id": "" }
+      ],
+      "source_dir": "products/cyberqrg-ai/deploy",
+      "vercel_project_id": "UNKNOWN (candidate: prj_h959G6w2eowieCxHgL5viESH4hAv 'beyond-tomorrow-cyber-mvp' in team hasf — NOT confirmed linked to this product)",
+      "vercel_project_name": "UNKNOWN",
+      "vercel_team_id": "team_9pSFeqlcDqSAGgPH57XD34LF",
+      "live_url": "UNKNOWN (staged, not deployed — founder gate)",
+      "health_check": "POST /api/create-checkout-session {\"tier\":\"scanpack\"} must return {url: <stripe url>}. STAGED: endpoint exists at products/cyberqrg-ai/deploy/api/create-checkout-session.js and FAILS SAFE with 501 until STRIPE_SECRET_KEY + STRIPE_PRICE_SCANPACK are set in Vercel.",
+      "source_of_truth": "products/cyberqrg-ai/deploy (in this repo: static landing page public/index.html + Stripe checkout serverless api/create-checkout-session.js + vercel.json + package.json + .env.example placeholders). The TS scanner engine remains at products/cyberqrg-ai (src/, tests/). Moonshot MOON-HCF-01.",
+      "monetization_rung": "3_SELLABLE_READY (staged — built, priced, checkout wired; one founder --go from live)",
+      "notes": "HASF PRODUCT_002. Deploy bundle built 2026-07-16: landing names product + shows $9 price + Buy button; checkout mirrors the proven HSF Story Studio shape (reads STRIPE_SECRET_KEY + STRIPE_PRICE_SCANPACK, returns {url}). INERT until founder adds keys (501 fail-safe). NO Stripe objects created, NO keys set, NOT deployed. Founder gate: scripts/factory_to_money.sh cyberqrg --go (see docs/founder/cyberqrg_go_live_note.md)."
+    },
+    {
+      "product_id": "HRF_CLARITY_BRIEFS",
+      "factory": "HRF",
+      "owning_factory": "HRF",
+      "name": "Clarity Briefs — cited plain-English research digests",
+      "buyer": "Knowledge workers who want a trustworthy, citation-backed plain-English digest of a topic.",
+      "price_usd": "UNKNOWN (not yet priced)",
+      "billing": "UNKNOWN",
+      "stripe_account_id": "UNKNOWN (none wired yet)",
+      "stripe_account_name": null,
+      "stripe_product_id": "UNKNOWN",
+      "price_ids": [],
+      "vercel_project_id": "UNKNOWN",
+      "vercel_project_name": "UNKNOWN",
+      "live_url": "UNKNOWN",
+      "health_check": "N/A yet.",
+      "source_of_truth": "UNKNOWN — no product build or spec file found on disk this pass (searched clarity/research). Exists only as moonshot mission MOON-HRF-01 (rung 2->3).",
+      "monetization_rung": "2_BUILT_NOT_SELLABLE",
+      "notes": "Defined only in the 8-factory moonshot manifest. No code, price, or checkout located. Founder gate: KEYS/DEPLOY when spec is ready."
+    },
+    {
+      "product_id": "HFF_RUNWAY_PACKET",
+      "factory": "HFF",
+      "owning_factory": "HFF",
+      "name": "Runway — Monthly Cash-Flow & Tax-Prep Packet",
+      "buyer": "Solo founders, freelancers, single-member LLCs with no bookkeeper.",
+      "price_usd": 15,
+      "billing": "monthly",
+      "annual_price_usd": 150,
+      "stripe_account_id": "UNKNOWN (none wired yet)",
+      "stripe_account_name": null,
+      "stripe_product_id": "UNKNOWN",
+      "price_ids": [],
+      "vercel_project_id": "UNKNOWN",
+      "vercel_project_name": "UNKNOWN",
+      "live_url": "UNKNOWN (no checkout built)",
+      "health_check": "N/A yet.",
+      "source_of_truth": "docs/factories/products/HFF_runway.md (mission spec only). No app/checkout on disk.",
+      "monetization_rung": "3_PRODUCTIZED_DEFINED_ONLY",
+      "notes": "Product DEFINITION only (name + $15/mo). Guardrail: organizational tooling only, NOT financial/tax/investment advice. Moonshot MOON-HFF-01 rung 0->2. $0 earned."
+    },
+    {
+      "product_id": "HMF_CUE_LIBRARY",
+      "factory": "HMF",
+      "owning_factory": "HMF",
+      "name": "HOCH Cue Library — Cleared Instrumental Cues for Creators",
+      "buyer": "Video creators, podcasters, indie game devs needing cheap license-clean background music.",
+      "price_usd": 9,
+      "billing": "monthly",
+      "annual_price_usd": 90,
+      "stripe_account_id": "UNKNOWN (none wired yet)",
+      "stripe_account_name": null,
+      "stripe_product_id": "UNKNOWN",
+      "price_ids": [],
+      "vercel_project_id": "UNKNOWN",
+      "vercel_project_name": "UNKNOWN",
+      "live_url": "UNKNOWN (no checkout built)",
+      "health_check": "N/A yet.",
+      "source_of_truth": "docs/factories/products/HMF_cue_library.md (mission spec only). No app/checkout on disk.",
+      "monetization_rung": "3_PRODUCTIZED_DEFINED_ONLY",
+      "notes": "Product DEFINITION only (name + $9/mo). Guardrail: instrumental-first, license-cleared, no vocal/voice-likeness. Moonshot MOON-HMF-01 rung 0->2 (one-time pack). $0 earned."
+    }
+  ],
+  "non_monetized_factories": {
+    "note": "EXEMPT from the revenue/earning rollup by design.",
+    "HHF": "Hoch Home PERSONAL Factory — family operations; success is family utility, run on SIMULATED data until Michael connects real accounts (MOON-HHF-01).",
+    "HPF": "Hoch Pods Theater — cinematic swarm-launch visualization (/theater console); not a product factory."
+  }
+}

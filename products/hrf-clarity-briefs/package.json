@@ -1,0 +1,9 @@
+{
+  "name": "hrf-clarity-briefs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HRF — Clarity Briefs: short, cited, jargon-free research briefs. Landing page + Stripe checkout scaffold.",
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

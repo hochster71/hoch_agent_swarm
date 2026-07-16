@@ -1,0 +1,15 @@
+{
+  "name": "cyberqrg-deploy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CyberQRG (Hoch Cyber Factory) deploy bundle: static landing page + Stripe checkout serverless function (Vercel). CommonJS to match api/*.js.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "stripe": "^16.12.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

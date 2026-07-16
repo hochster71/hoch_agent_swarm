@@ -1,0 +1,9 @@
+{
+  "name": "hff-runway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HFF — Runway: monthly cash-flow & tax-prep packet. Landing page + Stripe checkout scaffold. Organizational tooling only, not advice.",
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

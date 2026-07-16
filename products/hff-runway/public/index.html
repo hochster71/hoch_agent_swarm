@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runway — Monthly Cash-Flow & Tax-Prep Packet</title>
+  <style>
+    :root { --ink:#0e2a24; --muted:#4d6b62; --bg:#f2f8f5; --accent:#0f9d67; --line:#d9e8e1; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.55; }
+    .wrap { max-width:720px; margin:0 auto; padding:64px 24px 96px; }
+    .kicker { text-transform:uppercase; letter-spacing:.12em; font-size:13px; color:var(--accent); font-weight:700; }
+    h1 { font-size:40px; line-height:1.1; margin:12px 0 16px; }
+    .lede { font-size:19px; color:var(--muted); margin:0 0 32px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:28px; margin:20px 0;
+      box-shadow:0 1px 3px rgba(14,42,36,.04); }
+    .price { font-size:32px; font-weight:800; }
+    .price span { font-size:16px; font-weight:500; color:var(--muted); }
+    .list { padding-left:20px; margin:16px 0 0; color:var(--muted); }
+    .list li { margin:6px 0; }
+    button { appearance:none; border:0; cursor:pointer; font-weight:700; font-size:16px;
+      padding:14px 22px; border-radius:12px; background:var(--accent); color:#fff; width:100%; margin-top:20px; }
+    button:disabled { opacity:.6; cursor:progress; }
+    .banner { background:#fff7e6; border:1px solid #f2d999; color:#7a5a12; border-radius:12px;
+      padding:14px 16px; font-size:14px; margin-top:24px; }
+    #msg { font-size:14px; color:#b23; min-height:20px; margin-top:8px; }
+    footer { margin-top:48px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">HFF · Runway</p>
+    <h1>Your books, packet-ready for your accountant.</h1>
+    <p class="lede">An automated monthly packet for solo operators with no bookkeeper: a 30/60/90-day
+      cash-flow snapshot, a categorized transaction rollup, an estimated quarterly-tax worksheet, and a
+      year-end 1099-candidate list — assembled into one clean handoff for your own CPA.</p>
+
+    <div class="card">
+      <div class="price">$15<span> / month</span></div>
+      <ul class="list">
+        <li>30/60/90-day cash-flow snapshot (runway in months)</li>
+        <li>Categorized transaction rollup from your bank CSV export</li>
+        <li>Estimated quarterly-tax worksheet (math shown, inputs labeled)</li>
+        <li>Year-end 1099-candidate list (contractors paid &gt; $600)</li>
+        <li>One clean PDF/XLSX handoff for your accountant</li>
+      </ul>
+      <button id="buy-monthly">Subscribe — $15/mo</button>
+    </div>
+
+    <div id="msg"></div>
+
+    <div class="banner">
+      <strong>Organizational tooling only.</strong> Runway prepares and organizes your own numbers for
+      your accountant. It is <strong>not</strong> financial, investment, or tax advice, and it does not
+      file anything for you.
+    </div>
+
+    <footer>HFF · Hoch Finance Factory · Payments by Stripe.</footer>
+  </div>
+
+  <script>
+    async function checkout(tier, btn) {
+      const msg = document.getElementById('msg');
+      msg.textContent = '';
+      btn.disabled = true;
+      try {
+        const r = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier }),
+        });
+        const data = await r.json();
+        if (r.ok && data.url) { window.location.href = data.url; return; }
+        msg.textContent = data.message || 'Checkout is not available yet.';
+      } catch (e) {
+        msg.textContent = 'Network error. Please try again.';
+      }
+      btn.disabled = false;
+    }
+    document.getElementById('buy-monthly').addEventListener('click', function () { checkout('monthly', this); });
+  </script>
+</body>
+</html>

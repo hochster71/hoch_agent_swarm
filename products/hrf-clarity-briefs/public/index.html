@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clarity Briefs — the truth, in plain English, with receipts</title>
+  <style>
+    :root { --ink:#12203a; --muted:#5b6b86; --bg:#f6f8fc; --accent:#2b6cff; --line:#e2e8f4; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.55; }
+    .wrap { max-width:720px; margin:0 auto; padding:64px 24px 96px; }
+    .kicker { text-transform:uppercase; letter-spacing:.12em; font-size:13px; color:var(--accent); font-weight:700; }
+    h1 { font-size:40px; line-height:1.1; margin:12px 0 16px; }
+    .lede { font-size:19px; color:var(--muted); margin:0 0 32px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:28px; margin:20px 0;
+      box-shadow:0 1px 3px rgba(18,32,58,.04); }
+    .price { font-size:32px; font-weight:800; }
+    .price span { font-size:16px; font-weight:500; color:var(--muted); }
+    .list { padding-left:20px; margin:16px 0 0; color:var(--muted); }
+    .list li { margin:6px 0; }
+    button { appearance:none; border:0; cursor:pointer; font-weight:700; font-size:16px;
+      padding:14px 22px; border-radius:12px; background:var(--accent); color:#fff; width:100%; margin-top:20px; }
+    button.secondary { background:#eef2fb; color:var(--accent); }
+    button:disabled { opacity:.6; cursor:progress; }
+    .note { font-size:13px; color:var(--muted); margin-top:24px; }
+    .grid { display:grid; gap:16px; grid-template-columns:1fr; }
+    #msg { font-size:14px; color:#b23; min-height:20px; margin-top:8px; }
+    footer { margin-top:48px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">HRF · Clarity Briefs</p>
+    <h1>The truth, in plain English, with receipts.</h1>
+    <p class="lede">Short, cited, jargon-free research briefs on the topics that shape real decisions —
+      health, money, policy, tech. Every claim links to a real source, and every brief ends with an
+      explicit "what's still uncertain" section. No hot takes. No false confidence.</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="price">$5<span> / month</span></div>
+        <p style="margin:8px 0 0;color:var(--muted)">A weekly cited brief on your chosen topic.</p>
+        <ul class="list">
+          <li>One plain-English brief every week</li>
+          <li>Every claim linked to a real source</li>
+          <li>An honest "what's still uncertain" section</li>
+        </ul>
+        <button id="buy-monthly">Subscribe — $5/mo</button>
+      </div>
+
+      <div class="card">
+        <div class="price">$2<span> / one-off</span></div>
+        <p style="margin:8px 0 0;color:var(--muted)">A single on-demand brief on one question.</p>
+        <button id="buy-brief" class="secondary">Buy one brief — $2</button>
+      </div>
+    </div>
+
+    <div id="msg"></div>
+
+    <p class="note">Clarity Briefs summarize and cite existing public sources so you can verify them
+      yourself. They are information, not professional (medical, legal, or financial) advice.</p>
+
+    <footer>HRF · Hoch Research Factory · Payments by Stripe.</footer>
+  </div>
+
+  <script>
+    async function checkout(tier, btn) {
+      const msg = document.getElementById('msg');
+      msg.textContent = '';
+      btn.disabled = true;
+      try {
+        const r = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier }),
+        });
+        const data = await r.json();
+        if (r.ok && data.url) { window.location.href = data.url; return; }
+        msg.textContent = data.message || 'Checkout is not available yet.';
+      } catch (e) {
+        msg.textContent = 'Network error. Please try again.';
+      }
+      btn.disabled = false;
+    }
+    document.getElementById('buy-monthly').addEventListener('click', function () { checkout('monthly', this); });
+    document.getElementById('buy-brief').addEventListener('click', function () { checkout('brief', this); });
+  </script>
+</body>
+</html>

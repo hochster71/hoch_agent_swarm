@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CyberQRG — Is that QR code safe?</title>
+  <meta name="description" content="CyberQRG Safe-Scan Pack: check whether a QR code or link is safe before you tap it. Offline-first, no tracking." />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121a33; --ink:#e8ecff; --muted:#9aa6d6;
+      --accent:#3ddc97; --accent2:#5b8cff; --danger:#ff6b6b; --line:#26304f;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#1a2340 0,var(--bg) 60%),var(--bg);
+      color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    .wrap{max-width:820px;margin:0 auto;padding:48px 20px 80px}
+    .badge{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+    h1{font-size:40px;line-height:1.1;margin:20px 0 10px}
+    h1 .qr{color:var(--accent)}
+    .lede{color:var(--muted);font-size:19px;max-width:620px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px;margin-top:34px}
+    .price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+    .price .amt{font-size:44px;font-weight:800}
+    .price .unit{color:var(--muted)}
+    ul.feat{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:10px}
+    ul.feat li{padding-left:26px;position:relative;color:var(--ink)}
+    ul.feat li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800}
+    .btn{appearance:none;border:0;cursor:pointer;font-weight:700;font-size:17px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));color:#05122b;
+      padding:15px 22px;border-radius:12px;margin-top:22px;width:100%}
+    .btn:disabled{opacity:.6;cursor:progress}
+    .note{margin-top:14px;color:var(--muted);font-size:14px;min-height:20px}
+    .how{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .how .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+    .how .n{color:var(--accent2);font-weight:800}
+    footer{margin-top:56px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+    a{color:var(--accent2)}
+    @media(max-width:640px){.how{grid-template-columns:1fr}h1{font-size:32px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">CyberQRG · QR safety scanner</span>
+    <h1>Before you tap that <span class="qr">QR code</span> — know it's safe.</h1>
+    <p class="lede">
+      CyberQRG decodes a QR code or link and checks it against known malicious-URL
+      and phishing patterns — <strong>offline-first, no tracking, no account</strong>.
+      Buy a Safe-Scan Pack and vet suspicious codes before they reach your phone.
+    </p>
+
+    <div class="card">
+      <div class="price">
+        <span class="amt">$9</span>
+        <span class="unit">one-time · 100 safety scans</span>
+      </div>
+      <ul class="feat">
+        <li>100 QR / link safety scans you can use anytime</li>
+        <li>Flags malformed, look-alike, and known-bad URLs before you open them</li>
+        <li>Offline-first engine — your scans are not sent to trackers</li>
+        <li>No subscription, no login — pay once, scan whenever</li>
+      </ul>
+      <button class="btn" id="buy">Get the Safe-Scan Pack — $9</button>
+      <div class="note" id="note">Secure checkout via Stripe.</div>
+    </div>
+
+    <div class="how">
+      <div class="step"><div class="n">1</div><div>Point CyberQRG at a QR code or paste a link.</div></div>
+      <div class="step"><div class="n">2</div><div>It decodes and scores the destination for safety risks.</div></div>
+      <div class="step"><div class="n">3</div><div>You get a clear safe / caution / danger verdict — before you tap.</div></div>
+    </div>
+
+    <footer>
+      CyberQRG is an offline-first utility. It does not store your scans or personal
+      data. Payments are processed by Stripe. Questions? Reply to your receipt email.
+    </footer>
+  </div>
+
+  <script>
+  // ---- buy loop (works once deployed with Stripe keys in Vercel env) ----
+  document.getElementById("buy").addEventListener("click", async function () {
+    var btn = this;
+    btn.disabled = true; btn.textContent = "Preparing checkout…";
+    try {
+      var c = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ tier: "scanpack" })
+      });
+      if (c.status === 501) {
+        note("Checkout goes live once the founder adds Stripe keys in Vercel. The page is fully working.");
+        reset(); return;
+      }
+      var cd = await c.json();
+      if (cd.url) { location.href = cd.url; }
+      else { throw new Error(cd.message || "checkout unavailable"); }
+    } catch (e) {
+      note("Not live yet: " + e.message);
+      reset();
+    }
+    function reset(){ btn.disabled = false; btn.textContent = "Get the Safe-Scan Pack — $9"; }
+  });
+  function note(m){ document.getElementById("note").textContent = m; }
+  </script>
+</body>
+</html>
