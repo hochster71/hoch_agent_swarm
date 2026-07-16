@@ -60,7 +60,10 @@ FACTORY_INTENT = {
     # Michael). NON-MONETIZED by design: it is NOT scored on the revenue ladder; its success is
     # family utility, not EARNING. (A future census pass should exempt it from the earning rollup.)
     "HHF":  ("Hoch Home Personal Factory (NON-MONETIZED — family ops)", "family calendar, chores, household ops for the Hoch family", None),
-    "HPF":  ("Hoch Product Factory", "physical/digital goods", None),
+    # HPF / "Pods" is NOT a product factory — it is the Hoch Pods Theater, the cinematic swarm-launch
+    # visualization (agent spin-ups routing to the factory lanes). NON-MONETIZED; not scored on the
+    # revenue ladder. Animation asset lives under tools/hoch_pods_theme_guard/.
+    "HPF":  ("Hoch Pods Theater (NON-MONETIZED — swarm launch visualization)", "cinematic agent-swarm launch animation", None),
 }
 
 

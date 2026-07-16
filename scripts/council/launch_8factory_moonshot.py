@@ -151,19 +151,11 @@ MISSIONS = [
             "commit it — founder approves). Local only; no spend."
         ),
     },
-    {
-        "mission_id": "MOON-HPF-01", "factory": "HPF", "rung_now": 0, "rung_target": 2,
-        "name": "Pods: podcast production kit (product) — DIRECTION UNCONFIRMED",
-        "founder_gate": "DEFINITION + KEYS/DEPLOY — founder confirms what 'Pods' is, then wires Stripe.",
-        "prompt": (
-            "HPF (Hoch Pods Factory) product direction is TENTATIVE (founder to confirm what 'Pods' "
-            "means): assume a PODCAST PRODUCTION KIT — templates, show-notes generators, and a "
-            "release checklist sold to independent podcasters. Produce a bounded first deliverable "
-            "(e.g. a show-notes + episode-plan generator with tests) and the product spec (name, "
-            "buyer, price) + proposed product_registry.json entry (do NOT commit). If the founder "
-            "later redefines 'Pods', this mission is re-aimed. Local only; no spend."
-        ),
-    },
+    # HPF / "Pods" is NOT a product and NOT a mission. It is the Hoch Pods Theater — the cinematic
+    # swarm-launch VISUALIZATION (agent spin-ups routing to the factory lanes). The animation asset
+    # is preserved under tools/hoch_pods_theme_guard/; it is the moonshot's launch face, not a
+    # factory to monetize. Wiring it to live launch events is an optional future flourish, not part
+    # of this revenue moonshot.
 ]
 
 

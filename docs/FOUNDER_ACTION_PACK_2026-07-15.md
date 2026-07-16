@@ -71,9 +71,10 @@ runway/burn engine + spec; you wire Stripe when it's ready.
 
 **HMF — Music** → ✅ **Royalty-free ORIGINAL music pack** (one-time; clean IP, no copyrighted material).
 
-**HPF — Pods** → ⚠️ **Tentative: podcast production kit** — the swarm will start here, but this is the one
-direction I'm *guessing*. **What is "Pods" to you?** (podcast kit? digital bundles? print-on-demand? pods
-as in hardware?) One line back and I re-aim the mission precisely.
+**HPF — Pods** → ✅ **Resolved: NOT a product.** "Pods" is the **Hoch Pods Theater** — the cinematic
+swarm-launch animation (agent spin-ups routing to the factory lanes). Removed from the revenue moonshot;
+the animation asset is preserved as the swarm's launch visualization. Optional future flourish: wire it to
+fire on real launch events. No product, no money.
 
 **HHF — Hoch Home PERSONAL Factory** → ✅ **NOT a product. Not monetized.** A dedicated swarm for the
 Hoch family — **Alison, Caroline, Claire, and you**. It builds on the existing `backend/homeops` seed to
