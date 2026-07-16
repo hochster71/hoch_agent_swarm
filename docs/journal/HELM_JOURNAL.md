@@ -15,6 +15,35 @@ as complete.*
 
 ---
 
+## Entry — Wednesday, 2026-07-15 (late) · "The family factory's first act"
+
+The Hoch Home Personal Factory (HHF) did its first real thing — for Alison, not for revenue.
+
+Michael and Alison authorized read/write to her Apple Reminders + Calendar. Alison had built a
+genuinely well-designed **zone-based weekly cleaning rotation** (Mon kitchen · Tue bathrooms · Wed
+bedrooms · Thu living areas + walls · Fri floors + laundry), tuned to the real house — dog-drool
+walls, small fridges, rotating bathrooms. The system was good; the lists had drowned in ~85
+completed duplicate items.
+
+What HHF did (all verified on the Mac, her task wording preserved verbatim):
+- **De-cluttered** the five lists — removed ~85 completed duplicates, leaving clean templates
+  (Mon 7 · Tue 8 · Wed 6 · Thu 6 · Fri 10, zero leftover checkmarks).
+- **Built a recurring backbone** — 5 weekly auto-repeating events on the **HOCH HOME OPS** calendar
+  (🧹 Mon–Fri, 9 AM, task list in the notes) so the whole family sees the rhythm; first cycle 7/20.
+- **Added a Monthly Deep-Reset list** (14 tasks) for what the weekly rhythm misses (baseboards,
+  fans, window tracks, fridge/oven interiors, showerhead descaling, vents, under-furniture).
+- **Made it self-maintaining** — a Sunday-8-PM scheduled job that de-dupes and un-checks the five
+  day lists weekly, so duplicates can never pile up again (Reminders' native repeat isn't scriptable;
+  calendar recurrence + weekly reset gives true hands-off recurrence).
+
+*Market note (illustrative): a "family operations / smart-home automation" build like this — audit an
+existing system, de-dup, wire recurring schedules, and stand up an automated weekly maintenance job —
+is the kind of work a home-automation consultant or a personal-ops/EA service charges **$50–$150/hr**
+for. But this one isn't for sale, and that's the point: HHF's success metric is a lighter mental load
+for the family, not a dollar. It's the one factory measured in peace of mind.*
+
+---
+
 ## Entry — Wednesday, 2026-07-15 · "Ship day, and the moonshot"
 
 The day HELM stopped being a promise and became a shipped product with an armed factory line.
