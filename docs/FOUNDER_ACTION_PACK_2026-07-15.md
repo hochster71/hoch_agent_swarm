@@ -64,32 +64,26 @@ Then, in the **Vercel** project for Story Studio, set these env vars (do NOT com
 
 ---
 
-## 4. Decide what the 4 blank factories should *be*  ⏱️ ~15 min of judgment
+## 4. The 4 factory lanes — LOCKED (folded into the moonshot, commit daee22a0)
 
-HFF, HHF, HMF, HPF are empty config entries. Tomorrow's swarm will *propose* product candidates, but your
-call on the lane is the highest-value input. For each, pick a direction (or write your own):
+**HFF — Finance** → ✅ **Founder cash-runway dashboard** (recurring subscription). Swarm builds the
+runway/burn engine + spec; you wire Stripe when it's ready.
 
-**HFF — Finance Factory** (financial tooling)
-- (a) *Founder cash-runway dashboard* — subscription; small business owners. **[recommended: recurring revenue]**
-- (b) One-time financial-model template pack (fundraising, unit economics).
-- (c) A narrow calculator/API product.
-- Your call: __________
+**HMF — Music** → ✅ **Royalty-free ORIGINAL music pack** (one-time; clean IP, no copyrighted material).
 
-**HHF — Home Factory** (home / personal automation)
-- (a) *Home-automation blueprint pack* — one-time; smart-home owners.
-- (b) Personal-ops companion (routines/checklists) — subscription.
-- (c) Template/config marketplace.
-- Your call: __________
+**HPF — Pods** → ⚠️ **Tentative: podcast production kit** — the swarm will start here, but this is the one
+direction I'm *guessing*. **What is "Pods" to you?** (podcast kit? digital bundles? print-on-demand? pods
+as in hardware?) One line back and I re-aim the mission precisely.
 
-**HMF — Music Factory** (music / audio — **original works only, no copyrighted material**)
-- (a) *Royalty-free original music pack* — one-time; creators/streamers. **[recommended: clean IP, clear buyer]**
-- (b) Generative background-music tool — subscription.
-- (c) Custom jingle/stinger service.
-- Your call: __________
+**HHF — Hoch Home PERSONAL Factory** → ✅ **NOT a product. Not monetized.** A dedicated swarm for the
+Hoch family — **Alison, Caroline, Claire, and you**. It builds on the existing `backend/homeops` seed to
+deliver: a family roster, a shared-calendar sync design, a household scheduler (cleaning rotations, chores,
+supply reminders), and a daily family brief. It runs on **simulated data only** until you personally connect
+real accounts — **connecting the family's real calendars / personal data is a founder-only, privacy-gated
+step.** Its success metric is *making family life easier*, never revenue, so the census no longer scores it
+on the money ladder.
 
-**HPF — Pods Factory** ("physical/digital goods" — *this one needs your definition most*)
-- ❓ **What is "Pods"?** — podcast production kit? digital product bundles? print-on-demand? something else?
-- Tell me what you intend and I'll aim the swarm precisely. Your call: __________
+*The only open decision here is what "Pods" means — everything else is set and armed.*
 
 ---
 
