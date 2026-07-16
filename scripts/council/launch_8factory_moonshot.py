@@ -71,27 +71,33 @@ MISSIONS = [
     },
     {
         "mission_id": "MOON-HCF-01", "factory": "HCF", "rung_now": 2, "rung_target": 3,
-        "name": "Cyber: name & spec one product from the artifacts",
-        "founder_gate": "KEYS/DEPLOY — founder approves the checkout when the spec is ready.",
+        "name": "Cyber: productize CyberQRG-AI (QR safety scanner)",
+        "founder_gate": "KEYS/DEPLOY — founder approves the checkout/app when the build is ready.",
         "prompt": (
-            "HCF (Hoch Cyber Factory) has produced 531 validated artifacts but no PRODUCT. "
-            "Review what it actually produces (security/compliance deliverables) and define ONE "
-            "sellable product: a specific name, a named buyer, a price, and a one-page spec of "
-            "what the buyer receives. Output the product spec + a Stripe checkout scaffold plan. "
-            "Register the product in coordination/products/product_registry.json is a FOUNDER "
-            "step — propose the exact JSON entry, do not commit it."
+            "HCF product direction (blueprint: docs/products/HCF_HRF_PRODUCT_SPECS.md): productize "
+            "the EXISTING offline-first QR-code security scanner at products/cyberqrg-ai/ into "
+            "'CyberQRG-AI — scan before you trust'. It answers 'is this QR safe?' BEFORE the user "
+            "acts (reveal destination domain, flag look-alike/homograph domains, redirect chains, "
+            "known-scam patterns — offline heuristics; green/amber/red verdict). Deliver: a shippable "
+            "scan->verdict build (reuse the existing package + tests), the product spec, and the "
+            "proposed product_registry.json entry (price $0.99/mo 'Family Protect', free basic scan). "
+            "Do NOT commit the registry entry or deploy — founder step. Purpose: protect the elderly "
+            "and non-technical from quishing scams. Local only; no spend."
         ),
     },
     {
         "mission_id": "MOON-HRF-01", "factory": "HRF", "rung_now": 2, "rung_target": 3,
-        "name": "Research: name & spec one product from the artifacts",
+        "name": "Research: build Clarity Briefs (cited plain-English digests)",
         "founder_gate": "KEYS/DEPLOY — founder approves the checkout when the spec is ready.",
         "prompt": (
-            "HRF (Hoch Research Factory) has produced 531 validated artifacts (research & "
-            "intelligence). Define ONE sellable product: name, buyer, price, and a one-page spec "
-            "(e.g. a recurring intelligence brief or a report pack). Output the product spec + a "
-            "Stripe checkout scaffold plan + the proposed product_registry.json entry. Do not "
-            "commit the registry entry — that is the founder's approval."
+            "HRF product direction (blueprint: docs/products/HCF_HRF_PRODUCT_SPECS.md): build "
+            "'Clarity Briefs — the truth, in plain English, with receipts'. Reuse HRF's synthesis "
+            "pipeline to turn complex sources into SHORT, cited, jargon-free briefs, with a citation "
+            "per claim and an explicit 'what's still uncertain' section (no false confidence). Pick "
+            "ONE concrete launch vertical (e.g. 'everyday health claims, decoded'). Deliver: a sample "
+            "brief, the product spec, and the proposed product_registry.json entry (price $5/mo or "
+            "$2/brief). Do NOT commit the registry entry or deploy — founder step. Purpose: fight "
+            "misinformation with sourced clarity. Local only; no spend."
         ),
     },
     # The four DECLARED factories: first governed mission -> first validated artifact -> product candidate.
