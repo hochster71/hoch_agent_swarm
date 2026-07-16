@@ -97,45 +97,71 @@ MISSIONS = [
     # The four DECLARED factories: first governed mission -> first validated artifact -> product candidate.
     {
         "mission_id": "MOON-HFF-01", "factory": "HFF", "rung_now": 0, "rung_target": 2,
-        "name": "Finance: first governed mission + product candidate",
-        "founder_gate": "None yet (pre-revenue). Money actions remain founder-only downstream.",
+        "name": "Finance: Founder cash-runway dashboard (recurring product)",
+        "founder_gate": "KEYS/DEPLOY downstream — founder wires Stripe + deploy when the build is ready.",
         "prompt": (
-            "HFF (Hoch Finance Factory) has never run a mission. Execute one bounded, useful "
-            "financial-tooling deliverable (e.g. a small, correct, well-tested Python module that "
-            "computes something a finance user needs) as a validated artifact, then propose ONE "
-            "product candidate (name, buyer, price) it could become. Local only; no market data "
-            "credentials, no spend, no financial advice."
+            "HFF (Hoch Finance Factory) product direction (founder's choice): a FOUNDER CASH-RUNWAY "
+            "DASHBOARD — a recurring subscription for small-business owners / solo founders that "
+            "shows cash on hand, burn, and months of runway from simple inputs. Build a bounded, "
+            "correct, well-tested first module: given a starting balance, recurring inflows, and "
+            "outflows, compute runway months, a burn trend, and a clear 'out of cash' date, with "
+            "unit tests. Then write the product spec (name, buyer, price = recurring) + the proposed "
+            "product_registry.json entry (do NOT commit it — founder approves). Local only; no real "
+            "financial data, no market-data credentials, no spend, no financial advice."
         ),
     },
     {
-        "mission_id": "MOON-HHF-01", "factory": "HHF", "rung_now": 0, "rung_target": 2,
-        "name": "Home: first governed mission + product candidate",
-        "founder_gate": "None yet (pre-revenue).",
+        "mission_id": "MOON-HHF-01", "factory": "HHF", "rung_now": None, "rung_target": None,
+        "monetized": False,
+        "name": "Hoch Home PERSONAL Factory — family operations (NOT monetized)",
+        "founder_gate": ("PRIVACY — connecting the family's REAL calendars/accounts or handling "
+                         "any real personal data is founder-authorized. Build + run on SIMULATED "
+                         "family data until Michael explicitly connects real accounts."),
         "prompt": (
-            "HHF (Hoch Home Factory) has never run a mission. Execute one bounded home/personal-"
-            "automation deliverable as a validated artifact, then propose ONE product candidate "
-            "(name, buyer, price). Local only; no spend."
+            "HHF is the Hoch Home PERSONAL Factory. It serves the HOCH FAMILY — Alison (wife), "
+            "Caroline and Claire (daughters), and Michael — NOT a market. It is NEVER monetized; "
+            "its only success metric is making the family's daily life easier. Build ON TOP of the "
+            "existing backend/homeops (device_registry.py, action_simulator.py); do not start over.\n\n"
+            "Using SIMULATED / placeholder family data ONLY (no real accounts, no real personal "
+            "data yet), deliver a working first version of a dedicated family-operations swarm:\n"
+            "1. A family roster + household profile schema (members, roles, preferences, "
+            "constraints — e.g. school days for the girls).\n"
+            "2. A shared family-calendar model + a sync DESIGN naming which real service to connect "
+            "later (e.g. Google Calendar) behind a founder-authorized, privacy-scoped connector.\n"
+            "3. A household scheduler: cleaning rotations, chores, and recurring household-item / "
+            "supply reminders (groceries, consumables).\n"
+            "4. A daily 'family brief' the household can read each morning.\n\n"
+            "PRIVACY IS PARAMOUNT: do NOT connect real accounts, do NOT ingest real personal data, "
+            "do NOT send anything to family members. Output the working system on simulated data "
+            "plus a short, explicit list titled 'What Michael must connect' for the founder to wire "
+            "real accounts later under his control."
         ),
     },
     {
         "mission_id": "MOON-HMF-01", "factory": "HMF", "rung_now": 0, "rung_target": 2,
-        "name": "Music: first governed mission + product candidate",
-        "founder_gate": "None yet (pre-revenue). Respect copyright — original works only.",
+        "name": "Music: royalty-free ORIGINAL music pack (one-time product)",
+        "founder_gate": "KEYS/DEPLOY downstream — founder wires Stripe + deploy when the pack is ready.",
         "prompt": (
-            "HMF (Hoch Music Factory) has never run a mission. Execute one bounded music/audio "
-            "deliverable as a validated artifact (original composition or a tool that generates "
-            "one — never copying an existing artist), then propose ONE product candidate (name, "
-            "buyer, price). Local only; no spend."
+            "HMF (Hoch Music Factory) product direction (founder's choice): a ROYALTY-FREE ORIGINAL "
+            "MUSIC PACK sold one-time to creators/streamers/video-makers. Produce a bounded first "
+            "deliverable: a small set of ORIGINAL compositions (or a tool that generates them) with "
+            "clear, clean IP — NEVER copying, sampling, or imitating any existing artist or "
+            "copyrighted work. Include a license note (royalty-free terms) and the product spec "
+            "(name, buyer, price = one-time) + the proposed product_registry.json entry (do NOT "
+            "commit it — founder approves). Local only; no spend."
         ),
     },
     {
         "mission_id": "MOON-HPF-01", "factory": "HPF", "rung_now": 0, "rung_target": 2,
-        "name": "Pods: first governed mission + product candidate",
-        "founder_gate": "None yet (pre-revenue).",
+        "name": "Pods: podcast production kit (product) — DIRECTION UNCONFIRMED",
+        "founder_gate": "DEFINITION + KEYS/DEPLOY — founder confirms what 'Pods' is, then wires Stripe.",
         "prompt": (
-            "HPF (Hoch Pods Factory) has never run a mission. Execute one bounded digital/physical-"
-            "goods deliverable as a validated artifact, then propose ONE product candidate (name, "
-            "buyer, price). Local only; no spend."
+            "HPF (Hoch Pods Factory) product direction is TENTATIVE (founder to confirm what 'Pods' "
+            "means): assume a PODCAST PRODUCTION KIT — templates, show-notes generators, and a "
+            "release checklist sold to independent podcasters. Produce a bounded first deliverable "
+            "(e.g. a show-notes + episode-plan generator with tests) and the product spec (name, "
+            "buyer, price) + proposed product_registry.json entry (do NOT commit). If the founder "
+            "later redefines 'Pods', this mission is re-aimed. Local only; no spend."
         ),
     },
 ]
@@ -175,7 +201,11 @@ def seed(apply: bool) -> int:
     print(f"HELM 8-FACTORY MOONSHOT — {'APPLY' if apply else 'DRY-RUN'}")
     print(f"  soak interlock: {'BLOCKED — ' + why if blocked else 'clear (' + why + ')'}")
     for m in MISSIONS:
-        print(f"  {m['mission_id']:14} {m['factory']:5} rung {m['rung_now']}->{m['rung_target']}  {m['name']}")
+        if m.get("monetized", True) is False:
+            tag = "FAMILY-OPS (not monetized)"
+        else:
+            tag = f"rung {m['rung_now']}->{m['rung_target']}"
+        print(f"  {m['mission_id']:14} {m['factory']:5} {tag}  {m['name']}")
         print(f"                 founder gate: {m['founder_gate']}")
 
     if apply and blocked:

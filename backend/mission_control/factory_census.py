@@ -56,7 +56,10 @@ FACTORY_INTENT = {
     "HSF":  ("Hoch Story Factory", "narrative & creative works", None),
     "HMF":  ("Hoch Music Factory", "music & audio", None),
     "HFF":  ("Hoch Finance Factory", "financial tooling", None),
-    "HHF":  ("Hoch Home Factory", "home/personal automation", None),
+    # HHF is the Hoch Home PERSONAL factory — serves the Hoch family (Alison, Caroline, Claire,
+    # Michael). NON-MONETIZED by design: it is NOT scored on the revenue ladder; its success is
+    # family utility, not EARNING. (A future census pass should exempt it from the earning rollup.)
+    "HHF":  ("Hoch Home Personal Factory (NON-MONETIZED — family ops)", "family calendar, chores, household ops for the Hoch family", None),
     "HPF":  ("Hoch Product Factory", "physical/digital goods", None),
 }
 
