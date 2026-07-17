@@ -111,6 +111,16 @@ try:
 except Exception:
     pass  # fail open on import only; routes simply absent if substrate broken
 
+# Knowledge Engine — governed retrieval (EDR-0004) — read-only projections
+try:
+    from backend.helm_runtime.knowledge_api import router_or_none as _helm_knowledge_router
+
+    _kr = _helm_knowledge_router()
+    if _kr is not None:
+        app.include_router(_kr)
+except Exception:
+    pass  # fail open on import only; routes simply absent if substrate broken
+
 
 
 def now() -> str:
@@ -963,6 +973,111 @@ def api_council_solve(body: dict):
     return solve(prompt)
 
 
+@app.post("/api/v1/helm/council/chat")
+def api_council_chat(body: dict):
+    """Converse with the council in one thread. mode='auto' routes to the owning lane;
+    mode='all' fans out to the whole council (each member answers in its own voice).
+    This is the primary surface — the founder talks here, not in a terminal."""
+    from fastapi import HTTPException
+    from backend.dispatch.council_router import council_chat
+    prompt = ((body or {}).get("prompt") or "").strip()
+    mode = ((body or {}).get("mode") or "auto").strip().lower()
+    history = (body or {}).get("history") or []
+    if not prompt:
+        raise HTTPException(status_code=400, detail={"error": "empty_prompt"})
+    return council_chat(prompt, mode=mode, history=history)
+
+
+@app.post("/api/v1/helm/council/verify")
+def api_council_verify():
+    """One click: HELM fires the independent auditor (Grok) against the frozen evidence and
+    writes the verdict — the founder never runs a script. Returns the OVERALL verdict."""
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT / "scripts"))
+    from helm_fire_verification import run_verification
+    return run_verification()
+
+
+@app.post("/api/v1/helm/council/build")
+def api_council_build(body: dict):
+    """Guarded EXECUTE Builder lane — Claude (Opus) builds inside HELM. mode='plan' (default,
+    read-only) or mode='execute' (approved; snapshot-before + frozen-target guard + rollback).
+    Founder-gated (requires CLI_CLAUDE grant); cost-capped; ledgered. Irreversible actions
+    (deploy/publish/push/money) stay founder-gated — this lane changes code only."""
+    from fastapi import HTTPException
+    from backend.dispatch.guarded_build import build
+    task = ((body or {}).get("task") or "").strip()
+    mode = ((body or {}).get("mode") or "plan").strip().lower()
+    if not task:
+        raise HTTPException(status_code=400, detail={"error": "empty_task"})
+    return build(task, mode=mode)
+
+
+@app.get("/api/v1/helm/council/activity")
+def api_council_activity(limit: int = 30):
+    """Live brain activity — recent COUNCIL_* + GOAL_NODE_UPDATE events (dispatches, verdicts,
+    builds, debug passes, node closes) newest-first, so the theater shows the swarm reasoning."""
+    from backend.helm_runtime.event_bus import tail_events
+    evs = tail_events(300)
+    keep = [e for e in evs if str(e.get("type", "")).startswith("COUNCIL_")
+            or e.get("type") == "GOAL_NODE_UPDATE"]
+    keep = list(reversed(keep))[:max(1, min(limit, 120))]
+    return {"schema": "HELM_COUNCIL_ACTIVITY_v1", "count": len(keep),
+            "events": [{"type": e.get("type"), "producer": e.get("producer"),
+                        "timestamp": e.get("timestamp"), "payload": e.get("payload", {}),
+                        "evidence": e.get("evidence", [])} for e in keep]}
+
+
+@app.get("/api/v1/helm/build-status")
+def api_build_status():
+    """Live build-to-GOAL status — the autonomous runner's state, current node, %, and each
+    PERT node's status. Read-only; reflects what the runner writes as it works."""
+    import json as _json
+    status_f = ROOT / "coordination" / "goal" / "build_to_goal_status.json"
+    pert_f = ROOT / "coordination" / "goal" / "helm_pert.json"
+    out = {"state": "UNKNOWN", "detail": "", "percent_to_goal": None, "nodes": {}, "node_labels": {}}
+    try:
+        out.update(_json.loads(status_f.read_text()))
+    except Exception:
+        pass
+    try:
+        p = _json.loads(pert_f.read_text())
+        out["node_labels"] = {n.get("id"): (n.get("label") or n.get("name") or "")
+                              for n in p.get("nodes", [])}
+        out["node_order"] = [n.get("id") for n in p.get("nodes", [])]
+    except Exception:
+        pass
+    return out
+
+
+@app.get("/build", response_class=HTMLResponse)
+def serve_build_theater() -> str:
+    """Live Build Theater — watch the swarm reason and build toward GOAL in real time."""
+    f = ROOT / "frontend_live" / "build_theater.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>build_theater.html missing</h1>"
+
+
+@app.get("/api/v1/helm/audit-status")
+def api_audit_status():
+    """Live audit-to-GREEN status — each controllable audit's GREEN/FINDING state + the
+    externally-gated audits that require third-party evidence. Read-only."""
+    import json as _json
+    f = ROOT / "coordination" / "goal" / "audit_status.json"
+    try:
+        return _json.loads(f.read_text())
+    except Exception:
+        return {"state": "NOT_STARTED", "audits": {}, "green": 0, "total_controllable": 7,
+                "externally_gated": ["ATO / independent security certification", "SOC 2 attestation",
+                                     "Financial settlement audit (Stripe/bank)"]}
+
+
+@app.get("/audit", response_class=HTMLResponse)
+def serve_audit_theater() -> str:
+    """Live Audit Theater — watch the audit swarm drive each audit to GREEN."""
+    f = ROOT / "frontend_live" / "audit_theater.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>audit_theater.html missing</h1>"
+
+
 @app.post("/api/v1/helm/dispatch")
 def api_council_dispatch(body: dict):
     """HELM fires a council member from the UI. Money-gated + fail-closed: requires
@@ -1712,10 +1827,17 @@ def pert_wall() -> str:
 
 
 @app.get("/", response_class=HTMLResponse)
+@app.get("/hub", response_class=HTMLResponse)
 def ui() -> str:
+    """HELM Hub — the single front door. Links the 5 keeper cockpits (Council, Command Center,
+    PERT→GOAL, Build Theater, Audit Theater) with live GOAL% + lane status; groups the rest.
+    UI-consolidation front door (see docs/helm/UI_CONSOLIDATION.md)."""
+    hub = ROOT / "frontend_live" / "hub.html"
+    if hub.exists():
+        return hub.read_text(encoding="utf-8")
     if UI.exists():
         return UI.read_text()
-    return "<h1>HELM LIVE</h1><p>UI missing at frontend_live/helm.html</p>"
+    return "<h1>HELM LIVE</h1><p>hub.html missing at frontend_live/hub.html</p>"
 
 
 # ── FOUNDER GATE (iPhone) ────────────────────────────────────────────────────

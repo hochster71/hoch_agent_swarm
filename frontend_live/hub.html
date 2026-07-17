@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HELM · Hub</title>
+<style>
+  :root{
+    --bg:#080b11; --panel:#111721; --panel2:#0d131c; --edge:#1e2836; --ink:#e6edf3;
+    --dim:#8b98a9; --faint:#5b6675; --accent:#4da3ff; --good:#3fb950; --warn:#d29922;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box} body{margin:0;background:radial-gradient(1200px 700px at 60% -12%,#0f1b2c 0%,var(--bg) 60%);color:var(--ink);font-family:var(--sans);min-height:100vh}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 22px 80px}
+  .head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  h1{font-size:22px;margin:0;font-weight:650;letter-spacing:.3px}
+  .tag{font-size:12.5px;color:var(--dim)}
+  .goal{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .goal b{color:var(--good);font-size:16px}
+  .lanes{display:flex;gap:7px;margin:14px 0 4px;flex-wrap:wrap}
+  .lane{font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:999px;border:1px solid var(--edge);display:flex;gap:6px;align-items:center}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--faint)} .lane.ready .dot{background:var(--good);box-shadow:0 0 6px var(--good)}
+  h2{font-size:11px;font-family:var(--mono);letter-spacing:.7px;color:var(--faint);text-transform:uppercase;margin:26px 0 12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  a.card{display:block;text-decoration:none;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--edge);border-radius:14px;padding:18px 18px;transition:.12s}
+  a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .card .t{font-size:16px;font-weight:650;color:var(--ink)} .card .d{color:var(--dim);font-size:13px;margin-top:6px;line-height:1.5}
+  .card .u{color:var(--faint);font-family:var(--mono);font-size:11px;margin-top:10px}
+  .more{display:flex;flex-wrap:wrap;gap:8px}
+  .more a{font-size:12px;font-family:var(--mono);color:var(--dim);text-decoration:none;padding:6px 11px;border:1px solid var(--edge);border-radius:8px}
+  .more a:hover{border-color:var(--accent);color:var(--ink)}
+  .foot{margin-top:28px;color:var(--faint);font-size:11px;font-family:var(--mono);line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>HELM</h1><span class="tag">verified · operational · governed — the AI Executive Operating System</span>
+    <span class="goal" id="goal">GOAL <b>—</b></span>
+  </div>
+  <div class="lanes" id="lanes"></div>
+
+  <h2>Cockpits</h2>
+  <div class="grid">
+    <a class="card" href="/council"><div class="t">Council</div><div class="d">Talk to the whole council — Orchestrator, Builder (Claude), Auditor (Grok), Local. It routes, reasons, builds.</div><div class="u">/council</div></a>
+    <a class="card" href="/command"><div class="t">Command Center</div><div class="d">Executive view — every subsystem's runtime truth in one wall (mission, factories, cyber, founder gates).</div><div class="u">/command</div></a>
+    <a class="card" href="/pert-live"><div class="t">PERT → GOAL</div><div class="d">The live path to GOAL: every node's status and % complete, updating as the swarm works.</div><div class="u">/pert-live</div></a>
+    <a class="card" href="/build"><div class="t">Build Theater</div><div class="d">Watch the swarm reason and build in real time — Builder builds, Grok audits, nodes close.</div><div class="u">/build</div></a>
+    <a class="card" href="/audit"><div class="t">Audit Theater</div><div class="d">The autonomous audit swarm driving each assurance audit to GREEN, Grok-verified.</div><div class="u">/audit</div></a>
+  </div>
+
+  <h2>More views (specialized / reference)</h2>
+  <div class="more">
+    <a href="/architecture">Architecture</a>
+    <a href="/roadmap">Roadmap</a>
+    <a href="/voice">Voice</a>
+    <a href="/founder">Founder gate</a>
+    <a href="/jspace">J-Space</a>
+    <a href="/executive">Executive brief</a>
+    <a href="/mission">Mission</a>
+  </div>
+
+  <div class="foot" id="foot">
+    Legacy duplicates consolidated: /theater → Build Theater · /pert → PERT→GOAL · /command_center, /console, /control_plane, /brain, /helm → superseded by Council + Command Center.
+    <br>See docs/helm/UI_CONSOLIDATION.md for the full keep/merge/retire plan.
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id); function esc(s){return (s||"").replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+async function load(){
+  try{const d=await(await fetch('/api/v1/helm/goal-pert')).json();
+    const p=d.percent_to_goal??d.pct??d.percent; if(p!=null)$('goal').innerHTML=`GOAL <b>${(+p).toFixed(1)}%</b>`;}catch(e){}
+  try{const d=await(await fetch('/api/v1/helm/council/status')).json();
+    $('lanes').innerHTML=(d.members||[]).map(m=>`<span class="lane ${m.status==='READY'?'ready':''}"><span class="dot"></span>${esc(m.display_name)} · ${esc(m.provider||'')}</span>`).join('');}catch(e){}
+}
+load(); setInterval(load,10000);
+</script>
+</body>
+</html>
