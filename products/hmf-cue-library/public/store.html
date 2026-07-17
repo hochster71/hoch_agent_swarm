@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HOCH Cue Library — Storefront</title>
+  <style>
+    :root { --ink:#1c1230; --muted:#6a5b84; --bg:#f7f4fc; --accent:#7c3aed; --line:#e7e0f5; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.5; }
+    .wrap { max-width:860px; margin:0 auto; padding:48px 24px 96px; }
+    .kicker { text-transform:uppercase; letter-spacing:.12em; font-size:13px; color:var(--accent); font-weight:700; }
+    h1 { font-size:34px; line-height:1.1; margin:10px 0 8px; }
+    .lede { font-size:17px; color:var(--muted); margin:0 0 24px; }
+    .banner { background:#f3edff; border:1px solid #d8c9f7; color:#5b3aa6; border-radius:12px;
+      padding:12px 16px; font-size:14px; margin:0 0 24px; }
+    .stub { background:#fff7e6; border:1px solid #f2d999; color:#7a5a12; border-radius:12px;
+      padding:12px 16px; font-size:13px; margin:0 0 24px; }
+    .grid { display:grid; gap:18px; }
+    .pack { background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px;
+      box-shadow:0 1px 3px rgba(28,18,48,.04); }
+    .pack h2 { font-size:20px; margin:0 0 4px; }
+    .pack .blurb { color:var(--muted); font-size:14px; margin:0 0 12px; }
+    .tags { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
+    .tag { background:#f0eafd; color:#5b3aa6; border-radius:999px; padding:3px 10px; font-size:12px; }
+    .tracks { width:100%; border-collapse:collapse; font-size:13px; margin:8px 0 12px; }
+    .tracks th, .tracks td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+    .tracks th { color:var(--muted); font-weight:600; }
+    .meta { font-size:12px; color:var(--muted); }
+    .badge { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; }
+    .badge.soon { background:#fff0d6; color:#8a5a00; }
+    .badge.live { background:#e2f7e6; color:#1a7a33; }
+    button { appearance:none; border:0; cursor:pointer; font-weight:700; font-size:14px;
+      padding:10px 16px; border-radius:10px; background:var(--accent); color:#fff; margin-top:8px; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    footer { margin-top:40px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:18px; }
+    #err { color:#b23; font-size:14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">HMF · HOCH Cue Library</p>
+    <h1>Storefront</h1>
+    <p class="lede">Browse themed instrumental cue packs. Previews and metadata are free —
+      downloads unlock after you subscribe.</p>
+
+    <div class="banner">
+      <strong>Instrumental-first, license-cleared.</strong> Every cue is original and instrumental —
+      no vocals, no lyrics, no artist- or voice-likeness. Downloads are license-gated.
+    </div>
+    <div id="status-stub" class="stub" hidden></div>
+
+    <div id="err"></div>
+    <div class="grid" id="grid"></div>
+
+    <footer>HMF · Hoch Music Factory · Previews are metadata only; audio is delivered post-purchase behind the license gate.</footer>
+  </div>
+
+  <script>
+    function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[c])); }
+
+    function renderTags(tags) {
+      const out = [];
+      if (!tags) return out;
+      (tags.mood || []).forEach(m => out.push(m));
+      (tags.genre || []).forEach(g => out.push(g));
+      if (tags.tempo_bpm) out.push(tags.tempo_bpm + ' bpm');
+      if (tags.key) out.push(tags.key);
+      return out;
+    }
+
+    async function load() {
+      const grid = document.getElementById('grid');
+      const err = document.getElementById('err');
+      try {
+        const r = await fetch('/api/catalog');
+        const data = await r.json();
+        if (!r.ok) { err.textContent = data.message || 'Could not load catalog.'; return; }
+
+        if (data.status && data.status !== 'LIVE') {
+          const s = document.getElementById('status-stub');
+          s.hidden = false;
+          s.innerHTML = '<strong>Preview catalog.</strong> ' + esc(data.honesty_note || 'Audio not attached yet.');
+        }
+
+        (data.packs || []).forEach(p => {
+          const card = el('div', 'pack');
+          const badge = p.available
+            ? '<span class="badge live">available</span>'
+            : '<span class="badge soon">coming soon</span>';
+          card.appendChild(el('h2', null, esc(p.title) + ' ' + badge));
+          if (p.blurb) card.appendChild(el('div', 'blurb', esc(p.blurb)));
+
+          const tagWrap = el('div', 'tags');
+          renderTags(p.tags).forEach(t => tagWrap.appendChild(el('span', 'tag', esc(t))));
+          card.appendChild(tagWrap);
+
+          const table = el('table', 'tracks');
+          table.innerHTML = '<tr><th>Cue</th><th>Type</th><th>Length</th><th>BPM</th><th>Key</th></tr>';
+          (p.tracks || []).forEach(t => {
+            const tr = el('tr');
+            tr.innerHTML = '<td>' + esc(t.title) + '</td><td>' + esc(t.type || '') + '</td><td>' +
+              (t.duration_sec || 0) + 's</td><td>' + esc(t.bpm || '') + '</td><td>' + esc(t.key || '') + '</td>';
+            table.appendChild(tr);
+          });
+          card.appendChild(table);
+
+          card.appendChild(el('div', 'meta',
+            (p.track_count || 0) + ' cues · ' + (p.total_duration_sec || 0) + 's total · license ' + esc((p.license && p.license.id) || '')));
+
+          const btn = el('button', null, p.available ? 'Download (subscribers)' : 'Not available yet');
+          btn.disabled = !p.available;
+          btn.addEventListener('click', () => {
+            window.location.href = '/api/download?pack=' + encodeURIComponent(p.id);
+          });
+          card.appendChild(btn);
+
+          grid.appendChild(card);
+        });
+      } catch (e) {
+        err.textContent = 'Network error loading catalog.';
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

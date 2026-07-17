@@ -1,0 +1,87 @@
+{
+  "$schema": "./catalog.schema.md",
+  "catalog_version": "1.0.0",
+  "generated_utc": "2026-07-16T00:00:00Z",
+  "status": "PLACEHOLDER",
+  "honesty_note": "This is a PLACEHOLDER catalog. Every pack below is marked \"available\": false and lists track files that DO NOT EXIST yet. No real audio ships with this repo. The founder must drop license-cleared, instrumental-only tracks into cues/<pack_id>/ and flip \"available\": true. Shipping placeholder tones as a product would be FAKE GREEN.",
+  "guardrail": {
+    "instrumental_only": true,
+    "no_vocals": true,
+    "no_lyrics": true,
+    "no_artist_or_voice_likeness": true,
+    "license_gate_mandatory": true
+  },
+  "packs": [
+    {
+      "id": "midnight-drive",
+      "title": "Midnight Drive",
+      "blurb": "Moody synthwave beds for night-time montages and title sequences.",
+      "available": false,
+      "price_note": "included with active subscription",
+      "tags": {
+        "mood": ["moody", "cinematic", "nocturnal"],
+        "tempo_bpm": 92,
+        "genre": ["synthwave", "electronic"],
+        "key": "A minor"
+      },
+      "tracks": [
+        { "id": "md-01", "title": "Neon Approach", "type": "bed", "duration_sec": 124, "bpm": 92, "key": "Am", "file": "cues/midnight-drive/md-01.wav", "vocals": false, "artist_likeness": false },
+        { "id": "md-02", "title": "Overpass", "type": "loop", "duration_sec": 32, "bpm": 92, "key": "Am", "file": "cues/midnight-drive/md-02.wav", "vocals": false, "artist_likeness": false },
+        { "id": "md-03", "title": "Taillights Sting", "type": "sting", "duration_sec": 6, "bpm": 92, "key": "Am", "file": "cues/midnight-drive/md-03.wav", "vocals": false, "artist_likeness": false },
+        { "id": "md-04", "title": "Exit Ramp", "type": "transition", "duration_sec": 8, "bpm": 92, "key": "Am", "file": "cues/midnight-drive/md-04.wav", "vocals": false, "artist_likeness": false }
+      ],
+      "license": {
+        "id": "HMF-STD-1.0",
+        "name": "HMF Standard Creator License",
+        "grant": "Non-exclusive, worldwide, perpetual right to synchronize these instrumental cues into your own video, podcast, stream, and game projects, including monetized ones.",
+        "permitted": [
+          "Use in unlimited personal and commercial end-products you create",
+          "Edit, loop, trim, and layer the cues to fit your project",
+          "Monetize the end-products (YouTube, Twitch, podcasts, paid apps/games)"
+        ],
+        "prohibited": [
+          "Reselling, redistributing, or sublicensing the cue files as standalone audio, samples, or in another music/cue library",
+          "Registering the cues (or derivatives) with any Content ID / royalty-collection system as your own",
+          "Claiming authorship of the underlying composition"
+        ],
+        "attribution_required": false,
+        "term": "Perpetual for end-products created while the subscription was active."
+      }
+    },
+    {
+      "id": "sunrise-standup",
+      "title": "Sunrise Standup",
+      "blurb": "Bright, upbeat acoustic-pop beds for explainer videos and product demos.",
+      "available": false,
+      "price_note": "included with active subscription",
+      "tags": {
+        "mood": ["upbeat", "warm", "optimistic"],
+        "tempo_bpm": 120,
+        "genre": ["acoustic pop", "corporate"],
+        "key": "C major"
+      },
+      "tracks": [
+        { "id": "ss-01", "title": "First Light", "type": "bed", "duration_sec": 118, "bpm": 120, "key": "C", "file": "cues/sunrise-standup/ss-01.wav", "vocals": false, "artist_likeness": false },
+        { "id": "ss-02", "title": "Clap Along Loop", "type": "loop", "duration_sec": 16, "bpm": 120, "key": "C", "file": "cues/sunrise-standup/ss-02.wav", "vocals": false, "artist_likeness": false },
+        { "id": "ss-03", "title": "Reveal Sting", "type": "sting", "duration_sec": 5, "bpm": 120, "key": "C", "file": "cues/sunrise-standup/ss-03.wav", "vocals": false, "artist_likeness": false }
+      ],
+      "license": {
+        "id": "HMF-STD-1.0",
+        "name": "HMF Standard Creator License",
+        "grant": "Non-exclusive, worldwide, perpetual right to synchronize these instrumental cues into your own video, podcast, stream, and game projects, including monetized ones.",
+        "permitted": [
+          "Use in unlimited personal and commercial end-products you create",
+          "Edit, loop, trim, and layer the cues to fit your project",
+          "Monetize the end-products (YouTube, Twitch, podcasts, paid apps/games)"
+        ],
+        "prohibited": [
+          "Reselling, redistributing, or sublicensing the cue files as standalone audio, samples, or in another music/cue library",
+          "Registering the cues (or derivatives) with any Content ID / royalty-collection system as your own",
+          "Claiming authorship of the underlying composition"
+        ],
+        "attribution_required": false,
+        "term": "Perpetual for end-products created while the subscription was active."
+      }
+    }
+  ]
+}
