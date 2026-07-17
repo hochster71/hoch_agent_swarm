@@ -927,6 +927,74 @@ def _favicon():
     return Response(content=png, media_type="image/png")
 
 
+@app.get("/council", response_class=HTMLResponse)
+def serve_council() -> str:
+    """HELM Council Control Plane — the single dark surface where the founder hands HELM a
+    mission. HELM classifies the ask into a lane, routes it to the model that OWNS that lane
+    (Orchestrator/ChatGPT plans, Builder/Claude engineers, Auditor/Grok verifies, Local for
+    private data), reasons, and solves. The founder does not pick a member. No copy/paste."""
+    f = ROOT / "frontend_live" / "council.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>council.html missing</h1>"
+
+
+@app.get("/api/v1/helm/council/status")
+def api_council_status():
+    """Live per-lane readiness — which council members HELM can currently fire (presence only,
+    never a key value). READY = key present + money-gate on; GATED = key present, gate off;
+    BLOCKED_EXTERNAL = credential not supplied."""
+    from backend.dispatch.council_router import council_status
+    return council_status()
+
+
+@app.post("/api/v1/helm/council/solve")
+def api_council_solve(body: dict):
+    """HELM assigns the mission to the lane that owns it and solves. The founder does NOT pick
+    a model — HELM classifies the ask → capability → owning role → provider, then dispatches.
+    mode='orchestrate' runs the full governed chain (plan → build → verify). Fail-closed and
+    honest: a lane whose provider isn't enabled returns BLOCKED, never a fabricated answer."""
+    from fastapi import HTTPException
+    from backend.dispatch.council_router import solve, orchestrate
+    prompt = ((body or {}).get("prompt") or "").strip()
+    mode = ((body or {}).get("mode") or "auto").strip().lower()
+    if not prompt:
+        raise HTTPException(status_code=400, detail={"error": "empty_prompt"})
+    if mode == "orchestrate":
+        return orchestrate(prompt)
+    return solve(prompt)
+
+
+@app.post("/api/v1/helm/dispatch")
+def api_council_dispatch(body: dict):
+    """HELM fires a council member from the UI. Money-gated + fail-closed: requires
+    HELM_DISPATCH_ENABLED + the provider key (auto-loaded from ~/.helm/helm.env). Records a
+    COUNCIL_DISPATCH event (never the secret). Returns the model's text."""
+    from fastapi import HTTPException
+    from backend.dispatch import dispatch as live_dispatch
+    from backend.helm_runtime.dispatch_gateway import DispatchNotEnabledError
+    role = (body or {}).get("role") or None
+    capability = (body or {}).get("capability") or None
+    provider = (body or {}).get("provider") or None
+    prompt = ((body or {}).get("prompt") or "").strip()
+    if not prompt:
+        raise HTTPException(status_code=400, detail={"error": "empty_prompt"})
+    try:
+        r = live_dispatch(role=role, capability=capability, provider=provider, prompt=prompt)
+    except DispatchNotEnabledError as e:
+        raise HTTPException(status_code=403, detail={
+            "error": "dispatch_disabled", "message": str(e),
+            "howto": "add the provider key to ~/.helm/helm.env and set HELM_DISPATCH_ENABLED=1"})
+    except Exception as e:  # provider/network error — surface honestly, no secret
+        raise HTTPException(status_code=502, detail={"error": "provider_error", "message": str(e)[:300]})
+    try:  # record the dispatch on the nervous system (content length only, never the text/secret)
+        from backend.helm_runtime.event_bus import publish_event
+        publish_event(type="COUNCIL_DISPATCH", producer=(role or capability or "council"),
+                      mission_id="COUNCIL", payload={"provider": r.get("provider"),
+                      "model": r.get("model"), "prompt_chars": len(prompt)})
+    except Exception:
+        pass
+    return {"ok": True, **r}
+
+
 @app.get("/api/v1/helm/jspace/lens")
 def api_v1_jspace_lens():
     """Semantic Jacobian Lens — which findings actually hold the promotion gate closed, ranked by how

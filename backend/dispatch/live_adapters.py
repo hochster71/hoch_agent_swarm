@@ -30,6 +30,19 @@ def dispatch_globally_enabled() -> bool:
     return bool(os.environ.get(DISPATCH_FLAG))
 
 
+def provider_configured(provider: str) -> bool:
+    """Presence-only check: is this provider's credential available in the env?
+
+    Never reads or returns the value itself. `local` is configured when its base
+    URL is set (HELM_LOCAL_MODEL_URL). Other providers use PROVIDER_KEY_ENV.
+    """
+    p = (provider or "").lower()
+    if p == "local":
+        return bool(os.environ.get("HELM_LOCAL_MODEL_URL"))
+    env = PROVIDER_KEY_ENV.get(p)
+    return bool(env and os.environ.get(env))
+
+
 class _LiveAdapter(ProviderAdapter):
     """Base for real adapters. health() reports dispatch_implemented=True."""
 
@@ -100,7 +113,8 @@ class LiveOpenAIAdapter(_LiveAdapter):
         out = self._post(
             "https://api.openai.com/v1/chat/completions",
             {"Authorization": f"Bearer {key}"},
-            {"model": model, "messages": [{"role": "user", "content": request.prompt}]},
+            {"model": model, "max_tokens": 8192,
+             "messages": [{"role": "user", "content": request.prompt}]},
         )
         text = (out.get("choices") or [{}])[0].get("message", {}).get("content", "")
         return {"provider": "openai", "model": model, "text": text, "usage": out.get("usage")}
@@ -131,7 +145,8 @@ class LiveXAIAdapter(_LiveAdapter):
         out = self._post(
             "https://api.x.ai/v1/chat/completions",
             {"Authorization": f"Bearer {key}"},
-            {"model": model, "messages": [{"role": "user", "content": request.prompt}]},
+            {"model": model, "max_tokens": 8192,
+             "messages": [{"role": "user", "content": request.prompt}]},
         )
         text = (out.get("choices") or [{}])[0].get("message", {}).get("content", "")
         return {"provider": "xai", "model": model, "text": text, "usage": out.get("usage")}
