@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://helm/schema/helm_mission_assurance_audit.schema.json",
+  "title": "HELM Mission Assurance Audit — shared output schema (v2)",
+  "description": "Both ChatGPT 5.6 and Grok 4.5 emit JSON validating against this so outputs are field-for-field reconcilable. One $defs block; each output file references the relevant $def.",
+  "$defs": {
+    "componentState": { "enum": ["VERIFIED_LIVE","IMPLEMENTED_UNVERIFIED","PARTIAL","MOCKED","PLANNED","STALE","BROKEN","ABSENT","UNKNOWN"] },
+    "operationalState": { "enum": ["VERIFIED","OBSERVED","ESTIMATED","CONFIRMED_LIVE","ACTIVE","PENDING","BLOCKED","BLOCKED_EXTERNAL","WAITING_EXTERNAL","DEGRADED","FAILED","UNVERIFIED","UNKNOWN","PLANNED","NOT_STARTED"] },
+    "severity": { "enum": ["CRITICAL","HIGH","MEDIUM","LOW","INFO"] },
+    "verdict": { "enum": ["VERIFIED","VERIFIED_WITH_LIMITATIONS","FAILED","BLOCKED"] },
+    "gatedClass": { "enum": ["CONTROLLABLE","EXTERNALLY_GATED"] },
+    "evidenceKind": { "enum": ["DIRECT","DERIVED","TESTIMONIAL"] },
+    "findingId": { "type": "string", "pattern": "^(CHATGPT|GROK|UNIFIED)-[0-9]{1,2}-(CRITICAL|HIGH|MEDIUM|LOW|INFO)-[0-9]{3}$" },
+    "runHeader": {
+      "type": "object",
+      "required": ["model_identifier","run_timestamp_utc","git_commit_head","git_status_porcelain_clean"],
+      "properties": {
+        "model_identifier": { "type": "string" },
+        "run_timestamp_utc": { "type": "string" },
+        "git_commit_head": { "type": "string" },
+        "git_remote": { "type": "string" },
+        "git_branch": { "type": "string" },
+        "git_status_porcelain_clean": { "type": "boolean" },
+        "lockfile_hashes": { "type": "object" },
+        "host_os_arch": { "type": "string" },
+        "toolchain_versions": { "type": "object" }
+      }
+    },
+    "evidenceItem": {
+      "type": "object",
+      "required": ["artifact_path","sha256","collected_at_utc","source_command_or_request","exit_or_http_status","evidence_kind","model_identifier","git_commit"],
+      "properties": {
+        "artifact_path": { "type": "string" },
+        "sha256": { "type": "string" },
+        "collected_at_utc": { "type": "string" },
+        "source_command_or_request": { "type": "string" },
+        "exit_or_http_status": { "type": ["integer","string"] },
+        "environment_identifier": { "type": "string" },
+        "evidence_kind": { "$ref": "#/$defs/evidenceKind" },
+        "underlying_raw_evidence": { "type": "array", "items": { "type": "string" } },
+        "model_identifier": { "type": "string" },
+        "git_commit": { "type": "string" }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["id","domain_number","severity","title","gated_class","evidence_refs","recommended_fix","regression_test"],
+      "properties": {
+        "id": { "$ref": "#/$defs/findingId" },
+        "domain_number": { "type": "integer", "minimum": 1, "maximum": 14 },
+        "severity": { "$ref": "#/$defs/severity" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "gated_class": { "$ref": "#/$defs/gatedClass" },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } },
+        "recommended_fix": { "type": "string" },
+        "regression_test": { "type": "string" },
+        "score_deduction": { "type": "number" }
+      }
+    },
+    "domainScore": {
+      "type": "object",
+      "required": ["domain_number","domain_name","score","deductions"],
+      "properties": {
+        "domain_number": { "type": "integer", "minimum": 1, "maximum": 14 },
+        "domain_name": { "type": "string" },
+        "score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "cap_applied": { "type": ["string","null"] },
+        "deductions": { "type": "array", "items": { "type": "object", "required": ["finding_id","points"], "properties": { "finding_id": { "$ref": "#/$defs/findingId" }, "points": { "type": "number" } } } }
+      }
+    },
+    "negativeTest": {
+      "type": "object",
+      "required": ["prohibited_action","result","denied","state_unmutated","no_external_side_effect","audit_logged","replay_denied"],
+      "properties": {
+        "prohibited_action": { "type": "string" },
+        "result": { "enum": ["PASS","PARTIAL","FAIL"] },
+        "denied": { "type": "boolean" },
+        "state_unmutated": { "type": "boolean" },
+        "no_external_side_effect": { "type": "boolean" },
+        "audit_logged": { "type": "boolean" },
+        "audit_log_fields_complete": { "type": "boolean" },
+        "no_sensitive_exposure": { "type": "boolean" },
+        "replay_denied": { "type": "boolean" },
+        "response_no_false_success": { "type": "boolean" },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "controlStatus": {
+      "type": "object",
+      "required": ["family","status"],
+      "properties": {
+        "family": { "enum": ["AC","AU","CA","CM","CP","IA","IR","MA","PE","RA","SA","SC","SI","SR"] },
+        "control_id": { "type": "string" },
+        "status": { "enum": ["SATISFIED","PARTIAL","PLANNED","UNKNOWN"] },
+        "operational_view": { "type": "string" },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "type": "object",
+  "required": ["file","run"],
+  "properties": {
+    "file": { "enum": ["audit_summary","domain_scores","component_traceability","findings","negative_tests","red_blue_results","performance_results","resilience_results","nist_control_matrix","non_coverage","evidence_manifest"] },
+    "run": { "$ref": "#/$defs/runHeader" },
+    "composite_trust_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "composite_cap_reason": { "type": ["string","null"] },
+    "final_verdict": { "$ref": "#/$defs/verdict" },
+    "domain_scores": { "type": "array", "items": { "$ref": "#/$defs/domainScore" } },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "negative_tests": { "type": "array", "items": { "$ref": "#/$defs/negativeTest" } },
+    "nist_control_matrix": { "type": "array", "items": { "$ref": "#/$defs/controlStatus" } },
+    "evidence_manifest": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+    "non_coverage": { "type": "array", "items": { "type": "object", "required": ["area","reason"], "properties": { "area": { "type": "string" }, "reason": { "type": "string" } } } },
+    "top10_remediation_bar": { "type": "array", "items": { "type": "string" } }
+  }
+}
