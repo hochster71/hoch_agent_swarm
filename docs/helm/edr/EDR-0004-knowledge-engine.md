@@ -11,6 +11,20 @@ Today HELM's architectural intent still lives partly in conversations. The Const
 ## Decision — what the Knowledge Engine is
 The authoritative, governed source of durable organizational knowledge. **Knowledge belongs to HELM, never to an individual model.** It is a *runtime projection* for readers and a *governed, evidence-linked store* for writers.
 
+### First responsibility (v1 scope): Governed Retrieval — NOT long-term memory
+The Knowledge Engine's first and smallest valuable responsibility is **Governed Retrieval**:
+giving every worker a shared, authoritative answer to governance-provenance questions,
+so nothing depends on hidden conversation history. v1 must answer:
+- **Which Constitution article governs this?**
+- **Which EDR changed this behavior?**
+- **What verification evidence supports this implementation?**
+- **Which factories depend on this subsystem?**
+- **What controls map to this runtime component?**
+
+**Explicitly de-scoped from v1:** general "long-term memory," free-form recall, and
+conversational history. Those are later increments, not the first deliverable. Starting
+with Governed Retrieval keeps the Knowledge Engine small, authoritative, and immediately useful.
+
 ### Corpus (authoritative content)
 Constitution · EDRs · runbooks · cyber mappings (NIST/RMF/Zero-Trust) · mission history · lessons learned · factory specifications · runtime documentation · verification artifacts.
 

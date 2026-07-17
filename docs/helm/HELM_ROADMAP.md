@@ -57,6 +57,25 @@ independent verification is prerequisite to trusting any "implemented" claim.*
 HASF · HRF · HMF · HSF · Finance · Cyber · Research · Applications — as **plugins**
 that consume runtime services and never duplicate the runtime (Constitution Article VIII).
 
+## Release Trains (platform versioning, not "keep building")
+HELM ships as **platform releases**; the phases map to a release train:
+```
+HELM 1.0.0-alpha   Governance Frozen         (Constitution ratified) ← current
+      ↓
+HELM 1.0.0-beta    Knowledge Engine          (Phase B — Governed Retrieval)
+      ↓
+HELM 1.0.0-rc1     Dispatch Enabled          (Phase C — founder-gated credentials)
+      ↓
+HELM 1.0.0         Executive Runtime Operational
+```
+**Factories version independently** from HELM Core, so the platform stays stable while
+factories evolve at their own speed:
+```
+HELM Core 1.x   ·   HASF 1.x   ·   HRF 1.x   ·   HMF 1.x   ·   HSF 1.x   · …
+```
+A factory is a plugin (Constitution Article VIII); its version advances without forcing a
+HELM Core release, and HELM Core advances without forcing a factory release.
+
 ## Open sequencing decision (founder)
 The prior founder priority put **independent verification first**; this roadmap lists
 Knowledge (B) before Verification (D). These can run in either order or in parallel —

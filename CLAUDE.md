@@ -30,12 +30,16 @@ Hard lines that still hold (and are consistent with the above): Claude will not 
 | **Builder** | **`ROLE_BUILDER.md`** | **Claude (you)** |
 | Auditor | `ROLE_AUDITOR.md` | often Grok |
 
-Standing load order:
-0. **`docs/helm/HELM_CONSTITUTION_v1.0.md`** — the Authoritative Constitutional Baseline (normative reference). Architecture is frozen here; changes only via EDR. Reference it; do not restate or redesign the architecture.
-1. `docs/helm/HELM_EXECUTIVE_RUNTIME_CHARTER.md`
-2. `coordination/governance/role_overlays/ROLE_BUILDER.md`
-3. `coordination/goal/executive_mission.json` (control object)
-4. Truth **projections** (`mission_state.json`, APIs) — never treat as write source
+**The Five Canonical Session Loads (every session, nothing else — founder rule 2026-07-17):**
+1. **HELM Constitution** — `docs/helm/HELM_CONSTITUTION_v1.0.md` (RATIFIED baseline; frozen, changes only via EDR).
+2. **Active EDRs** — `docs/helm/edr/` (what changed and why).
+3. **Mission Runtime** — `backend/helm_runtime/` + `coordination/goal/executive_mission.json` (control object).
+4. **Runtime Truth** — projections / APIs (read-only; never a write source).
+5. **Current Mission** — the active founder-set queue (`coordination/goal/`).
+
+No giant context dumps. No architectural re-explanation. No reconstructing weeks of conversation.
+Then load the role overlay (`coordination/governance/role_overlays/ROLE_BUILDER.md`) + charter
+(`HELM_EXECUTIVE_RUNTIME_CHARTER.md`) for role context.
 
 Material writes go through **Mission Runtime transactions** (`backend/helm_runtime/transaction.py`). Architectural changes require an **EDR** under `docs/helm/edr/`. Never self-certify autonomous production OS readiness; hand assurance to Auditor with evidence paths. Close with a transaction **or** `NO_MISSION_WRITE: <reason>`.
 
