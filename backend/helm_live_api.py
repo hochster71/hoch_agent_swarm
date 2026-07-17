@@ -881,6 +881,25 @@ def serve_ops_center() -> str:
     return f.read_text(encoding="utf-8") if f.exists() else "<h1>ops_center.html missing</h1>"
 
 
+@app.get("/api/v1/helm/executive-brief")
+def api_executive_brief():
+    """Unified Executive Brief — integrates ALL existing HELM projections (mission,
+    HMAI, external milestones, AI/workers, cybersecurity/ConMon, factories, founder
+    decisions) into one honest payload. Fail-closed: absent sources render UNKNOWN,
+    unconnected lifestyle domains render NOT_CONNECTED. No fake green."""
+    from backend.helm_executive_brief import build_executive_brief
+    return build_executive_brief()
+
+
+@app.get("/command", response_class=HTMLResponse)
+def serve_command_center() -> str:
+    """HELM Executive Command Center — the integrated 15-panel view (mockup-aligned),
+    every number backed by runtime truth from /api/v1/helm/executive-brief. Illustrative
+    mockup figures are NOT used; real values or honest UNKNOWN/NOT_CONNECTED only."""
+    f = ROOT / "frontend_live" / "command_center.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>command_center.html missing</h1>"
+
+
 @app.get("/api/v1/helm/jspace/lens")
 def api_v1_jspace_lens():
     """Semantic Jacobian Lens — which findings actually hold the promotion gate closed, ranked by how

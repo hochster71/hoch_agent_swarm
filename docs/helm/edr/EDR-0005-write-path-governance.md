@@ -36,9 +36,12 @@ emits an event / submits a proposal.
 - Daemons that mutate state (liveness/refresher/producers) **emit events or write
   evidence files — they must not create commits.** Audit any daemon that commits and
   convert it to event/evidence output.
-- Stale-lock recovery is a documented, guarded step (`scripts/fix_git_governance_commit.sh`:
-  verify no live `git`, then clear `HEAD.lock`+`index.lock`, then commit) — not an
-  ad-hoc habit.
+- **Manual lock removal is an EXCEPTION, fail-closed — never routine.** Before deleting
+  `.git/HEAD.lock` or `.git/index.lock`, verify (a) no live `git` process AND (b) **no
+  process owns either lock file** (`lsof <lock>`). If either is held, do NOT delete —
+  investigate. Recovery is the guarded `scripts/fix_git_governance_commit.sh`, not an
+  ad-hoc habit. Once the authorized Git writer exists, stale locks should not occur and
+  manual deletion should approach zero.
 
 ## Consequences
 - **Positive:** lock contention disappears (one writer); Git history becomes a clean

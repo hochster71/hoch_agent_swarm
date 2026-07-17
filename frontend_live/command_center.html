@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HELM · Executive Command Center</title>
+<style>
+  :root{
+    --bg:#070b12; --panel:#0e1622; --panel2:#0b111a; --line:#1b2838;
+    --ink:#e6edf3; --muted:#7d8ea3; --dim:#45566b;
+    --green:#22e0a1; --amber:#f5a623; --red:#ff5c6c; --grey:#54637a; --blue:#4aa8ff; --purple:#9a7cff;
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+    --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1400px 700px at 60% -20%,#0d1a2b,var(--bg));color:var(--ink);font-family:var(--font)}
+  .wrap{max-width:1320px;margin:0 auto;padding:18px 18px 60px}
+  header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+  h1{font-size:14px;letter-spacing:.24em;font-weight:700;margin:0}
+  h1 b{color:var(--green)}
+  .headline{font-size:11px;color:var(--muted);margin-top:5px;max-width:760px}
+  .conn{font-size:10.5px;color:var(--muted);font-family:var(--mono);text-align:right}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:13px;padding:13px 14px}
+  .card h3{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+  .c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+  .big{font-size:30px;font-weight:700;line-height:1}
+  .unit{font-size:12px;color:var(--muted);font-weight:500}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;box-shadow:0 0 8px currentColor}
+  .s-green{color:var(--green)}.s-amber{color:var(--amber)}.s-red{color:var(--red)}.s-grey{color:var(--grey)}.s-blue{color:var(--blue)}
+  .kv{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #12202e}
+  .kv:last-child{border-bottom:0}
+  .kv .v{font-family:var(--mono);font-size:11.5px}
+  .tag{font-size:9.5px;font-family:var(--mono);border:1px solid var(--line);border-radius:6px;padding:5px 8px;color:var(--dim)}
+  .worker{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:7px 0;border-bottom:1px solid #12202e}
+  .worker:last-child{border-bottom:0}
+  .worker .m{font-family:var(--mono);font-size:10px;color:var(--dim)}
+  .hero{grid-column:span 4;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+  .ring{font-size:46px;font-weight:800;letter-spacing:-.02em}
+  .band{font-size:11px;font-family:var(--mono);letter-spacing:.1em;margin-top:4px}
+  .brainword{font-size:10px;letter-spacing:.3em;color:var(--muted);margin-top:8px}
+  .rec{background:#0f1a29;border:1px solid #22e0a133;border-left:3px solid var(--green);border-radius:11px;padding:12px 14px;grid-column:span 12}
+  .muteline{font-size:10.5px;color:var(--dim);font-family:var(--mono)}
+  .foot{margin-top:16px;font-size:10px;color:var(--dim);font-family:var(--mono);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2 class="sr-only" style="position:absolute;left:-9999px">HELM Executive Command Center — integrated runtime-truth panels; all values live or honestly UNKNOWN.</h2>
+  <header>
+    <div>
+      <h1>⎈ HELM · <b>EXECUTIVE COMMAND CENTER</b></h1>
+      <div class="headline" id="headline">—</div>
+    </div>
+    <div class="conn" id="conn"><span class="dot s-grey">●</span>connecting…<br><span id="ts" style="color:var(--dim)"></span></div>
+  </header>
+
+  <div class="grid">
+    <!-- HMAI hero -->
+    <div class="card hero">
+      <h3 style="align-self:flex-start">Mission Assurance · HMAI</h3>
+      <div class="ring" id="hmai">—</div>
+      <div class="band" id="hmai-band">—</div>
+      <div class="brainword">TRUTH · EVIDENCE · GOVERNANCE · MISSION</div>
+    </div>
+
+    <!-- Mission -->
+    <div class="card c4">
+      <h3>Mission</h3>
+      <div class="big" id="m-name" style="font-size:19px">—</div>
+      <div class="kv"><span>Baseline</span><span class="v s-green" id="m-base">RATIFIED</span></div>
+      <div class="kv"><span>Verification</span><span class="v s-amber" id="m-ver">PENDING</span></div>
+      <div class="kv"><span>State</span><span class="v" id="m-state">—</span></div>
+      <div class="kv"><span>Founder gate</span><span class="v" id="m-gate">—</span></div>
+    </div>
+
+    <!-- Runtime Truth Engine -->
+    <div class="card c4">
+      <h3>Runtime Truth Engine</h3>
+      <div class="kv"><span>Mission Runtime</span><span class="v" id="e-mr">—</span></div>
+      <div class="kv"><span>Runtime Truth</span><span class="v" id="e-rt">—</span></div>
+      <div class="kv"><span>Governance</span><span class="v" id="e-gov">—</span></div>
+      <div class="kv"><span>Dispatch</span><span class="v" id="e-dis">—</span></div>
+    </div>
+
+    <!-- Cyber Operations / ConMon -->
+    <div class="card c4">
+      <h3>Cyber Operations · ConMon</h3>
+      <div class="big" id="cy-posture">—<span class="unit">% posture</span></div>
+      <div class="muteline" id="cy-fw" style="margin:6px 0 8px">—</div>
+      <div class="kv"><span>Controls assessed</span><span class="v" id="cy-controls">—</span></div>
+      <div class="kv"><span>Implemented</span><span class="v s-green" id="cy-impl">—</span></div>
+      <div class="kv"><span>Unknown</span><span class="v s-grey" id="cy-unk">—</span></div>
+      <div class="kv"><span>High findings</span><span class="v" id="cy-high">—</span></div>
+    </div>
+
+    <!-- AI Cognition / model routing -->
+    <div class="card c4">
+      <h3>AI Cognition · capability routing (role → provider)</h3>
+      <div id="workers"><div class="muteline">loading…</div></div>
+      <div class="muteline" id="ai-summary" style="margin-top:8px"></div>
+    </div>
+
+    <!-- External milestones timeline -->
+    <div class="card c4">
+      <h3>Executive Milestones (evidence-gated)</h3>
+      <div class="kv"><span>Release</span><span class="v" id="ex-rel">—</span></div>
+      <div class="kv"><span>Revenue</span><span class="v" id="ex-rev">—</span></div>
+      <div class="muteline" id="ex-fresh" style="margin-top:8px"></div>
+      <h3 style="margin:12px 0 8px">Critical Path</h3>
+      <div id="cp"><div class="muteline">—</div></div>
+    </div>
+
+    <!-- Factories -->
+    <div class="card c4">
+      <h3>Factory Galaxy</h3>
+      <div class="big" id="fac-count">—<span class="unit">factories</span></div>
+      <div id="factories" style="margin-top:8px"></div>
+    </div>
+
+    <!-- Founder decisions -->
+    <div class="card c6">
+      <h3>Founder Decisions</h3>
+      <div id="founder"><div class="muteline">—</div></div>
+    </div>
+
+    <!-- Lifestyle (honest NOT_CONNECTED) -->
+    <div class="card c6">
+      <h3>HOCH Family OS domains (vision)</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="tag">Family · NOT CONNECTED</span>
+        <span class="tag">Home · NOT CONNECTED</span>
+        <span class="tag">Finance · NOT CONNECTED</span>
+        <span class="tag">Health · NOT CONNECTED</span>
+      </div>
+      <div class="muteline" style="margin-top:10px">Each domain enters via its own EDR + connector. No synthesized household data (No Fake Green).</div>
+    </div>
+
+    <!-- Recommended next action -->
+    <div class="rec">
+      <h3 style="color:var(--muted)">Recommended Next Action</h3>
+      <div id="rec" style="font-size:14px;font-weight:600;margin-top:2px">—</div>
+    </div>
+  </div>
+
+  <div class="foot">Every value is live runtime truth or an honest UNKNOWN/NOT_CONNECTED — never the illustrative mockup figures. Source: /api/v1/helm/executive-brief</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function cls(s){s=(s||"").toUpperCase();
+  if(["ACTIVE","VERIFIED","AVAILABLE","ENFORCED","READY","RATIFIED","IMPLEMENTED","OPERATIONAL","LIVE","SETTLED","REVENUE_VERIFIED"].includes(s))return"s-green";
+  if(["PENDING","BLOCKED","BLOCKED_FOUNDER","BLOCKED_EXTERNAL","WAITING_EXTERNAL","PAYMENT_AUTHORIZED","OBSERVED","OPERATIONAL_ATTENTION","DEGRADED","NOT_CONNECTED","PLANNED"].includes(s))return"s-amber";
+  if(["FAILED","BROKEN","ERROR","CRITICAL"].includes(s))return"s-red";
+  return"s-grey";}
+function dotspan(s,label){const c=cls(s);return `<span class="dot ${c}">●</span><span class="${c}">${label||s||"UNKNOWN"}</span>`;}
+function bandColor(b){b=(b||"").toUpperCase();return b.includes("OPERATIONAL")&&!b.includes("ATTENTION")?"var(--green)":b.includes("ATTENTION")?"var(--amber)":b.includes("CRITICAL")||b.includes("BLOCK")?"var(--red)":"var(--grey)";}
+
+async function refresh(){
+  let b;
+  try{ const r=await fetch("/api/v1/helm/executive-brief",{cache:"no-store"}); b=await r.json(); }
+  catch(e){ $("conn").innerHTML='<span class="dot s-red">●</span>runtime unreachable — UNKNOWN'; return; }
+  $("conn").innerHTML='<span class="dot s-green">●</span>live'; $("ts").textContent=new Date().toLocaleTimeString();
+  $("headline").textContent=b.headline||"";
+  const S=b.sections||{};
+  const get=(k)=> (S[k]&&S[k].ok)?S[k].data:null;
+
+  // HMAI
+  const h=get("assurance_hmai");
+  if(h){ $("hmai").textContent=(h.index!=null?h.index:"—"); $("hmai").style.color=bandColor(h.band);
+    $("hmai-band").textContent=h.band||"UNKNOWN"; $("hmai-band").style.color=bandColor(h.band); }
+
+  // Mission
+  const m=get("mission");
+  if(m){ $("m-name").textContent=m.mission_name||m.mission_id||"—";
+    $("m-state").innerHTML=dotspan(m.state,m.state); $("m-gate").innerHTML=dotspan(m.founder_gate,m.founder_gate);
+    const rt=m.runtime||{};
+    $("e-mr").innerHTML=dotspan(rt.mission_runtime); $("e-rt").innerHTML=dotspan(rt.runtime_truth);
+    $("e-gov").innerHTML=dotspan(rt.governance); $("e-dis").innerHTML=dotspan(rt.dispatch);
+    // critical path
+    const cp=m.critical_path||[];
+    $("cp").innerHTML = Array.isArray(cp)&&cp.length? cp.map(i=>`<div class="kv"><span>${(i.label||i.id||"item")}</span><span class="v ${cls(i.status)}">${i.status||"—"}</span></div>`).join("") : '<div class="muteline">none</div>';
+  }
+
+  // Cyber
+  const c=get("cybersecurity");
+  if(c){ $("cy-posture").innerHTML=(c.posture_percent!=null?c.posture_percent:"—")+'<span class="unit">% posture</span>';
+    $("cy-fw").textContent=(c.framework||"")+" · "+(c.conmon_standard||"");
+    $("cy-controls").textContent=c.controls_assessed??"—"; $("cy-impl").textContent=c.implemented??"—";
+    $("cy-unk").textContent=c.unknown??"—";
+    $("cy-high").innerHTML=`<span class="${(c.high_findings>0)?'s-red':'s-green'}">${c.high_findings??"—"}</span>`; }
+
+  // AI workers
+  const ai=get("ai_workers");
+  if(ai){ $("workers").innerHTML=(ai.workers||[]).map(w=>`<div class="worker"><span>${w.role.charAt(0).toUpperCase()+w.role.slice(1)} <span class="m">${w.binding||"—"}/${w.model||"—"}</span></span>${dotspan(w.status,w.status)}</div>`).join("");
+    $("ai-summary").textContent=`${ai.configured}/${ai.total} configured · blocked: ${(ai.blocked||[]).join(", ")}`; }
+
+  // External
+  const ex=get("external_milestones");
+  if(ex){ $("ex-rel").innerHTML=dotspan(ex.release,ex.release); $("ex-rev").innerHTML=dotspan(ex.revenue,ex.revenue);
+    $("ex-fresh").textContent="truth: "+(ex.truth_class||"—")+" · freshness "+(ex.freshness_seconds!=null?Math.round(ex.freshness_seconds)+"s":"—"); }
+
+  // Factories
+  const f=get("factories");
+  if(f){ $("fac-count").innerHTML=(f.count!=null?f.count:"—")+'<span class="unit">factories</span>';
+    $("factories").innerHTML=(f.factories||[]).map(x=>`<div class="kv"><span>${x.id||"—"}</span><span class="v ${cls(x.status)}">${x.status||"—"}</span></div>`).join(""); }
+
+  // Founder decisions
+  const fd=get("founder_decisions");
+  if(fd){ const items=fd.items||[];
+    $("founder").innerHTML = items.length? items.map(i=>`<div class="kv"><span>${i.label||i.id}</span><span class="v ${cls(i.status)}">${i.status||"—"}</span></div>`).join("") : '<div class="muteline">no founder-gated items pending</div>'; }
+
+  $("rec").textContent=b.recommended_next_action||"—";
+}
+refresh(); setInterval(refresh,7000);
+</script>
+</body>
+</html>

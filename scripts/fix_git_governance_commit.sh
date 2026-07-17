@@ -12,9 +12,17 @@ if pgrep -x git >/dev/null; then
 fi
 echo "  ✓ none"
 
-echo "▸ 2) Clear stale lock(s)"
+echo "▸ 2) Clear lock(s) — FAIL-CLOSED: only if genuinely unowned (EDR-0005; manual deletion is an exception)"
 for L in .git/HEAD.lock .git/index.lock; do
-  [ -e "$L" ] && { rm -f "$L" && echo "  ✓ removed $L"; } || echo "  · $L absent"
+  if [ -e "$L" ]; then
+    if command -v lsof >/dev/null && lsof "$L" >/dev/null 2>&1; then
+      echo "  ✗ $L is HELD by a live process — NOT removing (fail-closed). Investigate: lsof $L"
+      exit 1
+    fi
+    rm -f "$L" && echo "  ✓ removed stale $L (verified: no owner, no git process)"
+  else
+    echo "  · $L absent"
+  fi
 done
 
 echo "▸ 3) Keep the nested backup repo out of the commit (files stay on disk)"

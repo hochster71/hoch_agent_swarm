@@ -1,13 +1,13 @@
 {
   "active_alerts": 1,
   "contained_findings": 1,
-  "cycle_id": "JCYC-20260717-A62D34",
+  "cycle_id": "JCYC-20260717-E32533",
   "governance": {
     "authorizing_policy_id": null,
     "automatic_quarantine_enabled": false,
     "orphan_lease_hygiene": "manual_approval"
   },
-  "health_digest": "f6e3fa19d9e3dfeded79bfdb5dc67089f4bde39d0c645d5417ea9267a96f4e51",
+  "health_digest": "e4420a33fa55ebad246872f6cde7b627c6e5579385279bd9a5139965b110c064",
   "historical_findings": 5914,
   "mutation_truth": {
     "authoritative_state_mutated": false,
@@ -17,7 +17,7 @@
     "containment_state_mutated": false,
     "observation_state_mutated": false
   },
-  "observed_at": "2026-07-17T15:46:58Z",
+  "observed_at": "2026-07-17T16:08:58Z",
   "observer_counts": {
     "CONFIRMED_LIVE": 10,
     "UNCONFIRMED": 1,
