@@ -1,13 +1,13 @@
 {
   "schema": "brain-outcome-stats",
-  "at": "2026-07-17T15:30:06.686791Z",
+  "at": "2026-07-17T15:43:51.810238Z",
   "genes_with_combat_record": 0,
   "total_champion_executions": 0,
   "genes": {},
   "gates": {
     "m0_generation": {
-      "total": 1071,
-      "VERIFIED": 1071
+      "total": 1073,
+      "VERIFIED": 1073
     }
   }
 }

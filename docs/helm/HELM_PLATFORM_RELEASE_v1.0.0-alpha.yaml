@@ -6,6 +6,17 @@ helm_platform_release:
   constitution_status: "RATIFIED"          # architecture & governance approach, 2026-07-17
   ratification_scope: "architecture + governance only; implementation conformance NOT certified"
   ratification_record: "FOUNDER_RATIFICATION.md"
+
+  # Founder-tightened headline (separates constitutional state from implementation state)
+  headline_status: "HELM Core 1.0.0-alpha — Constitutional Baseline Ratified. Independent implementation verification pending."
+
+  # Executive five-layer status (honest status model, founder 2026-07-17)
+  executive_status:
+    governance:   RATIFIED       # constitutional baseline established
+    knowledge:    PLANNED        # Governed Retrieval is the correct first scope
+    runtime:      PARTIAL        # core services exist; implementation continues
+    verification: PENDING        # independent auditor is the next critical milestone
+    execution:    INCREMENTAL    # factories advance only against the constitutional baseline
   architecture: "FROZEN on ratification"
   released_at_utc: "2026-07-17"
   category: "AI Executive Operating System"
