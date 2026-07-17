@@ -1,0 +1,37 @@
+{
+  "schema": "EXTERNAL_MILESTONES_v1",
+  "doctrine": "HELM Design Constitution Principle V — Honest Uncertainty. An external milestone is one HELM cannot make true by itself (Apple approval, Stripe settlement). It HOLDS at BLOCKED_EXTERNAL and advances ONLY when an authoritative evidence snapshot — fresh, present, from the real provider — confirms. Expectation is not evidence; a settle date is not a settlement; 'founder says approved' is not an ASC state. This file is an HONEST persisted SNAPSHOT of the current computed state. The authoritative live value is backend.truth.external_milestones.compute_external_milestones() / GET /api/v1/helm/external.",
+  "seeded_at": "2026-07-17T13:43:44Z",
+  "compute_source": "backend.truth.external_milestones.compute_external_milestones()",
+  "milestones": {
+    "RELEASE": {
+      "label": "Epic Fury — App Store release",
+      "states": ["BLOCKED_EXTERNAL", "APPLE_APPROVED", "READY_FOR_RELEASE", "LIVE"],
+      "current_state": "BLOCKED_EXTERNAL",
+      "is_blocked_external": true,
+      "reason": "no fresh ASC evidence — v1.0.2 reported in Apple review; no authoritative asc_epic_fury.json snapshot yet",
+      "note": "product_registry app_store_distribution=READY_FOR_DISTRIBUTION is FOUNDER_ATTESTED, NOT an authoritative ASC state — it does NOT advance this milestone. Only a fresh coordination/evidence/external/asc_epic_fury.json with an approval/live appStoreState does.",
+      "evidence_source": "coordination/evidence/external/asc_epic_fury.json",
+      "evidence_present": false,
+      "next_transition": {
+        "to": "APPLE_APPROVED",
+        "requires_evidence": "fresh asc_epic_fury.json with appStoreState in APPROVED/PENDING_DEVELOPER_RELEASE/PENDING_APPLE_RELEASE"
+      }
+    },
+    "REVENUE": {
+      "label": "Epic Fury — first settled dollar",
+      "states": ["CHECKOUT_CREATED", "PAYMENT_AUTHORIZED", "SETTLED", "REVENUE_VERIFIED"],
+      "current_state": "PAYMENT_AUTHORIZED",
+      "is_blocked_external": true,
+      "reason": "real charge ch_3Tsv7qDK7Brrgheo1z3ksuF5 authorized ($20.52 gross), NOT proven settled; registry revenue_state=PENDING_SETTLEMENT, revenue_settled_usd=0, settle date on file 2026-07-21. A pending charge is PAYMENT_AUTHORIZED, not SETTLED.",
+      "evidence_source": "coordination/products/product_registry.json (EPIC_FURY_2026) + coordination/evidence/external/stripe_settlement.json (absent)",
+      "evidence_present": false,
+      "stripe_charge_id": "ch_3Tsv7qDK7Brrgheo1z3ksuF5",
+      "settles_at": "2026-07-21",
+      "next_transition": {
+        "to": "SETTLED",
+        "requires_evidence": "stripe_settlement.json with matching charge_id AND balance_txn_status == 'available'"
+      }
+    }
+  }
+}

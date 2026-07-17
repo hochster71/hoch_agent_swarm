@@ -1,0 +1,16 @@
+{
+  "versionString": "1.0.2",
+  "appStoreState": "IN_REVIEW",
+  "observed_at": "2026-07-17T13:45:53Z",
+  "source": "App Store Connect API /appStoreVersions",
+  "all_versions": [
+    {
+      "versionString": "1.0.2",
+      "appStoreState": "IN_REVIEW"
+    },
+    {
+      "versionString": "1.0",
+      "appStoreState": "READY_FOR_SALE"
+    }
+  ]
+}

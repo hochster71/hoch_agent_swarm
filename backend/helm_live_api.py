@@ -419,6 +419,30 @@ def api_wall():
     return JSONResponse(wall_state())
 
 
+@app.get("/api/v1/helm/external")
+def api_v1_external():
+    """External-milestone tracker — Principle V (Honest Uncertainty) as code.
+
+    RELEASE (Epic Fury App Store) and REVENUE (first settled dollar) each hold at
+    BLOCKED_EXTERNAL / PAYMENT_AUTHORIZED and advance ONLY on authoritative, fresh
+    evidence. Standard truth envelope (truth_class/source/observed_at/
+    freshness_seconds/tested_commit).
+    """
+    from backend.truth.external_milestones import compute_external_milestones
+    m = compute_external_milestones()
+    return JSONResponse(_truth_response(
+        truth_class=m["truth_class"],
+        source=m["source"],
+        observed_at=m["observed_at"],
+        freshness_seconds=m["freshness_seconds"],
+        data={
+            "milestones": m["milestones"],
+            "doctrine": m["doctrine"],
+            "build_ms": m["build_ms"],
+        },
+    ))
+
+
 @app.get("/api/v1/helm/runtime")
 @app.get("/api/helm/concurrency")
 def api_v1_runtime():
