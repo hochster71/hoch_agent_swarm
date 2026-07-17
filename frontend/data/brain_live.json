@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-17T15:43:51.792004Z",
+  "ts": "2026-07-17T15:47:08.363789Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,7 +9,7 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 1892,
+  "generation": 1893,
   "genes": 737,
   "champions": 30,
   "mean_score": 96.167,
@@ -40,10 +40,6 @@
       "state": "CONVERGED",
       "gates": 4,
       "history": [
-        {
-          "g": 1877,
-          "m": 96.167
-        },
         {
           "g": 1878,
           "m": 96.167
@@ -103,6 +99,10 @@
         {
           "g": 1892,
           "m": 96.167
+        },
+        {
+          "g": 1893,
+          "m": 96.167
         }
       ]
     },
@@ -116,10 +116,6 @@
       "state": "CONVERGED",
       "gates": 4,
       "history": [
-        {
-          "g": 1863,
-          "m": 96.938
-        },
         {
           "g": 1864,
           "m": 96.938
@@ -179,6 +175,10 @@
         {
           "g": 1878,
           "m": 96.938
+        },
+        {
+          "g": 1879,
+          "m": 96.938
         }
       ]
     },
@@ -192,10 +192,6 @@
       "state": "CONVERGED",
       "gates": 5,
       "history": [
-        {
-          "g": 1862,
-          "m": 96.5
-        },
         {
           "g": 1863,
           "m": 96.5
@@ -254,6 +250,10 @@
         },
         {
           "g": 1877,
+          "m": 96.5
+        },
+        {
+          "g": 1878,
           "m": 96.5
         }
       ]
@@ -555,11 +555,6 @@
   ],
   "history": [
     {
-      "g": 1869,
-      "m": 96.167,
-      "gain": 0.0
-    },
-    {
       "g": 1870,
       "m": 96.167,
       "gain": 0.0
@@ -673,6 +668,11 @@
       "g": 1892,
       "m": 96.167,
       "gain": 0.0
+    },
+    {
+      "g": 1893,
+      "m": 96.167,
+      "gain": 0.0
     }
   ],
   "recent_improvements": [
@@ -776,13 +776,13 @@
     }
   ],
   "combat": {
-    "at": "2026-07-17T15:43:51.810238Z",
+    "at": "2026-07-17T15:47:08.376645Z",
     "genes_with_combat_record": 0,
     "total_champion_executions": 0,
     "gates": {
       "m0_generation": {
-        "total": 1073,
-        "VERIFIED": 1073
+        "total": 1074,
+        "VERIFIED": 1074
       }
     },
     "top": []
@@ -798,8 +798,8 @@
         "id": "L1",
         "status": "Active",
         "cpu": 0,
-        "ram": 75,
-        "agents": 24,
+        "ram": 76,
+        "agents": 23,
         "latency_ms": 0.0,
         "authority": "MEASURED_LOCAL",
         "activity": "Control plane: API + cadence + BRAIN loops (this host)"
@@ -902,17 +902,17 @@
         "name": "lmstudio",
         "alive": true,
         "model": "google/gemma-4-12b-qat",
-        "latency_ms": 312.3,
+        "latency_ms": 313.2,
         "failures": 0,
-        "last_probe": 1784303033.792045
+        "last_probe": 1784303230.234414
       },
       {
         "name": "mac-local",
         "alive": true,
         "model": "llama3.1:8b",
-        "latency_ms": 2432.7,
+        "latency_ms": 1668.0,
         "failures": 0,
-        "last_probe": 1784303035.912677
+        "last_probe": 1784303231.5893602
       },
       {
         "name": "relay-001",
@@ -920,7 +920,7 @@
         "model": null,
         "latency_ms": null,
         "failures": 0,
-        "last_probe": 1784303033.647014
+        "last_probe": 1784303230.054921
       }
     ],
     "primary": "lmstudio",

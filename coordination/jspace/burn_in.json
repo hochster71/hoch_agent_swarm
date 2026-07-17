@@ -3,34 +3,10 @@
   "burn_in_complete": false,
   "burn_in_completed_at": "2026-07-14T12:52:19Z",
   "clean_cycles": 0,
-  "completed_cycles": 4389,
+  "completed_cycles": 4392,
   "disabled_by_audit": true,
   "disabled_reason": "Independent audit: 5-cycle burn-in is not approved production maturity evidence; mutation gated fail-closed via quarantine_governance.json",
   "history": [
-    {
-      "at": "2026-07-17T14:54:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-7C5C3A",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T14:55:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-9F0AB5",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T14:56:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-2FB6FE",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
     {
       "at": "2026-07-17T14:57:58Z",
       "clean": false,
@@ -406,16 +382,40 @@
       "exception": null,
       "overall": "UNKNOWN",
       "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T15:44:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-2C13BC",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T15:45:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-184327",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T15:46:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-A62D34",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
     }
   ],
   "last_dirty": {
-    "at": "2026-07-17T15:43:58Z",
-    "cycle_id": "JCYC-20260717-D36B3C",
+    "at": "2026-07-17T15:46:58Z",
+    "cycle_id": "JCYC-20260717-A62D34",
     "exception": null,
     "overall": "UNKNOWN",
     "state_mutated": false
   },
   "min_cycles": 5,
   "schema": "HJOS_BURN_IN_v1",
-  "updated_at": "2026-07-17T15:43:58Z"
+  "updated_at": "2026-07-17T15:46:58Z"
 }
