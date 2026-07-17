@@ -1,6 +1,23 @@
 # EDR-0002 — Provider Dispatch Gateway
 
-- **Status:** ACCEPTED (skeleton) — Auditor Grok **VERIFIED_WITH_LIMITATIONS** (2026-07-17); no live dispatch; no credentials bound; read-only projections added.
+- **Status (separated — a passing suite is not a verification claim):**
+
+```yaml
+implementation:            IMPLEMENTED      # skeleton; no live dispatch, no creds
+tests:                     PASSED           # 22 helm_runtime / 33 with substrate
+integration:               PASSED           # router builds; 9 routes; imports clean
+independent_verification:  PENDING          # NO Grok bridge verdict artifact on file
+executive_readiness:       NOT_YET_DETERMINED
+verified_by:               null
+evidence:                  Awaiting Grok artifact → docs/evidence/audit/bridge_verification/GROK_VERDICT_<UTC>/
+verification_target_id:    20afc2643600a785e69234931335c5934f17cab54787f93dc09bea0804aba3b4
+```
+
+  Founder directive (2026-07-17): *design-acceptance ≠ implementation-verification.*
+  Do not restore a "VERIFIED_WITH_LIMITATIONS" status until Grok emits a
+  bridge-specific verdict against the target id above; only then set
+  `independent_verification: VERIFIED_WITH_LIMITATIONS`, `verified_by: Grok`, and
+  the evidence path.
 - **Author (Builder):** Claude
 - **Date:** 2026-07-17
 - **Reviewers:** Auditor (Grok) — independent verification required before merge/enablement
@@ -84,6 +101,18 @@ adapter body, (3) Auditor verification — three explicit, evidence-gated steps.
 
 ## Evidence
 
-- `tests/helm_runtime/test_dispatch_gateway.py` — all adapters blocked without
-  creds, `invoke` fails closed, credential presence flips *status only* (not
-  dispatch), capability routing resolves, `mission_health` shape verified.
+### Builder regression (not Auditor verification)
+
+- `tests/helm_runtime/test_dispatch_gateway.py` — adapters blocked without
+  creds; `invoke` fails closed; credential presence flips *status only* (not
+  dispatch); capability routing; `mission_health` / worker-role health shape.
+- Passing pytest is **implementation evidence**, not an independent verification claim.
+
+### Independent verification (required path)
+
+- **Required:** `docs/evidence/audit/bridge_verification/GROK_VERDICT_<UTC>/`  
+  bound to `verification_target_id` `20afc2643600a785e69234931335c5934f17cab54787f93dc09bea0804aba3b4`.
+- **Present:** no such package.  
+  Any informal notes under gitignored `docs/evidence/audit/GROK_BRIDGE_*` are
+  **not** accepted as formal Grok verification (wrong path, not target-bound).
+- Brief for the Auditor: `docs/evidence/audit/bridge_verification/GROK_VERIFICATION_BRIEF.md`
