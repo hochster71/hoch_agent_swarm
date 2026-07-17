@@ -1,6 +1,6 @@
 {
   "schema": "HOCH_GOAL_STATE_v1",
-  "computed_at": "2026-07-17T16:20:40.794969Z",
+  "computed_at": "2026-07-17T16:50:13.725652Z",
   "canonical_north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete.",
   "computation_rule": "weight-sum of requirements whose validator EXECUTED SUCCESSFULLY against current, fresh evidence. Everything else contributes zero. No fallback default exists in this engine.",
   "metrics": {
@@ -363,13 +363,13 @@
       "validator": "python3 scripts/council/generate_h1_candidate_registry.py --dry-run",
       "evidence_path": "coordination/council/h1_candidate_registry.json",
       "evidence_exists": true,
-      "evidence_age_hours": 128.7,
+      "evidence_age_hours": 129.19,
       "freshness_sla_hours": 168,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794342Z"
+      "checked_at": "2026-07-17T16:50:13.724981Z"
     },
     {
       "id": "REQ-GOV-002",
@@ -381,13 +381,13 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q",
       "evidence_path": "scripts/council/h1_authorization.py",
       "evidence_exists": true,
-      "evidence_age_hours": 122.35,
+      "evidence_age_hours": 122.85,
       "freshness_sla_hours": 168,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794377Z"
+      "checked_at": "2026-07-17T16:50:13.725016Z"
     },
     {
       "id": "REQ-GOV-003",
@@ -399,13 +399,13 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q -k 'quorum or mock or dry_run or advisory or partial'",
       "evidence_path": "scripts/council/aggregate.py",
       "evidence_exists": true,
-      "evidence_age_hours": 122.35,
+      "evidence_age_hours": 122.85,
       "freshness_sla_hours": 168,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794387Z"
+      "checked_at": "2026-07-17T16:50:13.725038Z"
     },
     {
       "id": "REQ-GOV-004",
@@ -417,13 +417,13 @@
       "validator": "python3 -m pytest tests/test_h1d_spend_gate.py -q",
       "evidence_path": "hoch_pods/compute/cost_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 19.95,
+      "evidence_age_hours": 20.45,
       "freshness_sla_hours": 168,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794403Z"
+      "checked_at": "2026-07-17T16:50:13.725058Z"
     },
     {
       "id": "REQ-GOV-005",
@@ -441,7 +441,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794469Z"
+      "checked_at": "2026-07-17T16:50:13.725151Z"
     },
     {
       "id": "REQ-GOV-006",
@@ -459,7 +459,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794491Z"
+      "checked_at": "2026-07-17T16:50:13.725169Z"
     },
     {
       "id": "REQ-ES-001",
@@ -471,13 +471,13 @@
       "validator": "python3 scripts/goal/verify_h1d_relay.py",
       "evidence_path": "coordination/council/relay/H1D_pert_node.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.05,
+      "evidence_age_hours": 0.49,
       "freshness_sla_hours": 168,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794562Z"
+      "checked_at": "2026-07-17T16:50:13.725243Z"
     },
     {
       "id": "REQ-ES-002",
@@ -489,13 +489,13 @@
       "validator": "python3 -m pytest tests/test_h1d_dispatch.py -q",
       "evidence_path": "scripts/council/dispatch.py",
       "evidence_exists": true,
-      "evidence_age_hours": 113.35,
+      "evidence_age_hours": 113.85,
       "freshness_sla_hours": 168,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794585Z"
+      "checked_at": "2026-07-17T16:50:13.725263Z"
     },
     {
       "id": "REQ-ES-003",
@@ -513,7 +513,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794595Z"
+      "checked_at": "2026-07-17T16:50:13.725276Z"
     },
     {
       "id": "REQ-ES-004",
@@ -531,7 +531,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794604Z"
+      "checked_at": "2026-07-17T16:50:13.725294Z"
     },
     {
       "id": "REQ-TO-001",
@@ -543,13 +543,13 @@
       "validator": "python3 scripts/goal/verify_champion_selected.py",
       "evidence_path": "coordination/goal/champion_selection.json",
       "evidence_exists": true,
-      "evidence_age_hours": 112.65,
+      "evidence_age_hours": 113.14,
       "freshness_sla_hours": 720,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794612Z"
+      "checked_at": "2026-07-17T16:50:13.725302Z"
     },
     {
       "id": "REQ-TO-002",
@@ -567,7 +567,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794620Z"
+      "checked_at": "2026-07-17T16:50:13.725309Z"
     },
     {
       "id": "REQ-TO-003",
@@ -585,7 +585,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794627Z"
+      "checked_at": "2026-07-17T16:50:13.725315Z"
     },
     {
       "id": "REQ-NS-001",
@@ -597,13 +597,13 @@
       "validator": "python3 scripts/goal/verify_founder_not_transport.py",
       "evidence_path": "coordination/council/relay/dispatch_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 42.58,
+      "evidence_age_hours": 43.07,
       "freshness_sla_hours": 168,
       "state": "VALIDATOR_NOT_RUN",
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794640Z"
+      "checked_at": "2026-07-17T16:50:13.725321Z"
     },
     {
       "id": "REQ-NS-002",
@@ -621,7 +621,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794654Z"
+      "checked_at": "2026-07-17T16:50:13.725328Z"
     },
     {
       "id": "REQ-CP-BUILD",
@@ -639,7 +639,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794662Z"
+      "checked_at": "2026-07-17T16:50:13.725334Z"
     },
     {
       "id": "REQ-CP-TEST",
@@ -657,7 +657,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794668Z"
+      "checked_at": "2026-07-17T16:50:13.725340Z"
     },
     {
       "id": "REQ-CP-SECURITY",
@@ -675,7 +675,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794674Z"
+      "checked_at": "2026-07-17T16:50:13.725345Z"
     },
     {
       "id": "REQ-CP-SIGNING_READINESS",
@@ -693,7 +693,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794679Z"
+      "checked_at": "2026-07-17T16:50:13.725350Z"
     },
     {
       "id": "REQ-CP-STORE_METADATA",
@@ -711,7 +711,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794685Z"
+      "checked_at": "2026-07-17T16:50:13.725356Z"
     },
     {
       "id": "REQ-CP-PRIVACY",
@@ -729,7 +729,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794691Z"
+      "checked_at": "2026-07-17T16:50:13.725361Z"
     },
     {
       "id": "REQ-CP-MONETIZATION",
@@ -747,7 +747,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794697Z"
+      "checked_at": "2026-07-17T16:50:13.725367Z"
     },
     {
       "id": "REQ-CP-TESTFLIGHT",
@@ -765,7 +765,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794702Z"
+      "checked_at": "2026-07-17T16:50:13.725378Z"
     },
     {
       "id": "REQ-CP-APP_STORE_CONNECT",
@@ -783,7 +783,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794708Z"
+      "checked_at": "2026-07-17T16:50:13.725384Z"
     },
     {
       "id": "REQ-CP-SUBMISSION_PACKAGE",
@@ -801,7 +801,7 @@
       "exit_code": null,
       "detail": "",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:20:40.794713Z"
+      "checked_at": "2026-07-17T16:50:13.725389Z"
     }
   ],
   "hard_constraint": "No fake green. No unevidenced completion. No autonomous execution beyond explicit authorization and policy."

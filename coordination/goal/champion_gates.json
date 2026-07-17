@@ -10,11 +10,11 @@
     {
       "blocker": null,
       "contributes": 1.0,
-      "detail": "build 8 VALID, selected=True, revalidated age=46.8h",
+      "detail": "build 8 VALID, selected=True, revalidated age=47.3h",
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 46.8,
+      "evidence_age_hours": 47.3,
       "gate": "BUILD",
       "status": "PASS"
     },
@@ -25,7 +25,7 @@
       "evidence": [
         "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
       ],
-      "evidence_age_hours": 110.8,
+      "evidence_age_hours": 111.2,
       "gate": "TEST",
       "status": "PASS"
     },
@@ -37,7 +37,7 @@
         "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
         "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md"
       ],
-      "evidence_age_hours": 203.1,
+      "evidence_age_hours": 203.6,
       "gate": "SECURITY",
       "status": "PASS"
     },
@@ -48,7 +48,7 @@
       "evidence": [
         "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json"
       ],
-      "evidence_age_hours": 240.3,
+      "evidence_age_hours": 240.8,
       "gate": "SIGNING_READINESS",
       "status": "PASS"
     },
@@ -59,7 +59,7 @@
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 46.8,
+      "evidence_age_hours": 47.3,
       "gate": "STORE_METADATA",
       "status": "PASS"
     },
@@ -70,7 +70,7 @@
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 46.8,
+      "evidence_age_hours": 47.3,
       "gate": "PRIVACY",
       "status": "PASS"
     },
@@ -82,7 +82,7 @@
         "has_live_project_tracker/data/epic_fury_release_ledger.json",
         "has_live_project_tracker/data/epic_fury_roi_model.json"
       ],
-      "evidence_age_hours": 46.8,
+      "evidence_age_hours": 47.3,
       "gate": "MONETIZATION",
       "status": "PASS"
     },
@@ -126,8 +126,8 @@
   ],
   "gates_passed": 8,
   "gates_total": 10,
-  "generated_at": "2026-07-17T16:11:36.899109Z",
-  "ledger_age_hours": 46.8,
+  "generated_at": "2026-07-17T16:41:03.434944Z",
+  "ledger_age_hours": 47.3,
   "ledger_is_stale": false,
   "next_critical_path_gate": "TESTFLIGHT",
   "selection_evidence": "coordination/goal/champion_selection.json",

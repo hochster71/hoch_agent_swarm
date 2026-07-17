@@ -2,7 +2,7 @@
   "schema": "HELM_CONTROL_POSTURE_v1",
   "framework": "NIST SP 800-53 Rev. 5",
   "conmon_standard": "NIST SP 800-137",
-  "assessed_at": "2026-07-17T16:31:48.310955+00:00",
+  "assessed_at": "2026-07-17T16:41:07.504301+00:00",
   "target_system": "HELM / Hoch Agent Swarm",
   "controls_assessed": 13,
   "implemented": 11,
@@ -23,7 +23,7 @@
       "evidence": "ScopedStateEvaluator: mission/capability scoping",
       "detail": "blocks bind to capability, not the whole lane (least privilege)",
       "severity": "HIGH",
-      "assessed_at": "2026-07-17T16:31:39.429562+00:00"
+      "assessed_at": "2026-07-17T16:41:07.088910+00:00"
     },
     {
       "control_id": "AC-6",
@@ -33,7 +33,7 @@
       "evidence": "per-task $0.5 / daily $5.0",
       "detail": "an adapter with no published rate FAILS CLOSED; unknown price is never free",
       "severity": "HIGH",
-      "assessed_at": "2026-07-17T16:31:44.855921+00:00"
+      "assessed_at": "2026-07-17T16:41:07.149486+00:00"
     },
     {
       "control_id": "AU-2",
@@ -43,7 +43,7 @@
       "evidence": "council_heartbeat.jsonl (571 cycles) + spend_ledger.jsonl",
       "detail": "dispatch, lease, validator verdict and spend are all logged",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:44.857566+00:00"
+      "assessed_at": "2026-07-17T16:41:07.149954+00:00"
     },
     {
       "control_id": "AU-9",
@@ -53,7 +53,7 @@
       "evidence": "spend/revenue/founder hash-chains verified",
       "detail": "editing or deleting a row breaks the chain and is detected",
       "severity": "HIGH",
-      "assessed_at": "2026-07-17T16:31:44.964013+00:00"
+      "assessed_at": "2026-07-17T16:41:07.231298+00:00"
     },
     {
       "control_id": "CA-7",
@@ -63,17 +63,17 @@
       "evidence": "helm_conmon.py assesses every control on a schedule",
       "detail": "posture is recomputed from live evidence, never from a stored attestation",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:44.964030+00:00"
+      "assessed_at": "2026-07-17T16:41:07.231308+00:00"
     },
     {
       "control_id": "CM-3",
       "family": "CONFIG MGMT",
       "title": "Configuration Change Control",
       "status": "NOT_IMPLEMENTED",
-      "evidence": "2 uncommitted CODE files (40 dirty paths total)",
-      "detail": "evidence cannot bind to a commit that does not contain the code under test",
+      "evidence": "0 code files dirty but 37 other uncommitted paths",
+      "detail": "working tree not clean \u2014 evidence packages must pin a reproducible tree",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:45.559749+00:00"
+      "assessed_at": "2026-07-17T16:41:07.298579+00:00"
     },
     {
       "control_id": "CP-10",
@@ -83,7 +83,7 @@
       "evidence": "LIVE_RUNTIME_PROOF: SIGKILL, fencing 243->244",
       "detail": "monotonic fencing token prevents a resurrected worker from writing",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:45.560378+00:00"
+      "assessed_at": "2026-07-17T16:41:07.298816+00:00"
     },
     {
       "control_id": "IA-2",
@@ -93,7 +93,7 @@
       "evidence": "epic-fury-auth-security.spec.ts (7 regression tests)",
       "detail": "demo route 404; test-auth header rejected; anon fails closed",
       "severity": "HIGH",
-      "assessed_at": "2026-07-17T16:31:48.199400+00:00"
+      "assessed_at": "2026-07-17T16:41:07.432570+00:00"
     },
     {
       "control_id": "RA-5",
@@ -103,7 +103,7 @@
       "evidence": "49 static verifiers (egress, runtime-truth, tautology)",
       "detail": "verify_api_budget_guard, verify_has_prr_criteria, verify_agent_output_quality, verify_no_secret_leakage",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:48.201413+00:00"
+      "assessed_at": "2026-07-17T16:41:07.432904+00:00"
     },
     {
       "control_id": "SA-11",
@@ -113,7 +113,7 @@
       "evidence": "325 test modules",
       "detail": "1396 python tests + 23 e2e, 0 failing at last run",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:48.267721+00:00"
+      "assessed_at": "2026-07-17T16:41:07.436478+00:00"
     },
     {
       "control_id": "SC-7",
@@ -123,7 +123,7 @@
       "evidence": "verify_provider_data_egress_policy.py PASSED",
       "detail": "static scan proves no provider call bypasses the gateway",
       "severity": "HIGH",
-      "assessed_at": "2026-07-17T16:31:48.290093+00:00"
+      "assessed_at": "2026-07-17T16:41:07.455456+00:00"
     },
     {
       "control_id": "SI-4",
@@ -133,7 +133,7 @@
       "evidence": "helm_live_api: 55 UNKNOWN guards, 0 fabricating fallbacks",
       "detail": "absent data renders UNKNOWN; a lost feed reports STALE, not last-good",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:48.294190+00:00"
+      "assessed_at": "2026-07-17T16:41:07.457263+00:00"
     },
     {
       "control_id": "SR-3",
@@ -141,9 +141,9 @@
       "title": "Supply Chain Controls and Processes",
       "status": "NOT_IMPLEMENTED",
       "evidence": "attested tool fails live verification: GROK_CLI",
-      "detail": "TOOL_BINARY_MISSING: GROK_CLI -> /Users/michaelhoch/.local/bin/grok",
+      "detail": "TOOL_DIGEST_MISMATCH: GROK_CLI at /Users/michaelhoch/.local/bin/grok is sha256:1e424cf7264589f8\u2026 but was attested as sha256:8431538dbd993792\u2026 \u2014 the binary was s",
       "severity": "MODERATE",
-      "assessed_at": "2026-07-17T16:31:48.310920+00:00"
+      "assessed_at": "2026-07-17T16:41:07.504230+00:00"
     }
   ],
   "poam": [
@@ -151,11 +151,11 @@
       "poam_id": "POAM-CM-3",
       "control_id": "CM-3",
       "title": "Configuration Change Control",
-      "weakness": "2 uncommitted CODE files (40 dirty paths total)",
-      "detail": "evidence cannot bind to a commit that does not contain the code under test",
+      "weakness": "0 code files dirty but 37 other uncommitted paths",
+      "detail": "working tree not clean \u2014 evidence packages must pin a reproducible tree",
       "severity": "MODERATE",
       "status": "OPEN",
-      "identified_at": "2026-07-17T16:31:45.559749+00:00",
+      "identified_at": "2026-07-17T16:41:07.298579+00:00",
       "source": "HELM ConMon (NIST SP 800-137) \u2014 automated, evidence-derived"
     },
     {
@@ -163,10 +163,10 @@
       "control_id": "SR-3",
       "title": "Supply Chain Controls and Processes",
       "weakness": "attested tool fails live verification: GROK_CLI",
-      "detail": "TOOL_BINARY_MISSING: GROK_CLI -> /Users/michaelhoch/.local/bin/grok",
+      "detail": "TOOL_DIGEST_MISMATCH: GROK_CLI at /Users/michaelhoch/.local/bin/grok is sha256:1e424cf7264589f8\u2026 but was attested as sha256:8431538dbd993792\u2026 \u2014 the binary was s",
       "severity": "MODERATE",
       "status": "OPEN",
-      "identified_at": "2026-07-17T16:31:48.310920+00:00",
+      "identified_at": "2026-07-17T16:41:07.504230+00:00",
       "source": "HELM ConMon (NIST SP 800-137) \u2014 automated, evidence-derived"
     }
   ],

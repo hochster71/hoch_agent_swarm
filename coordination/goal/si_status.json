@@ -1,12 +1,12 @@
 {
   "schema": "HELM_SI_STATUS_v1",
-  "ran_at": "2026-07-17T16:21:01Z",
-  "duration_s": 25.7,
-  "scope_modules": 31,
-  "passed": 277,
+  "ran_at": "2026-07-17T16:50:39Z",
+  "duration_s": 29.9,
+  "scope_modules": 32,
+  "passed": 284,
   "failed": 0,
   "errors": 0,
-  "total": 277,
+  "total": 284,
   "green": true,
   "exit_code": 0,
   "out_of_scope": [
@@ -35,5 +35,5 @@
       "reason": "orphaned: hoch_agent_swarm.main missing"
     }
   ],
-  "summary_line": "277 passed, 3 warnings in 24.43s"
+  "summary_line": "284 passed, 3 warnings in 29.31s"
 }

@@ -18,15 +18,24 @@ The moment those env vars are present when the HELM server runs, the existing ad
 Secret discipline: `~/.helm/helm.env` is gitignored and founder-controlled. Claude never
 reads/stores/echoes the values — only presence (and optional HTTP-200 validity) is reported.
 
-## Half 2 — live invoke bodies (POST-VERIFICATION; Builder)
-Configured credentials make workers *reachable-ready*, but actual dispatch still
-fails closed (`DispatchNotEnabledError`) until each adapter's `invoke/stream/cancel`
-body is implemented. Those bodies live in `dispatch_gateway.py` / `provider_router.py`,
-which **are** the frozen verification target `d8d5139a…`. Implementing them now would
-contaminate the pending audit, so per sequence they are the **first EDR-0002 follow-on
-after the independent verdict** — then N6 flips fully to DONE.
+## Half 2 — live invoke bodies (BUILT; new files, frozen target untouched)
+The real call bodies are implemented in **`backend/dispatch/`** (`live_adapters.py`,
+`live_gateway.py`) — they **subclass** the frozen `ProviderAdapter` and are **injected**
+into the existing `DispatchGateway` by composition, so the frozen verification target
+`d8d5139a…` is **byte-unchanged** (verified). `HELM fires the models`, e.g.
+`scripts/helm_fire_verification.py` dispatches Grok itself.
 
-## Net
-- **You can do Half 1 right now** → workers show CONFIGURED (honest), dispatch still
-  fail-closed until Half 2.
-- **Half 2 waits for the verdict** (frozen-target discipline).
+**Founder money-gate (fail-closed):** no provider is ever called unless BOTH
+`HELM_DISPATCH_ENABLED=1` **and** the key are present. Enable once:
+```bash
+set -a; . ~/.helm/helm.env; set +a       # keys
+export HELM_DISPATCH_ENABLED=1            # master switch (money gate)
+python3 scripts/helm_fire_verification.py # HELM fires Grok; verdict -> GROK_VERDICT_<UTC>/
+```
+
+## Net — HELM fires the models, not the founder
+- **Founder enables ONCE** (keys + `HELM_DISPATCH_ENABLED=1`). That is not you running
+  Grok by hand — it is you unlocking HELM to run it.
+- After that, `dispatch(role=…, capability=…, prompt=…)` calls the bound provider
+  (Grok for audit, ChatGPT for orchestration, local for cheap tasks) autonomously.
+- Until enabled, every call fails closed (`DispatchNotEnabledError`) — no fake success.

@@ -14,7 +14,7 @@
     {"id": "N3_VERIFY", "label": "Independent implementation verification", "status": "PENDING", "ac": "AC4", "deps": ["N2_SI_CORE"], "O": 1, "M": 2, "P": 4, "gated": "auditor (Grok) vs frozen target d8d5139a"},
     {"id": "N4_NORMALIZE", "label": "EDR-0003 normalization implemented", "status": "PENDING", "ac": "AC5", "deps": ["N3_VERIFY"], "O": 0.5, "M": 1, "P": 2},
     {"id": "N5_KNOWLEDGE", "label": "Knowledge Engine (governed retrieval)", "status": "PLANNED", "ac": "AC6", "deps": ["N4_NORMALIZE"], "O": 2, "M": 4, "P": 7},
-    {"id": "N6_DISPATCH", "label": "Provider dispatch enablement", "status": "BLOCKED_FOUNDER", "ac": "AC9", "deps": ["N4_NORMALIZE"], "O": 1, "M": 2, "P": 4, "gated": "founder credentials"},
+    {"id": "N6_DISPATCH", "label": "Provider dispatch enablement", "status": "PARTIAL", "ac": "AC9", "deps": ["N2_SI_CORE"], "O": 0.5, "M": 1, "P": 2, "gated": "founder: set HELM_DISPATCH_ENABLED + supply keys", "evidence": "live adapters built (backend/dispatch/); fail-closed until enabled; frozen target untouched"},
     {"id": "GOAL_HELM", "label": "HELM verified operational governed OS", "status": "PENDING", "ac": "GOAL", "deps": ["N3_VERIFY", "N4_NORMALIZE", "N5_KNOWLEDGE", "N6_DISPATCH", "N7_COMMAND", "N8_CONMON"], "O": 0, "M": 0, "P": 0}
   ]
 }

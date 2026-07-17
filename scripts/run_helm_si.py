@@ -32,7 +32,7 @@ SI_SCOPE = [
     "tests/test_runtime_animation_state.py", "tests/test_runtime_freshness.py",
     "tests/test_runtime_governor.py", "tests/test_runtime_process_bus.py",
     "tests/test_runtime_refresher.py", "tests/test_runtime_truth_defaults.py",
-    "tests/test_soak_select_freshness.py",
+    "tests/test_soak_select_freshness.py", "tests/test_live_dispatch.py",
 ]
 OUT_OF_SCOPE = [
     {"module": "tests/test_brain_runtime.py", "reason": "orphaned: hoch_agent_swarm.brain_runtime missing"},
