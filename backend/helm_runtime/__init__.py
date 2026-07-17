@@ -24,6 +24,18 @@ from backend.helm_runtime.provider_router import (
     worker_health,
 )
 from backend.helm_runtime.role_router import route_proposal, routing_status
+from backend.helm_runtime.capability_registry import (
+    route_capability,
+    roles_for_capability,
+    all_capabilities,
+)
+from backend.helm_runtime.dispatch_gateway import (
+    DispatchGateway,
+    DispatchRequest,
+    DispatchNotEnabledError,
+    ProviderAdapter,
+    default_gateway,
+)
 
 __all__ = [
     "publish_event",
@@ -45,4 +57,14 @@ __all__ = [
     # Bridge — the single door
     "route_proposal",
     "routing_status",
+    # Capability routing (brand-agnostic)
+    "route_capability",
+    "roles_for_capability",
+    "all_capabilities",
+    # Dispatch Gateway (EDR-0002 skeleton — fail-closed)
+    "DispatchGateway",
+    "DispatchRequest",
+    "DispatchNotEnabledError",
+    "ProviderAdapter",
+    "default_gateway",
 ]

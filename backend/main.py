@@ -133,13 +133,30 @@ def run_git_command(args: list[str]) -> str:
         print(f"Error running git command {' '.join(args)}: {e}")
         return ""
 
-# Enable CORS for frontend development
+# CORS: default local origins only (audit R-02). Override with HELM_CORS_ORIGINS
+# comma-separated list. allow_credentials=True is incompatible with origins=["*"],
+# so we never use wildcard here.
+_cors_env = os.environ.get("HELM_CORS_ORIGINS", "").strip()
+if _cors_env:
+    _main_cors_origins = [o.strip() for o in _cors_env.split(",") if o.strip()]
+else:
+    _main_cors_origins = [
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8788",
+        "http://localhost:8788",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+        "http://127.0.0.1:3003",
+        "http://localhost:3003",
+        "null",
+    ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_main_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Helm-Read-Token", "X-HELM-Read-Token"],
 )
 
 # HAS v2 Roadmap Middleware for Quarantine and Redirection
@@ -241,7 +258,19 @@ app.include_router(app_store_router)
 from backend.voice.router import router as voice_router
 app.include_router(voice_router)
 
+# Mission State Engine — same writer as HELM LIVE :8770 (audit R-06 dual-surface fix)
+from backend.mission_control.mission_api_router import router as mission_state_router
+app.include_router(mission_state_router)
 
+# Runtime Bridge projections (providers / workers / mission-health / capabilities)
+try:
+    from backend.helm_runtime.bridge_api import router_or_none as _helm_bridge_router
+
+    _br = _helm_bridge_router()
+    if _br is not None:
+        app.include_router(_br)
+except Exception:
+    pass
 
 
 @app.get("/api/v1/control-plane/status")

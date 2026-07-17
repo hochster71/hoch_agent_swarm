@@ -101,6 +101,16 @@ app.include_router(nist_router)
 from backend.voice.router import router as voice_router
 app.include_router(voice_router)
 
+# Runtime Bridge + Dispatch Gateway projections (EDR-0001/0002) — read + OCC PATCH
+try:
+    from backend.helm_runtime.bridge_api import router_or_none as _helm_bridge_router
+
+    _br = _helm_bridge_router()
+    if _br is not None:
+        app.include_router(_br)
+except Exception:
+    pass  # fail open on import only; routes simply absent if substrate broken
+
 
 
 def now() -> str:

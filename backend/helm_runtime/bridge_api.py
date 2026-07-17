@@ -4,11 +4,15 @@ Exposes the runtime bridge as a FastAPI router so ChatGPT (Orchestrator),
 Claude (Builder), and Grok (Auditor) each talk to HELM over the same governed
 door instead of to each other:
 
-  GET   /api/v1/helm/mission     → versioned mission + projection hint (read)
-  PATCH /api/v1/helm/mission     → role-tagged, version-pinned proposal (write)
-  GET   /api/v1/helm/events      → tail of the event bus (nervous system)
-  GET   /api/v1/helm/providers   → worker bindings + key-presence (no secrets)
-  GET   /api/v1/helm/bridge      → routing status (how to submit a proposal)
+  GET   /api/v1/helm/mission          → versioned mission + projection hint (read)
+  PATCH /api/v1/helm/mission          → role-tagged, version-pinned proposal (write)
+  GET   /api/v1/helm/events           → tail of the event bus (nervous system)
+  GET   /api/v1/helm/providers        → provider health (adapter-level; no secrets)
+  GET   /api/v1/helm/workers          → per-role worker health (≠ provider health)
+  GET   /api/v1/helm/mission-health   → dark-UI executive mission health projection
+  GET   /api/v1/helm/capabilities     → capability registry (brand-agnostic)
+  GET   /api/v1/helm/bridge           → routing status (how to submit a proposal)
+  GET   /api/v1/helm/timeline         → mission timeline from event bus
 
 The PATCH path is optimistic-concurrency: the client sends the mission_version
 it read; a stale version returns HTTP 409. Founder-gate fields require an
@@ -31,6 +35,8 @@ from backend.helm_runtime.mission_store import read_mission
 from backend.helm_runtime.mission_runtime import mission_projection_hint
 from backend.helm_runtime.provider_router import worker_health
 from backend.helm_runtime.role_router import route_proposal, routing_status
+from backend.helm_runtime.dispatch_gateway import default_gateway
+from backend.helm_runtime.capability_registry import all_capabilities
 
 
 def _mission_view() -> Dict[str, Any]:
@@ -99,7 +105,51 @@ if _HAVE_FASTAPI:
 
         @router.get("/providers")
         def get_providers() -> Dict[str, Any]:
-            return worker_health()
+            """Provider-level health (adapters). Distinct from per-role workers."""
+            gw = default_gateway()
+            return {
+                "kind": "provider_health",
+                "providers": gw.health(),
+                "summary": gw.worker_status(),
+                "binding_view": worker_health(),
+                "doctrine": "no secrets returned; configured=env presence only",
+            }
+
+        @router.get("/workers")
+        def get_workers() -> Dict[str, Any]:
+            """Per-role worker health — configured / reachable / dispatch_enabled."""
+            rows = default_gateway().worker_role_health()
+            return {
+                "kind": "worker_health",
+                "workers": rows,
+                "blocked": [w for w in rows if w.get("status") == "BLOCKED"],
+                "available": [w for w in rows if w.get("status") == "AVAILABLE"],
+            }
+
+        @router.get("/mission-health")
+        def get_mission_health() -> Dict[str, Any]:
+            """Dark UI executive projection — operational status, not conversations."""
+            return default_gateway().mission_health()
+
+        @router.get("/capabilities")
+        def get_capabilities() -> Dict[str, Any]:
+            return {
+                "kind": "capability_registry",
+                "by_role": all_capabilities(),
+                "note": "route by capability → role → binding; never by brand in callers",
+            }
+
+        @router.get("/timeline")
+        def get_timeline(n: int = 40) -> Dict[str, Any]:
+            """Mission timeline sourced entirely from the event bus (replayable)."""
+            events = tail_events(n=n)
+            # Chronological for UI (file is append-only chronological already)
+            return {
+                "kind": "mission_timeline",
+                "source": "event_bus",
+                "events": events,
+                "count": len(events),
+            }
 
         @router.get("/bridge")
         def get_bridge() -> Dict[str, Any]:

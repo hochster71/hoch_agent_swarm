@@ -1,0 +1,36 @@
+{
+  "schema": "HELM_CAPABILITY_REGISTRY_v1",
+  "doctrine": "The runtime routes by capability, not by brand. A role advertises capabilities; the dispatch gateway matches a task's required capability to a role, then the provider_router resolves the current model binding. Swapping providers never changes routing logic.",
+  "updated_at": "2026-07-17T00:00:00Z",
+  "roles": {
+    "orchestrator": {
+      "capabilities": [
+        "planning",
+        "decomposition",
+        "dependency_resolution",
+        "reconciliation_coordination",
+        "executive_briefing"
+      ]
+    },
+    "builder": {
+      "capabilities": [
+        "architecture",
+        "python",
+        "typescript",
+        "react",
+        "testing",
+        "engineering_decision_records"
+      ]
+    },
+    "auditor": {
+      "capabilities": [
+        "verification",
+        "red_team",
+        "adversarial_testing",
+        "performance_measurement",
+        "regression_verification",
+        "security_review"
+      ]
+    }
+  }
+}
