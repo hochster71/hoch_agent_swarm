@@ -1458,6 +1458,24 @@ def serve_arch() -> str:
     return f.read_text() if f.exists() else "<h1>architecture missing</h1>"
 
 
+@app.get("/architecture", response_class=HTMLResponse)
+def serve_architecture_alias() -> str:
+    f = ROOT / "frontend_live" / "architecture.html"
+    return f.read_text() if f.exists() else "<h1>architecture missing</h1>"
+
+
+@app.get("/control_plane", response_class=HTMLResponse)
+def serve_control_plane() -> str:
+    f = ROOT / "frontend_live" / "control_plane.html"
+    return f.read_text() if f.exists() else "<h1>control_plane missing</h1>"
+
+
+@app.get("/helm", response_class=HTMLResponse)
+def serve_helm_alias() -> str:
+    f = ROOT / "frontend_live" / "helm.html"
+    return f.read_text() if f.exists() else "<h1>helm.html missing</h1>"
+
+
 @app.get("/pert", response_class=HTMLResponse)
 def pert_wall() -> str:
     """The 85-inch wall. Same runtime-truth feed; nothing on it can be faked."""

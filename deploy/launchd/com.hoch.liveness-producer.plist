@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.hoch.liveness-producer</string>
+  <key>ProgramArguments</key><array>
+    <string>/Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3</string>
+    <string>/Users/michaelhoch/hoch_agent_swarm/scripts/liveness_producer.py</string>
+    <string>--loop</string><string>--interval</string><string>60</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/michaelhoch/hoch_agent_swarm</string>
+  <key>KeepAlive</key><true/><key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>/Users/michaelhoch/hoch_agent_swarm/data/backups/liveness_producer.log</string>
+  <key>StandardErrorPath</key><string>/Users/michaelhoch/hoch_agent_swarm/data/backups/liveness_producer.log</string>
+</dict></plist>
