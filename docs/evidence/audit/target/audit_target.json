@@ -1,0 +1,54 @@
+{
+  "audit_target_id": "43734d38bdbd41a91492899ab952e16021822c01fdb69bf7a2a13aaf7ed76fda",
+  "repository": "~/hoch_agent_swarm",
+  "branch": "helm/h1b-r2-remediation",
+  "git_commit": "9cc3a5502cf881148b69e9b84964d12779614d04",
+  "working_tree_state": "DIRTY",
+  "captured_at_utc": "2026-07-17T14:04:47Z",
+  "components": {
+    "git_commit": "9cc3a5502cf881148b69e9b84964d12779614d04",
+    "tracked_diff_sha256": "91e90208f3adfd9d030d36e0ebe9bbb96792ca4428a32b2f66703a008e47ad4e",
+    "staged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked_manifest_sha256": "a56224b0a203be3ba3c5d0319ddfd36d3b59cb73ba0362e69393f9ff12127821",
+    "runtime_state_snapshot_sha256": "c98eb52222f69ce22031faf41f80d63292079140c5cef254dbbbeff47d56cb04",
+    "dependency_inventory_sha256": "71611108a4710cd2c8145dd8fb2593a740071094dd052762e1a2f54cd95588af",
+    "environment_manifest_sha256": "837da2dcf8f39b55a36e313f52144ced51223a3e089b8f7584e0344bf2e07d96"
+  },
+  "dependency_inventory": {
+    "uv.lock": {
+      "sha256": "4cbe5b19d5a60f02ac0edf3b70fc0862a4432eb1a5be696bd0abe7d20eab67ce",
+      "size": 956361
+    },
+    "package-lock.json": {
+      "sha256": "77ffce18797003f0457c42341c1b28c5ca95a03787abe4fd0fc7501e3853de22",
+      "size": 55202
+    },
+    "node_modules_dirs": [
+      {
+        "path": "products/hff-runway/node_modules",
+        "file_count": 3536
+      },
+      {
+        "path": "products/hff-invoice-aging/node_modules",
+        "file_count": 3536
+      }
+    ]
+  },
+  "path_class_counts": {
+    "IRRELEVANT_TO_AUDIT": 232,
+    "GENERATED_EVIDENCE": 220,
+    "SOURCE_CHANGE": 251,
+    "RUNTIME_STATE": 39,
+    "SECRET_OR_SENSITIVE": 7
+  },
+  "secret_paths_metadata_only": [
+    "coordination/leases/_fencing_tokens.bak",
+    "coordination/leases/_fencing_tokens.json",
+    "coordination/leases/_token_journal.jsonl",
+    "coordination/source_leases/_fencing_tokens.json",
+    "coordination/source_leases/_fencing_tokens.lock",
+    "coordination/source_leases/_token_journal.jsonl",
+    "docs/founder/secrets_and_deploy_discipline.md"
+  ],
+  "rule": "Both auditors MUST verify this exact audit_target_id before testing. Divergence => verdict BLOCKED, reason AUDIT_TARGET_DIVERGENCE."
+}

@@ -88,3 +88,25 @@ Freeze identical commit → ChatGPT independent baseline → Grok independent ba
 | Revenue state | Financial verification | Stripe settlement evidence | provider-specific | UNVERIFIED | WAITING_EXTERNAL | Yes | checkout cannot render as revenue |
 | Release state | Distribution readiness | Apple authoritative status | provider-specific | UNKNOWN | WAITING_EXTERNAL | Yes | submitted cannot render as live |
 Extend this table to every operational indicator on the wall; any row that fails a cell is a finding.
+
+## 15. DIRTY-WORKTREE AUDIT TARGET CAPTURE (v2.1 — the frozen target IS mandatory)
+A commit hash over a DIRTY tree is disclosure, not a frozen target: tracked mods are outside the commit, daemon ledgers mutate mid-audit, untracked files influence imports/builds/tests, node_modules isn't in the commit. The audit target is defined by **BOTH** the git commit AND a cryptographically frozen worktree-state manifest.
+
+**The target has already been captured for this run** by `scripts/audit/capture_audit_target.py` →
+```
+audit_target_id: 43734d38bdbd41a91492899ab952e16021822c01fdb69bf7a2a13aaf7ed76fda
+git_commit:      9cc3a5502cf881148b69e9b84964d12779614d04   branch: helm/h1b-r2-remediation
+manifest dir:    docs/evidence/audit/target/  (audit_target.json, tracked_worktree.patch, staged.patch,
+                 untracked_files.json, audit_relevant_hashes.json, runtime_state_snapshot/, environment.json, SHA256SUMS)
+```
+`audit_target_id = SHA256(git_commit + tracked_diff_hash + staged_diff_hash + untracked_manifest_hash + runtime_state_snapshot_hash + dependency_inventory_hash + environment_manifest_hash)`.
+
+RULES both auditors obey:
+1. Before testing, **re-run `capture_audit_target.py` and verify you observe the SAME `audit_target_id`.** If it differs → **verdict = BLOCKED, reason = AUDIT_TARGET_DIVERGENCE** (the tree drifted; rerun against a common immutable target — snapshot/clone the worktree or pause local writers during capture).
+2. Never hash or inspect secret content — secret-bearing files record path/existence/permissions/size/mtime/classification ONLY (7 such paths in this target).
+3. Dependency trees (node_modules/.venv) are inventoried by lockfile hash + package count, NOT per-file.
+4. Authoritative mutable ledgers are copied to a read-only timestamped snapshot before hashing.
+5. Generated audit evidence (`docs/evidence/audit/`) is EXCLUDED from the target-under-test.
+6. Path classes captured this run: SOURCE_CHANGE 251 · GENERATED_EVIDENCE 220 · IRRELEVANT_TO_AUDIT 232 · RUNTIME_STATE 39 · SECRET_OR_SENSITIVE 7.
+
+Every auditor's `audit_summary.json` MUST include the `audit_target` object (schema §helm_mission_assurance_audit) carrying `audit_target_id`, `target_manifest_sha256`, `target_verified_before_testing`, and `target_divergence_detected`. The commit hash alone is insufficient when the tree is dirty.

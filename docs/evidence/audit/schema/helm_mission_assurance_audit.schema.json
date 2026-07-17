@@ -86,6 +86,20 @@
         "evidence_refs": { "type": "array", "items": { "type": "string" } }
       }
     },
+    "auditTarget": {
+      "type": "object",
+      "required": ["repository","branch","git_commit","working_tree_state","target_manifest_sha256","audit_target_id","target_verified_before_testing","target_divergence_detected"],
+      "properties": {
+        "repository": { "type": "string" },
+        "branch": { "type": "string" },
+        "git_commit": { "type": "string" },
+        "working_tree_state": { "enum": ["CLEAN","DIRTY"] },
+        "target_manifest_sha256": { "type": "string" },
+        "audit_target_id": { "type": "string" },
+        "target_verified_before_testing": { "type": "boolean" },
+        "target_divergence_detected": { "type": "boolean" }
+      }
+    },
     "controlStatus": {
       "type": "object",
       "required": ["family","status"],
@@ -103,6 +117,7 @@
   "properties": {
     "file": { "enum": ["audit_summary","domain_scores","component_traceability","findings","negative_tests","red_blue_results","performance_results","resilience_results","nist_control_matrix","non_coverage","evidence_manifest"] },
     "run": { "$ref": "#/$defs/runHeader" },
+    "audit_target": { "$ref": "#/$defs/auditTarget" },
     "composite_trust_score": { "type": "number", "minimum": 0, "maximum": 100 },
     "composite_cap_reason": { "type": ["string","null"] },
     "final_verdict": { "$ref": "#/$defs/verdict" },
