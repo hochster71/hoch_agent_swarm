@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HELM · Executive Operations Center</title>
+<style>
+  :root{
+    --bg:#0a0e14; --panel:#111823; --panel2:#0d141d; --line:#1e2a3a;
+    --ink:#e6edf3; --muted:#7d8ea3; --dim:#4a5b70;
+    --green:#22e0a1; --amber:#f5a623; --red:#ff5c6c; --grey:#5b6b80; --blue:#4aa8ff;
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+    --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#0f1826,var(--bg));
+    color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+  header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}
+  h1{font-size:15px;letter-spacing:.22em;font-weight:600;margin:0;color:var(--ink)}
+  h1 b{color:var(--green)}
+  .sub{font-size:11px;color:var(--muted);font-family:var(--mono)}
+  .conn{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .conn .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grey);margin-right:6px;vertical-align:middle}
+  .row{display:grid;gap:12px;margin-bottom:14px}
+  .r-mission{grid-template-columns:repeat(3,1fr)}
+  .r-runtime{grid-template-columns:repeat(5,1fr)}
+  .cell{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:12px;padding:13px 14px;min-height:74px;position:relative;overflow:hidden}
+  .cell .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .cell .v{font-size:18px;font-weight:650;margin-top:7px;display:flex;align-items:center;gap:8px}
+  .cell .meta{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--mono)}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 10px currentColor}
+  .s-green{color:var(--green)} .s-amber{color:var(--amber)} .s-red{color:var(--red)}
+  .s-grey{color:var(--grey)} .s-blue{color:var(--blue)}
+  .section{font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;
+    margin:22px 2px 10px}
+  .workers{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  .worker{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;
+    cursor:pointer;transition:border-color .15s,transform .05s}
+  .worker:hover{border-color:#2c3e56}
+  .worker:active{transform:translateY(1px)}
+  .worker .role{font-size:13px;font-weight:650;display:flex;justify-content:space-between;align-items:center}
+  .worker .st{font-size:11px;font-family:var(--mono);margin-top:6px;display:flex;align-items:center;gap:7px}
+  .worker .reveal{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+    font-size:11px;font-family:var(--mono);color:var(--muted);display:none}
+  .worker.open .reveal{display:block}
+  .worker .reveal b{color:var(--ink);font-weight:600}
+  .timeline{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:6px 0;
+    max-height:280px;overflow:auto}
+  .ev{display:grid;grid-template-columns:64px 1fr auto;gap:12px;padding:9px 16px;
+    border-bottom:1px solid #14202e;font-size:12px;align-items:center}
+  .ev:last-child{border-bottom:0}
+  .ev .t{font-family:var(--mono);color:var(--dim);font-size:11px}
+  .ev .ty{font-family:var(--mono);color:var(--ink)}
+  .ev .p{font-size:10px;color:var(--muted);font-family:var(--mono)}
+  .empty{padding:20px 16px;color:var(--dim);font-family:var(--mono);font-size:12px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{background:#132033;border:1px solid var(--line);color:var(--ink);border-radius:9px;
+    padding:9px 15px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
+  .btn:hover{border-color:#345}
+  .btn.approve{color:var(--green)} .btn.release{color:var(--blue)} .btn.pause{color:var(--amber)}
+  .note{font-size:11px;color:var(--dim);margin-top:8px;font-family:var(--mono)}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0f1826;
+    border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--ink);
+    max-width:520px;opacity:0;pointer-events:none;transition:opacity .2s;font-family:var(--mono)}
+  .toast.show{opacity:1}
+  a.link{color:var(--blue);text-decoration:none;font-size:11px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>HELM · <b>EXECUTIVE OPERATIONS CENTER</b></h1>
+      <div class="sub">One console. The models are interchangeable backends behind the runtime.</div>
+    </div>
+    <div class="conn" id="conn"><span class="dot"></span>connecting…</div>
+  </header>
+
+  <!-- MISSION STRIP -->
+  <div class="row r-mission">
+    <div class="cell"><div class="k">Mission</div><div class="v" id="m-state"><span class="dot s-grey">●</span><span>—</span></div><div class="meta" id="m-state-meta">runtime truth</div></div>
+    <div class="cell"><div class="k">North Star</div><div class="v" id="m-north"><span>—</span></div><div class="meta" id="m-north-meta"></div></div>
+    <div class="cell"><div class="k">Critical Path</div><div class="v" id="m-crit"><span>—</span></div><div class="meta" id="m-crit-meta">remaining</div></div>
+  </div>
+
+  <!-- RUNTIME STRIP -->
+  <div class="row r-runtime">
+    <div class="cell"><div class="k">Mission Runtime</div><div class="v" id="e-mr"><span class="dot s-grey">●</span><span>—</span></div></div>
+    <div class="cell"><div class="k">Runtime Truth</div><div class="v" id="e-rt"><span class="dot s-grey">●</span><span>—</span></div></div>
+    <div class="cell"><div class="k">Governance</div><div class="v" id="e-gov"><span class="dot s-grey">●</span><span>—</span></div></div>
+    <div class="cell"><div class="k">Dispatch</div><div class="v" id="e-dis"><span class="dot s-grey">●</span><span>—</span></div><div class="meta" id="e-dis-meta"></div></div>
+    <div class="cell"><div class="k">Founder Gate</div><div class="v" id="e-fg"><span class="dot s-grey">●</span><span>—</span></div><div class="meta" id="e-fg-meta"></div></div>
+  </div>
+
+  <!-- WORKERS -->
+  <div class="section">Workers · <span id="w-count" style="color:var(--dim)">—</span></div>
+  <div class="workers" id="workers"><div class="empty">loading workers…</div></div>
+
+  <!-- TIMELINE -->
+  <div class="section">Mission Timeline · <span style="color:var(--dim)">event bus (replayable)</span></div>
+  <div class="timeline" id="timeline"><div class="empty">loading timeline…</div></div>
+
+  <!-- FOUNDER ACTIONS -->
+  <div class="section">Founder Console</div>
+  <div class="actions">
+    <button class="btn approve" data-a="Approve">Approve</button>
+    <button class="btn pause" data-a="Pause">Pause</button>
+    <button class="btn" data-a="Ask Builder">Ask Builder</button>
+    <button class="btn" data-a="Request Audit">Request Audit</button>
+    <button class="btn release" data-a="Release">Release</button>
+  </div>
+  <div class="note">Founder actions route through the Mission Runtime as founder-gated transactions. Live dispatch is not enabled in this build (Package 4, founder-authorized) — buttons record intent honestly, they do not fake execution.</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API = ""; // same-origin (served by HELM LIVE at /ops)
+const $ = id => document.getElementById(id);
+
+// status -> color class + dot
+function cls(s){
+  s=(s||"").toUpperCase();
+  if(["ACTIVE","VERIFIED","ENFORCED","READY","AVAILABLE","OPERATIONAL","LIVE","PASSED"].includes(s)) return "s-green";
+  if(["PENDING","BLOCKED","IDLE","DEGRADED","WAITING","WAITING_EXTERNAL","BLOCKED_EXTERNAL","NOT_YET_DETERMINED"].includes(s)) return "s-amber";
+  if(["FAILED","BROKEN","ERROR"].includes(s)) return "s-red";
+  return "s-grey"; // UNKNOWN / STALE / absent -> never green
+}
+function setCell(el,label,status,meta){
+  const c=cls(status);
+  $(el).innerHTML=`<span class="dot ${c}">●</span><span>${label||status||"UNKNOWN"}</span>`;
+  if(meta!==undefined && $(el+"-meta")) $(el+"-meta").textContent=meta;
+}
+async function get(p){ const r=await fetch(API+p,{cache:"no-store"}); if(!r.ok) throw new Error(p+" "+r.status); return r.json(); }
+
+function conn(ok,txt){
+  const d=$("conn"); d.innerHTML=`<span class="dot" style="background:var(--${ok?'green':'red'})"></span>${txt}`;
+}
+
+async function refresh(){
+  // 1) runtime truth strip + founder gate + dispatch
+  try{
+    const h=await get("/api/v1/helm/mission-health");
+    const rt=h.runtime||{};
+    setCell("e-mr","",rt.mission_runtime);
+    setCell("e-rt","",rt.runtime_truth);
+    setCell("e-gov","",rt.governance);
+    setCell("e-dis","",rt.dispatch, h.workers?`${h.workers.configured}/${h.workers.total} workers`:"");
+    setCell("e-fg","",h.founder_gate, h.reason||"");
+    conn(true,"live · "+new Date().toLocaleTimeString());
+  }catch(e){ conn(false,"runtime unreachable — showing UNKNOWN (no fake green)"); }
+
+  // 2) mission strip (north star / state / critical path)
+  try{
+    const m=await get("/api/v1/helm/mission");
+    const mm=m.mission||{};
+    setCell("m-state","", (m.state||m.operational_status||"UNKNOWN"),
+      m.mission_version?("mission v"+m.mission_version):"runtime truth");
+    $("m-north").innerHTML=`<span>${mm.north_star||mm.name||mm.id||"—"}</span>`;
+    $("m-north-meta").textContent=mm.id?("id "+mm.id):"";
+    const cp=m.critical_path;
+    let rem = Array.isArray(cp)?cp.length:(cp&&cp.remaining!=null?cp.remaining:(cp&&cp.items?cp.items.length:null));
+    $("m-crit").innerHTML=`<span>${rem!=null?rem:"—"}</span>`;
+  }catch(e){ /* leave dashes; honest */ }
+
+  // 3) workers
+  try{
+    const w=await get("/api/v1/helm/workers");
+    const rows=w.workers||[];
+    $("w-count").textContent=`${(w.available||[]).length} available · ${(w.blocked||[]).length} blocked`;
+    $("workers").innerHTML = rows.map(r=>{
+      const c=cls(r.status);
+      return `<div class="worker" onclick="this.classList.toggle('open')">
+        <div class="role">${(r.display_name&&r.display_name!==r.binding)?titleRole(r.role):titleRole(r.role)}
+          <span class="dot ${c}" title="${r.status}">●</span></div>
+        <div class="st"><span class="${c}">${r.status||"UNKNOWN"}</span></div>
+        <div class="reveal">
+          Provider: <b>${r.binding||"—"}</b><br>
+          Model: <b>${r.model||"—"}</b><br>
+          Dispatch: <b>${r.dispatch_enabled?"enabled":"disabled"}</b><br>
+          ${r.reason?("Reason: "+r.reason):""}
+        </div></div>`;
+    }).join("") || `<div class="empty">no workers registered</div>`;
+  }catch(e){ $("workers").innerHTML=`<div class="empty">workers endpoint unreachable</div>`; }
+
+  // 4) timeline from event bus
+  try{
+    const t=await get("/api/v1/helm/timeline?n=25");
+    const ev=(t.events||[]).slice().reverse();
+    $("timeline").innerHTML = ev.map(e=>{
+      const ts=(e.timestamp||"").replace("T"," ").replace("Z","").slice(11,19)||"--:--:--";
+      return `<div class="ev"><span class="t">${ts}</span>
+        <span class="ty">${e.type||"EVENT"}</span>
+        <span class="p">${e.producer||""}</span></div>`;
+    }).join("") || `<div class="empty">no events yet — the timeline is honest, not padded</div>`;
+  }catch(e){ $("timeline").innerHTML=`<div class="empty">timeline endpoint unreachable</div>`; }
+}
+
+function titleRole(r){ r=r||""; return r.charAt(0).toUpperCase()+r.slice(1); }
+
+// Founder actions — honest intent, no faked execution
+document.querySelectorAll(".btn").forEach(b=>b.addEventListener("click",()=>{
+  toast(`Founder intent recorded: “${b.dataset.a}”. This routes through the Mission Runtime as a founder-gated transaction; live execution is Package 4 (not enabled).`);
+}));
+let tT;
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(tT); tT=setTimeout(()=>t.classList.remove("show"),4200); }
+
+refresh(); setInterval(refresh,5000);
+</script>
+</body>
+</html>

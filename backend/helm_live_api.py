@@ -871,6 +871,16 @@ def serve_roadmap() -> str:
     return f.read_text() if f.exists() else "<h1>roadmap missing</h1>"
 
 
+@app.get("/ops", response_class=HTMLResponse)
+def serve_ops_center() -> str:
+    """HELM Executive Operations Center — the single dark mission-control console.
+    Michael's one entry point: HELM is the only thing he talks to; the frontier
+    models are interchangeable backends shown as workers. Reads the runtime-truth
+    projections (/mission, /mission-health, /workers, /timeline, /external) same-origin."""
+    f = ROOT / "frontend_live" / "ops_center.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>ops_center.html missing</h1>"
+
+
 @app.get("/api/v1/helm/jspace/lens")
 def api_v1_jspace_lens():
     """Semantic Jacobian Lens — which findings actually hold the promotion gate closed, ranked by how
