@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your sting pack — download</title>
+<style>
+  :root { --ink:#1a1626; --muted:#6b6480; --bg:#f6f4fb; --card:#fff; --accent:#5b2f9e; --line:#e6e2f0; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:640px; margin:0 auto; padding:40px 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; }
+  a.btn { display:inline-block; background:var(--accent); color:#fff; text-decoration:none; border-radius:10px; padding:12px 20px; }
+  .muted { color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Thanks for your purchase</h1>
+    <p class="muted">Your pack: <strong id="pack"></strong></p>
+    <p><a class="btn" id="dl" href="#">Download your sting pack (ZIP)</a></p>
+    <p class="muted">The ZIP includes the stings plus a <code>LICENSE.txt</code> and <code>manifest.json</code>. Instrumental-only, license-clean.</p>
+    <p class="muted" id="note"></p>
+  </div>
+</div>
+<script>
+function qs(k){ return new URLSearchParams(location.search).get(k); }
+const pack = qs('pack'); const sessionId = qs('session_id');
+document.getElementById('pack').textContent = pack || '(unknown)';
+// In production the delivery gate keys on the verified buyer identity (set by the
+// trusted session/webhook layer), not on arbitrary input. This link passes the
+// pack id; the server checks the entitlement the signed webhook wrote.
+document.getElementById('dl').href = '/api/download?pack=' + encodeURIComponent(pack || '') + (sessionId ? '&session_id=' + encodeURIComponent(sessionId) : '');
+document.getElementById('note').textContent = 'If the pack is still in placeholder mode, the download will explain that license-cleared audio has not been loaded yet.';
+</script>
+</body>
+</html>

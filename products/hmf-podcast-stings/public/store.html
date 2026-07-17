@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sting Packs — store</title>
+<style>
+  :root { --ink:#1a1626; --muted:#6b6480; --bg:#f6f4fb; --card:#fff; --accent:#5b2f9e; --line:#e6e2f0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:820px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:1.6rem; } .muted { color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin:16px 0; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:10px; padding:10px 18px; font-size:.95rem; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  .tag { display:inline-block; background:#efeaf8; color:#5b2f9e; border-radius:999px; padding:2px 10px; font-size:.8rem; margin:2px; }
+  .track { font-size:.85rem; color:var(--muted); }
+  .na { color:#8a6d00; font-size:.85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sting Packs</h1>
+  <p class="muted" id="status"></p>
+  <div id="packs"></div>
+  <p id="msg" class="muted"></p>
+</div>
+<script>
+async function load() {
+  const r = await fetch('/api/catalog');
+  const cat = await r.json();
+  document.getElementById('status').textContent = cat.honesty_note || '';
+  const host = document.getElementById('packs');
+  (cat.packs || []).forEach(p => {
+    const div = document.createElement('div'); div.className = 'card';
+    const tags = [].concat(p.tags && p.tags.mood || [], p.tags && p.tags.genre || []).map(t => '<span class="tag">'+t+'</span>').join('');
+    const tracks = p.tracks.map(t => '<div class="track">• '+t.title+' ('+t.type+', '+t.duration_sec+'s)</div>').join('');
+    div.innerHTML = '<h3>'+p.title+' — <span class="muted">'+ (p.price_note||'$9') +'</span></h3>' +
+      '<p class="muted">'+(p.blurb||'')+'</p>'+tags+'<div style="margin-top:8px">'+tracks+'</div>' +
+      (p.available ? '<p><button data-pack="'+p.id+'">Buy — $9</button></p>'
+                   : '<p class="na">Coming soon — license-cleared audio not yet loaded. Buying is disabled until this pack is available.</p>');
+    host.appendChild(div);
+  });
+  host.querySelectorAll('button[data-pack]').forEach(b => b.addEventListener('click', () => buy(b)));
+}
+async function buy(btn) {
+  const msg = document.getElementById('msg');
+  btn.disabled = true; msg.textContent = 'Starting secure checkout…';
+  try {
+    const r = await fetch('/api/create-checkout-session', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tier:'pack', pack: btn.dataset.pack }) });
+    const data = await r.json();
+    if (data.url) { window.location = data.url; return; }
+    msg.textContent = data.message || 'Checkout is not available yet.';
+  } catch (e) { msg.textContent = 'Could not start checkout. Please try again.'; }
+  btn.disabled = false;
+}
+load().catch(() => { document.getElementById('msg').textContent = 'Could not load the catalog.'; });
+</script>
+</body>
+</html>

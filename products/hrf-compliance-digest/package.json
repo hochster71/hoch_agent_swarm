@@ -1,0 +1,12 @@
+{
+  "name": "hrf-compliance-digest",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HRF — Compliance Change Digest. Given provided regulatory/source docs, produce a cited plain-English digest of what changed, who it affects, and an explicit uncertainty section. Citation-per-claim enforced by a fail-closed linter. Information, not legal advice.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

@@ -1,0 +1,52 @@
+# Build context is the repo ROOT (see docker-compose.yml build.context: ../..).
+# This trims the context so builds are fast, small, and never ship secrets,
+# state DBs, backups, or the host virtualenv.
+
+# --- version control & caches ---
+.git/
+.git/objects/
+.githooks/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- host virtualenv (rebuilt inside the image) ---
+.venv/
+venv/
+node_modules/
+dist/
+build/
+coverage/
+htmlcov/
+
+# --- secrets: NEVER copy into the image ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.mobileprovision
+secrets/
+**/secrets/
+
+# --- runtime state / DBs: come from volumes, not the image ---
+*.db
+*.db-journal
+*.db-wal
+*.sqlite
+*.sqlite3
+data/backups/
+logs/
+*.log
+
+# --- quarantine / archives / large artifacts ---
+_quarantine/
+archive/
+artifacts/release_candidates/*
+artifacts/live_screenshots/*
+
+# --- os cruft ---
+.DS_Store

@@ -1,0 +1,12 @@
+{
+  "name": "hcf-phish-checker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HCF — Link & QR Safety Report. OFFLINE heuristic link/QR safety report (redirect chain, punycode/homoglyph, known-bad patterns, TLS surface). Heuristic only — never a guarantee. Deterministic engine + landing page + Stripe checkout scaffold.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

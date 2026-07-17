@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Compliance Change Digest — cited, plain-English regulatory summaries</title>
+<style>
+  :root { --ink:#12233b; --muted:#5b6b7b; --bg:#f5f7fa; --card:#fff; --accent:#0b5a4a; --line:#e2e8f0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:740px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:1.9rem; margin:0 0 8px; }
+  .sub { color:var(--muted); font-size:1.05rem; margin:0 0 24px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; margin:16px 0; }
+  .price { font-size:2rem; font-weight:700; }
+  .price small { font-size:.9rem; color:var(--muted); font-weight:400; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:10px; padding:14px 22px; font-size:1rem; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  ul { padding-left:20px; } li { margin:6px 0; }
+  .warn { background:#eef6f3; border:1px solid #bfe3d8; border-radius:10px; padding:14px 16px; font-size:.92rem; color:#0b5a4a; }
+  .foot { color:var(--muted); font-size:.85rem; margin-top:28px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Compliance Change Digest</h1>
+  <p class="sub">Feed in the regulatory documents you already have. Get back a cited, plain-English digest of what changed, who it affects, and an explicit "what we're uncertain about" section.</p>
+
+  <div class="card">
+    <div class="price">$12 <small>/ month</small></div>
+    <ul>
+      <li><strong>Citation-per-claim, enforced.</strong> Every statement is footnoted to your sources — a fail-closed linter rejects any uncited claim.</li>
+      <li><strong>Anti-fabrication.</strong> Each cited quote must appear verbatim in your source text, or the digest won't render.</li>
+      <li><strong>Mandatory uncertainty section.</strong> Single-source and unverifiable claims are surfaced, never hidden.</li>
+      <li>Unlimited digests while your subscription is active.</li>
+    </ul>
+    <p><button id="buy">Subscribe — $12/mo</button></p>
+    <p id="msg" style="color:var(--muted);"></p>
+  </div>
+
+  <div class="warn">
+    <strong>Information, not legal advice.</strong> This tool summarizes only the documents you provide. It is not legal, compliance, or regulatory advice and may be incomplete or out of date. Verify against the primary text and consult qualified counsel before acting.
+  </div>
+
+  <p class="foot">After subscribing you'll be returned to a page where you paste your sources and drafted changes, then generate the cited digest. Powered by Stripe. We never see your card details.</p>
+</div>
+<script>
+document.getElementById('buy').addEventListener('click', async function () {
+  const btn = this, msg = document.getElementById('msg');
+  btn.disabled = true; msg.textContent = 'Starting secure checkout…';
+  try {
+    const r = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tier: 'monthly' }) });
+    const data = await r.json();
+    if (data.url) { window.location = data.url; return; }
+    msg.textContent = data.message || 'Checkout is not available yet.';
+  } catch (e) { msg.textContent = 'Could not start checkout. Please try again.'; }
+  btn.disabled = false;
+});
+</script>
+</body>
+</html>

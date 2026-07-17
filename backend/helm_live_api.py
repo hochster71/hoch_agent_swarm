@@ -57,7 +57,32 @@ PERT_UI = ROOT / "frontend_live" / "pert.html"
 UNKNOWN = "UNKNOWN"
 
 app = FastAPI(title="HELM LIVE")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# CORS + API hardening (audit R-CORS / R-AUTH). Never allow_origins=["*"] on the
+# control plane. Origins come from HELM_CORS_ALLOWLIST (comma-separated), falling
+# back to the legacy HELM_CORS_ORIGINS, then to a safe loopback default; optional
+# *.ts.net (Tailscale) via HELM_CORS_ALLOW_TSNET=1. See backend/security/api_hardening.py.
+import os as _os
+
+from backend.security.api_hardening import cors_middleware_kwargs, ApiHardeningMiddleware
+
+app.add_middleware(CORSMiddleware, **cors_middleware_kwargs())
+
+# Zero-Trust read-auth middleware: MOUNTED, default OFF (HELM_READ_AUTH_ENABLED).
+# Mounting makes the cutover path real; enabling still requires founder token env.
+# See backend/security/zero_trust/ and audit finding SEC-01 / R-01.
+from backend.security.zero_trust.config import HardenedConfig as _ZTConfig
+from backend.security.zero_trust.read_auth import ReadAuthMiddleware as _ReadAuthMiddleware
+
+_zt_cfg = _ZTConfig.from_env()
+app.add_middleware(_ReadAuthMiddleware, config=_zt_cfg)
+
+# API hardening (bearer gate + payload limit + rate limit + security headers).
+# Added LAST so it is the OUTERMOST layer: it short-circuits 401/413/429 before the
+# heavy handlers run and stamps security headers on every response. Deny-by-default
+# bearer gate is FLAGGED (HELM_REQUIRE_AUTH=1 + HELM_API_TOKEN) — default OFF, so
+# nothing changes until the founder provisions the token and restarts.
+app.add_middleware(ApiHardeningMiddleware)
 
 from backend.instrument_integrity.council_router import council_router
 app.include_router(council_router)
@@ -759,6 +784,50 @@ def api_v1_goal():
               "next_recommended_task": goal.get("next_recommended_task"),
               "soak_chain": chain,
               "soak_24_7_proven": done}))
+
+
+@app.get("/api/v1/helm/hmai")
+def api_v1_hmai():
+    """HELM Mission Assurance Index (HMAI) — the composite readiness index.
+
+    Read-only. Re-derived from live repo evidence on every call: a weighted 0-100
+    composite over pillars (mission execution, evidence freshness, founder approvals,
+    runtime truth, cyber/security, AI governance, supply chain/ConMon/zero-trust),
+    each with its own state (VERIFIED/DEGRADED/STALE/UNKNOWN). UNKNOWN pillars are
+    down-weighted and never rendered green — no fake green.
+    """
+    import time
+    from backend.truth.hmai import compute_hmai, GOAL_STATE
+    # Standard truth envelope with an explicit nested `data` payload (the HMAI
+    # result is a large object; nesting keeps the envelope keys unambiguous).
+    def _envelope(data, source, freshness):
+        return {
+            "truth_class": "HELM_MISSION_ASSURANCE_INDEX",
+            "source": source,
+            "observed_at": now(),
+            "freshness_seconds": freshness,
+            "tested_commit": get_current_commit(),
+            "data": data,
+        }
+    try:
+        data = compute_hmai()
+    except Exception as e:
+        return JSONResponse(_envelope(
+            {"state": UNKNOWN, "reason": f"hmai computation failed: {type(e).__name__}: {e}"},
+            "backend.truth.hmai", None))
+    freshness = float(time.time() - GOAL_STATE.stat().st_mtime) if GOAL_STATE.exists() else None
+    return JSONResponse(_envelope(
+        data,
+        "backend/truth/hmai.py (goal_state + factory_registry + runtime_source + security posture)",
+        freshness))
+
+
+@app.get("/executive", response_class=HTMLResponse)
+def serve_executive() -> str:
+    """HELM Executive Command — the Layer-1 mission-control screen. Same-origin so it
+    renders identically on the Mac, the phone, and over Tailscale. Reads /api/v1/helm/hmai."""
+    f = ROOT / "frontend_live" / "executive.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>executive.html missing</h1>"
 
 
 @app.get("/roadmap", response_class=HTMLResponse)

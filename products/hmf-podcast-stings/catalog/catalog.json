@@ -1,0 +1,89 @@
+{
+  "$schema": "./catalog.schema.md",
+  "catalog_version": "1.0.0",
+  "generated_utc": "2026-07-17T00:00:00Z",
+  "status": "PLACEHOLDER",
+  "honesty_note": "This is a PLACEHOLDER catalog. Every pack below is marked \"available\": false and lists sting files that DO NOT EXIST yet. No real audio ships with this repo. The founder must drop license-cleared, instrumental-only stings into stings/<pack_id>/ and flip \"available\": true. Shipping placeholder tones as a product would be FAKE GREEN.",
+  "guardrail": {
+    "instrumental_only": true,
+    "no_vocals": true,
+    "no_lyrics": true,
+    "no_artist_or_voice_likeness": true,
+    "license_gate_mandatory": true
+  },
+  "packs": [
+    {
+      "id": "cold-open",
+      "title": "Cold Open",
+      "blurb": "Punchy intro stings and hard-cut transitions for a show that starts with energy.",
+      "available": false,
+      "price_note": "$9 one-time",
+      "tags": {
+        "mood": ["energetic", "confident", "modern"],
+        "tempo_bpm": 120,
+        "genre": ["electronic", "percussive"],
+        "key": "E minor"
+      },
+      "tracks": [
+        { "id": "co-01", "title": "Signal Intro", "type": "intro", "duration_sec": 8, "bpm": 120, "key": "Em", "file": "stings/cold-open/co-01.wav", "vocals": false, "artist_likeness": false },
+        { "id": "co-02", "title": "Hard Cut", "type": "transition", "duration_sec": 3, "bpm": 120, "key": "Em", "file": "stings/cold-open/co-02.wav", "vocals": false, "artist_likeness": false },
+        { "id": "co-03", "title": "Swell Riser", "type": "riser", "duration_sec": 4, "bpm": 120, "key": "Em", "file": "stings/cold-open/co-03.wav", "vocals": false, "artist_likeness": false },
+        { "id": "co-04", "title": "Button Out", "type": "sting", "duration_sec": 2, "bpm": 120, "key": "Em", "file": "stings/cold-open/co-04.wav", "vocals": false, "artist_likeness": false },
+        { "id": "co-05", "title": "Segment Bumper", "type": "bumper", "duration_sec": 6, "bpm": 120, "key": "Em", "file": "stings/cold-open/co-05.wav", "vocals": false, "artist_likeness": false }
+      ],
+      "license": {
+        "id": "HMF-POD-1.0",
+        "name": "HMF Podcast Sting License",
+        "grant": "Non-exclusive, worldwide, perpetual right to use these instrumental stings and transitions as intros, outros, bumpers, and segment breaks in your own podcast episodes and their promotional clips, including monetized shows.",
+        "permitted": [
+          "Use in unlimited podcast episodes and their promo/social clips you produce",
+          "Edit, trim, layer, and fade the stings to fit your show",
+          "Monetize the podcast (ads, sponsorships, subscriptions)"
+        ],
+        "prohibited": [
+          "Reselling, redistributing, or sublicensing the sting files as standalone audio, samples, or in another music/sting library",
+          "Registering the stings (or derivatives) with any Content ID / royalty-collection system as your own",
+          "Claiming authorship of the underlying composition"
+        ],
+        "attribution_required": false,
+        "term": "Perpetual for podcast end-products you create."
+      }
+    },
+    {
+      "id": "quiet-desk",
+      "title": "Quiet Desk",
+      "blurb": "Soft, warm intros and gentle transitions for interview, essay, and narrative shows.",
+      "available": false,
+      "price_note": "$9 one-time",
+      "tags": {
+        "mood": ["warm", "calm", "thoughtful"],
+        "tempo_bpm": 84,
+        "genre": ["acoustic", "ambient"],
+        "key": "F major"
+      },
+      "tracks": [
+        { "id": "qd-01", "title": "Morning Note", "type": "intro", "duration_sec": 10, "bpm": 84, "key": "F", "file": "stings/quiet-desk/qd-01.wav", "vocals": false, "artist_likeness": false },
+        { "id": "qd-02", "title": "Soft Turn", "type": "transition", "duration_sec": 4, "bpm": 84, "key": "F", "file": "stings/quiet-desk/qd-02.wav", "vocals": false, "artist_likeness": false },
+        { "id": "qd-03", "title": "Reflective Bed Sting", "type": "sting", "duration_sec": 5, "bpm": 84, "key": "F", "file": "stings/quiet-desk/qd-03.wav", "vocals": false, "artist_likeness": false },
+        { "id": "qd-04", "title": "Close Out", "type": "outro", "duration_sec": 8, "bpm": 84, "key": "F", "file": "stings/quiet-desk/qd-04.wav", "vocals": false, "artist_likeness": false }
+      ],
+      "license": {
+        "id": "HMF-POD-1.0",
+        "name": "HMF Podcast Sting License",
+        "grant": "Non-exclusive, worldwide, perpetual right to use these instrumental stings and transitions as intros, outros, bumpers, and segment breaks in your own podcast episodes and their promotional clips, including monetized shows.",
+        "permitted": [
+          "Use in unlimited podcast episodes and their promo/social clips you produce",
+          "Edit, trim, layer, and fade the stings to fit your show",
+          "Monetize the podcast (ads, sponsorships, subscriptions)"
+        ],
+        "prohibited": [
+          "Reselling, redistributing, or sublicensing the sting files as standalone audio, samples, or in another music/sting library",
+          "Registering the stings (or derivatives) with any Content ID / royalty-collection system as your own",
+          "Claiming authorship of the underlying composition"
+        ],
+        "attribution_required": false,
+        "term": "Perpetual for podcast end-products you create."
+      }
+    }
+  ]
+}

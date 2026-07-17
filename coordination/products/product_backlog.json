@@ -25,7 +25,10 @@
       "price_usd": 5,
       "billing": "one_time",
       "guardrail": "heuristic only; never claim certainty; no real-world security decision advice",
-      "status": "BACKLOG"
+      "status": "BUILT",
+      "slug": "hcf-phish-checker",
+      "built_at": "2026-07-17",
+      "tests": "21 engine + 10 buyloop, all pass (node v22)"
     },
     {
       "id": "HRF_COMPLIANCE_DIGEST",
@@ -36,7 +39,10 @@
       "price_usd": 12,
       "billing": "monthly",
       "guardrail": "information not legal advice; every claim cited; uncertainty section mandatory",
-      "status": "BACKLOG"
+      "status": "BUILT",
+      "slug": "hrf-compliance-digest",
+      "built_at": "2026-07-17",
+      "tests": "11 engine (citation linter) + 10 buyloop, all pass (node v22)"
     },
     {
       "id": "HMF_PODCAST_STINGS",
@@ -47,7 +53,10 @@
       "price_usd": 9,
       "billing": "one_time",
       "guardrail": "instrumental-only; no vocals/voice-likeness; license-gate mandatory; no fabricated audio",
-      "status": "BACKLOG"
+      "status": "BUILT",
+      "slug": "hmf-podcast-stings",
+      "built_at": "2026-07-17",
+      "tests": "9 license-gate + 5 webhook, all pass (node v22)"
     },
     {
       "id": "HSF_COLORING_EXPORT",

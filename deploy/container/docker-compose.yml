@@ -1,0 +1,93 @@
+# ---------------------------------------------------------------------------
+# HELM LIVE — container stack
+# ---------------------------------------------------------------------------
+# Run from this directory:   docker compose up --build
+# (build context is the repo root, two levels up.)
+#
+# What this gives you (the resilience wins):
+#   - reproducible:  same image on any Linux/Docker host, deps pinned by uv.lock
+#   - isolated:      no dependence on the founder's Mac venv / global python
+#   - restart-safe:  `restart: unless-stopped` replaces the launchd KeepAlive
+#   - portable:      lift-and-shift from the MacBook to a VPS / k8s node
+#
+# Secrets: provided ONLY via the .env file below (placeholders in .env.example).
+# Never commit a real .env. TLS is terminated OUTSIDE this stack.
+# ---------------------------------------------------------------------------
+services:
+  helm-api:
+    build:
+      context: ../..                       # repo ROOT — needs pyproject/uv.lock/backend
+      dockerfile: deploy/container/Dockerfile
+    image: hoch-agent-swarm/helm-live:latest
+    container_name: helm-live-api
+    restart: unless-stopped
+    env_file:
+      - .env                               # placeholders only; real values injected at deploy
+    environment:
+      HELM_VOICE_PORT: "8770"
+      # Control-plane hardening knobs (safe defaults; override in .env):
+      HELM_CORS_ORIGINS: "${HELM_CORS_ORIGINS:-}"
+      HELM_READ_AUTH_ENABLED: "${HELM_READ_AUTH_ENABLED:-0}"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    ports:
+      # Publish to loopback only. Put a TLS reverse proxy in front for anything
+      # beyond localhost — the app speaks plain HTTP by design.
+      - "127.0.0.1:8770:8770"
+    volumes:
+      # Real runtime state — keep it OUTSIDE the image so restarts/redeploys
+      # don't wipe leases or council live-proof packages. The app reads/writes
+      # coordination/ by RELATIVE path, so this volume Just Works.
+      - helm-coordination:/app/coordination
+      # swarm_ledger.db: the app hardcodes ROOT/backend/swarm_ledger.db (no env
+      # override yet — see README "known blockers"). Until that path is
+      # parametrized, persist it with a single-file bind mount. Create the host
+      # file first (touch ./state/swarm_ledger.db) or copy the real one in.
+      # - ./state/swarm_ledger.db:/app/backend/swarm_ledger.db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8770/api/helm/live || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    networks:
+      - helm-net
+
+  # ---- OPTIONAL: scheduled / liveness loop ------------------------------
+  # The Mac ran a launchd "autoloop" supervisor (scripts/helm_autoloop.sh).
+  # In-container that becomes an ordinary long-running sibling service that
+  # shares the same image and coordination volume. Enable with:
+  #   docker compose --profile loop up --build
+  helm-loop:
+    profiles: ["loop"]
+    image: hoch-agent-swarm/helm-live:latest
+    build:
+      context: ../..
+      dockerfile: deploy/container/Dockerfile
+    container_name: helm-live-loop
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - helm-api
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - helm-coordination:/app/coordination
+    # Placeholder loop command — point this at the real scheduler entrypoint
+    # once its host-path assumptions are parametrized (see README blockers).
+    command: ["/app/.venv/bin/python", "-c",
+              "import time,sys; print('helm-loop: standby (wire real scheduler entrypoint)', flush=True); [time.sleep(3600) for _ in iter(int,1)]"]
+    networks:
+      - helm-net
+
+volumes:
+  helm-coordination:
+
+networks:
+  helm-net:
+    driver: bridge

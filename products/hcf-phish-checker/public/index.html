@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Link &amp; QR Safety Report — heuristic link checker</title>
+<style>
+  :root { --ink:#0d1b2a; --muted:#5b6b7b; --bg:#f4f7fb; --card:#fff; --accent:#1b4965; --line:#e2e8f0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:720px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:1.9rem; margin:0 0 8px; }
+  .sub { color:var(--muted); font-size:1.05rem; margin:0 0 24px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; margin:16px 0; }
+  .price { font-size:2rem; font-weight:700; }
+  .price small { font-size:.9rem; color:var(--muted); font-weight:400; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:10px; padding:14px 22px; font-size:1rem; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  ul { padding-left:20px; } li { margin:6px 0; }
+  .warn { background:#fff8e1; border:1px solid #ffe08a; border-radius:10px; padding:14px 16px; font-size:.92rem; color:#5a4a00; }
+  .foot { color:var(--muted); font-size:.85rem; margin-top:28px; }
+  code { background:#eef2f7; padding:1px 5px; border-radius:5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Link &amp; QR Safety Report</h1>
+  <p class="sub">Paste a suspicious link (or a QR's contents) and get a plain-English, offline heuristic safety report before you click.</p>
+
+  <div class="card">
+    <div class="price">$5 <small>one-time, per report</small></div>
+    <ul>
+      <li>Redirect-chain inspection (embedded/open-redirect targets)</li>
+      <li>Punycode &amp; homoglyph look-alike detection</li>
+      <li>Known-bad patterns: IP hosts, credential tricks, brand look-alikes, abused TLDs, shorteners</li>
+      <li>TLS surface (from the URL), risky download extensions, and more</li>
+    </ul>
+    <p><button id="buy">Buy a report — $5</button></p>
+    <p id="msg" style="color:var(--muted);"></p>
+  </div>
+
+  <div class="warn">
+    <strong>Heuristic, not a guarantee.</strong> This is an offline, text-only analysis of the link.
+    It cannot see the live page, its certificate, or where a shortened/redirecting link finally lands.
+    It is one input to your judgment, not a security decision or professional advice. When in doubt, do not click.
+  </div>
+
+  <p class="foot">After payment you'll be returned to a page where you can paste your link and generate the report.
+  Powered by Stripe Checkout. We never see your card details.</p>
+</div>
+<script>
+document.getElementById('buy').addEventListener('click', async function () {
+  const btn = this, msg = document.getElementById('msg');
+  btn.disabled = true; msg.textContent = 'Starting secure checkout…';
+  try {
+    const r = await fetch('/api/create-checkout-session', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tier: 'report' })
+    });
+    const data = await r.json();
+    if (data.url) { window.location = data.url; return; }
+    msg.textContent = data.message || 'Checkout is not available yet.';
+  } catch (e) { msg.textContent = 'Could not start checkout. Please try again.'; }
+  btn.disabled = false;
+});
+</script>
+</body>
+</html>

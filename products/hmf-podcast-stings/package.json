@@ -1,0 +1,12 @@
+{
+  "name": "hmf-podcast-stings",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HMF — Podcast Intro & Transition Sting Pack. Themed packs of short INSTRUMENTAL stings/transitions with an attached usage license. License-gated ZIP delivery. Instrumental-only by policy; NO fabricated audio (placeholder catalog until founder supplies cleared tracks).",
+  "scripts": {
+    "test": "node test/test_license_gate.js && node test/test_webhook.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

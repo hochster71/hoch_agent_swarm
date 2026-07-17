@@ -1,0 +1,29 @@
+{
+  "topic": "Data Protection Rule Update 2027",
+  "period": "Q4 2026 review",
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Regulator Notice 2026-14",
+      "url": "https://example.gov/notice/2026-14",
+      "text": "Effective 1 January 2027, covered entities must complete an annual data protection impact assessment. The reporting deadline for breaches is reduced from 72 hours to 48 hours."
+    }
+  ],
+  "changes": [
+    {
+      "text": "Covered entities must now complete an annual data protection impact assessment.",
+      "affects": ["covered entities"],
+      "effective": "2027-01-01",
+      "citations": [
+        { "source_id": "s1", "quote": "covered entities must complete an annual data protection impact assessment" }
+      ]
+    },
+    {
+      "text": "The breach reporting deadline is shortened to 48 hours.",
+      "affects": ["compliance teams"],
+      "citations": [
+        { "source_id": "s1", "quote": "reduced from 72 hours to 48 hours" }
+      ]
+    }
+  ]
+}

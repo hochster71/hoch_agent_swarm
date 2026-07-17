@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your Link &amp; QR Safety Report</title>
+<style>
+  :root { --ink:#0d1b2a; --muted:#5b6b7b; --bg:#f4f7fb; --card:#fff; --accent:#1b4965; --line:#e2e8f0;
+          --low:#2e7d32; --elev:#b26a00; --high:#c62828; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:1.6rem; } .muted { color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin:16px 0; }
+  textarea, select { width:100%; font-size:1rem; padding:10px; border:1px solid var(--line); border-radius:10px; font-family:inherit; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:10px; padding:12px 20px; font-size:1rem; cursor:pointer; }
+  .band { display:inline-block; padding:4px 12px; border-radius:999px; color:#fff; font-weight:700; }
+  .band.LOW{background:var(--low);} .band.ELEVATED{background:var(--elev);} .band.HIGH{background:var(--high);}
+  pre { white-space:pre-wrap; background:#0d1b2a; color:#e6edf3; padding:16px; border-radius:10px; overflow:auto; font-size:.85rem; }
+  .sev { font-weight:700; } .sev.high{color:var(--high);} .sev.medium{color:var(--elev);} .sev.low{color:#557; } .sev.info{color:var(--muted);}
+  .finding { border-top:1px solid var(--line); padding:10px 0; }
+  .warn { background:#fff8e1; border:1px solid #ffe08a; border-radius:10px; padding:12px 14px; font-size:.9rem; color:#5a4a00; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Thanks — your report is unlocked</h1>
+  <p class="muted">Paste the link you want checked (or the text a QR code contains) and generate your report. Offline &amp; heuristic — see the note at the bottom.</p>
+
+  <div class="card">
+    <label class="muted" for="kind">Input type</label>
+    <select id="kind">
+      <option value="url">A link / URL</option>
+      <option value="qr">Decoded QR contents (paste what your scanner shows)</option>
+    </select>
+    <p></p>
+    <label class="muted" for="input">Link or QR contents</label>
+    <textarea id="input" rows="2" placeholder="https://example.com/login"></textarea>
+    <p><button id="go">Generate report</button> <span id="msg" class="muted"></span></p>
+  </div>
+
+  <div id="out" style="display:none;">
+    <div class="card">
+      <p>Concern band: <span id="band" class="band"></span> <span class="muted" id="score"></span></p>
+      <p id="meaning" class="muted"></p>
+      <div id="chain"></div>
+      <div id="findings"></div>
+    </div>
+    <div class="card">
+      <strong>Full report</strong>
+      <pre id="text"></pre>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>Heuristic, not a guarantee.</strong> Offline text-only analysis. It cannot see the live page, certificate, or the final destination of a shortened/redirecting link. One input to your judgment — not a security decision or professional advice.
+  </div>
+</div>
+<script>
+function qs(k){ return new URLSearchParams(location.search).get(k); }
+const sessionId = qs('session_id');
+document.getElementById('go').addEventListener('click', async function () {
+  const msg = document.getElementById('msg');
+  const input = document.getElementById('input').value.trim();
+  const kind = document.getElementById('kind').value;
+  if (!input) { msg.textContent = 'Enter a link first.'; return; }
+  msg.textContent = 'Analyzing…';
+  try {
+    const r = await fetch('/api/generate-report', {
+      method: 'POST', headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ session_id: sessionId, input, kind })
+    });
+    const data = await r.json();
+    if (!data.ok) { msg.textContent = data.message || 'Could not generate the report.'; return; }
+    msg.textContent = '';
+    render(data.report);
+  } catch (e) { msg.textContent = 'Something went wrong. Please try again.'; }
+});
+function render(rep){
+  document.getElementById('out').style.display='block';
+  const band = document.getElementById('band');
+  band.textContent = rep.band; band.className = 'band ' + rep.band;
+  document.getElementById('score').textContent = '(heuristic score ' + rep.score + ')';
+  document.getElementById('meaning').textContent = rep.meaning;
+  const chain = document.getElementById('chain');
+  chain.innerHTML = '';
+  if (rep.redirectChainStatic && rep.redirectChainStatic.length > 1) {
+    chain.innerHTML = '<p class="muted">Static redirect chain (embedded params only, no network):</p><ol>' +
+      rep.redirectChainStatic.map(u => '<li><code>'+escapeHtml(u)+'</code></li>').join('') + '</ol>';
+  }
+  const f = document.getElementById('findings');
+  f.innerHTML = rep.findings.length ? '' : '<p class="muted">No heuristic signals matched — see the note below.</p>';
+  rep.findings.forEach(x => {
+    const d = document.createElement('div'); d.className='finding';
+    d.innerHTML = '<span class="sev '+x.severity+'">['+x.severity.toUpperCase()+']</span> <strong>'+escapeHtml(x.title)+'</strong><br><span class="muted">'+escapeHtml(x.detail)+'</span>';
+    f.appendChild(d);
+  });
+  document.getElementById('text').textContent = rep.text;
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+</script>
+</body>
+</html>
