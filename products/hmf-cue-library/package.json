@@ -2,7 +2,10 @@
   "name": "hmf-cue-library",
   "version": "0.1.0",
   "private": true,
-  "description": "HMF — HOCH Cue Library: cleared instrumental cues for creators. Landing page + Stripe checkout scaffold. Instrumental-only, license-cleared.",
+  "description": "HMF — HOCH Cue Library: cleared instrumental cues for creators. Storefront + license-gated delivery engine + Stripe checkout scaffold. Instrumental-only, license-cleared.",
+  "scripts": {
+    "test": "node test/test_license_gate.js"
+  },
   "dependencies": {
     "stripe": "^16.0.0"
   }
