@@ -1,0 +1,14 @@
+Transaction Date,Details,Value,Category
+05-Apr-2026,Retainer client Delta Studios,"$9,000.00",Income
+09-Apr-2026,Contractor Bob Writer,($750.00),Contractors
+12-Apr-2026,Slack subscription,($12.50),Software/SaaS
+16-Apr-2026,LinkedIn Ads campaign,($275.00),Advertising
+20-Apr-2026,Cafe lunch meeting,($18.00),Meals
+24-Apr-2026,Airbnb travel,($260.00),Travel
+28-Apr-2026,Owner personal transfer,"($3,000.00)",Owner Draw
+02-May-2026,Retainer client Delta Studios,"$9,000.00",Income
+06-May-2026,Contractor Bob Writer,($900.00),Contractors
+BADROW-no-date,Contractor Bob Writer,notanumber,Contractors
+10-May-2026,Figma subscription,($15.00),Software/SaaS
+15-May-2026,Franchise tax payment,($800.00),Taxes
+20-May-2026,Office Depot supplies,($64.30),Office
