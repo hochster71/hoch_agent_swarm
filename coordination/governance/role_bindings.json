@@ -1,0 +1,41 @@
+{
+  "schema": "HELM_ROLE_BINDINGS_v1",
+  "doctrine": "Roles are durable. Provider/model bindings are replaceable. Update bindings when frontier fit changes; do not rename the architecture after models.",
+  "updated_at": "2026-07-17T15:00:00Z",
+  "role_bindings": {
+    "orchestrator": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "mode": "agent",
+      "display_name": "ChatGPT Agent",
+      "overlay": "coordination/governance/role_overlays/ROLE_ORCHESTRATOR.md",
+      "notes": "Chief of Staff — orchestration only; never boss, never self-certifies"
+    },
+    "builder": {
+      "provider": "anthropic",
+      "model": "claude",
+      "mode": "ide_agent",
+      "display_name": "Claude",
+      "overlay": "coordination/governance/role_overlays/ROLE_BUILDER.md",
+      "notes": "Engineering + EDRs"
+    },
+    "auditor": {
+      "provider": "xai",
+      "model": "grok-4.5",
+      "mode": "agent",
+      "display_name": "Grok",
+      "overlay": "coordination/governance/role_overlays/ROLE_AUDITOR.md",
+      "notes": "Independent assurance; red team; verification; performance; regression"
+    }
+  },
+  "platform": {
+    "name": "HELM_Executive_Runtime",
+    "is_actor": false,
+    "engines": [
+      "mission_runtime",
+      "runtime_truth_engine",
+      "governance_engine",
+      "event_bus"
+    ]
+  }
+}

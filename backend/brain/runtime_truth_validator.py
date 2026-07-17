@@ -145,12 +145,22 @@ def validate_source_manifest(manifest_path: Path) -> Dict[str, Any]:
             status_val = "UNKNOWN"
             has_no_go = True
 
+        # Fail closed for live UI: only FRESH + checksum-valid sources may paint UI
+        # (audit R-13 — stale sources previously kept allowed_for_live_ui=true).
+        allow_ui = (
+            status_val in ("GO", "FRESH")
+            or (freshness == "fresh" and status_val not in ("MALFORMED", "UNKNOWN", "QUARANTINED", "STALE", "NO_GO"))
+        )
+        if freshness in ("stale", "unknown", "malformed", "quarantined") or status_val in (
+            "STALE", "UNKNOWN", "MALFORMED", "QUARANTINED", "NO_GO"
+        ):
+            allow_ui = False
         sources_out[key] = {
             "source_id": key,
             "label": label,
             "path": str(local_path),
             "authority": authority,
-            "allowed_for_live_ui": True,
+            "allowed_for_live_ui": allow_ui,
             "freshness": freshness,
             "last_modified": mtime_str,
             "age_seconds": age_seconds,

@@ -1,0 +1,18 @@
+{
+  "mission": {
+    "error": "Remote end closed connection without response",
+    "url": "http://127.0.0.1:8770/api/v1/helm/mission"
+  },
+  "executive": {
+    "error": "Remote end closed connection without response",
+    "url": "http://127.0.0.1:8770/api/v1/helm/mission/executive"
+  },
+  "voice_mission": {
+    "error": "Remote end closed connection without response",
+    "url": "http://127.0.0.1:8770/api/v1/helm/voice/mission"
+  },
+  "mission_page": {
+    "error": "Remote end closed connection without response",
+    "url": "http://127.0.0.1:8770/mission"
+  }
+}

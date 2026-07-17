@@ -1,0 +1,17 @@
+{
+  "at": "2026-07-17T12:45:03.780893Z",
+  "sha256": {
+    "coordination/goal/mission_state.json": "9ac49d659da9ebdda9a2a1f57ad0cbba36e89008a2532b81c8ac6c3ab2a58e9b",
+    "coordination/goal/goal_state.json": "2e793ee4baa3bfb542b3677f9743b0aa1b4a2881a8cad0abe6fa8289a65bef65",
+    "coordination/goal/champion_gates.json": "4eddc454b8616bb305ab2ca75a1798be3a08bb9d9eb6f18eae10d2c2e699f39e",
+    "backend/mission_control/mission_state.py": "66107d593fc742e02fc67b4926d325cd40866fc4477885ceb99b7bbbda762233",
+    "docs/evidence/runtime/helm_mission_state_independent_validation_20260715.json": "acb9c99451e9fc14afe4cb70e63211ace2dd95b24f41d7a512ce896ec8c0604b",
+    "docs/evidence/runtime/helm_mission_state_negative_tests_20260715.json": "2fbcf9125a332c59327d8d124f7e77ded3b43ebe8aa0d52e53c9cf1612e797a7",
+    "docs/evidence/runtime/helm_mission_state_api_samples_20260715.json": "18dd49d3e5964d053ed91fafabd88716ba47ce11dd3cf97f9a1e91bc43792164",
+    "docs/evidence/runtime/mission_state_validation_shots_20260715/mission_blocked.png": "7e82a8fa28eef3791c8200cdc9255a537838c779c753f418754f7ab5b625703b",
+    "docs/evidence/runtime/mission_state_validation_shots_20260715/mission_normal.png": "5b65df1653f5ccbdb18eff626b19b3966bd4387fb0741c6610ccd24c72c805a4",
+    "docs/evidence/runtime/mission_state_validation_shots_20260715/mission_page_source.html": "62b153826288de2ad0f216bb9fe065b13a6a7928874e3916ae0d7580be1da4aa",
+    "docs/evidence/runtime/mission_state_validation_shots_20260715/mission_stale.png": "4d85dde8f8530adc6b4d57c223afdb36c3ff8873d6a3a7103ca3238d4139e9f8",
+    "docs/evidence/runtime/mission_state_validation_shots_20260715/mission_unknown.png": "a14944210a58897f58227787b5ae7a7a680d4bc50aee55777f651e7051b5a3a1"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "tool": "bind_audit",
+  "assessed_at": "2026-07-15T16:10:51.736232+00:00",
+  "root": "/sessions/nice-adoring-fermi/mnt/hoch_agent_swarm",
+  "verdict": "FAIL",
+  "exit_code": 2,
+  "nist_controls": [
+    "SC-7",
+    "AC-4",
+    "SC-8"
+  ],
+  "framework": "NIST SP 800-207 Zero Trust / 800-53 Rev5",
+  "runtime": {
+    "available": true,
+    "reason": null,
+    "total_listeners": 2,
+    "all_interface_listeners": [
+      {
+        "ip": "::",
+        "port": 22,
+        "pid": null,
+        "process": "",
+        "all_interfaces": true
+      },
+      {
+        "ip": "0.0.0.0",
+        "port": 22,
+        "pid": null,
+        "process": "",
+        "all_interfaces": true
+      }
+    ]
+  },
+  "config": {
+    "files_scanned": 524,
+    "all_interface_bindings": [
+      {
+        "file": "scripts/helm_autoloop.sh",
+        "line": 33,
+        "text": "nohup \"$PY\" -m uvicorn backend.helm_live_api:app --host 0.0.0.0 --port 8770 \\"
+      },
+      {
+        "file": "scripts/remote_runtime/relay_api.py",
+        "line": 78,
+        "text": "uvicorn.run(app, host=\"0.0.0.0\", port=8010)"
+      },
+      {
+        "file": "docker/entrypoints/api.sh",
+        "line": 5,
+        "text": "exec /app/.venv/bin/python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000"
+      }
+    ]
+  },
+  "tls": {
+    "live_api_tls_configured": false,
+    "note": "SC-8 gap: origin :8770 is plain HTTP. Tailscale terminates HTTPS in front but the origin transmits in the clear."
+  },
+  "summary": "2 runtime + 3 config all-interface binding(s); TLS on origin: False"
+}

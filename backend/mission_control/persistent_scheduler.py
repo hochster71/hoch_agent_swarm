@@ -25,6 +25,28 @@ from backend.mission_control.scoped_states import ScopedStateEvaluator, StateSta
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DB_PATH = PROJECT_ROOT / "backend" / "swarm_ledger.db"
 
+# ── FAIL-CLOSED CAPABILITY GRANT SET ──────────────────────────────────────────
+# A task that declares a `required_capability` may be dispatched autonomously
+# ONLY if that capability appears here (i.e. is POSITIVELY GRANTED). This is the
+# default-DENY half of the dispatch-time capability gate: it does not depend on
+# any blocker being present, so a missing / parse-failed / resolved blocker
+# register can no longer leak an externally-gated task.
+#
+# LOCAL_ONLY = self-contained local work needing no external/founder authority
+# (all 8factory moonshot tasks carry it). Capabilities that require out-of-band
+# authorization — APP_STORE_CONNECT_OBSERVATION, APPLE_DISTRIBUTION_PROMOTION,
+# and anything Apple/Google/store/founder-gated — are deliberately ABSENT and
+# are therefore denied at dispatch until explicitly granted here.
+#
+# Root cause this closes (sealed soak HELM-SOAK-24H-20260715T194547Z, round 644):
+# the old gate only skipped a required_capability that was listed in the
+# dynamically-derived `blocked_capabilities`. When `epic_fury_blocked` was
+# momentarily False (blocker absent/resolved or a racy non-atomic rewrite of
+# goal_blocker_register.json making load_blockers() return []), that list was
+# empty and the Epic Fury APP_STORE_CONNECT_OBSERVATION task dispatched. Grant
+# is now required, not merely "no active block".
+DISPATCH_GRANTED_CAPABILITIES: frozenset = frozenset({"LOCAL_ONLY"})
+
 logger = logging.getLogger("HELM.PersistentScheduler")
 
 def get_utc_now_str() -> str:
@@ -237,6 +259,20 @@ class PersistentScheduler:
             blocked_caps = set(f_info.get("blocked_capabilities") or [])
             t_mission = (t.get("mission_id") or "").upper()
             t_cap = (t.get("required_capability") or "").upper()
+
+            # (b0) FAIL-CLOSED CAPABILITY GATE. A task that declares a
+            #      required_capability dispatches ONLY if that capability is
+            #      POSITIVELY GRANTED. This is default-DENY and does NOT depend
+            #      on any blocker: a missing / resolved / parse-failed blocker
+            #      register cannot open this gate. Closes the round-644 leak
+            #      where an empty blocked_capabilities list let the Epic Fury
+            #      APP_STORE_CONNECT_OBSERVATION task through.
+            if t_cap and t_cap not in {c.upper() for c in DISPATCH_GRANTED_CAPABILITIES}:
+                logger.info(
+                    f"Skipping {t['task_id']}: capability {t_cap} not positively "
+                    f"granted (fail-closed dispatch gate)")
+                continue
+
             if t_mission and t_mission in {m.upper() for m in blocked_missions}:
                 logger.info(f"Skipping {t['task_id']}: mission {t_mission} is BLOCKED_EXTERNAL")
                 continue

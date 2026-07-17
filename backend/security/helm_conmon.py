@@ -87,6 +87,8 @@ def assess() -> Dict[str, Any]:
     } for r in gaps + unk]
 
     total = len(results)
+    # Sample posture only — never claim full 800-53 catalog coverage (audit R-03).
+    sample_pct = round(100.0 * len(impl) / total, 1) if total else 0.0
     posture = {
         "schema": "HELM_CONTROL_POSTURE_v1",
         "framework": "NIST SP 800-53 Rev. 5",
@@ -98,13 +100,20 @@ def assess() -> Dict[str, Any]:
         "not_implemented": len(gaps),
         "unknown": len(unk),
         # UNKNOWN contributes ZERO. Absence of evidence is never partial credit.
-        "posture_percent": round(100.0 * len(impl) / total, 1) if total else 0.0,
+        "posture_percent": sample_pct,
+        "posture_percent_scope": "SAMPLED_CONTROLS_ONLY",
+        "full_nist_800_53_coverage": False,
+        "catalog_scope_note": (
+            f"posture_percent is {sample_pct}% of {total} continuously assessed HELM controls, "
+            "NOT percent of the full NIST SP 800-53 Rev. 5 catalog. Do not cite as ATO posture."
+        ),
         "open_findings": len(poam),
         "high_findings": len([p for p in poam if p["severity"] == "HIGH"]),
         "controls": results,
         "poam": poam,
         "doctrine": ("posture is RE-DERIVED from live evidence every cycle; a control that "
-                     "cannot be proven right now is a FINDING, not a green square"),
+                     "cannot be proven right now is a FINDING, not a green square; "
+                     "sample percent is never full-catalog coverage"),
     }
 
     CONMON_DIR.mkdir(parents=True, exist_ok=True)

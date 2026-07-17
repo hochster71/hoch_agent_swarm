@@ -1,0 +1,65 @@
+# HELM Platform Release manifest — tracks HELM as a versioned operating system.
+# Not a git tag. A platform release. Amendments/status change only via governance.
+helm_platform_release:
+  version: "1.0.0-alpha"
+  constitution: "1.0"
+  constitution_status: "RATIFIED"          # architecture & governance approach, 2026-07-17
+  ratification_scope: "architecture + governance only; implementation conformance NOT certified"
+  ratification_record: "FOUNDER_RATIFICATION.md"
+  architecture: "FROZEN on ratification"
+  released_at_utc: "2026-07-17"
+  category: "AI Executive Operating System"
+
+  # Implementation % is ESTIMATED (not VERIFIED). Weighted from the Constitution
+  # layer register: IMPLEMENTED=1.0, PARTIAL=0.5, PLANNED=0.0 over 16 layer items.
+  # Basis: 10.5 / 16 = 0.656.
+  implementation:
+    estimate_pct: 66
+    label: "ESTIMATED (weighted layer register; not independently verified)"
+    counts: { implemented: 8, partial: 5, planned: 3 }
+  verification:
+    status: "PENDING"
+    note: "Runtime Bridge + Dispatch Gateway await Grok bridge verdict; conformance report awaits Auditor confirmation."
+
+  subsystems:
+    mission_runtime:      IMPLEMENTED
+    runtime_truth_engine: PARTIAL
+    governance_engine:    IMPLEMENTED
+    knowledge_engine:     PLANNED
+    dispatch_gateway:     SKELETON        # fail-closed; no live dispatch; no credentials
+    provider_registry:    IMPLEMENTED
+    worker_registry:      PARTIAL          # 3 roles bound; extended roster DESIGNED
+    capability_registry:  IMPLEMENTED
+    event_bus:            IMPLEMENTED
+    executive_ops_center: IMPLEMENTED      # /ops
+    api:                  IMPLEMENTED      # read-only projections
+    voice:                PARTIAL
+    cli:                  PLANNED
+    mobile:               PARTIAL
+
+  security_baseline:
+    status: "ESTABLISHED (partial)"
+    nist_rev5_matrix: PARTIAL
+    conmon: PARTIAL                        # backend/security/helm_conmon.py
+    drift_detection: PARTIAL               # backend/promptops_drift.py
+    zero_trust: PLANNED
+    api_hardening: "STAGED (flag-off, founder gate)"
+
+  provider_backends:
+    frontier: [openai, anthropic, xai, google]
+    local: [ollama, lm_studio, llama_cpp, vllm]
+    dispatch_enabled: false                # founder-gated (Package 4)
+
+  gates:
+    founder_ratification: "CLEARED (architecture & governance, 2026-07-17)"
+    auditor_verification: PENDING            # implementation conformance — independent audit
+    live_dispatch: "BLOCKED (founder credentials)"
+
+  governance:
+    amendments_only_via: "EDR (Constitution Article IX)"
+    next_governed_step: "EDR-0003 Normalization (after ratification)"
+
+  references:
+    constitution: "docs/helm/HELM_CONSTITUTION_v1.0.md"
+    conformance_report: "docs/helm/CONSTITUTION_CONFORMANCE_REPORT.md"
+    edrs: ["docs/helm/edr/EDR-0001-runtime-bridge.md", "docs/helm/edr/EDR-0002-provider-dispatch-gateway.md"]

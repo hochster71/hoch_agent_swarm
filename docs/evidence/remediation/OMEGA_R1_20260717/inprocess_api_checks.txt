@@ -1,0 +1,7 @@
+<stdin>:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+cors_middleware_count 1
+middleware_classes ["<class 'backend.security.zero_trust.read_auth.ReadAuthMiddleware'>", "<class 'starlette.middleware.cors.CORSMiddleware'>"]
+mission_status 200
+truth_class HELM_MISSION_STATE
+overall BLOCKED_EXTERNAL
+helm_live_mission 200 HELM_MISSION_STATE BLOCKED_EXTERNAL

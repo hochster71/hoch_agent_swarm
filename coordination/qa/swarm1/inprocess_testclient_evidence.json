@@ -1,0 +1,283 @@
+{
+  "/api/v1/helm/health": {
+    "status_code": 200,
+    "len": 6171,
+    "body": {
+      "truth_class": "HELM_SERVICE_HEALTH_TRUTH",
+      "source": "backend.helm.health_registry (lsof + curated port map + tcp/http probes)",
+      "observed_at": "2026-07-15T16:14:04.437971+00:00",
+      "freshness_seconds": 0.032,
+      "tested_commit": "d729871265cef2bcb374d75ea4cfab02567be2a7",
+      "data": {
+        "lsof_available": true,
+        "lsof_error": null,
+        "services": [
+          {
+            "port": 3000,
+            "name": "swarm_frontend_dev",
+            "description": "hoch-agent-swarm frontend dev server (Node)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.428643+00:00"
+          },
+          {
+            "port": 3012,
+            "name": "remote_relay_api",
+            "description": "Remote relay API (Tailscale-reachable)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.435689+00:00"
+          },
+          {
+            "port": 8000,
+            "name": "backend_main",
+            "description": "Main HELM API / control-plane (FastAPI, backend/main.py)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.435845+00:00"
+          },
+          {
+            "port": 8010,
+            "name": "widget_static_server",
+            "description": "Static widget/frontend file server (python -m http.server)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.435904+00:00"
+          },
+          {
+            "port": 8080,
+            "name": "has_ui_tool_service",
+            "description": "HAS UI / alternate swarm tool service",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.435941+00:00"
+          },
+          {
+            "port": 8086,
+            "name": "hochster_operator_health",
+            "description": "Hochster app operator health endpoint",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.435975+00:00"
+          },
+          {
+            "port": 8443,
+            "name": "live_cockpit",
+            "description": "Live cockpit binding (TLS)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.436558+00:00"
+          },
+          {
+            "port": 8765,
+            "name": "pert_server",
+            "description": "Authoritative PERT/CPM computation API",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.436615+00:00"
+          },
+          {
+            "port": 8770,
+            "name": "helm_live_api",
+            "description": "HELM Live API \u2014 runtime-truth API + PERT wall (this service)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.436871+00:00"
+          },
+          {
+            "port": 8777,
+            "name": "has_live_truth_sidecar",
+            "description": "Anti-fake-green live truth telemetry sidecar",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.436900+00:00"
+          },
+          {
+            "port": 8787,
+            "name": "hochster_api",
+            "description": "Hochster API control plane",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.436934+00:00"
+          },
+          {
+            "port": 8788,
+            "name": "reserved_unconfirmed",
+            "description": "Curated placeholder \u2014 no confirmed process found in repo history; probe decides",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437216+00:00"
+          },
+          {
+            "port": 8789,
+            "name": "hasf_mesh_studio",
+            "description": "Hasf Mesh Studio mesh console (Node dev server)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437243+00:00"
+          },
+          {
+            "port": 8797,
+            "name": "family_ops_dashboard",
+            "description": "Legacy family-ops dashboard (may be unloaded)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437290+00:00"
+          },
+          {
+            "port": 8810,
+            "name": "dell_worker_pull_server",
+            "description": "Dell worker pull server (mesh node)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437301+00:00"
+          },
+          {
+            "port": 8820,
+            "name": "neo_worker_pull_server",
+            "description": "Neo worker pull server (mesh node)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437327+00:00"
+          },
+          {
+            "port": 8830,
+            "name": "imac_worker_pull_server",
+            "description": "iMac worker pull server (mesh node)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437350+00:00"
+          },
+          {
+            "port": 8898,
+            "name": "temp_http_file_server",
+            "description": "Temporary HTTP file server",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437662+00:00"
+          },
+          {
+            "port": 9090,
+            "name": "prometheus",
+            "description": "Prometheus metrics (cloud mirror only)",
+            "curated": true,
+            "discovered_via_lsof": false,
+            "process": null,
+            "state": "DOWN",
+            "detail": "connection actively refused \u2014 nothing listening",
+            "http_status": null,
+            "checked_at": "2026-07-15T16:14:04.437926+00:00"
+          }
+        ],
+        "summary": {
+          "total": 19,
+          "confirmed_live": 0,
+          "down": 19,
+          "unknown": 0,
+          "curated_count": 19,
+          "undocumented_listeners": 0
+        }
+      }
+    }
+  },
+  "/control": {
+    "status_code": 200,
+    "len": 15217
+  },
+  "/api/v1/helm/agents": {
+    "status_code": 200,
+    "len": 8438
+  },
+  "/jspace": {
+    "status_code": 200,
+    "len": 17594
+  },
+  "/roadmap": {
+    "status_code": 200,
+    "len": 12361
+  },
+  "/command": {
+    "status_code": 200,
+    "len": 26936
+  },
+  "/brain": {
+    "status_code": 200,
+    "len": 18756
+  },
+  "/founder": {
+    "status_code": 200,
+    "len": 26939
+  }
+}

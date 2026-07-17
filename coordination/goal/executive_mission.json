@@ -1,0 +1,192 @@
+{
+  "schema": "HELM_EXECUTIVE_MISSION_v2",
+  "charter": "docs/helm/HELM_EXECUTIVE_RUNTIME_CHARTER.md",
+  "field_ownership": "coordination/governance/field_ownership.json",
+  "role_overlays": {
+    "orchestrator": "coordination/governance/role_overlays/ROLE_ORCHESTRATOR.md",
+    "builder": "coordination/governance/role_overlays/ROLE_BUILDER.md",
+    "auditor": "coordination/governance/role_overlays/ROLE_AUDITOR.md"
+  },
+  "mission": {
+    "id": "EPIC-FURY-2026",
+    "name": "EPIC_FURY_RELEASE",
+    "champion_product": "EPIC_FURY_2026",
+    "goal": "First settled revenue via governed path (Apple distribution + checkout + settlement), without fake green",
+    "north_star_ref": "coordination/goal/goal_state.json#canonical_north_star"
+  },
+  "state": "ACTIVE",
+  "operational_status": "BLOCKED_EXTERNAL",
+  "roles": {
+    "founder": "Michael Hoch",
+    "orchestrator": "bound:role_bindings.orchestrator",
+    "builder": "bound:role_bindings.builder",
+    "auditor": "bound:role_bindings.auditor"
+  },
+  "critical_path": [
+    {
+      "id": "REQ-GOV-002",
+      "label": "Founder authorization binding",
+      "status": "BLOCKED_FOUNDER",
+      "owner_role": "founder"
+    },
+    {
+      "id": "APPLE_REVIEW",
+      "label": "Apple Review (ASC 1.0.2)",
+      "status": "BLOCKED_EXTERNAL",
+      "owner_role": "external:Apple",
+      "evidence": "coordination/evidence/external/asc_epic_fury.json"
+    },
+    {
+      "id": "CHECKOUT",
+      "label": "Checkout / payment path",
+      "status": "OBSERVED",
+      "owner_role": "builder",
+      "note": "Payment authorized path exists; source-of-truth deploy discipline still load-bearing"
+    },
+    {
+      "id": "SETTLEMENT",
+      "label": "Stripe settlement \u2192 REVENUE_VERIFIED",
+      "status": "PAYMENT_AUTHORIZED",
+      "owner_role": "external:Stripe",
+      "evidence": "coordination/council/revenue_ledger.jsonl"
+    }
+  ],
+  "external_gates": [
+    {
+      "party": "Apple",
+      "machine": "RELEASE",
+      "current": "BLOCKED_EXTERNAL",
+      "authority": "App Store Connect appStoreState"
+    },
+    {
+      "party": "Stripe",
+      "machine": "REVENUE",
+      "current": "PAYMENT_AUTHORIZED",
+      "authority": "balance transaction available"
+    }
+  ],
+  "links": {
+    "mission_state": "coordination/goal/mission_state.json",
+    "goal_state": "coordination/goal/goal_state.json",
+    "external_milestones_api": "/api/v1/helm/external",
+    "hmai_api": "/api/v1/helm/hmai",
+    "constitution": "docs/helm/HELM_DESIGN_CONSTITUTION.md"
+  },
+  "orchestration": {
+    "decomposition": null,
+    "dependencies": null,
+    "task_queue": [],
+    "routing": null,
+    "reconciliation_requests": [
+      {
+        "id": "DUAL_BASELINE_20260717",
+        "request": "GPT-5.6 Thinking independent baseline against frozen audit_target_id 44405b52\u2026 then Grok reconfirmation; no recapture; no daemon pause for primary audit",
+        "status": "OPEN",
+        "owner_role": "orchestrator"
+      }
+    ],
+    "founder_briefings": [],
+    "governance_flags": {
+      "no_self_certification": true,
+      "founder_gates_reserved": true,
+      "runtime_truth_first": true
+    },
+    "notes": "Orchestrator role is model-agnostic; current binding often ChatGPT Agent (Chief of Staff). HELM is platform. Truth is derived, not a role."
+  },
+  "engineering": {
+    "status": "PARTIAL",
+    "implementation_notes": null,
+    "test_status": null,
+    "packaging_status": null,
+    "builder_artifacts": [],
+    "edr_refs": [
+      "docs/helm/edr/EDR-0001-executive-runtime-four-engines.md"
+    ]
+  },
+  "assurance": {
+    "status": "OBSERVED",
+    "last_audit_package": "docs/evidence/audit/GROK_4.5_20260717T135442Z",
+    "last_audit_classification": "PRE_FREEZE_REFERENCE_BASELINE",
+    "auditor_verdict": "VERIFIED_WITH_LIMITATIONS",
+    "deployment_recommendation": "NO_GO_AUTONOMOUS_PRODUCTION_OS",
+    "authorized_operating_envelope": "LAN_LAB_ENGINEERING_ONLY",
+    "findings_open_high_or_critical": true,
+    "reconfirmation_required": true
+  },
+  "last_writes": [
+    {
+      "at_utc": "2026-07-17T14:30:00Z",
+      "role": "builder",
+      "actor": "Claude",
+      "fields": [
+        "schema",
+        "mission",
+        "roles",
+        "critical_path",
+        "orchestration.reconciliation_requests",
+        "assurance"
+      ],
+      "artifact": "coordination/goal/executive_mission.json",
+      "correlation_id": "HELM-CHARTER-CODIFY-20260717",
+      "note": "Initial executive mission object + charter wiring (architecture layer; not an assurance re-run)"
+    },
+    {
+      "at_utc": "2026-07-17T14:28:38Z",
+      "role": "builder",
+      "actor": "Claude",
+      "fields": [
+        "schema",
+        "roles",
+        "platform",
+        "mission_version",
+        "projections",
+        "engineering.edr_refs"
+      ],
+      "artifact": "coordination/goal/executive_mission.json",
+      "correlation_id": "HELM-RUNTIME-SUBSTRATE-20260717",
+      "transaction_id": "GENESIS-EXEC-MISSION-v1",
+      "mission_version": 1,
+      "note": "Four engines + truth-not-a-role + versioning fields (substrate codification)"
+    }
+  ],
+  "doctrine": [
+    "HELM_is_the_platform",
+    "truth_is_derived_not_a_role",
+    "actors_are_founder_orchestrator_builder_auditor_only",
+    "models_are_workers_bound_at_runtime",
+    "mission_is_durable_not_chat",
+    "dashboard_is_projection_never_source",
+    "transactional_writes",
+    "no_self_certification",
+    "no_fake_green"
+  ],
+  "mission_version": 1,
+  "transaction_id": "GENESIS-EXEC-MISSION-v1",
+  "parent_version": 0,
+  "created_at": "2026-07-17T14:28:38Z",
+  "updated_at": "2026-07-17T14:28:38Z",
+  "correlation_id": "HELM-RUNTIME-SUBSTRATE-20260717",
+  "platform": {
+    "name": "HELM_Executive_Runtime",
+    "is_actor": false,
+    "engines": [
+      "mission_runtime",
+      "runtime_truth_engine",
+      "governance_engine",
+      "event_bus"
+    ],
+    "truth": "DERIVED_BY_RUNTIME_TRUTH_ENGINE_NOT_A_ROLE"
+  },
+  "role_bindings": "coordination/governance/role_bindings.json",
+  "projections": {
+    "mission_state": {
+      "path": "coordination/goal/mission_state.json",
+      "class": "PROJECTION",
+      "never_source": true
+    },
+    "dashboard": {
+      "class": "PROJECTION",
+      "never_source": true
+    }
+  }
+}

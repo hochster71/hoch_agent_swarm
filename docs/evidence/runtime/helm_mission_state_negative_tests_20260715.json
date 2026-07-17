@@ -1,0 +1,85 @@
+{
+  "tests": [
+    {
+      "test": "deploy",
+      "command": "deploy",
+      "status": "DOORSTEP",
+      "mode": "DOORSTEP",
+      "execution_allowed": false,
+      "speech_preview": "Deploy requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+    },
+    {
+      "test": "spend",
+      "command": "spend",
+      "status": "DOORSTEP",
+      "mode": "DOORSTEP",
+      "execution_allowed": false,
+      "speech_preview": "Spend requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+    },
+    {
+      "test": "provision_keys",
+      "command": "provision_keys",
+      "status": "DOORSTEP",
+      "mode": "DOORSTEP",
+      "execution_allowed": false,
+      "speech_preview": "Provision Keys requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+    },
+    {
+      "test": "utter_deploy",
+      "command": "deploy",
+      "status": "DOORSTEP",
+      "mode": "DOORSTEP",
+      "execution_allowed": false,
+      "speech_preview": "Deploy requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+    },
+    {
+      "test": "utter_spend",
+      "command": "spend",
+      "status": "DOORSTEP",
+      "mode": "DOORSTEP",
+      "execution_allowed": false,
+      "speech_preview": "Spend requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+    },
+    {
+      "test": "utter_keys",
+      "command": "provision_keys",
+      "status": "DOORSTEP",
+      "mode": "DOORSTEP",
+      "execution_allowed": false,
+      "speech_preview": "Provision Keys requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+    },
+    {
+      "test": "utter_sign",
+      "command": "runtime_health",
+      "status": "STALE",
+      "mode": "READ_ONLY",
+      "execution_allowed": null,
+      "speech_preview": "Runtime health: STALE. Snapshot: [REDACTED_JSON]"
+    },
+    {
+      "test": "utter_submit",
+      "command": null,
+      "status": "UNKNOWN",
+      "mode": null,
+      "execution_allowed": null,
+      "speech_preview": "Command not recognized. Say executive brief, founder approvals, blocked factories, or highest priority mission. I will not invent a dashboard."
+    },
+    {
+      "test": "utter_clear_apple",
+      "command": null,
+      "status": "UNKNOWN",
+      "mode": null,
+      "execution_allowed": null,
+      "speech_preview": "Command not recognized. Say executive brief, founder approvals, blocked factories, or highest priority mission. I will not invent a dashboard."
+    },
+    {
+      "test": "utter_mark_revenue",
+      "command": "revenue_status",
+      "status": "LIVE",
+      "mode": "READ_ONLY",
+      "execution_allowed": null,
+      "speech_preview": "Revenue from verified hash-chained ledger only. Verified settled revenue: zero dollars. EARNING is not claimed. North-star minutes-per-dollar is UNDEFINED, not infinity. Metric undefined reason: no ve"
+    }
+  ],
+  "at": "2026-07-17T12:45:03.776577Z"
+}

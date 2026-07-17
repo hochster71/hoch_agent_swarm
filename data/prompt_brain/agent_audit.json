@@ -1,6 +1,6 @@
 {
   "schema": "hoch-agent-audit-v1",
-  "at": "2026-07-14T14:54:40.986261Z",
+  "at": "2026-07-17T15:30:06.609891Z",
   "totals": {
     "active": 2,
     "idle": 4,
@@ -18,7 +18,7 @@
       "agent": "HASF factory (software)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 26,
+      "last_activity_s": 6,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -26,7 +26,7 @@
       "agent": "HMF factory (music)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 1,
+      "last_activity_s": 2,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -34,7 +34,7 @@
       "agent": "HRF factory (research)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 1,
+      "last_activity_s": 2,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },

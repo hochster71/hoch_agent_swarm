@@ -1,0 +1,13 @@
+{
+  "path": "backend/helm_live_api.py",
+  "lease_id": "srclease-f8d5da85",
+  "holder": "swarm/control-plane",
+  "agent_pid": 3,
+  "fencing_token": 5,
+  "content_sha256_at_acquire": "0765e0ccc8cd0dc79711981fdde0df4f16cd41dc14d8b0d67171ebd971c8de25",
+  "acquired_at": "2026-07-15T16:11:42.039698+00:00",
+  "expires_at": "2026-07-15T16:26:42.039698+00:00",
+  "status": "ACTIVE",
+  "content_sha256_expected": "5eead3c745e5f95bd24b34c80aab7b3ce00c8fa44355376af64f8bb0a9d85404",
+  "last_write_at": "2026-07-15T16:12:11.071195+00:00"
+}

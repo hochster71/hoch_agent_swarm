@@ -269,6 +269,8 @@ def voice_mission_state():
             {
                 "truth_class": "HELM_MISSION_STATE",
                 "status": (st.get("overall") or {}).get("status") or "UNKNOWN",
+                "computed_at": st.get("computed_at"),
+                "observed_at": st.get("computed_at"),
                 "speech_text": render_speech(st),
                 "dashboard": st.get("dashboard"),
                 "critical_path": st.get("critical_path"),

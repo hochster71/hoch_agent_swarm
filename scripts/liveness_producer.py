@@ -57,13 +57,116 @@ def _detect_runtime() -> dict:
             "note": "no long-running orchestrator process detected; HELM product work runs via scheduled tasks"}
 
 
+def _reconcile_factory_readiness(d: dict) -> list[str]:
+    """Map operational readiness from products manifest — no fake READY (audit R-05).
+
+    Registry identity fields stay; health/readiness become evidence-derived:
+      - no products for factory → keep UNKNOWN/NOT_READY (or leave stubs)
+      - max monetization rung digit:
+          0-1 → NOT_READY / UNKNOWN or PROTOTYPE
+          2-3 → DEGRADED / PARTIAL (code or defined, not sellable)
+          4   → READY only if sellable claim + source or live_url present
+          5   → READY / ACTIVE (earning — still requires settled ledger elsewhere)
+    """
+    notes: list[str] = []
+    products_path = ROOT / "coordination" / "products" / "products.json"
+    if not products_path.exists():
+        notes.append("products.json missing — readiness not reconciled")
+        return notes
+    try:
+        products = json.loads(products_path.read_text()).get("products") or []
+    except Exception as e:
+        notes.append(f"products.json unreadable: {e}")
+        return notes
+
+    by_factory: dict[str, list[dict]] = {}
+    for p in products:
+        fid = (p.get("factory") or p.get("owning_factory") or "").strip().upper()
+        if not fid:
+            continue
+        by_factory.setdefault(fid, []).append(p)
+
+    factories = d.get("factories") or {}
+    for fid, fac in factories.items():
+        if not isinstance(fac, dict):
+            continue
+        prods = by_factory.get(fid, [])
+        if not prods:
+            # Non-monetized or stub factories: never promote to READY without products
+            if fac.get("readiness") == "READY" and fac.get("health") == "ACTIVE":
+                fac["readiness"] = "NOT_READY"
+                fac["health"] = "UNKNOWN"
+                fac["readiness_basis"] = "no_products_in_manifest"
+                notes.append(f"{fid}: demoted READY→NOT_READY (no products)")
+            continue
+
+        def _rung_num(p: dict) -> int:
+            r = str(p.get("monetization_rung") or "0")
+            for ch in r:
+                if ch.isdigit():
+                    return int(ch)
+            return 0
+
+        best = max(prods, key=_rung_num)
+        n = _rung_num(best)
+        # source on disk?
+        src = best.get("source_dir") or ""
+        sot = best.get("source_of_truth") or ""
+        on_disk = False
+        for cand in (src, sot):
+            if not cand or "UNKNOWN" in cand.upper() or "NOT-IN-REPO" in cand.upper():
+                continue
+            # first path-like token
+            path = cand.split()[0].strip(".,;:")
+            if path.startswith("docs/"):
+                continue
+            absdir = path if path.startswith("/") else str(ROOT / path)
+            if os.path.isdir(absdir):
+                on_disk = True
+                break
+
+        prev_r, prev_h = fac.get("readiness"), fac.get("health")
+        if n >= 5:
+            fac["readiness"], fac["health"] = "READY", "ACTIVE"
+            fac["readiness_basis"] = f"manifest_rung={best.get('monetization_rung')} product={best.get('product_id')}"
+        elif n >= 4:
+            # Sellable claim — still not READY for *factory ops* unless source or live
+            live = best.get("live_url") or ""
+            if live and "UNKNOWN" not in live.upper():
+                fac["readiness"], fac["health"] = "READY", "ACTIVE"
+            else:
+                fac["readiness"], fac["health"] = "DEGRADED", "PARTIAL"
+            fac["readiness_basis"] = f"manifest_rung={best.get('monetization_rung')} live_url={'yes' if live else 'no'}"
+        elif n >= 2:
+            fac["readiness"] = "DEGRADED" if on_disk else "NOT_READY"
+            fac["health"] = "PARTIAL" if on_disk else "UNKNOWN"
+            fac["readiness_basis"] = (
+                f"manifest_rung={best.get('monetization_rung')} on_disk={on_disk} "
+                f"product={best.get('product_id')}"
+            )
+        else:
+            fac["readiness"], fac["health"] = "NOT_READY", "UNKNOWN"
+            fac["readiness_basis"] = f"manifest_rung={best.get('monetization_rung')}"
+
+        if (prev_r, prev_h) != (fac.get("readiness"), fac.get("health")):
+            notes.append(f"{fid}: {prev_h}/{prev_r} → {fac.get('health')}/{fac.get('readiness')}")
+    return notes
+
+
 def refresh_factory_registry() -> str:
     if not FACTORY_REGISTRY.exists():
         return f"SKIP factory_registry.json missing at {FACTORY_REGISTRY}"
     d = json.loads(FACTORY_REGISTRY.read_text())
-    d["republished_at"] = _now()  # identity content preserved; only the freshness stamp advances
+    recon = _reconcile_factory_readiness(d)
+    d["republished_at"] = _now()
+    d["readiness_reconciled_at"] = d["republished_at"]
+    d["readiness_doctrine"] = (
+        "health/readiness derived from coordination/products/products.json monetization rungs "
+        "+ on-disk source checks; READY is not stamped by identity alone (no fake green)"
+    )
     FACTORY_REGISTRY.write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8")
-    return f"OK factory_registry.json ({len(d.get('factories', {}))} factories) @ {d['republished_at']}"
+    extra = ("; " + "; ".join(recon)) if recon else ""
+    return f"OK factory_registry.json ({len(d.get('factories', {}))} factories) @ {d['republished_at']}{extra}"
 
 
 def refresh_runtime_pointer() -> str:

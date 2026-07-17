@@ -110,8 +110,21 @@ def synthesize_speech(
     *,
     voice_id: Optional[str] = None,
     as_base64: bool = False,
+    policy: Optional[Dict[str, Any]] = None,
+    ledger_path: Optional[Any] = None,
 ) -> Tuple[bool, Dict[str, Any], Optional[bytes]]:
-    """Call ElevenLabs TTS. Returns (ok, meta, audio_bytes)."""
+    """Call ElevenLabs TTS. Returns (ok, meta, audio_bytes).
+
+    Fail-closed order:
+      1. boolean readiness flags (key + paid + enabled) — pre-existing gate,
+      2. sanitize + empty/redacted check — pre-existing gate,
+      3. Phase 2 cost gate (backend/voice/cost_gate.py) — per-call/daily/monthly ceilings,
+         UNKNOWN price, and ledger read/write all fail closed to the free local_tts path.
+    `policy` / `ledger_path` are optional injection points for tests; production passes neither
+    and the gate reads config/voice_policy.yaml and data/runtime/voice_usage_ledger.jsonl.
+    """
+    from backend.voice import cost_gate
+
     status = elevenlabs_config_status()
     if not status["ready"]:
         return (
@@ -128,6 +141,44 @@ def synthesize_speech(
     clean = sanitize_for_speech(text)
     if not clean or clean == "[REDACTED]":
         return False, {"status": "BLOCKED", "reason": "empty or fully redacted text"}, None
+
+    # --- Phase 2 pre-flight cost gate (in front of the paid network call) ---
+    verdict = cost_gate.preflight_cost_gate(
+        len(clean),
+        provider="elevenlabs",
+        policy=policy,
+        ledger_path=ledger_path,
+    )
+    if not verdict["allow"]:
+        # Record the blocked attempt (best-effort; no spend occurred either way).
+        cost_gate.append_usage(verdict["ledger_record"], ledger_path=ledger_path)
+        meta_blocked: Dict[str, Any] = {
+            "status": "DOORSTEP" if verdict["doorstep"] else "BLOCKED",
+            "reason": f"budget_gate:{verdict['reason']}",
+            "fallback": "local_tts",
+            "estimated_cost_usd": verdict["estimated_cost_usd"],
+            "billable_chars": verdict["billable_chars"],
+            "price_unknown": verdict["price_unknown"],
+            "budget_snapshot": verdict["budget_snapshot"],
+            "gate_result": verdict["gate_result"],
+        }
+        if verdict["doorstep"]:
+            meta_blocked["labels"] = {"execution": "BLOCKED", "gate": "DOORSTEP"}
+            meta_blocked["staged"] = verdict["staged"]
+        return False, meta_blocked, None
+
+    # Allowed: fail-closed on ledger write — no untracked spend (design F8). Write BEFORE network.
+    if not cost_gate.append_usage(verdict["ledger_record"], ledger_path=ledger_path):
+        return (
+            False,
+            {
+                "status": "BLOCKED",
+                "reason": "budget_gate:usage_ledger_unwritable",
+                "fallback": "local_tts",
+                "gate_result": cost_gate.BLOCKED_FAILCLOSED,
+            },
+            None,
+        )
 
     vid = (voice_id or _voice_id()).strip()
     model = _model_id()
@@ -196,6 +247,9 @@ def synthesize_speech(
         "text_chars": len(clean),
         "speech_text": clean,
         "observed_at": _now(),
+        "estimated_cost_usd": verdict["estimated_cost_usd"],
+        "budget_snapshot": verdict["budget_snapshot"],
+        "gate_result": verdict["gate_result"],
     }
     if as_base64:
         meta["audio_base64"] = base64.b64encode(audio).decode("ascii")

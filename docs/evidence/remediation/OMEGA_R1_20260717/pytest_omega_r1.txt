@@ -1,0 +1,32 @@
+.F.......F...................................                            [100%]
+=================================== FAILURES ===================================
+_____________________ test_helm_live_api_cors_not_wildcard _____________________
+tests/test_omega_r1_remediation.py:42: in test_helm_live_api_cors_not_wildcard
+    assert 'allow_origins=["*"]' not in src
+E   assert 'allow_origins=["*"]' not in '"""HELM LIV..._code=404)\n'
+E     
+E     'allow_origins=["*"]' is contained here:
+E       RS: never allow_origins=["*"] on the control plane (audit R-02).
+E     ?           +++++++++++++++++++
+E       # Default: loopback + common local FE ports. Override via HELM_CORS_ORIGINS
+E       # (comma-separated). Empty string disables cross-origin entirely (same-origin only).
+E       import os as _os...
+E     
+E     ...Full output truncated (1556 lines hidden), use '-vv' to show
+_______ test_voice_doorstep_utterances[mark revenue earned-mark_revenue] _______
+tests/test_omega_r1_remediation.py:102: in test_voice_doorstep_utterances
+    assert cmd["id"] == expect_id
+E   AssertionError: assert 'revenue_status' == 'mark_revenue'
+E     
+E     - mark_revenue
+E     + revenue_status
+=============================== warnings summary ===============================
+tests/test_omega_r1_remediation.py::test_read_auth_default_disabled_fail_closed_when_enabled
+  /Users/michaelhoch/hoch_agent_swarm/tests/test_omega_r1_remediation.py:67: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_omega_r1_remediation.py::test_helm_live_api_cors_not_wildcard
+FAILED tests/test_omega_r1_remediation.py::test_voice_doorstep_utterances[mark revenue earned-mark_revenue]
+2 failed, 43 passed, 1 warning in 55.41s

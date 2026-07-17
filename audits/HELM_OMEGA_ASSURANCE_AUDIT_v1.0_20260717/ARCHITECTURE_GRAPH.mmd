@@ -1,0 +1,40 @@
+%% HELM OMEGA ASSURANCE — Architecture Graph (evidence-simplified)
+flowchart TB
+  Founder["Founder DOORSTEP\n(token / biometric / --go)"]
+  AuthPol["control/authority_policy.json"]
+  GoalEng["scripts/goal/goal_engine.py"]
+  GoalState["coordination/goal/goal_state.json"]
+  Gates["coordination/goal/champion_gates.json"]
+  Posture["coordination/security/helm_control_posture.json"]
+  Rev["coordination/council/revenue_ledger.jsonl"]
+  MSEng["backend/mission_control/mission_state.py"]
+  MS["coordination/goal/mission_state.json"]
+  Refresher["runtime_refresher + autoloop"]
+  API8000["backend.main :8000\n663 routes"]
+  API8770["helm_live_api :8770 TLS\n68 routes"]
+  PERT["pert_server :8765"]
+  Voice["voice router / briefing"]
+  Factories["Factories HASF HSF HMF HRF HCF HFF HHF HPF"]
+  Products["products/* + hsf/deploy"]
+  Models["Model Gateway\nlmstudio/ollama/relay"]
+  External["Vercel / Stripe / Apple\nUNVERIFIED or PENDING"]
+
+  Founder --> AuthPol
+  Founder --> Factories
+  GoalEng --> GoalState
+  GoalEng --> MSEng
+  Refresher --> GoalEng
+  GoalState --> MSEng
+  Gates --> MSEng
+  Posture --> MSEng
+  Rev --> MSEng
+  MSEng --> MS
+  MS --> API8770
+  MSEng --> Voice
+  API8770 --> Voice
+  API8000 --> Models
+  Factories --> Products
+  Products --> External
+  PERT --> GoalState
+  API8770 -.->|"mission truth"| MS
+  API8000 -.->|"no /api/mission/state"| X["404 / divergent surface"]

@@ -273,6 +273,54 @@ COMMAND_REGISTRY: Dict[str, Dict[str, Any]] = {
         "utterance_patterns": [r"provision (api )?keys?", r"rotate (the )?keys?", r"api key"],
         "priority": 0,
     },
+    # Explicit DOORSTEP verbs that previously fell through to READ_ONLY routes
+    # (audit GOV-03: "sign the release" → runtime_health was imprecise).
+    "sign_release": {
+        "id": "sign_release",
+        "mode": "DOORSTEP",
+        "description": "Sign / approve a release — founder only",
+        "utterance_patterns": [
+            r"\bsign\b.*\brelease\b",
+            r"\bsign the release\b",
+            r"\bapprove (the )?release\b",
+            r"\brelease signature\b",
+        ],
+        "priority": 0,
+    },
+    "submit_store": {
+        "id": "submit_store",
+        "mode": "DOORSTEP",
+        "description": "Submit to App Store / TestFlight — founder only",
+        "utterance_patterns": [
+            r"\bsubmit\b.*(app store|testflight|asc)\b",
+            r"\bsubmit (to )?(the )?(app store|testflight)\b",
+            r"\bpush to (testflight|app store)\b",
+        ],
+        "priority": 0,
+    },
+    "clear_apple_gate": {
+        "id": "clear_apple_gate",
+        "mode": "DOORSTEP",
+        "description": "Clear Apple / TestFlight / ASC gates — founder only",
+        "utterance_patterns": [
+            r"\bclear (the )?apple\b",
+            r"\bclear (testflight|asc|app store)\b",
+            r"\bmark (apple|testflight) (cleared|done|pass)\b",
+        ],
+        "priority": 0,
+    },
+    "mark_revenue": {
+        "id": "mark_revenue",
+        "mode": "DOORSTEP",
+        "description": "Mark revenue earned / settled — founder only (ledger is source of truth)",
+        "utterance_patterns": [
+            r"\bmark\b.{0,40}\b(earned|settled)\b",
+            r"\bmark (the )?(revenue|dollar|sale)s?\b",
+            r"\bwe (made|earned) (money|revenue|a dollar)\b",
+            r"\bset (settled )?revenue\b",
+        ],
+        "priority": 0,
+    },
 }
 
 

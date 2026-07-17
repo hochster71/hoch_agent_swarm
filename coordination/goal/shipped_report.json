@@ -1,12 +1,12 @@
 {
   "requirement": "REQ-TO-002",
-  "shipped": true,
-  "appStoreState": "READY_FOR_SALE",
-  "asc_state": "PASS",
-  "asc_detail": "version 1.0 appStoreState=READY_FOR_SALE",
-  "read_at": "2026-07-15T21:42:20.478620+00:00",
+  "shipped": false,
+  "appStoreState": null,
+  "asc_state": "UNKNOWN",
+  "asc_detail": "APP_STORE_CONNECT_KEY_ID / ISSUER_ID not set",
+  "read_at": "2026-07-17T15:31:09.133098+00:00",
   "bundle_id": "com.epicfury.dashboard",
   "evidence": "asc:appStoreVersions (live App Store Connect read)",
-  "reason": "App Store Connect reports appStoreState=READY_FOR_SALE: the champion is live and for sale.",
-  "status": "PASS"
+  "reason": "Not confirmed shipped-to-production (asc_state=UNKNOWN, appStoreState=None). Fail-closed: requires a live READY_FOR_SALE/READY_FOR_DISTRIBUTION read from Apple (and valid ASC credentials in the environment).",
+  "status": "FAIL"
 }

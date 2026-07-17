@@ -1,0 +1,68 @@
+{
+  "program": "HELM-8-FACTORY-MOONSHOT",
+  "armed_at": "2026-07-16T20:25:46.605095+00:00",
+  "revenue_rail": "stripe",
+  "mode": "APPLY",
+  "soak_interlock": {
+    "blocked": false,
+    "reason": "no soak active"
+  },
+  "missions": [
+    {
+      "mission_id": "MOON-HASF-01",
+      "factory": "HASF",
+      "rung_now": 4,
+      "rung_target": 5,
+      "name": "Epic Fury: first-buyer distribution kit",
+      "founder_gate": "PUBLISH/SEND \u2014 founder posts the landing copy and sends outreach."
+    },
+    {
+      "mission_id": "MOON-HSF-01",
+      "factory": "HSF",
+      "rung_now": 2,
+      "rung_target": 4,
+      "name": "Story Studio: make it genuinely sellable",
+      "founder_gate": "LIVE KEYS + DEPLOY \u2014 founder sets Stripe live keys in Vercel and deploys."
+    },
+    {
+      "mission_id": "MOON-HCF-01",
+      "factory": "HCF",
+      "rung_now": 2,
+      "rung_target": 3,
+      "name": "Cyber: productize CyberQRG-AI (QR safety scanner)",
+      "founder_gate": "KEYS/DEPLOY \u2014 founder approves the checkout/app when the build is ready."
+    },
+    {
+      "mission_id": "MOON-HRF-01",
+      "factory": "HRF",
+      "rung_now": 2,
+      "rung_target": 3,
+      "name": "Research: build Clarity Briefs (cited plain-English digests)",
+      "founder_gate": "KEYS/DEPLOY \u2014 founder approves the checkout when the spec is ready."
+    },
+    {
+      "mission_id": "MOON-HFF-01",
+      "factory": "HFF",
+      "rung_now": 0,
+      "rung_target": 2,
+      "name": "Finance: Founder cash-runway dashboard (recurring product)",
+      "founder_gate": "KEYS/DEPLOY downstream \u2014 founder wires Stripe + deploy when the build is ready."
+    },
+    {
+      "mission_id": "MOON-HHF-01",
+      "factory": "HHF",
+      "rung_now": null,
+      "rung_target": null,
+      "name": "Hoch Home PERSONAL Factory \u2014 family operations (NOT monetized)",
+      "founder_gate": "PRIVACY \u2014 connecting the family's REAL calendars/accounts or handling any real personal data is founder-authorized. Build + run on SIMULATED family data until Michael explicitly connects real accounts."
+    },
+    {
+      "mission_id": "MOON-HMF-01",
+      "factory": "HMF",
+      "rung_now": 0,
+      "rung_target": 2,
+      "name": "Music: royalty-free ORIGINAL music pack (one-time product)",
+      "founder_gate": "KEYS/DEPLOY downstream \u2014 founder wires Stripe + deploy when the pack is ready."
+    }
+  ]
+}

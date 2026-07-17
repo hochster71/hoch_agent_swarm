@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#08090c"/>
+<title>HELM · NIST CONTROL COVERAGE</title>
+<style>
+:root{
+  --bg:#08090c; --panel:#0d0e13; --panel2:#111319; --line:#1b1e26; --line2:#282d38;
+  --ink:#dbe0e6; --dim:#79818d; --dim2:#565d69;
+  --amber:#f5b942; --amber2:#c8901f; --green:#43b581; --greendim:#12241b;
+  --red:#e5484d; --grey:#464d5b; --violet:#a371f7; --sky:#6fb3ff;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:
+  radial-gradient(120% 60% at 50% -10%, #101319 0%, transparent 55%), var(--bg);
+  color:var(--ink);font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace;
+  -webkit-font-smoothing:antialiased;padding-bottom:40px}
+a{color:inherit}
+header{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);
+  background:linear-gradient(180deg,rgba(8,9,12,.94),rgba(8,9,12,.66));
+  border-bottom:1px solid var(--line);padding:12px 20px;display:flex;
+  justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+h1{font-size:13px;letter-spacing:.34em;font-weight:700}
+h1 .g{color:var(--sky);text-shadow:0 0 16px rgba(111,179,255,.5)}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav a{text-decoration:none;color:var(--dim);border:1px solid var(--line2);padding:4px 9px;
+  border-radius:7px;font-size:10px;letter-spacing:.1em}
+main{max-width:1240px;margin:0 auto;padding:18px 20px}
+.intro{font-size:11.5px;color:var(--dim);line-height:1.6;max-width:920px;margin-bottom:6px}
+.fresh{font-size:9.5px;color:var(--dim2);letter-spacing:.06em}
+
+/* summary strip */
+.summary{display:flex;gap:12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:16px;
+  padding:16px 18px;background:linear-gradient(180deg,var(--panel2),var(--panel));margin:16px 0 22px}
+.scard{flex:1;min-width:120px;text-align:center}
+.scard b{display:block;font-size:26px;font-weight:800}
+.scard span{font-size:9.5px;letter-spacing:.14em;color:var(--dim2);text-transform:uppercase}
+.scard.COVERED b{color:var(--green)} .scard.PARTIAL b{color:var(--amber)} .scard.UNVERIFIED b{color:var(--red)}
+.scard.total b{color:var(--sky)}
+.doctrine{font-size:10px;color:var(--dim2);border-left:2px solid var(--sky);padding:8px 12px;
+  background:rgba(111,179,255,.04);line-height:1.6;margin-bottom:22px}
+
+/* CSF function sections */
+.section{font-size:11px;letter-spacing:.18em;color:var(--dim2);text-transform:uppercase;
+  margin:26px 2px 12px;display:flex;align-items:center;gap:10px}
+.section .n{font-size:9px;color:var(--dim2);font-weight:400;letter-spacing:.08em}
+.section::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.fngrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+
+.card{border:1px solid var(--line);border-radius:13px;background:var(--panel);overflow:hidden}
+.card.COVERED{border-color:#1e5c40}
+.card.PARTIAL{border-color:#6a5518}
+.card.UNVERIFIED{border-color:#5a2427}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+  padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.cid{font-size:11.5px;font-weight:800;letter-spacing:.04em}
+.ctitle{font-size:10px;color:var(--dim);margin-top:3px;line-height:1.4}
+.chip{font-size:9px;font-weight:800;letter-spacing:.08em;padding:3px 9px;border-radius:99px;
+  white-space:nowrap;flex-shrink:0}
+.chip.COVERED{color:#0c1e15;background:var(--green)}
+.chip.PARTIAL{color:#1e1706;background:var(--amber)}
+.chip.UNVERIFIED{color:#2a0c0f;background:var(--red)}
+.cbody{padding:11px 14px}
+.mech{font-size:11px;color:var(--ink);font-weight:600;margin-bottom:7px}
+.cat{font-size:9.5px;color:var(--violet);letter-spacing:.04em;margin-bottom:8px}
+.ev{font-size:10.5px;color:#9fb0c0;line-height:1.55}
+.dt{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.55}
+.ptr{margin-top:9px;display:flex;align-items:center;gap:7px}
+.ptr a{font-size:9.5px;color:var(--sky);border:1px solid #1c3a52;padding:3px 8px;border-radius:6px;
+  text-decoration:none;letter-spacing:.04em}
+.ptr a:hover{background:rgba(111,179,255,.08)}
+.ptr .file{font-size:9px;color:var(--dim2);word-break:break-all}
+.obs{font-size:8.5px;color:#3f4a5a;margin-top:8px}
+
+.err{color:var(--red)}
+.empty{font-size:10.5px;color:var(--dim2);padding:14px}
+</style>
+</head>
+<body>
+<header>
+  <h1>NIST <span class="g">CONTROL COVERAGE · HELM</span></h1>
+  <div class="nav">
+    <a href="/roadmap">◎ ROADMAP</a><a href="/jspace">◱ J-SPACE</a>
+    <a href="/command">◈ COMMAND</a><a href="/brain">◇ BRAIN</a><a href="/founder">⬡ FOUNDER</a>
+  </div>
+</header>
+<main>
+  <div class="intro" id="intro">binding to NIST matrix…</div>
+
+  <div class="summary" id="summary"></div>
+  <div class="doctrine" id="doctrine"></div>
+
+  <div id="functions"></div>
+</main>
+
+<script>
+const API='';
+const esc=s=>String(s==null?'':s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+const rel=s=>{ if(s==null)return''; const m=Math.round(s/60); return m<90?m+'m ago':Math.round(m/60)+'h ago'; };
+const FN_ORDER=['GOVERN','IDENTIFY','PROTECT','DETECT','RESPOND','RECOVER'];
+const FN_LABEL={GOVERN:'Govern',IDENTIFY:'Identify',PROTECT:'Protect',DETECT:'Detect',RESPOND:'Respond',RECOVER:'Recover'};
+
+function evidenceLink(ptr){
+  if(!ptr) return '';
+  if(ptr.startsWith('/')) return `<a href="${esc(ptr)}" target="_blank">↗ ${esc(ptr)}</a>`;
+  return `<span class="file">${esc(ptr)}</span>`;
+}
+
+function renderCard(r){
+  return `<div class="card ${esc(r.status)}">
+    <div class="chead">
+      <div>
+        <div class="cid">${esc(r.control_id)} — ${esc(r.control_title)}</div>
+        <div class="ctitle">${esc(r.control_family)}</div>
+      </div>
+      <div class="chip ${esc(r.status)}">${esc(r.status)}</div>
+    </div>
+    <div class="cbody">
+      <div class="mech">${esc(r.mechanism)}</div>
+      <div class="cat">${esc(r.csf_category)}</div>
+      <div class="ev">${esc(r.evidence)}</div>
+      <div class="dt">${esc(r.detail)}</div>
+      <div class="ptr">${evidenceLink(r.evidence_pointer)}</div>
+      <div class="obs">observed ${esc(r.observed_at)}</div>
+    </div>
+  </div>`;
+}
+
+async function pull(){
+  let d;
+  try{ d=await (await fetch(API+'/api/v1/helm/nist',{cache:'no-store'})).json(); }
+  catch(e){ document.getElementById('intro').innerHTML='<span class="err">NIST matrix unreachable — UNKNOWN, not last-known-good</span>'; return; }
+  if(d.data && d.data.state==='UNVERIFIED'){
+    document.getElementById('intro').innerHTML = `<span class="err">${esc(d.data.reason||'matrix unavailable')}</span>`;
+    return;
+  }
+  document.getElementById('intro').innerHTML =
+    `${esc(d.standard||'')} · source ${esc(d.source||'')} · tested_commit ${esc((d.tested_commit||'').slice(0,10))} `+
+    `<span class="fresh">· observed ${esc(d.observed_at||'')}</span>`;
+  document.getElementById('doctrine').textContent = d.doctrine || '';
+
+  const c=d.counts||{};
+  document.getElementById('summary').innerHTML = `
+    <div class="scard total"><b>${c.total??'—'}</b><span>Total controls</span></div>
+    <div class="scard COVERED"><b>${c.COVERED??0}</b><span>Covered</span></div>
+    <div class="scard PARTIAL"><b>${c.PARTIAL??0}</b><span>Partial</span></div>
+    <div class="scard UNVERIFIED"><b>${c.UNVERIFIED??0}</b><span>Unverified</span></div>`;
+
+  const byFn = d.by_function || {};
+  document.getElementById('functions').innerHTML = FN_ORDER.map(fn=>{
+    const rows = byFn[fn] || [];
+    if(!rows.length) return `<div class="section">${FN_LABEL[fn]} <span class="n">(${fn})</span></div><div class="empty">no mechanisms mapped to this function yet</div>`;
+    return `<div class="section">${FN_LABEL[fn]} <span class="n">(${fn}) · ${rows.length} control${rows.length===1?'':'s'}</span></div>
+      <div class="fngrid">${rows.map(renderCard).join('')}</div>`;
+  }).join('');
+}
+pull(); setInterval(pull, 8000);
+</script>
+</body>
+</html>

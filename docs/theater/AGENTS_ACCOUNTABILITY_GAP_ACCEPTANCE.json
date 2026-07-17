@@ -1,0 +1,31 @@
+{
+  "schema": "HELM_GAP_ACCEPTANCE_v1",
+  "gap": "Agent Performance & Accountability Visuals",
+  "date": "2026-07-14",
+  "evidence_package": "HELM-SOAK-2H-20260714T204715Z",
+  "rule": "Dashboard only shows what tamper-evident ledgers prove",
+  "implemented": {
+    "endpoint": "GET /api/v1/helm/agents",
+    "view": "frontend_live/command.html tab AGENTS",
+    "command_center": "http://127.0.0.1:8770/command",
+    "tests": "tests/test_helm_agents_accountability.py"
+  },
+  "accountable_dimensions": [
+    "factory",
+    "validator",
+    "adapter",
+    "scheduler_instance_id"
+  ],
+  "explicitly_not_built": [
+    "named-agent leaderboard over ephemeral worker_id",
+    "empty adapter zero-loser bars",
+    "blank cost cells",
+    "retry recovery rate without retry ledger"
+  ],
+  "fail_closed": [
+    "no package -> UNKNOWN",
+    "AU-9 broken -> CONTRADICTED for whole view",
+    "API down -> UNKNOWN not last-known-good green"
+  ],
+  "observed_at": "2026-07-14T21:32:19Z"
+}

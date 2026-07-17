@@ -1,0 +1,92 @@
+{
+  "schema": "HELM_OMEGA_ARTIFACT_HASH_MANIFEST_v1",
+  "generated_at": "2026-07-17T12:47:37.470578+00:00",
+  "branch": "helm/h1b-r2-remediation",
+  "commit": "2db7e0de",
+  "artifacts": [
+    {
+      "path": "coordination/goal/mission_state.json",
+      "sha256": "b1bb22ad5f11fe2a5d324d5fc4a2c7f73bdb6e1a8ec3e8aa200e1defae5f1d5b",
+      "bytes": 8073,
+      "mtime_utc": "2026-07-17T12:46:21.253743+00:00"
+    },
+    {
+      "path": "coordination/goal/goal_state.json",
+      "sha256": "2e793ee4baa3bfb542b3677f9743b0aa1b4a2881a8cad0abe6fa8289a65bef65",
+      "bytes": 24642,
+      "mtime_utc": "2026-07-17T12:28:30.182336+00:00"
+    },
+    {
+      "path": "coordination/council/factory_registry.json",
+      "sha256": "cb7831944255bda67245834f581fc12695f66b08dda5908ca8bd663a99e735fd",
+      "bytes": 6686,
+      "mtime_utc": "2026-07-17T12:47:28.138401+00:00"
+    },
+    {
+      "path": "coordination/council/active_runtime_source.json",
+      "sha256": "0b7965cc59aa8eec217d1b7263d21a3faa2f448ff2321e3d78bed477513a6ed6",
+      "bytes": 369,
+      "mtime_utc": "2026-07-17T12:47:28.269485+00:00"
+    },
+    {
+      "path": "coordination/security/helm_control_posture.json",
+      "sha256": "5b985815756652b995011c587d3cd44632edac13d1b659a599267d67d491edea",
+      "bytes": 5658,
+      "mtime_utc": "2026-07-15T17:24:49.389774+00:00"
+    },
+    {
+      "path": "control/authority_policy.json",
+      "sha256": "9da09f78237fd9731b3715a622b3a77c2e1ffad7fde8c4fb22fcf01a4cbdd25c",
+      "bytes": 532,
+      "mtime_utc": "2026-07-01T06:38:35.281986+00:00"
+    },
+    {
+      "path": "coordination/council/revenue_ledger.jsonl",
+      "sha256": "dbf21957f442256dc0fea42f5faffbf8f065fbeece4d7669e4819de386aa11e2",
+      "bytes": 687,
+      "mtime_utc": "2026-07-14T02:14:23.464883+00:00"
+    },
+    {
+      "path": "docs/founder/FACTORY_READINESS_BOARD.md",
+      "sha256": "c39a873f7304a3b588c777dd995c8f7a515d7066ea7b1c4c79060f6433a0bafa",
+      "bytes": 5222,
+      "mtime_utc": "2026-07-17T12:43:40.381743+00:00"
+    },
+    {
+      "path": "artifacts/pentest/overall_release_gate.md",
+      "sha256": "f3395518749f0e4ba0385898ed83611e54257e83402f7d3994a936cd9cc7894c",
+      "bytes": 1221,
+      "mtime_utc": "2026-07-01T06:38:35.220386+00:00"
+    },
+    {
+      "path": "HOCH_STATUS.md",
+      "sha256": "0bd3545f6442fb1b959d47668d31f9df48a7648cb12cc3da546828c0d080e9e5",
+      "bytes": 5681,
+      "mtime_utc": "2026-07-07T05:13:40.889473+00:00"
+    },
+    {
+      "path": "README.md",
+      "sha256": "c473aaf1a4f4750cdb6d4b7f813056d794ef6f7afd44ecaae93c6407caa61d96",
+      "bytes": 5561,
+      "mtime_utc": "2026-06-29T00:30:24.092692+00:00"
+    },
+    {
+      "path": "backend/mission_control/mission_state.py",
+      "sha256": "66107d593fc742e02fc67b4926d325cd40866fc4477885ceb99b7bbbda762233",
+      "bytes": 15241,
+      "mtime_utc": "2026-07-15T17:53:26.461898+00:00"
+    },
+    {
+      "path": "backend/helm_live_api.py",
+      "sha256": "bfb6ab43958fa9cfbd34fd750ec795bbfc267dca6ba8f8ef9e1e37ad6a6b8e32",
+      "bytes": 64973,
+      "mtime_utc": "2026-07-17T12:08:36.994395+00:00"
+    },
+    {
+      "path": "scripts/validation/validate_mission_state_independent.py",
+      "sha256": "b281d3ee25020cdee83e084a6578921642970bde21dc7b072364a66a9a2dca93",
+      "bytes": 45204,
+      "mtime_utc": "2026-07-15T17:58:44.115961+00:00"
+    }
+  ]
+}

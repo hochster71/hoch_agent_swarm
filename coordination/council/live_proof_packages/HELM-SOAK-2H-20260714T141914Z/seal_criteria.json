@@ -1,0 +1,68 @@
+{
+  "schema": "PHASE_A_SEAL_CRITERIA_v1",
+  "package": "HELM-SOAK-2H-20260714T141914Z",
+  "bound_pid": 17876,
+  "bound_instance": "sched-77dcea88",
+  "tested_commit": "e2db3278246d58df14b5ea99dbbda55a3032691a",
+  "expected_end_utc": "2026-07-14T16:19:19Z",
+  "earliest_seal_attempt_utc": "2026-07-14T16:19:19Z",
+  "do_not_touch_until_end": true,
+  "process_completion": [
+    "PID 17876 terminated naturally",
+    "exit code recorded",
+    "duration >= 7200s",
+    "no replacement soak inherited package"
+  ],
+  "commit_and_instrument": [
+    "tested_commit remains e2db3278",
+    "re-check preflight hashes: soak_runner, per_task_lease, persistent_scheduler, sealer, hjos policy",
+    "UI-only HEAD drift OK only if those hashes match",
+    "scheduler instance remained sched-77dcea88"
+  ],
+  "lease_and_filesystem": [
+    "each acquisition has exactly one terminal outcome",
+    "failed release = RELEASE_FAILED not RELEASED",
+    "no successful release still physically active",
+    "no package-owned lock unexplained",
+    "foreign locks excluded but documented",
+    "fencing-token sequence reconciles"
+  ],
+  "execution_truth": [
+    "expected rounds/tasks completed",
+    "authority decisions for all dispatches",
+    "failure injections ran and recovered",
+    "no hidden manual intervention",
+    "resource limits within policy"
+  ],
+  "jspace_truth": [
+    "HJOS read-only",
+    "historical findings visible",
+    "no automatic quarantine",
+    "active/resolved/historical counts reconcile",
+    "contradiction => FAIL or INCONCLUSIVE not in-place remediation"
+  ],
+  "evidence_integrity": [
+    "manifest after completion",
+    "evidence hashes complete",
+    "no post-seal modification",
+    "termination_record.json exists",
+    "seal_verdict.json from independent evaluator",
+    "verdict in {PASS, FAIL, INCONCLUSIVE}"
+  ],
+  "browser_proof": {
+    "required_before_console_promotion": true,
+    "not_satisfied_by": "frontend build alone",
+    "transitions": [
+      "healthy API -> truthful current state",
+      "API unavailable -> UNKNOWN",
+      "stale timestamp -> STALE",
+      "conflicting sources -> CONTRADICTED",
+      "missing source -> UNVERIFIED or UNKNOWN",
+      "promotion authority absent -> NONE visible",
+      "cached LKG must not remain green"
+    ]
+  },
+  "next_action": "Do nothing to Phase A until expected_end; then independent seal only",
+  "phase_b": "BLOCKED until unqualified Phase A PASS",
+  "recorded_at": "2026-07-14T15:02:10Z"
+}

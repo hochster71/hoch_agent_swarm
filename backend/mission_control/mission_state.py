@@ -47,6 +47,14 @@ def _age_hours(path: Path) -> Optional[float]:
     return round((time.time() - path.stat().st_mtime) / 3600.0, 2)
 
 
+def _rel(path: Path) -> str:
+    """Safe relative path for evidence; never throws if path is outside ROOT."""
+    try:
+        return str(path.resolve().relative_to(ROOT.resolve()))
+    except Exception:
+        return str(path)
+
+
 def _conf(status: str, *, age_h: Optional[float] = None, sla_h: float = 168.0) -> str:
     if status in ("PENDING", "BLOCKED_EXTERNAL", "NOT_STARTED", "WAITING_FOUNDER"):
         return "Certain"
@@ -207,7 +215,7 @@ def build_mission_state(mission_id: Optional[str] = None) -> Dict[str, Any]:
         "BLOCKED_EXTERNAL" if apple_status != "VERIFIED" else "VERIFIED",
         detail="Production distribution blocked until TestFlight + App Store Connect are founder-cleared",
         confidence="Certain",
-        evidence=[str(CHAMPION_GATES.relative_to(ROOT))],
+        evidence=[_rel(CHAMPION_GATES)],
         age_h=gates_age,
     )
 
@@ -304,9 +312,9 @@ def build_mission_state(mission_id: Optional[str] = None) -> Dict[str, Any]:
         },
         "computed_at": _now(),
         "sources": {
-            "goal_state": str(GOAL_STATE.relative_to(ROOT)),
-            "champion_gates": str(CHAMPION_GATES.relative_to(ROOT)),
-            "control_posture": str(POSTURE.relative_to(ROOT)) if POSTURE.exists() else None,
+            "goal_state": _rel(GOAL_STATE),
+            "champion_gates": _rel(CHAMPION_GATES),
+            "control_posture": _rel(POSTURE) if POSTURE.exists() else None,
             "goal_computed_at": goal.get("computed_at"),
             "goal_age_hours": goal_age,
         },
@@ -360,9 +368,36 @@ def build_mission_state(mission_id: Optional[str] = None) -> Dict[str, Any]:
 
 
 def write_mission_state(mission_id: Optional[str] = None) -> Dict[str, Any]:
+    """Write mission state atomically (temp file + os.replace).
+
+    Multiple writers (goal engine, runtime_refresher, live API, voice) may call
+    this concurrently. Non-atomic write_text can leave a torn/partial JSON file
+    that readers then fail-open or fail-closed incorrectly. Atomic replace makes
+    readers always see a complete previous or complete new document.
+    """
+    import os
+    import tempfile
+
     state = build_mission_state(mission_id=mission_id)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    payload = json.dumps(state, indent=2) + "\n"
+    fd, tmp_name = tempfile.mkstemp(
+        prefix=".mission_state.",
+        suffix=".tmp",
+        dir=str(OUT.parent),
+    )
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(payload)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp_name, OUT)
+    except Exception:
+        try:
+            os.unlink(tmp_name)
+        except OSError:
+            pass
+        raise
     return state
 
 

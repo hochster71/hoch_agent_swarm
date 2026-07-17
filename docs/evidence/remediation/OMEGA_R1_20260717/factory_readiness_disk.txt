@@ -1,0 +1,40 @@
+
+[written] /Users/michaelhoch/hoch_agent_swarm/docs/founder/FACTORY_READINESS_BOARD.md
+# HELM Factory Readiness Board
+
+_Generated 2026-07-17T13:00:08Z by `scripts/factory_readiness.py` — read-only (`curl -s` probes only; no writes, no deploys, no Stripe mutations)._
+
+**Rung scale:** 0 IDEA · 1 PROTOTYPE · 2 BUILT_NOT_SELLABLE · 3 PRODUCTIZED_DEFINED_ONLY · 4 SELLABLE (live checkout reachable) · 5 EARNING (a real charge has settled).
+
+> NOTE: run with `--no-net` — homepage/checkout columns were NOT probed this run.
+
+| Factory | Product | Src on disk | Home | Checkout | Observed rung | Asserted rung |
+|---|---|:--:|:--:|:--:|---|---|
+| HCF | HCF_CYBERQRG_AI | ✅ | — | — | 2 BUILT (source on disk) | 3_SELLABLE_READY (staged — built, priced, checkout wired; one founder --go from live) ⚠ |
+| HFF | HFF_RUNWAY_PACKET | ✅ | — | — | 2 BUILT (source on disk) | 2_BUILT_NOT_SELLABLE |
+| HMF | HMF_CUE_LIBRARY | ✅ | — | — | 2 BUILT (source on disk) | 2_BUILT_NOT_SELLABLE |
+| HRF | HRF_CLARITY_BRIEFS | ✅ | — | — | 2 BUILT (source on disk) | 2_BUILT_NOT_SELLABLE |
+| HASF | EPIC_FURY_2026 | ❌ | ❌ — | ❌ — | 3 DEFINED (priced, nothing live) | 4_SELLABLE ⚠ |
+| HSF | HSF_STORY_STUDIO | ❌ | ❌ — | ❌ — | 3 DEFINED (priced, nothing live) | 3_PRODUCTIZED_DEFINED_ONLY |
+
+⚠ = observed rung differs from the rung asserted in the manifest — reconcile.
+
+## Per-product read (evidence)
+
+### HCF_CYBERQRG_AI — CyberQRG-AI — QR safety scanner
+- **Factory:** HCF
+- **Source on disk:** yes — products/cyberqrg-ai/deploy
+- **Live URL:** (none declared)
+- **Stripe account wired:** no; **prices declared:** yes
+- **Observed rung:** 2 (BUILT (source on disk)) · **Manifest asserts:** 3_SELLABLE_READY (staged — built, priced, checkout wired; one founder --go from live)
+
+### HFF_RUNWAY_PACKET — Runway — Monthly Cash-Flow & Tax-Prep Packet
+- **Factory:** HFF
+- **Source on disk:** yes — products/hff-runway
+- **Live URL:** (none declared)
+- **Stripe account wired:** no; **prices declared:** no
+- **Observed rung:** 2 (BUILT (source on disk)) · **Manifest asserts:** 2_BUILT_NOT_SELLABLE
+
+### HMF_CUE_LIBRARY — HOCH Cue Library — Cleared Instrumental Cues for Creators
+- **Factory:** HMF
+- **Source on disk:** yes — products/hmf-cue-library

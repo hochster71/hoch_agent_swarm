@@ -1,0 +1,8 @@
+{
+  "verdict": "SOAK_PHASE_C_INCONCLUSIVE",
+  "reasons": [
+    "validation.json missing (process likely terminated early)",
+    "no failure injections recorded"
+  ],
+  "sealed_at": "2026-07-15T15:49:05Z"
+}

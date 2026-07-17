@@ -1,0 +1,13 @@
+{
+  "classification": "PHASE_A_141914Z_COMPLETED_FAIL",
+  "pid": 17876,
+  "package": "HELM-SOAK-2H-20260714T141914Z",
+  "verdict": "SOAK_PHASE_A_FAIL",
+  "reasons": [
+    "no STRANDED lock files (filesystem cross-check) failed: 4 lock files ACTIVE on disk: ['SOAK-HSF-31', 'SOAK-HRF-24', 'SOAK-HSF-24', 'SOAK-HASF-116']"
+  ],
+  "cycles": 129,
+  "observed_peak_concurrency": 4,
+  "unrelated_work_continued": true,
+  "recorded_at": "2026-07-14T16:22:00Z"
+}

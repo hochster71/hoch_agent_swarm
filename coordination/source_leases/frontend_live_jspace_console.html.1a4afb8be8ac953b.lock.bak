@@ -1,0 +1,13 @@
+{
+  "path": "frontend_live/jspace_console.html",
+  "lease_id": "srclease-38fb0bb8",
+  "holder": "swarm/control-plane",
+  "agent_pid": 3,
+  "fencing_token": 1,
+  "content_sha256_at_acquire": "7d1710bf7f63481d943867d92a452a19e4e93a1d756a5d01e65cd58c0137e9a9",
+  "acquired_at": "2026-07-15T16:13:03.231382+00:00",
+  "expires_at": "2026-07-15T16:28:03.231382+00:00",
+  "status": "ACTIVE",
+  "content_sha256_expected": "f337199434d19806d5f7ee82dec20691485761bb2c6e4381ffcc99227aa09b40",
+  "last_write_at": "2026-07-15T16:13:32.208754+00:00"
+}

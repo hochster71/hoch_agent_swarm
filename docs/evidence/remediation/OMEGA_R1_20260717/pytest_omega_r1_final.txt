@@ -1,0 +1,8 @@
+.................                                                        [100%]
+=============================== warnings summary ===============================
+tests/test_omega_r1_remediation.py::test_read_auth_default_disabled_fail_closed_when_enabled
+  /Users/michaelhoch/hoch_agent_swarm/tests/test_omega_r1_remediation.py:67: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+17 passed, 1 warning in 53.81s

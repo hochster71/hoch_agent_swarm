@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "injection": "kill_worker",
+    "at": "2026-07-15T00:01:35Z",
+    "detail": "lease held then worker 'dies' (never released)"
+  },
+  {
+    "id": 2,
+    "injection": "corrupt_lock_file",
+    "at": "2026-07-15T00:25:59Z"
+  },
+  {
+    "id": 3,
+    "injection": "corrupt_fencing_store",
+    "at": "2026-07-15T00:45:12Z"
+  },
+  {
+    "id": 4,
+    "injection": "adapter_timeout",
+    "at": "2026-07-15T01:04:10Z"
+  },
+  {
+    "id": 5,
+    "injection": "mutated_task_digest",
+    "at": "2026-07-15T01:24:00Z"
+  },
+  {
+    "id": 6,
+    "injection": "expired_authority_decision",
+    "at": "2026-07-15T01:37:58Z"
+  },
+  {
+    "id": 7,
+    "injection": "scheduler_restart",
+    "at": "2026-07-15T01:52:11Z"
+  },
+  {
+    "id": 8,
+    "injection": "duplicate_terminal",
+    "at": "2026-07-15T02:02:02Z"
+  }
+]

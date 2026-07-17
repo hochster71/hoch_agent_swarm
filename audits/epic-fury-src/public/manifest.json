@@ -1,0 +1,64 @@
+{
+  "name": "Epic Fury — US-Iran War Dashboard",
+  "short_name": "Epic Fury",
+  "description": "Real-time OSINT intelligence dashboard tracking Operation Epic Fury — the 2026 US-Iran conflict. Live theater updates, ceasefire probability, economic impact, and AI newsroom.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#052e16",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["news", "government", "security"],
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-icon",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-icon",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/opengraph-image",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "label": "Epic Fury War Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "SITREP",
+      "short_name": "SITREP",
+      "description": "Today's situation report",
+      "url": "/dashboard/sitrep",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Breaking Intel",
+      "short_name": "Intel",
+      "description": "Latest intelligence feed",
+      "url": "/dashboard/intel",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Economics",
+      "short_name": "Econ",
+      "description": "War economy & energy markets",
+      "url": "/dashboard/econ",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

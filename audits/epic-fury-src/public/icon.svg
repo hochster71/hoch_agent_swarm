@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <!-- Background -->
+  <rect width="192" height="192" fill="#09090b"/>
+  <!-- Border -->
+  <rect x="4" y="4" width="184" height="184" rx="20" fill="none" stroke="#166534" stroke-width="3"/>
+  <!-- Shield shape -->
+  <path d="M96 32 L140 52 L140 100 Q140 136 96 156 Q52 136 52 100 L52 52 Z"
+        fill="none" stroke="#16a34a" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Inner shield fill -->
+  <path d="M96 42 L132 59 L132 100 Q132 128 96 145 Q60 128 60 100 L60 59 Z"
+        fill="rgba(22,163,74,0.08)"/>
+  <!-- Target crosshair center -->
+  <circle cx="96" cy="98" r="14" fill="none" stroke="#4ade80" stroke-width="2"/>
+  <circle cx="96" cy="98" r="4" fill="#4ade80"/>
+  <!-- Crosshair lines -->
+  <line x1="96" y1="80" x2="96" y2="88" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+  <line x1="96" y1="108" x2="96" y2="116" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+  <line x1="78" y1="98" x2="86" y2="98" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+  <line x1="106" y1="98" x2="114" y2="98" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+  <!-- LIVE dot top-right -->
+  <circle cx="148" cy="44" r="7" fill="#ef4444" opacity="0.9"/>
+  <circle cx="148" cy="44" r="11" fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.4"/>
+</svg>

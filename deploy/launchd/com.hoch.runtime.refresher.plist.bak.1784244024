@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- STAGED — do NOT load until the 24h Phase C soak has sealed. -->
+<!-- Post-seal load:  cp deploy/launchd/com.hoch.runtime.refresher.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.hoch.runtime.refresher.plist -->
+<!-- Unload:          launchctl unload ~/Library/LaunchAgents/com.hoch.runtime.refresher.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.hoch.runtime.refresher</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/michaelhoch/hoch_agent_swarm/scripts/runtime_refresher.py</string>
+        <string>--loop</string>
+        <string>--interval</string>
+        <string>300</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm</string>
+    <key>StartInterval</key>
+    <integer>300</integer>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm/data/backups/runtime_refresher.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm/data/backups/runtime_refresher.log</string>
+</dict>
+</plist>

@@ -1,0 +1,61 @@
+{
+  "schema": "HELM_INCIDENT_v1",
+  "incident_id": "JINC-20260714-UI-QUAR-V4",
+  "incident_class": "DESTRUCTIVE_REPOSITORY_MUTATION",
+  "severity": "HIGH",
+  "permanent_data_loss": false,
+  "recovery": "COMPLETE",
+  "status": "CONTAINED",
+  "do_not_self_clear": true,
+  "observed_at": "2026-07-14T15:02:10Z",
+  "subject": "repository_ui_quarantine_cleanup",
+  "summary": "UI cleanup generated multi-stage destructive mutation: basename collisions overwrote files; quarantine dir deletion removed untracked files; git checkout restored obsolete fake-green content; failed shell redirections created empty files. Historical recovery restored all 14 unavailable files; path-preserving quarantine + manifest v4 corrected design. Recovery does NOT erase the incident.",
+  "failure_stages": [
+    "flat_destination_basename_collisions",
+    "five_files_overwritten",
+    "quarantine_directory_deletion_removed_untracked",
+    "git_checkout_restored_obsolete_fake_green",
+    "failed_shell_redirection_created_empty_files",
+    "historical_recovery_restored_14_files",
+    "path_preserving_quarantine_manifest_v4_corrected_design"
+  ],
+  "root_cause": [
+    "non-unique quarantine destination",
+    "destructive cleanup before inventory verification",
+    "shell redirection before source validation",
+    "recovery procedure not tested on fixtures"
+  ],
+  "recovery_outcome": {
+    "permanent_file_loss_proven": false,
+    "files_restored_count": 14,
+    "fake_ui_quarantine": "RECOVERED_AND_REBUILT",
+    "quarantine_manifest": "CREATED_V4",
+    "frontend_build": "PASS",
+    "browser_truth_state_proof": "PENDING"
+  },
+  "phase_a_interaction": {
+    "note": "Incident is orthogonal to Phase A soak; must not be used to fail or pass Phase A by implication",
+    "phase_a_package": "HELM-SOAK-2H-20260714T141914Z",
+    "phase_a_pid": 17876
+  },
+  "recommended_controls": [
+    "path-preserving quarantine (no basename-only destinations)",
+    "inventory + hash before any destructive cleanup",
+    "fixture-tested recovery procedures",
+    "never git-checkout as content recovery without explicit obsolete-content review",
+    "no shell redirect until source path validated non-empty"
+  ],
+  "recovery_reconciliation_path": "coordination/forensics/QUARANTINE_RECOVERY_RECONCILIATION_v1.json",
+  "recovery_reconciliation": {
+    "expected": 14,
+    "actual": 14,
+    "zero_byte": 0,
+    "hashable": 14,
+    "unresolved": 0,
+    "counts_match_claim": true,
+    "git_blob_matched": 13,
+    "git_blob_unresolved_for_content_match": [
+      "frontend/index.html"
+    ]
+  }
+}

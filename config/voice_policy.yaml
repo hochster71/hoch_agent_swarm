@@ -25,6 +25,25 @@ max_events_per_hour: 30
 min_severity: INFO
 daily_budget_usd: 0
 
+# --- Phase 2 voice cost enforcement (additive; defaults preserve today's fail-closed posture) ---
+# ENFORCED by backend/voice/cost_gate.py as a pre-flight gate in front of every paid TTS call.
+# NOTE: the repo's dependency-free YAML loader (backend/voice/policy.py::_parse_yaml_simple)
+# only supports one nesting level, so these are FLAT keys rather than the nested `cost:` block
+# sketched in docs/evidence/runtime/voice-sidecar-phase-2-design.md §1.4 (documented deviation).
+# cost_enabled: master switch; false => paid TTS stays fully blocked (fail-closed)
+cost_enabled: false
+# per_call_ceiling_usd: hard cap on a single utterance's estimated cost
+per_call_ceiling_usd: 0.05
+# monthly_budget_usd: calendar-month cap (UTC); 0 = disabled = no paid spend
+monthly_budget_usd: 0
+# doorstep_on_budget_exhaustion: stage at founder door on ceiling breach instead of spending
+doorstep_on_budget_exhaustion: true
+# elevenlabs_usd_per_1k_chars is a PLACEHOLDER / UNKNOWN until the founder confirms it against
+# live account pricing. It labels an estimate; it is NOT authoritative (no_fake_green).
+elevenlabs_usd_per_1k_chars: 0.30
+# voice_usage_ledger: append-only NEW file; never an existing runtime ledger
+voice_usage_ledger: data/runtime/voice_usage_ledger.jsonl
+
 # Staleness: data older than this is labeled STALE, never LIVE
 freshness_budget_seconds: 300
 

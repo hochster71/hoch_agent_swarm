@@ -1,0 +1,14 @@
+{
+  "docs/SOURCE_TREE_COORDINATION_GUARD.md": 3,
+  "frontend_live/founder.html": 5,
+  "backend/helm_live_api.py": 6,
+  "frontend_live/brain.html": 1,
+  "backend/truth/soak_select.py": 1,
+  "scripts/council/auto_chain_phases.sh": 3,
+  "frontend_live/command.html": 2,
+  "scripts/council/seal_soak_phase.py": 1,
+  "backend/council/founder_gate.py": 1,
+  "frontend_live/jspace_console.html": 1,
+  "backend/jspace/observers/truth_sentinel.py": 1,
+  "backend/jspace/observers/flow_sentinel.py": 1
+}

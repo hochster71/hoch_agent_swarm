@@ -1,0 +1,4 @@
+status STALE
+naics_2022 status= STALE allowed_for_live_ui= False
+onet_28 status= STALE allowed_for_live_ui= False
+bls_oews_24 status= STALE allowed_for_live_ui= False

@@ -1,0 +1,143 @@
+[
+  {
+    "id": "roadmap",
+    "httpStatus": 200,
+    "verdict": "PASS",
+    "contentOK": true,
+    "jsErrors": [],
+    "consoleErrors": [],
+    "badRequests": [],
+    "forbiddenText": [],
+    "navLinks": [
+      {
+        "href": "/jspace",
+        "status": 200
+      },
+      {
+        "href": "/command",
+        "status": 200
+      },
+      {
+        "href": "/brain",
+        "status": 200
+      },
+      {
+        "href": "/founder",
+        "status": 200
+      }
+    ],
+    "textSample": "ROADMAP TO GOAL · HELM ◱ J-SPACE ◈ COMMAND ◇ BRAIN ⬡ FOUNDER Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete. 0% NORTH-STAR COMPLETION No fake green. No unevidenced completion. No"
+  },
+  {
+    "id": "command",
+    "httpStatus": 200,
+    "verdict": "PASS",
+    "contentOK": true,
+    "jsErrors": [],
+    "consoleErrors": [],
+    "badRequests": [],
+    "forbiddenText": [],
+    "navLinks": [
+      {
+        "href": "/roadmap",
+        "status": 200
+      },
+      {
+        "href": "/jspace",
+        "status": 200
+      },
+      {
+        "href": "/brain",
+        "status": 200
+      },
+      {
+        "href": "/founder",
+        "status": 200
+      }
+    ],
+    "textSample": "HELM COMMAND live · 15:50:52Z · commit 8d1e7f7c · 2 leases · 40 tasks ◎ ROADMAP ◇ J-SPACE ◈ BRAIN ⬡ FOUNDER LIVE ◈ WALL ▤ FLOW ◇ AGENTS ⛓ CHAIN ✦ CONTROLS complete executing (live lease) queued / blocked failed unknown — never guessed particles flow only when a lease is actually held — no idle motion"
+  },
+  {
+    "id": "jspace",
+    "httpStatus": 200,
+    "verdict": "PASS",
+    "contentOK": true,
+    "jsErrors": [],
+    "consoleErrors": [],
+    "badRequests": [],
+    "forbiddenText": [],
+    "navLinks": [
+      {
+        "href": "/roadmap",
+        "status": 200
+      },
+      {
+        "href": "/command",
+        "status": 200
+      },
+      {
+        "href": "/brain",
+        "status": 200
+      },
+      {
+        "href": "/founder",
+        "status": 200
+      }
+    ],
+    "textSample": "≡ ⬡ HELM J-SPACE ◎ ROADMAP ◱ COMMAND ◈ BRAIN ⬡ FOUNDER HELM_STATUS: HOLD FACTORIES: FROZEN TRUE_GO: LOCKED J-SPACE: RECONCILING observers nominal 8/10 · 80% ⬡ HJOS OBSERVERS AGENT_COUNT: 20 ALERT_LEVEL: MODERATE OPEN_FINDINGS: 4206 SYSTEM_INTEGRITY: 96.1% TRANSACTION ID — VERIFICATION SIGNATURE — CHAIN STATE CONFIRMED_"
+  },
+  {
+    "id": "brain",
+    "httpStatus": 200,
+    "verdict": "PASS",
+    "contentOK": true,
+    "jsErrors": [],
+    "consoleErrors": [],
+    "badRequests": [],
+    "forbiddenText": [],
+    "navLinks": [
+      {
+        "href": "/roadmap",
+        "status": 200
+      },
+      {
+        "href": "/jspace",
+        "status": 200
+      },
+      {
+        "href": "/command",
+        "status": 200
+      },
+      {
+        "href": "/founder",
+        "status": 200
+      }
+    ],
+    "textSample": "J-SPACE BRAIN cycle JCYC-20260715-5514F4 · 2 alerts · 4206 unresolved · live ◎ ROADMAP ◇ CONSOLE ◱ COMMAND ⬡ FOUNDER CONTRADICTED promotion NONE · 6 observers · 13 subjects WITHHOLD_PROMOTION confirmed live blocked contradicted × — — drag to orbit · tap a node · the brain fires only on real observations"
+  },
+  {
+    "id": "founder",
+    "httpStatus": 200,
+    "verdict": "PASS",
+    "contentOK": true,
+    "jsErrors": [],
+    "consoleErrors": [],
+    "badRequests": [],
+    "forbiddenText": [],
+    "navLinks": [
+      {
+        "href": "/roadmap",
+        "status": 200
+      },
+      {
+        "href": "/jspace",
+        "status": 200
+      },
+      {
+        "href": "/brain",
+        "status": 200
+      }
+    ],
+    "textSample": "H HELM · FOUNDER live NORTH STAR · FOUNDER-MINUTES PER SHIPPED DOLLAR UNDEFINED Cannot compute yet — revenue is $0. The metric needs one real dollar to divide by. Everything else runs regardless. AWAITING YOU THE ONLY NUMBER THAT COUNTS EARNING 0 / 8 ran 4 · produce 4 REVENUE $0.00 settled · evidenced SPEND TODAY $0.00"
+  }
+]

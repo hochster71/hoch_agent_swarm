@@ -24,6 +24,13 @@ _DEFAULTS: Dict[str, Any] = {
     "max_events_per_hour": 30,
     "min_severity": "INFO",
     "daily_budget_usd": 0,
+    # Phase 2 cost-enforcement knobs (fail-closed: disabled + zero budgets by default).
+    "cost_enabled": False,
+    "per_call_ceiling_usd": 0.05,
+    "monthly_budget_usd": 0,
+    "doorstep_on_budget_exhaustion": True,
+    "elevenlabs_usd_per_1k_chars": 0.30,
+    "voice_usage_ledger": "data/runtime/voice_usage_ledger.jsonl",
     "freshness_budget_seconds": 300,
     "allowed_modes": ["READ_ONLY", "STAGE_ONLY"],
     "doorstep_blocked_verbs": [
@@ -143,6 +150,17 @@ def get_policy_public() -> Dict[str, Any]:
         "max_events_per_hour": int(p["max_events_per_hour"]),
         "min_severity": p["min_severity"],
         "daily_budget_usd": p["daily_budget_usd"],
+        # Phase 2 cost enforcement, now ENFORCED by backend/voice/cost_gate.py (was display-only).
+        "cost": {
+            "cost_enabled": bool(p.get("cost_enabled")),
+            "per_call_ceiling_usd": p.get("per_call_ceiling_usd"),
+            "daily_budget_usd": p.get("daily_budget_usd"),
+            "monthly_budget_usd": p.get("monthly_budget_usd"),
+            "doorstep_on_budget_exhaustion": bool(p.get("doorstep_on_budget_exhaustion")),
+            "elevenlabs_usd_per_1k_chars": p.get("elevenlabs_usd_per_1k_chars"),
+            "pricing_note": "estimate only; UNKNOWN/placeholder until founder-confirmed",
+            "enforced_by": "backend/voice/cost_gate.py",
+        },
         "freshness_budget_seconds": int(p["freshness_budget_seconds"]),
         "allowed_modes": list(p["allowed_modes"]),
         "doorstep_blocked_verbs": list(p["doorstep_blocked_verbs"]),

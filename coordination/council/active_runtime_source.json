@@ -1,8 +1,9 @@
 {
-  "scheduler_instance_id": "sched-77dcea88",
-  "ledger_path": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/task_lease_ledger.jsonl",
-  "evidence_dir": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon",
-  "instance_sidecar": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/scheduler_instance.json",
-  "pid": 17876,
-  "published_at": "2026-07-14T14:19:19Z"
+  "scheduler_instance_id": "native-cadence",
+  "ledger_path": "",
+  "evidence_dir": "coordination/council/native_runtime",
+  "runtime": "freshness_refresher+autoloop",
+  "pid": 59168,
+  "published_at": "2026-07-17T15:31:12Z",
+  "note": "HELM on native cadence: freshness refresher + helm autoloop live; product work runs on the scheduled-task loop; no soak active"
 }

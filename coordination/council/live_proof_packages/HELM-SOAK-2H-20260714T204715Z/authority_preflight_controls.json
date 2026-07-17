@@ -1,0 +1,65 @@
+{
+  "controls": [
+    {
+      "control": "missing_authority_id_blocks",
+      "pass": true,
+      "detail": "AUTHORITY_INCOMPLETE",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "wrong_task_digest_blocks",
+      "pass": true,
+      "detail": "AUTHORITY_BINDING_MISMATCH",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "wrong_lease_binding_blocks",
+      "pass": true,
+      "detail": "AUTHORITY_BINDING_MISMATCH",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "revoked_decision_blocks",
+      "pass": true,
+      "detail": "AUTHORITY_REVOKED",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "expired_decision_blocks",
+      "pass": true,
+      "detail": "AUTHORITY_EXPIRED",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "altered_dispatch_digest_blocks",
+      "pass": true,
+      "detail": "DISPATCH_BINDING_MISMATCH",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "validator_without_binding_cannot_pass",
+      "pass": true,
+      "detail": "",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "artifact_cannot_infer_authority",
+      "pass": true,
+      "detail": "AUTHORITY_INCOMPLETE",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "scheduler_instance_mismatch_visible",
+      "pass": true,
+      "detail": "RUNTIME_SOURCE_MISMATCH",
+      "at": "2026-07-14T20:47:15Z"
+    },
+    {
+      "control": "rejected_tasks_release_leases",
+      "pass": true,
+      "detail": "open=0",
+      "at": "2026-07-14T20:47:15Z"
+    }
+  ],
+  "all_pass": true
+}

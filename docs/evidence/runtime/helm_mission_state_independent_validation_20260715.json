@@ -1,0 +1,736 @@
+{
+  "schema": "HELM_MISSION_STATE_INDEPENDENT_VALIDATION_v1",
+  "started_at": "2026-07-17T12:44:45.890123Z",
+  "ended_at": "2026-07-17T12:45:03.774310Z",
+  "checks": [
+    {
+      "id": "canonical_path",
+      "pass": true,
+      "detail": "OUT=/Users/[REDACTED]",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891265Z"
+    },
+    {
+      "id": "canonical_exists",
+      "pass": true,
+      "detail": "/Users/[REDACTED]",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891289Z"
+    },
+    {
+      "id": "api_uses_write_mission_state",
+      "pass": true,
+      "detail": "helm_live_api imports write_mission_state",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891530Z"
+    },
+    {
+      "id": "voice_api_uses_write_mission_state",
+      "pass": true,
+      "detail": "voice router uses mission_state module",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891541Z"
+    },
+    {
+      "id": "voice_command_uses_engine",
+      "pass": true,
+      "detail": "mission_ops handler present",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891566Z"
+    },
+    {
+      "id": "dashboard_fetches_api",
+      "pass": true,
+      "detail": "mission.html fetches /api/v1/helm/mission only",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891571Z"
+    },
+    {
+      "id": "dashboard_no_static_green",
+      "pass": true,
+      "detail": "HTML has CSS class names only, status filled by API",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891577Z"
+    },
+    {
+      "id": "dashboard_no_hardcoded_overall",
+      "pass": true,
+      "detail": "no hardcoded mission overall/score in HTML body",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891584Z"
+    },
+    {
+      "id": "goal_engine_writes_mission_state",
+      "pass": true,
+      "detail": "goal_engine recomputes mission state after compute",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.891636Z"
+    },
+    {
+      "id": "recompute_deterministic_shape",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:45.981683Z"
+    },
+    {
+      "id": "api_mission",
+      "pass": false,
+      "detail": "unreachable http://127.0.0.1:8770/api/v1/helm/mission: Remote end closed connection without response",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.478233Z"
+    },
+    {
+      "id": "api_executive",
+      "pass": false,
+      "detail": "unreachable http://127.0.0.1:8770/api/v1/helm/mission/executive: Remote end closed connection without response",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.881412Z"
+    },
+    {
+      "id": "api_voice_mission",
+      "pass": false,
+      "detail": "unreachable http://127.0.0.1:8770/api/v1/helm/voice/mission: Remote end closed connection without response",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.882553Z"
+    },
+    {
+      "id": "api_mission_page",
+      "pass": false,
+      "detail": "unreachable http://127.0.0.1:8770/mission: Remote end closed connection without response",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.883690Z"
+    },
+    {
+      "id": "api_404_unknown_path",
+      "pass": false,
+      "detail": "Remote end closed connection without response",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.885666Z"
+    },
+    {
+      "id": "inject_blocked_external_apple_overall",
+      "pass": true,
+      "detail": "got BLOCKED_EXTERNAL expected BLOCKED_EXTERNAL",
+      "evidence": {
+        "case": "blocked_external_apple",
+        "overall": "BLOCKED_EXTERNAL",
+        "dashboard": [
+          {
+            "area": "Engineering",
+            "status": "100.0%",
+            "confidence": "High"
+          },
+          {
+            "area": "Testing",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Security",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Evidence",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Runtime Truth",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Apple Review",
+            "status": "Waiting on Founder",
+            "confidence": "Certain"
+          },
+          {
+            "area": "Revenue",
+            "status": "NOT_STARTED",
+            "confidence": "Certain"
+          },
+          {
+            "area": "Overall Mission",
+            "status": "BLOCKED_EXTERNAL",
+            "confidence": "High"
+          }
+        ],
+        "critical_path": [
+          {
+            "name": "Engineering",
+            "status": "DONE",
+            "mark": "\u2713"
+          },
+          {
+            "name": "Security",
+            "status": "DONE",
+            "mark": "\u2713"
+          },
+          {
+            "name": "Evidence",
+            "status": "DONE",
+            "mark": "\u2713"
+          },
+          {
+            "name": "Founder Review",
+            "status": "WAITING_FOUNDER",
+            "mark": "\u23f3"
+          },
+          {
+            "name": "Apple Review",
+            "status": "WAITING_EXTERNAL",
+            "mark": "\u23f3"
+          },
+          {
+            "name": "Production Release",
+            "status": "WAITING_EXTERNAL",
+            "mark": "\u23f3"
+          }
+        ],
+        "apple": {
+          "status": "BLOCKED_EXTERNAL",
+          "testflight": "UNKNOWN",
+          "app_store_connect": "UNKNOWN",
+          "confidence": "Certain",
+          "detail": "Live Apple state requires founder credentials; local ledger claims are not re-verified here"
+        }
+      },
+      "at": "2026-07-17T12:44:46.937287Z"
+    },
+    {
+      "id": "inject_blocked_external_apple_no_fake_go",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.937302Z"
+    },
+    {
+      "id": "inject_blocked_external_apple_text_sync",
+      "pass": true,
+      "detail": "executive text contains overall",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.937321Z"
+    },
+    {
+      "id": "inject_blocked_external_apple_speech_sync",
+      "pass": true,
+      "detail": "Mission EPIC-FURY-2026. Overall BLOCKED_EXTERNAL. Engineering: 100.0%. Testing: VERIFIED. Security: ",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.937332Z"
+    },
+    {
+      "id": "inject_verified_internal_still_blocked_apple_overall",
+      "pass": true,
+      "detail": "got BLOCKED_EXTERNAL expected BLOCKED_EXTERNAL",
+      "evidence": {
+        "case": "verified_internal_still_blocked_apple",
+        "overall": "BLOCKED_EXTERNAL",
+        "dashboard": [
+          {
+            "area": "Engineering",
+            "status": "100.0%",
+            "confidence": "High"
+          },
+          {
+            "area": "Testing",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Security",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Evidence",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Runtime Truth",
+            "status": "VERIFIED",
+            "confidence": "High"
+          },
+          {
+            "area": "Apple Review",
+            "status": "Waiting on Founder",
+            "confidence": "Certain"
+          },
+          {
+            "area": "Revenue",
+            "status": "NOT_STARTED",
+            "confidence": "Certain"
+          },
+          {
+            "area": "Overall Mission",
+            "status": "BLOCKED_EXTERNAL",
+            "confidence": "High"
+          }
+        ],
+        "critical_path": [
+          {
+            "name": "Engineering",
+            "status": "DONE",
+            "mark": "\u2713"
+          },
+          {
+            "name": "Security",
+            "status": "DONE",
+            "mark": "\u2713"
+          },
+          {
+            "name": "Evidence",
+            "status": "DONE",
+            "mark": "\u2713"
+          },
+          {
+            "name": "Founder Review",
+            "status": "WAITING_FOUNDER",
+            "mark": "\u23f3"
+          },
+          {
+            "name": "Apple Review",
+            "status": "WAITING_EXTERNAL",
+            "mark": "\u23f3"
+          },
+          {
+            "name": "Production Release",
+            "status": "WAITING_EXTERNAL",
+            "mark": "\u23f3"
+          }
+        ],
+        "apple": {
+          "status": "BLOCKED_EXTERNAL",
+          "testflight": "UNKNOWN",
+          "app_store_connect": "UNKNOWN",
+          "confidence": "Certain",
+          "detail": "Live Apple state requires founder credentials; local ledger claims are not re-verified here"
+        }
+      },
+      "at": "2026-07-17T12:44:46.976151Z"
+    },
+    {
+      "id": "inject_verified_internal_still_blocked_apple_no_fake_go",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.976164Z"
+    },
+    {
+      "id": "inject_verified_internal_still_blocked_apple_text_sync",
+      "pass": true,
+      "detail": "executive text contains overall",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.976180Z"
+    },
+    {
+      "id": "inject_verified_internal_still_blocked_apple_speech_sync",
+      "pass": true,
+      "detail": "Mission EPIC-FURY-2026. Overall BLOCKED_EXTERNAL. Engineering: 100.0%. Testing: VERIFIED. Security: ",
+      "evidence": {},
+      "at": "2026-07-17T12:44:46.976189Z"
+    },
+    {
+      "id": "inject_security_failed_no_fake_go",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.015680Z"
+    },
+    {
+      "id": "inject_security_failed_text_sync",
+      "pass": true,
+      "detail": "executive text contains overall",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.015699Z"
+    },
+    {
+      "id": "inject_security_failed_speech_sync",
+      "pass": true,
+      "detail": "Mission EPIC-FURY-2026. Overall BLOCKED_EXTERNAL. Engineering: 100.0%. Testing: VERIFIED. Security: ",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.015711Z"
+    },
+    {
+      "id": "inject_stale_runtime_truth",
+      "pass": true,
+      "detail": "runtime_truth=STALE overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.053358Z"
+    },
+    {
+      "id": "inject_stale_no_fake_go",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.053368Z"
+    },
+    {
+      "id": "inject_stale_speech_sync",
+      "pass": true,
+      "detail": "Mission EPIC-FURY-2026. Overall BLOCKED_EXTERNAL. Engineering: 100.0%. Testing: VERIFIED. Security: ",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.053376Z"
+    },
+    {
+      "id": "inject_empty_goal_unknown_no_fake_go",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.091227Z"
+    },
+    {
+      "id": "inject_empty_goal_unknown_text_sync",
+      "pass": true,
+      "detail": "executive text contains overall",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.091247Z"
+    },
+    {
+      "id": "inject_empty_goal_unknown_speech_sync",
+      "pass": true,
+      "detail": "Mission EPIC-FURY-2026. Overall BLOCKED_EXTERNAL. Engineering: UNKNOWN. Testing: UNKNOWN. Security: ",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.091256Z"
+    },
+    {
+      "id": "inject_missing_sources_fail_closed",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {
+        "overall": "BLOCKED_EXTERNAL",
+        "engineering": {
+          "area": "Engineering",
+          "status": "UNKNOWN",
+          "confidence": "Low",
+          "detail": "agent CP None% \u00b7 ES None% (goal engine)",
+          "evidence": [
+            "coordination/goal/goal_state.json"
+          ],
+          "evidence_age_hours": null,
+          "score_pct": null
+        }
+      },
+      "at": "2026-07-17T12:44:47.127765Z"
+    },
+    {
+      "id": "inject_missing_eng_not_verified",
+      "pass": true,
+      "detail": "engineering=UNKNOWN",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.127773Z"
+    },
+    {
+      "id": "inject_malformed_json_fail_closed",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.164643Z"
+    },
+    {
+      "id": "voice_mission_ops_command",
+      "pass": true,
+      "detail": "command=mission_ops status=BLOCKED_EXTERNAL",
+      "evidence": {},
+      "at": "2026-07-17T12:44:47.700148Z"
+    },
+    {
+      "id": "voice_speech_from_canonical",
+      "pass": true,
+      "detail": "overall=BLOCKED_EXTERNAL speech[:80]=Mission EPIC-FURY-2026. Overall BLOCKED_EXTERNAL. Engineering: 90.0%. Testing: V",
+      "evidence": {},
+      "at": "2026-07-17T12:44:48.056885Z"
+    },
+    {
+      "id": "voice_includes_dashboard_data",
+      "pass": true,
+      "detail": "voice payload carries mission structure or speech",
+      "evidence": {},
+      "at": "2026-07-17T12:44:48.056899Z"
+    },
+    {
+      "id": "voice_deploy_doorstep",
+      "pass": true,
+      "detail": "status=DOORSTEP mode=DOORSTEP",
+      "evidence": {},
+      "at": "2026-07-17T12:44:48.056977Z"
+    },
+    {
+      "id": "voice_http_mission",
+      "pass": false,
+      "detail": "Remote end closed connection without response",
+      "evidence": {},
+      "at": "2026-07-17T12:44:48.631431Z"
+    },
+    {
+      "id": "dashboard_html_served",
+      "pass": false,
+      "detail": "Remote end closed connection without response",
+      "evidence": {},
+      "at": "2026-07-17T12:44:48.819250Z"
+    },
+    {
+      "id": "gov_refuse_deploy",
+      "pass": true,
+      "detail": "status=DOORSTEP mode=DOORSTEP command=deploy",
+      "evidence": {
+        "test": "deploy",
+        "command": "deploy",
+        "status": "DOORSTEP",
+        "mode": "DOORSTEP",
+        "execution_allowed": false,
+        "speech_preview": "Deploy requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+      },
+      "at": "2026-07-17T12:44:48.819683Z"
+    },
+    {
+      "id": "gov_refuse_spend",
+      "pass": true,
+      "detail": "status=DOORSTEP mode=DOORSTEP command=spend",
+      "evidence": {
+        "test": "spend",
+        "command": "spend",
+        "status": "DOORSTEP",
+        "mode": "DOORSTEP",
+        "execution_allowed": false,
+        "speech_preview": "Spend requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+      },
+      "at": "2026-07-17T12:44:48.819869Z"
+    },
+    {
+      "id": "gov_refuse_provision_keys",
+      "pass": true,
+      "detail": "status=DOORSTEP mode=DOORSTEP command=provision_keys",
+      "evidence": {
+        "test": "provision_keys",
+        "command": "provision_keys",
+        "status": "DOORSTEP",
+        "mode": "DOORSTEP",
+        "execution_allowed": false,
+        "speech_preview": "Provision Keys requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+      },
+      "at": "2026-07-17T12:44:48.820019Z"
+    },
+    {
+      "id": "gov_refuse_utter_deploy",
+      "pass": true,
+      "detail": "status=DOORSTEP mode=DOORSTEP command=deploy",
+      "evidence": {
+        "test": "utter_deploy",
+        "command": "deploy",
+        "status": "DOORSTEP",
+        "mode": "DOORSTEP",
+        "execution_allowed": false,
+        "speech_preview": "Deploy requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+      },
+      "at": "2026-07-17T12:44:48.820172Z"
+    },
+    {
+      "id": "gov_refuse_utter_spend",
+      "pass": true,
+      "detail": "status=DOORSTEP mode=DOORSTEP command=spend",
+      "evidence": {
+        "test": "utter_spend",
+        "command": "spend",
+        "status": "DOORSTEP",
+        "mode": "DOORSTEP",
+        "execution_allowed": false,
+        "speech_preview": "Spend requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+      },
+      "at": "2026-07-17T12:44:48.820312Z"
+    },
+    {
+      "id": "gov_refuse_utter_keys",
+      "pass": true,
+      "detail": "status=DOORSTEP mode=DOORSTEP command=provision_keys",
+      "evidence": {
+        "test": "utter_keys",
+        "command": "provision_keys",
+        "status": "DOORSTEP",
+        "mode": "DOORSTEP",
+        "execution_allowed": false,
+        "speech_preview": "Provision Keys requires founder approval. Voice will not execute deploy, spend, keys, sign, or money moves. Stage it on the doorstep for the founder."
+      },
+      "at": "2026-07-17T12:44:48.820454Z"
+    },
+    {
+      "id": "gov_refuse_utter_sign",
+      "pass": true,
+      "detail": "status=STALE mode=READ_ONLY command=runtime_health",
+      "evidence": {
+        "test": "utter_sign",
+        "command": "runtime_health",
+        "status": "STALE",
+        "mode": "READ_ONLY",
+        "execution_allowed": null,
+        "speech_preview": "Runtime health: STALE. Snapshot: [REDACTED_JSON]"
+      },
+      "at": "2026-07-17T12:44:49.228557Z"
+    },
+    {
+      "id": "gov_refuse_utter_submit",
+      "pass": true,
+      "detail": "status=UNKNOWN mode=None command=None",
+      "evidence": {
+        "test": "utter_submit",
+        "command": null,
+        "status": "UNKNOWN",
+        "mode": null,
+        "execution_allowed": null,
+        "speech_preview": "Command not recognized. Say executive brief, founder approvals, blocked factories, or highest priority mission. I will not invent a dashboard."
+      },
+      "at": "2026-07-17T12:44:49.230035Z"
+    },
+    {
+      "id": "gov_refuse_utter_clear_apple",
+      "pass": true,
+      "detail": "status=UNKNOWN mode=None command=None",
+      "evidence": {
+        "test": "utter_clear_apple",
+        "command": null,
+        "status": "UNKNOWN",
+        "mode": null,
+        "execution_allowed": null,
+        "speech_preview": "Command not recognized. Say executive brief, founder approvals, blocked factories, or highest priority mission. I will not invent a dashboard."
+      },
+      "at": "2026-07-17T12:44:49.230288Z"
+    },
+    {
+      "id": "gov_refuse_utter_mark_revenue",
+      "pass": true,
+      "detail": "status=LIVE mode=READ_ONLY command=revenue_status",
+      "evidence": {
+        "test": "utter_mark_revenue",
+        "command": "revenue_status",
+        "status": "LIVE",
+        "mode": "READ_ONLY",
+        "execution_allowed": null,
+        "speech_preview": "Revenue from verified hash-chained ledger only. Verified settled revenue: zero dollars. EARNING is not claimed. North-star minutes-per-dollar is UNDEFINED, not infinity. Metric undefined reason: no ve"
+      },
+      "at": "2026-07-17T12:44:49.647217Z"
+    },
+    {
+      "id": "gov_mission_ops_no_apple_clear",
+      "pass": true,
+      "detail": "mission_ops does not claim production ship",
+      "evidence": {
+        "status": "BLOCKED_EXTERNAL",
+        "overall": "BLOCKED_EXTERNAL"
+      },
+      "at": "2026-07-17T12:44:50.105215Z"
+    },
+    {
+      "id": "gov_revenue_no_fake_earn",
+      "pass": true,
+      "detail": "revenue from verified hash-chained ledger only. verified settled revenue: zero dollars. earning is not claimed. north-st",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.479981Z"
+    },
+    {
+      "id": "evidence_engineering_not_only_self",
+      "pass": true,
+      "detail": "evidence=['coordination/goal/goal_state.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525524Z"
+    },
+    {
+      "id": "evidence_security_not_only_self",
+      "pass": true,
+      "detail": "evidence=['docs/products/epic-fury-2026/HASF_GATE_VERIFY.json', 'docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md', 'coordination/security/helm_control_posture.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525538Z"
+    },
+    {
+      "id": "evidence_security_present_when_verified",
+      "pass": true,
+      "detail": "status=VERIFIED evidence=['docs/products/epic-fury-2026/HASF_GATE_VERIFY.json', 'docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md', 'coordination/security/helm_control_posture.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525546Z"
+    },
+    {
+      "id": "evidence_testing_not_only_self",
+      "pass": true,
+      "detail": "evidence=['coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525554Z"
+    },
+    {
+      "id": "evidence_testing_present_when_verified",
+      "pass": true,
+      "detail": "status=VERIFIED evidence=['coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525562Z"
+    },
+    {
+      "id": "evidence_evidence_not_only_self",
+      "pass": true,
+      "detail": "evidence=['coordination/goal/goal_state.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525566Z"
+    },
+    {
+      "id": "evidence_runtime_truth_not_only_self",
+      "pass": true,
+      "detail": "evidence=['coordination/goal/goal_state.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525570Z"
+    },
+    {
+      "id": "evidence_runtime_truth_present_when_verified",
+      "pass": true,
+      "detail": "status=VERIFIED evidence=['coordination/goal/goal_state.json']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525573Z"
+    },
+    {
+      "id": "evidence_revenue_not_only_self",
+      "pass": true,
+      "detail": "evidence=['coordination/council/revenue_ledger.jsonl']",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525577Z"
+    },
+    {
+      "id": "evidence_sources_not_circular",
+      "pass": true,
+      "detail": "{'goal_state': 'coordination/goal/goal_state.json', 'champion_gates': 'coordination/goal/champion_gates.json', 'control_posture': 'coordination/security/helm_control_posture.json', 'goal_computed_at': '2026-07-17T12:28:30.181350Z', 'goal_age_hours': 0.27}",
+      "evidence": {},
+      "at": "2026-07-17T12:44:50.525593Z"
+    },
+    {
+      "id": "regression_unit_tests",
+      "pass": true,
+      "detail": "30 passed, 77 warnings in 12.69s",
+      "evidence": {
+        "exit_code": 0,
+        "passed": 30,
+        "failed": 0,
+        "skipped": 0,
+        "unexecuted": [
+          "full Playwright e2e suite (rc* specs)",
+          "App Store Connect live credential tests",
+          "production Tailscale funnel Grok cloud reachability"
+        ],
+        "summary_line": "30 passed, 77 warnings in 12.69s",
+        "output_tail": "  [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    @app.on_event(\"startup\")\n\ntests/unit/test_helm_voice_executive.py::test_main_app_voice_routes\n  /Users/[REDACTED] DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    return self.router.on_event(event_type)  # ty: ignore[deprecated]\n\ntests/unit/test_helm_voice_executive.py: 59 warnings\n  /Users/[REDACTED] DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    \"\"\", (rule_id, rule_text, datetime.utcnow().isoformat() + \"Z\"))\n\ntests/unit/test_helm_voice_executive.py: 15 warnings\n  /Users/[REDACTED] DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    \"\"\", (rule_id, r, datetime.utcnow().isoformat() + \"Z\"))\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n30 passed, 77 warnings in 12.69s\n"
+      },
+      "at": "2026-07-17T12:45:03.774135Z"
+    }
+  ],
+  "limitations": [
+    "Voice HTTP path not fully validated: Remote end closed connection without response",
+    "Dashboard HTML fetch failed: Remote end closed connection without response",
+    "Utterance 'sign the release' routes to runtime_health (READ_ONLY), not an explicit DOORSTEP refuse for sign; no mutation/sign action is executed, but verb routing is imprecise.",
+    "Voice unavailable-backend / tool-timeout paths were not fully exercised against a killed process; live HTTP mission matched the engine while the server was up.",
+    "Dashboard blocked/stale/unknown screenshots used Playwright API route interception; normal screenshot used live recomputed state. Founder-only Apple gates and external App Store Connect state were not modified.",
+    "Unexecuted external tests remain: full Playwright e2e suite (rc* specs); App Store Connect live credential tests; production Tailscale funnel Grok cloud reachability. Unit regression: passed=30 failed=0 skipped=0."
+  ],
+  "verdict": "VERIFIED_WITH_LIMITATIONS",
+  "summary": {
+    "checks_passed": 57,
+    "checks_failed": 7,
+    "checks_total": 64,
+    "limitations_count": 6
+  }
+}

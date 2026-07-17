@@ -67,6 +67,9 @@ FACTORY_INTENT = {
 }
 
 
+NON_MONETIZED = {"HHF", "HPF"}  # non-monetized by design; exempt from the revenue ladder
+
+
 def _now() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
@@ -149,10 +152,16 @@ def census() -> Dict[str, Any]:
             5: None,
         }[rung]
 
+        is_exempt = fac in NON_MONETIZED
+        if is_exempt:
+            blocker = ("NON-MONETIZED by design — exempt from the revenue ladder "
+                       "(success = utility, not earning)")
+
         rows.append({
             "factory": fac, "name": name, "makes": makes,
             "champion": champion or (prod or {}).get("name") or "UNKNOWN",
-            "rung": rung, "stage": RUNGS[rung],
+            "rung": rung, "stage": ("EXEMPT" if is_exempt else RUNGS[rung]),
+            "non_monetized": is_exempt,
             "missions_run": dispatched.get(fac, 0),
             "artifacts": len(arts),
             "product": (prod or {}).get("name"),
@@ -163,8 +172,10 @@ def census() -> Dict[str, Any]:
         })
 
     rows.sort(key=lambda r: (-r["rung"], r["factory"]))
-    earning = [r for r in rows if r["rung"] == 5]
-    sellable = [r for r in rows if r["rung"] >= 4]
+    monetized = [r for r in rows if not r.get("non_monetized")]
+    exempt = [r for r in rows if r.get("non_monetized")]
+    earning = [r for r in monetized if r["rung"] == 5]
+    sellable = [r for r in monetized if r["rung"] >= 4]
 
     return {
         "schema": "FACTORY_CENSUS_v1",
@@ -172,18 +183,21 @@ def census() -> Dict[str, Any]:
         "ladder": RUNGS,
         "factories": rows,
         "declared": len(rows),
-        "ever_ran": len([r for r in rows if r["rung"] >= 1]),
-        "producing": len([r for r in rows if r["rung"] >= 2]),
-        "productized": len([r for r in rows if r["rung"] >= 3]),
+        "monetized": len(monetized),
+        "non_monetized": len(exempt),
+        "non_monetized_factories": [r["factory"] for r in exempt],
+        "ever_ran": len([r for r in monetized if r["rung"] >= 1]),
+        "producing": len([r for r in monetized if r["rung"] >= 2]),
+        "productized": len([r for r in monetized if r["rung"] >= 3]),
         "sellable": len(sellable),
         "earning": len(earning),
-        "total_revenue_usd": round(sum(r["revenue_usd"] for r in rows), 2),
+        "total_revenue_usd": round(sum(r["revenue_usd"] for r in monetized), 2),
         "verdict": (
-            "NO FACTORY IS EARNING. Artifacts are not products; a validated file that "
+            "NO MONETIZED FACTORY IS EARNING. Artifacts are not products; a validated file that "
             "nobody can buy is a cost, not an asset."
             if not earning else
-            f"{len(earning)} factory(ies) earning ${round(sum(r['revenue_usd'] for r in rows),2)}"),
-        "doctrine": "a factory exists at the rung it can PROVE, not the one it is declared at",
+            f"{len(earning)} factory(ies) earning ${round(sum(r['revenue_usd'] for r in monetized),2)}"),
+        "doctrine": "a factory exists at the rung it can PROVE, not the one it is declared at; non-monetized factories are exempt from the ladder",
     }
 
 
@@ -195,8 +209,10 @@ def main() -> int:
         price = f"${r['price_usd']}" if r["price_usd"] is not None else "—"
         print(f"  {r['factory']:5s} {r['stage']:12s} {r['missions_run']:5d} {r['artifacts']:5d} "
               f"{price:>8s} {('$'+format(r['revenue_usd'],'.2f')):>8s}  {r['next_blocker'] or 'EARNING'}")
-    print(f"\n  declared {c['declared']} · ran {c['ever_ran']} · producing {c['producing']} · "
-          f"productized {c['productized']} · sellable {c['sellable']} · EARNING {c['earning']}")
+    print(f"\n  declared {c['declared']} ({c['monetized']} monetized · {c['non_monetized']} exempt: "
+          f"{', '.join(c['non_monetized_factories']) or 'none'}) · ran {c['ever_ran']} · "
+          f"producing {c['producing']} · productized {c['productized']} · sellable {c['sellable']} · "
+          f"EARNING {c['earning']}")
     print(f"\n  {c['verdict']}")
     return 0
 

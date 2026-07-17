@@ -1,0 +1,29 @@
+=== SNAPSHOT active_locks ===
+  SOAK-HASF-266 status= ACTIVE authority_decision_id= None scheduler_instance_id= None expires_at= 2026-07-15T15:48:37.141156+00:00
+  /sessions/nice-adoring-fermi/mnt/hoch_agent_swarm/coordination/leases/_fencing_tokens.lock status= UNREADABLE authority_decision_id= None scheduler_instance_id= None expires_at= None
+
+=== FIXED SUBJECTS (before ledger-latest  ->  after fresh-cycle) ===
+  jspace_truth_sentinel/scheduler_instance_consistency
+      BEFORE ('CONTRADICTED', '2026-07-15T07:37:40Z')
+      AFTER  (CONFIRMED_LIVE)
+  jspace_flow_sentinel/concurrency_pressure
+      BEFORE ('BLOCKED', '2026-07-15T15:14:43Z')
+      AFTER  (CONFIRMED_LIVE)
+
+=== GENUINELY-OPEN SUBJECTS (unchanged, correctly fail-closed) ===
+  jspace_truth_sentinel/active_leases_authority: before=('CONTRADICTED', '2026-07-15T15:42:43Z')  after=CONTRADICTED
+  jspace_security_sentinel/control_posture: before=('BLOCKED', '2026-07-15T15:42:43Z')  after=BLOCKED
+  jspace_flow_sentinel/lease_expiry: before=('CONFIRMED_LIVE', '2026-07-15T15:42:43Z')  after=CONTRADICTED
+
+=== POST-FIX RECONCILED HEALTH (in-memory, NOT written) ===
+  overall            : CONTRADICTED
+  recommended_action : WITHHOLD_PROMOTION
+  observer_counts    : {'CONFIRMED_LIVE': 8, 'CONTRADICTED': 3, 'BLOCKED': 1}
+  worst_findings     :
+     - jspace_truth_sentinel / active_leases_authority -> CONTRADICTED :: Active leases missing authority_decision_id: ['SOAK-HASF-266']
+     - jspace_flow_sentinel / lease_expiry -> CONTRADICTED :: Locks past expires_at still ACTIVE: ['SOAK-HASF-266']
+     - jspace_evidence_auditor / canonical_lease_ledger -> CONTRADICTED :: Runtime pointer declares a ledger path that does not exist.
+     - jspace_security_sentinel / control_posture -> BLOCKED :: Control posture degraded or high findings open.
+
+=== WRITE-SAFETY ===
+  ledger mtime unchanged by this run: (read-only; no persist call invoked)

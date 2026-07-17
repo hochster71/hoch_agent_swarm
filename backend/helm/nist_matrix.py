@@ -314,10 +314,17 @@ def a_ac3_ia2_read_side_auth() -> Dict[str, Any]:
         return _unverified("no zero-trust module staged", "n/a")
     try:
         api_src = (ROOT / "backend" / "helm_live_api.py").read_text()
-        mounted = "zero_trust" in api_src or "ReadAuthMiddleware" in api_src
+        mounted = "ReadAuthMiddleware" in api_src or "zero_trust" in api_src
     except Exception:
         mounted = None
     files = sorted(p.name for p in zt_dir.glob("*.py"))
+    # Live enablement is env-gated; do not claim COVERED unless enabled + token set.
+    try:
+        from backend.security.zero_trust.config import HardenedConfig
+        cfg = HardenedConfig.from_env()
+        enabled = bool(cfg.read_auth_enabled and cfg.read_token)
+    except Exception:
+        enabled = False
     if mounted is False:
         return _row(PARTIAL,
                     f"read-auth layer staged on disk ({', '.join(files)}) but NOT mounted in "
@@ -326,9 +333,18 @@ def a_ac3_ia2_read_side_auth() -> Dict[str, Any]:
                     "(bind/TLS/read-auth changes can break phone access over Tailscale and the "
                     "live Phase-C soak if flipped carelessly)",
                     "backend/security/zero_trust/__init__.py")
+    if mounted is True and enabled:
+        return _row(COVERED,
+                    f"read-auth mounted AND enabled ({', '.join(files)})",
+                    "HELM_READ_AUTH_ENABLED + HELM_READ_TOKEN active",
+                    "backend/security/zero_trust/read_auth.py")
     if mounted is True:
-        return _row(COVERED, f"read-auth layer staged AND mounted ({', '.join(files)})",
-                    "cut over from staged to live", "backend/security/zero_trust/__init__.py")
+        return _row(PARTIAL,
+                    f"read-auth mounted in helm_live_api.py but DISABLED by default "
+                    f"({', '.join(files)}); GETs remain open until HELM_READ_AUTH_ENABLED=1 "
+                    "and HELM_READ_TOKEN is set (founder gate)",
+                    "middleware is live in the ASGI stack; enablement is opt-in fail-closed",
+                    "backend/security/zero_trust/read_auth.py")
     return _unverified("could not determine mount state of helm_live_api.py", "n/a")
 
 

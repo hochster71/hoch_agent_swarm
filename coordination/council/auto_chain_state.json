@@ -1,7 +1,1 @@
-{
-  "phase": "C",
-  "status": "RUNNING",
-  "prev": "B SOAK_PHASE_B_PASS",
-  "phase_started_at": "2026-07-15T11:36:22Z",
-  "24_7_status": "NOT PROVEN \u2014 A+B sealed PASS, C(24h) running"
-}
+{"phase": "C", "status": "HALTED", "prev": "B SOAK_PHASE_B_PASS", "phase_started_at": "2026-07-15T19:45:47.057897+00:00", "24_7_status": "Phase C on frozen hardened build (SC-7+SC-8+single-supervisor, read-auth staged-off) \u2014 running to 24h", "verdict": "SOAK_PHASE_C_FAIL", "expected": "SOAK_PHASE_C_PASS"}

@@ -1,0 +1,69 @@
+{
+  "name": "epic-fury-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "next dev -p 3003",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test:contract": "node scripts/ci/test-contract.mjs",
+    "test:smoke": "node scripts/ci/test-smoke.mjs",
+    "test:api-hardening": "node scripts/ci/test-api-hardening.mjs",
+    "migrate:check": "node scripts/ci/migrate-check.mjs",
+    "truth:gate": "node scripts/ci/domain-truth-gate.mjs",
+    "migrate:rollback-check": "node scripts/ci/migrate-rollback-check.mjs",
+    "verify:auth": "node scripts/verify-no-auth-backdoor.mjs",
+    "prebuild": "node scripts/verify-no-auth-backdoor.mjs && node scripts/verify-provenance.mjs && node scripts/verify-no-fabricated-claims.mjs",
+    "verify:provenance": "node scripts/verify-provenance.mjs",
+    "verify:claims": "node scripts/verify-no-fabricated-claims.mjs",
+    "setup:payments": "node scripts/setup-stripe-managed-payments.mjs",
+    "stripe:products": "node scripts/create-stripe-products.mjs",
+    "stripe:webhook": "node scripts/create-stripe-webhook.mjs",
+    "supabase:key": "bash scripts/supabase-key.sh"
+  },
+  "dependencies": {
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/ios": "^8.3.0",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.1",
+    "@radix-ui/react-tooltip": "^1.1.3",
+    "@revenuecat/purchases-capacitor": "^12.3.2",
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.46.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "jotai": "^2.10.0",
+    "lucide-react": "^0.460.0",
+    "next": "^15.5.19",
+    "openai": "^4.104.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "stripe": "^22.0.2",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^16.2.4",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^9",
+    "eslint-config-next": "^15.1.0",
+    "postcss": "^8.5.10",
+    "puppeteer-core": "^24.40.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "basic-ftp": "^5.2.2",
+    "postcss": "^8.5.10"
+  }
+}

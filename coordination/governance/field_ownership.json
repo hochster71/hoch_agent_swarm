@@ -1,0 +1,129 @@
+{
+  "schema": "HELM_FIELD_OWNERSHIP_v2",
+  "doctrine": "Actors only: founder, orchestrator, builder, auditor. Runtime is platform—not a writable actor role. Truth is derived by Runtime Truth Engine, never owned by a model.",
+  "platform_not_actors": [
+    "mission_runtime",
+    "runtime_truth_engine",
+    "governance_engine",
+    "event_bus"
+  ],
+  "roles": {
+    "founder": {
+      "actor_type": "human",
+      "may_write": [
+        "authorization.*",
+        "founder_decisions.*",
+        "organizational_direction",
+        "legal_acceptance",
+        "secrets_provisioning",
+        "deploy_production",
+        "publish_external",
+        "money_movement",
+        "external_submissions",
+        "charter_ratification"
+      ],
+      "scope_note": "Minimal founder surface: money, publication, legal acceptance, external submissions, secrets, organizational direction. Everything else delegated under governance."
+    },
+    "orchestrator": {
+      "actor_type": "model_role",
+      "title": "Chief of Staff",
+      "may_write": [
+        "mission.decomposition",
+        "mission.dependencies",
+        "mission.planning",
+        "mission.task_queue",
+        "mission.routing",
+        "mission.reconciliation_requests",
+        "mission.founder_briefings",
+        "mission.governance_flags",
+        "mission.orchestration_notes",
+        "orchestration.*",
+        "last_writes"
+      ],
+      "may_not": [
+        "approve_work_as_authority",
+        "audit_or_certify_work",
+        "production_code",
+        "final_audit_verdict",
+        "external_milestone_force_advance",
+        "clear_founder_gates"
+      ]
+    },
+    "builder": {
+      "actor_type": "model_role",
+      "title": "Engineering",
+      "may_write": [
+        "mission.engineering_status",
+        "mission.implementation_notes",
+        "mission.test_status",
+        "mission.packaging_status",
+        "mission.builder_artifacts",
+        "mission.edr_refs",
+        "engineering.*",
+        "last_writes"
+      ],
+      "may_not": [
+        "final_audit_verdict",
+        "orchestrate_as_chief_of_staff",
+        "clear_founder_gates",
+        "mark_revenue_settled",
+        "approve_own_readiness_as_auditor"
+      ],
+      "must_produce": [
+        "Engineering Decision Records (EDRs) for architectural changes — docs/helm/edr/"
+      ]
+    },
+    "auditor": {
+      "actor_type": "model_role",
+      "title": "Independent Assurance",
+      "may_write": [
+        "mission.assurance_status",
+        "mission.audit_findings",
+        "mission.red_team_results",
+        "mission.verification_results",
+        "mission.adversarial_results",
+        "mission.evidence_validation",
+        "mission.performance_measurements",
+        "mission.regression_verification",
+        "mission.auditor_verdict",
+        "assurance.*",
+        "last_writes"
+      ],
+      "may_not": [
+        "primary_product_implementation",
+        "mission.routing",
+        "clear_founder_gates",
+        "self_certify_without_evidence_paths"
+      ]
+    }
+  },
+  "platform_writers": {
+    "mission_runtime": [
+      "mission_version",
+      "transaction_id",
+      "parent_version",
+      "updated_at",
+      "correlation_id",
+      "transaction_log_tail"
+    ],
+    "runtime_truth_engine": [
+      "projections.mission_state",
+      "projections.external_milestones",
+      "projections.hmai"
+    ],
+    "governance_engine": [
+      "authorization_decisions",
+      "policy_violations"
+    ],
+    "event_bus": [
+      "events only (append-only log)"
+    ]
+  },
+  "read_all": [
+    "coordination/goal/executive_mission.json",
+    "coordination/goal/mission_state.json",
+    "docs/helm/HELM_EXECUTIVE_RUNTIME_CHARTER.md",
+    "docs/helm/HELM_DESIGN_CONSTITUTION.md",
+    "docs/helm/HELM_MISSION_RUNTIME_ARCHITECTURE.md"
+  ]
+}

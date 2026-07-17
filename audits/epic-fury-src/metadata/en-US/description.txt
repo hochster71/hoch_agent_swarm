@@ -1,0 +1,58 @@
+BUILT BY A COMBAT-SEASONED NAVAL OFFICER. POWERED BY AI.
+
+Epic Fury 2026 is the only real-time military intelligence dashboard built by someone who's actually operated in the waters, theaters, and threat environments it covers.
+
+Michael Hoch served 31 years as a U.S. Navy Mustang — enlisted to officer — retiring as a Lieutenant Commander (O-4), Surface Warfare Officer and Limited Duty Officer in Surface Operations. From the Persian Gulf to the Red Sea, from 1988 to 2019, he lived the operational realities that this app tracks in real time.
+
+This isn't aggregated headlines. This is pattern-of-life analysis, theater situational awareness, and AI-synthesized intelligence — the way a watch officer would want it.
+
+──────────────────────────────
+WHAT EPIC FURY 2026 DELIVERS
+──────────────────────────────
+
+🎯 LIVE INTEL FEED
+Continuous AI-curated intelligence reports from verified open-source feeds — filtered for signal, stripped of noise. Updated automatically around the clock.
+
+🗺️ THEATER SITUATIONAL AWARENESS
+Real-time tracking of key developments across the Persian Gulf, Strait of Hormuz, Red Sea, and broader Middle East theater — the exact lanes a Surface Warfare Officer watches.
+
+📡 AI-GENERATED SITREP
+Automated Situation Reports synthesized by AI from live data — formatted the way operators think, not the way journalists write.
+
+🔮 FORESIGHT ENGINE
+Predictive analysis of probable next moves — escalation indicators, force posture changes, and decision branch points — giving you a step ahead of the news cycle.
+
+⚡ BREAKING INTEL ALERTS
+Immediate notification of high-confidence breaking developments before they hit mainstream media.
+
+📊 THREAT METER & CONFIDENCE SCORING
+Every report carries a credibility and confidence score — so you know what to weight and what to watch.
+
+🛡️ COMMAND CENTER DASHBOARD
+A unified view of the operating environment — forces, fronts, logistics, and political dimensions — in one scroll.
+
+──────────────────────────────
+WHO THIS IS FOR
+──────────────────────────────
+
+• Veterans and active-duty service members who want credible, operational-level analysis
+• Defense analysts, contractors, and policy professionals
+• Journalists and researchers covering the Middle East and US-Iran conflict
+• Informed citizens who want more than talking heads
+
+──────────────────────────────
+WHY TRUST IT
+──────────────────────────────
+
+Most apps aggregate headlines. Epic Fury 2026 applies 31 years of operational naval experience as the intelligence filter — combined with modern AI to process, score, and synthesize open-source information at machine speed.
+
+When the Strait of Hormuz closes, when missiles are fired, when carrier groups reposition — you'll know why it matters and what comes next.
+
+──────────────────────────────
+PRIVACY & DATA
+──────────────────────────────
+
+Epic Fury 2026 uses only open-source, publicly available information. No classified data. No government affiliation. All analysis represents the independent professional judgment of the developer.
+
+Privacy Policy: https://epic-fury-2026.vercel.app/privacy
+Support: https://epic-fury-2026.vercel.app/support

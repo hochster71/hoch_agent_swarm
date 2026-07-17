@@ -1,191 +1,355 @@
 {
-  "factories": {
-    "HASF": {
-      "id": "HASF",
-      "name": "Hoch Agent Swarm Factory",
-      "product_types": ["swarm_agent", "control_plane_module", "runner_script"],
-      "intake_schema": {
-        "type": "object",
-        "properties": {
-          "agent_name": { "type": "string" },
-          "role_specification": { "type": "string" },
-          "permissions": { "type": "array", "items": { "type": "string" } }
-        },
-        "required": ["agent_name", "role_specification"]
-      },
-      "agent_roles": ["Mission Commander", "Architect", "Builder", "QA/Independent Verifier"],
-      "eligible_adapters": ["ollama", "gemini", "grok", "openai", "claude"],
-      "validators": ["py_compile", "pytest", "git_status_clean"],
-      "security_policy": "SANDBOX_STRICT",
-      "budget": {
-        "monthly_limit_usd": 150.0,
-        "per_task_limit_usd": 1.00
-      },
-      "concurrency": 2,
-      "artifact_locations": ["backend/swarm_agents/", "has_live_project_tracker/artifacts/"],
-      "doorstep_contract": "FOUNDER_SIGNATURE_REQUIRED",
-      "founder_only_gates": ["KEY_PROVISIONING", "RELEASE_PROMOTION", "DEPLOY_PRODUCTION"],
-      "health": "ACTIVE",
-      "readiness": "READY"
+ "factories": {
+  "HASF": {
+   "id": "HASF",
+   "name": "Hoch Agent Swarm Factory",
+   "product_types": [
+    "swarm_agent",
+    "control_plane_module",
+    "runner_script"
+   ],
+   "intake_schema": {
+    "type": "object",
+    "properties": {
+     "agent_name": {
+      "type": "string"
+     },
+     "role_specification": {
+      "type": "string"
+     },
+     "permissions": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
     },
-    "HSF": {
-      "id": "HSF",
-      "name": "Hoch Story Factory",
-      "product_types": ["story_script", "narrative_arc", "character_profile"],
-      "intake_schema": {
-        "type": "object",
-        "properties": {
-          "genre": { "type": "string" },
-          "outline": { "type": "string" }
-        },
-        "required": ["genre", "outline"]
-      },
-      "agent_roles": ["Story Specialist", "Editor", "Narrative Architect"],
-      "eligible_adapters": ["ollama", "gemini", "openai"],
-      "validators": ["markdown_lint", "narrative_consistency_check"],
-      "security_policy": "SANDBOX_STANDARD",
-      "budget": {
-        "monthly_limit_usd": 50.0,
-        "per_task_limit_usd": 0.20
-      },
-      "concurrency": 3,
-      "artifact_locations": ["docs/stories/", "scratch/stories/"],
-      "doorstep_contract": "NONE",
-      "founder_only_gates": [],
-      "health": "ACTIVE",
-      "readiness": "READY"
+    "required": [
+     "agent_name",
+     "role_specification"
+    ]
+   },
+   "agent_roles": [
+    "Mission Commander",
+    "Architect",
+    "Builder",
+    "QA/Independent Verifier"
+   ],
+   "eligible_adapters": [
+    "ollama",
+    "gemini",
+    "grok",
+    "openai",
+    "claude"
+   ],
+   "validators": [
+    "py_compile",
+    "pytest",
+    "git_status_clean"
+   ],
+   "security_policy": "SANDBOX_STRICT",
+   "budget": {
+    "monthly_limit_usd": 150.0,
+    "per_task_limit_usd": 1.0
+   },
+   "concurrency": 2,
+   "artifact_locations": [
+    "backend/swarm_agents/",
+    "has_live_project_tracker/artifacts/"
+   ],
+   "doorstep_contract": "FOUNDER_SIGNATURE_REQUIRED",
+   "founder_only_gates": [
+    "KEY_PROVISIONING",
+    "RELEASE_PROMOTION",
+    "DEPLOY_PRODUCTION"
+   ],
+   "health": "ACTIVE",
+   "readiness": "READY",
+   "readiness_basis": "manifest_rung=4_SELLABLE live_url=yes"
+  },
+  "HSF": {
+   "id": "HSF",
+   "name": "Hoch Story Factory",
+   "product_types": [
+    "story_script",
+    "narrative_arc",
+    "character_profile"
+   ],
+   "intake_schema": {
+    "type": "object",
+    "properties": {
+     "genre": {
+      "type": "string"
+     },
+     "outline": {
+      "type": "string"
+     }
     },
-    "HMF": {
-      "id": "HMF",
-      "name": "Hoch Music Factory",
-      "product_types": ["melody_midi", "chord_progression", "audio_synthesized"],
-      "intake_schema": {
-        "type": "object",
-        "properties": {
-          "tempo": { "type": "integer" },
-          "key": { "type": "string" }
-        },
-        "required": ["tempo", "key"]
-      },
-      "agent_roles": ["Composer", "Synthesizer", "Arranger"],
-      "eligible_adapters": ["ollama", "openai"],
-      "validators": ["midi_validity_check"],
-      "security_policy": "SANDBOX_STANDARD",
-      "budget": {
-        "monthly_limit_usd": 50.0,
-        "per_task_limit_usd": 0.30
-      },
-      "concurrency": 1,
-      "artifact_locations": ["docs/music/", "scratch/music/"],
-      "doorstep_contract": "NONE",
-      "founder_only_gates": [],
-      "health": "ACTIVE",
-      "readiness": "READY"
+    "required": [
+     "genre",
+     "outline"
+    ]
+   },
+   "agent_roles": [
+    "Story Specialist",
+    "Editor",
+    "Narrative Architect"
+   ],
+   "eligible_adapters": [
+    "ollama",
+    "gemini",
+    "openai"
+   ],
+   "validators": [
+    "markdown_lint",
+    "narrative_consistency_check"
+   ],
+   "security_policy": "SANDBOX_STANDARD",
+   "budget": {
+    "monthly_limit_usd": 50.0,
+    "per_task_limit_usd": 0.2
+   },
+   "concurrency": 3,
+   "artifact_locations": [
+    "docs/stories/",
+    "scratch/stories/"
+   ],
+   "doorstep_contract": "NONE",
+   "founder_only_gates": [],
+   "health": "UNKNOWN",
+   "readiness": "NOT_READY",
+   "readiness_basis": "manifest_rung=3_PRODUCTIZED_DEFINED_ONLY on_disk=False product=HSF_STORY_STUDIO"
+  },
+  "HMF": {
+   "id": "HMF",
+   "name": "Hoch Music Factory",
+   "product_types": [
+    "melody_midi",
+    "chord_progression",
+    "audio_synthesized"
+   ],
+   "intake_schema": {
+    "type": "object",
+    "properties": {
+     "tempo": {
+      "type": "integer"
+     },
+     "key": {
+      "type": "string"
+     }
     },
-    "HRF": {
-      "id": "HRF",
-      "name": "Hoch Research Factory",
-      "product_types": ["literature_synthesis", "patent_review", "technology_assessment"],
-      "intake_schema": {
-        "type": "object",
-        "properties": {
-          "query": { "type": "string" },
-          "sources": { "type": "array", "items": { "type": "string" } }
-        },
-        "required": ["query"]
-      },
-      "agent_roles": ["Researcher", "Evidence Auditor", "Synthesis Writer"],
-      "eligible_adapters": ["ollama", "gemini", "grok", "openai"],
-      "validators": ["fact_check_verifier"],
-      "security_policy": "SANDBOX_STRICT",
-      "budget": {
-        "monthly_limit_usd": 100.0,
-        "per_task_limit_usd": 0.50
-      },
-      "concurrency": 2,
-      "artifact_locations": ["docs/research/", "scratch/research/"],
-      "doorstep_contract": "NONE",
-      "founder_only_gates": [],
-      "health": "ACTIVE",
-      "readiness": "READY"
+    "required": [
+     "tempo",
+     "key"
+    ]
+   },
+   "agent_roles": [
+    "Composer",
+    "Synthesizer",
+    "Arranger"
+   ],
+   "eligible_adapters": [
+    "ollama",
+    "openai"
+   ],
+   "validators": [
+    "midi_validity_check"
+   ],
+   "security_policy": "SANDBOX_STANDARD",
+   "budget": {
+    "monthly_limit_usd": 50.0,
+    "per_task_limit_usd": 0.3
+   },
+   "concurrency": 1,
+   "artifact_locations": [
+    "docs/music/",
+    "scratch/music/"
+   ],
+   "doorstep_contract": "NONE",
+   "founder_only_gates": [],
+   "health": "PARTIAL",
+   "readiness": "DEGRADED",
+   "readiness_basis": "manifest_rung=2_BUILT_NOT_SELLABLE on_disk=True product=HMF_CUE_LIBRARY"
+  },
+  "HRF": {
+   "id": "HRF",
+   "name": "Hoch Research Factory",
+   "product_types": [
+    "literature_synthesis",
+    "patent_review",
+    "technology_assessment"
+   ],
+   "intake_schema": {
+    "type": "object",
+    "properties": {
+     "query": {
+      "type": "string"
+     },
+     "sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
     },
-    "HCF": {
-      "id": "HCF",
-      "name": "Hoch Cybersecurity Factory",
-      "product_types": ["hardening_patch", "threat_model", "vulnerability_report"],
-      "intake_schema": {
-        "type": "object",
-        "properties": {
-          "target_file": { "type": "string" },
-          "audit_log": { "type": "string" }
-        },
-        "required": ["target_file"]
-      },
-      "agent_roles": ["Security Auditor", "Hardening Builder", "Compliance Packager"],
-      "eligible_adapters": ["ollama", "gemini", "grok", "openai"],
-      "validators": ["static_analysis_scanner", "pytest"],
-      "security_policy": "SANDBOX_STRICT",
-      "budget": {
-        "monthly_limit_usd": 150.0,
-        "per_task_limit_usd": 0.80
-      },
-      "concurrency": 1,
-      "artifact_locations": ["docs/security/", "scratch/security/"],
-      "doorstep_contract": "FOUNDER_APPROVAL_REQUIRED_FOR_PATCH",
-      "founder_only_gates": ["APPLY_PATCH"],
-      "health": "ACTIVE",
-      "readiness": "READY"
+    "required": [
+     "query"
+    ]
+   },
+   "agent_roles": [
+    "Researcher",
+    "Evidence Auditor",
+    "Synthesis Writer"
+   ],
+   "eligible_adapters": [
+    "ollama",
+    "gemini",
+    "grok",
+    "openai"
+   ],
+   "validators": [
+    "fact_check_verifier"
+   ],
+   "security_policy": "SANDBOX_STRICT",
+   "budget": {
+    "monthly_limit_usd": 100.0,
+    "per_task_limit_usd": 0.5
+   },
+   "concurrency": 2,
+   "artifact_locations": [
+    "docs/research/",
+    "scratch/research/"
+   ],
+   "doorstep_contract": "NONE",
+   "founder_only_gates": [],
+   "health": "PARTIAL",
+   "readiness": "DEGRADED",
+   "readiness_basis": "manifest_rung=2_BUILT_NOT_SELLABLE on_disk=True product=HRF_CLARITY_BRIEFS"
+  },
+  "HCF": {
+   "id": "HCF",
+   "name": "Hoch Cybersecurity Factory",
+   "product_types": [
+    "hardening_patch",
+    "threat_model",
+    "vulnerability_report"
+   ],
+   "intake_schema": {
+    "type": "object",
+    "properties": {
+     "target_file": {
+      "type": "string"
+     },
+     "audit_log": {
+      "type": "string"
+     }
     },
-    "HFF": {
-      "id": "HFF",
-      "name": "Hoch Finance Factory",
-      "product_types": [],
-      "intake_schema": {},
-      "agent_roles": [],
-      "eligible_adapters": [],
-      "validators": [],
-      "security_policy": "SANDBOX_STRICT",
-      "budget": { "monthly_limit_usd": 0.0, "per_task_limit_usd": 0.0 },
-      "concurrency": 0,
-      "artifact_locations": [],
-      "doorstep_contract": "ALL_FOUNDER",
-      "founder_only_gates": ["ALL"],
-      "health": "UNKNOWN",
-      "readiness": "NOT_READY"
-    },
-    "HHF": {
-      "id": "HHF",
-      "name": "Hoch Humanity/Home Factory",
-      "product_types": [],
-      "intake_schema": {},
-      "agent_roles": [],
-      "eligible_adapters": [],
-      "validators": [],
-      "security_policy": "SANDBOX_STANDARD",
-      "budget": { "monthly_limit_usd": 0.0, "per_task_limit_usd": 0.0 },
-      "concurrency": 0,
-      "artifact_locations": [],
-      "doorstep_contract": "ALL_FOUNDER",
-      "founder_only_gates": ["ALL"],
-      "health": "UNKNOWN",
-      "readiness": "NOT_READY"
-    },
-    "HPF": {
-      "id": "HPF",
-      "name": "Hoch Pods Factory",
-      "product_types": [],
-      "intake_schema": {},
-      "agent_roles": [],
-      "eligible_adapters": [],
-      "validators": [],
-      "security_policy": "SANDBOX_STRICT",
-      "budget": { "monthly_limit_usd": 0.0, "per_task_limit_usd": 0.0 },
-      "concurrency": 0,
-      "artifact_locations": [],
-      "doorstep_contract": "ALL_FOUNDER",
-      "founder_only_gates": ["ALL"],
-      "health": "UNKNOWN",
-      "readiness": "NOT_READY"
-    }
+    "required": [
+     "target_file"
+    ]
+   },
+   "agent_roles": [
+    "Security Auditor",
+    "Hardening Builder",
+    "Compliance Packager"
+   ],
+   "eligible_adapters": [
+    "ollama",
+    "gemini",
+    "grok",
+    "openai"
+   ],
+   "validators": [
+    "static_analysis_scanner",
+    "pytest"
+   ],
+   "security_policy": "SANDBOX_STRICT",
+   "budget": {
+    "monthly_limit_usd": 150.0,
+    "per_task_limit_usd": 0.8
+   },
+   "concurrency": 1,
+   "artifact_locations": [
+    "docs/security/",
+    "scratch/security/"
+   ],
+   "doorstep_contract": "FOUNDER_APPROVAL_REQUIRED_FOR_PATCH",
+   "founder_only_gates": [
+    "APPLY_PATCH"
+   ],
+   "health": "PARTIAL",
+   "readiness": "DEGRADED",
+   "readiness_basis": "manifest_rung=3_SELLABLE_READY (staged \u2014 built, priced, checkout wired; one founder --go from live) on_disk=True product=HCF_CYBERQRG_AI"
+  },
+  "HFF": {
+   "id": "HFF",
+   "name": "Hoch Finance Factory",
+   "product_types": [],
+   "intake_schema": {},
+   "agent_roles": [],
+   "eligible_adapters": [],
+   "validators": [],
+   "security_policy": "SANDBOX_STRICT",
+   "budget": {
+    "monthly_limit_usd": 0.0,
+    "per_task_limit_usd": 0.0
+   },
+   "concurrency": 0,
+   "artifact_locations": [],
+   "doorstep_contract": "ALL_FOUNDER",
+   "founder_only_gates": [
+    "ALL"
+   ],
+   "health": "PARTIAL",
+   "readiness": "DEGRADED",
+   "readiness_basis": "manifest_rung=2_BUILT_NOT_SELLABLE on_disk=True product=HFF_RUNWAY_PACKET"
+  },
+  "HHF": {
+   "id": "HHF",
+   "name": "Hoch Humanity/Home Factory",
+   "product_types": [],
+   "intake_schema": {},
+   "agent_roles": [],
+   "eligible_adapters": [],
+   "validators": [],
+   "security_policy": "SANDBOX_STANDARD",
+   "budget": {
+    "monthly_limit_usd": 0.0,
+    "per_task_limit_usd": 0.0
+   },
+   "concurrency": 0,
+   "artifact_locations": [],
+   "doorstep_contract": "ALL_FOUNDER",
+   "founder_only_gates": [
+    "ALL"
+   ],
+   "health": "UNKNOWN",
+   "readiness": "NOT_READY"
+  },
+  "HPF": {
+   "id": "HPF",
+   "name": "Hoch Pods Factory",
+   "product_types": [],
+   "intake_schema": {},
+   "agent_roles": [],
+   "eligible_adapters": [],
+   "validators": [],
+   "security_policy": "SANDBOX_STRICT",
+   "budget": {
+    "monthly_limit_usd": 0.0,
+    "per_task_limit_usd": 0.0
+   },
+   "concurrency": 0,
+   "artifact_locations": [],
+   "doorstep_contract": "ALL_FOUNDER",
+   "founder_only_gates": [
+    "ALL"
+   ],
+   "health": "UNKNOWN",
+   "readiness": "NOT_READY"
   }
+ },
+ "republished_at": "2026-07-17T15:31:12Z",
+ "readiness_reconciled_at": "2026-07-17T12:57:42Z",
+ "readiness_doctrine": "health/readiness derived from coordination/products/products.json monetization rungs + on-disk source checks; READY is not stamped by identity alone (no fake green)"
 }

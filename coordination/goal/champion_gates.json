@@ -10,11 +10,11 @@
     {
       "blocker": null,
       "contributes": 1.0,
-      "detail": "build 8 VALID, selected=True, revalidated age=0.0h",
+      "detail": "build 8 VALID, selected=True, revalidated age=46.2h",
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 0.0,
+      "evidence_age_hours": 46.2,
       "gate": "BUILD",
       "status": "PASS"
     },
@@ -25,7 +25,7 @@
       "evidence": [
         "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
       ],
-      "evidence_age_hours": 63.9,
+      "evidence_age_hours": 110.1,
       "gate": "TEST",
       "status": "PASS"
     },
@@ -37,7 +37,7 @@
         "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
         "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md"
       ],
-      "evidence_age_hours": 156.3,
+      "evidence_age_hours": 202.4,
       "gate": "SECURITY",
       "status": "PASS"
     },
@@ -48,7 +48,7 @@
       "evidence": [
         "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json"
       ],
-      "evidence_age_hours": 193.5,
+      "evidence_age_hours": 239.7,
       "gate": "SIGNING_READINESS",
       "status": "PASS"
     },
@@ -59,7 +59,7 @@
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 0.0,
+      "evidence_age_hours": 46.2,
       "gate": "STORE_METADATA",
       "status": "PASS"
     },
@@ -70,7 +70,7 @@
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 0.0,
+      "evidence_age_hours": 46.2,
       "gate": "PRIVACY",
       "status": "PASS"
     },
@@ -82,27 +82,29 @@
         "has_live_project_tracker/data/epic_fury_release_ledger.json",
         "has_live_project_tracker/data/epic_fury_roi_model.json"
       ],
-      "evidence_age_hours": 0.0,
+      "evidence_age_hours": 46.2,
       "gate": "MONETIZATION",
       "status": "PASS"
     },
     {
-      "blocker": "requires App Store Connect access (founder-only credential)",
+      "blocker": "TestFlight build state read from App Store Connect",
       "contributes": 0.0,
-      "detail": "TestFlight state lives in App Store Connect. No local artifact records a current TestFlight build/tester state, and ASC credentials are NOT_PROVISIONED.",
-      "evidence": [],
+      "detail": "live App Store Connect read: APP_STORE_CONNECT_KEY_ID / ISSUER_ID not set",
+      "evidence": [
+        "asc:none"
+      ],
       "evidence_age_hours": null,
       "gate": "TESTFLIGHT",
       "status": "UNKNOWN"
     },
     {
-      "blocker": "requires App Store Connect read (founder-only credential)",
+      "blocker": "App Store review state read from App Store Connect",
       "contributes": 0.0,
-      "detail": "ledger claims state=WAITING_FOR_REVIEW submitted=2026-07-07T17:25:46Z. This is a 0.0h-old CLAIM in a local file, not a live reading. ASC credentials present: False. Apple may have approved or rejected since. The truthful state is UNKNOWN until App Store Connect is read.",
+      "detail": "live App Store Connect read: APP_STORE_CONNECT_KEY_ID / ISSUER_ID not set",
       "evidence": [
-        "has_live_project_tracker/data/epic_fury_release_ledger.json"
+        "asc:none"
       ],
-      "evidence_age_hours": 0.0,
+      "evidence_age_hours": null,
       "gate": "APP_STORE_CONNECT",
       "status": "UNKNOWN"
     },
@@ -124,8 +126,8 @@
   ],
   "gates_passed": 8,
   "gates_total": 10,
-  "generated_at": "2026-07-15T17:23:07.982615Z",
-  "ledger_age_hours": 0.0,
+  "generated_at": "2026-07-17T15:31:10.513872Z",
+  "ledger_age_hours": 46.2,
   "ledger_is_stale": false,
   "next_critical_path_gate": "TESTFLIGHT",
   "selection_evidence": "coordination/goal/champion_selection.json",

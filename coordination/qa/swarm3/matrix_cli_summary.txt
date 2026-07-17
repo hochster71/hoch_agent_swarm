@@ -1,0 +1,13 @@
+NIST matrix: {'COVERED': 8, 'PARTIAL': 4, 'UNVERIFIED': 0, 'total': 12}
+  [   COVERED] AU-9         AU-9 tamper-evident evidence chain (sha256 hash-chained ledger)
+  [   COVERED] AU-10        Founder decision chain-of-custody + HELM_SOURCE_HOLDER identity bindin
+  [   COVERED] CM-3 / SA-10 guarded_edit lease-before-write + .githooks pre-commit conflict detect
+  [   PARTIAL] CA-7         A/B/C soak seals + freshness gate (select_soak_package)
+  [   COVERED] AC-3 / IA-2  Founder token gate on writes (fail-closed, constant-time, PROPOSE_ONLY
+  [   PARTIAL] AC-3 / IA-2  Read-side (GET) authentication on the live API
+  [   COVERED] SC-7         AST-verified single egress chokepoint for all model dispatch
+  [   COVERED] AC-3         Scoped-state blocking (capability-scoped, not lane-wide)
+  [   PARTIAL] SI-4         Continuous monitoring surface with UNKNOWN guards, zero numeric fallba
+  [   COVERED] CP-10        SIGKILL restart recovery with monotonic fencing (proven, not structura
+  [   COVERED] RA-5         Static verifiers run against the codebase (egress, runtime-truth, taut
+  [   PARTIAL] SR-3         Tool/model provenance attestation, fail-closed on unattested dispatch

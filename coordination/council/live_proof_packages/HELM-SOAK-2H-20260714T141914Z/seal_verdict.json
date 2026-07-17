@@ -15,7 +15,7 @@
   "notes": [],
   "unrelated_work_continued_after_every_injection": true,
   "evaluator": "seal_soak_phase.py (independent of the runner that produced the evidence)",
-  "sealed_at": "2026-07-14T16:21:31Z",
+  "sealed_at": "2026-07-14T16:30:40Z",
   "next_phase_authorized": false,
   "24_7_status": "NOT YET PROVEN"
 }

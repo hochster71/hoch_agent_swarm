@@ -101,18 +101,36 @@ def a_sc07_boundary_protection() -> Dict[str, str]:
 
 
 def a_cm03_change_control() -> Dict[str, str]:
-    """CM-3 Configuration Change Control — evidence is bound to the exact commit."""
+    """CM-3 Configuration Change Control — evidence is bound to the exact commit.
+
+    Counts modified AND untracked code files (??). Excluding untracked previously
+    allowed a green CM-3 while remediation code existed only as untracked paths —
+    audit R-03/R-04 rejected that as fake green.
+    """
     try:
         h = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
                            capture_output=True, text=True, timeout=20).stdout.strip()
         dirty = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT,
                                capture_output=True, text=True, timeout=30).stdout
-        code_dirty = [l for l in dirty.splitlines()
-                      if l.endswith((".py", ".ts", ".tsx")) and not l.startswith("??")]
+        code_ext = (".py", ".ts", ".tsx", ".js", ".mjs", ".cjs", ".go", ".rs", ".swift")
+        code_dirty = []
+        for line in dirty.splitlines():
+            # porcelain: XY PATH or XY ORIG -> PATH; path starts at index 3
+            path = line[3:].strip() if len(line) > 3 else line
+            if " -> " in path:
+                path = path.split(" -> ", 1)[-1]
+            if path.endswith(code_ext):
+                code_dirty.append(line)
+        total_dirty = len([l for l in dirty.splitlines() if l.strip()])
         if code_dirty:
-            return _r(NOT_IMPLEMENTED, f"{len(code_dirty)} uncommitted CODE files",
+            return _r(NOT_IMPLEMENTED, f"{len(code_dirty)} uncommitted CODE files "
+                      f"({total_dirty} dirty paths total)",
                       "evidence cannot bind to a commit that does not contain the code under test")
-        return _r(IMPLEMENTED, f"HEAD {h[:8]}, 0 uncommitted code files",
+        if total_dirty > 0:
+            # Non-code dirty (json/md) still weakens commit binding for runtime truth.
+            return _r(NOT_IMPLEMENTED, f"0 code files dirty but {total_dirty} other uncommitted paths",
+                      "working tree not clean — evidence packages must pin a reproducible tree")
+        return _r(IMPLEMENTED, f"HEAD {h[:8]}, 0 uncommitted paths",
                   "every evidence package records tested_commit")
     except Exception as e:
         return _r(UNKNOWN, "git unavailable", str(e)[:120])

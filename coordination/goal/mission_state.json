@@ -5,25 +5,25 @@
     "champion_product": "EPIC_FURY_2026",
     "north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete."
   },
-  "computed_at": "2026-07-15T22:11:04.965826Z",
+  "computed_at": "2026-07-17T15:31:10.619709Z",
   "sources": {
     "goal_state": "coordination/goal/goal_state.json",
     "champion_gates": "coordination/goal/champion_gates.json",
     "control_posture": "coordination/security/helm_control_posture.json",
-    "goal_computed_at": "2026-07-15T22:11:04.925723Z",
+    "goal_computed_at": "2026-07-17T15:31:10.524672Z",
     "goal_age_hours": 0.0
   },
   "areas": {
     "Engineering": {
       "area": "Engineering",
-      "status": "VERIFIED",
-      "confidence": "High",
-      "detail": "agent CP 100.0% \u00b7 ES 100.0% (goal engine)",
+      "status": "PARTIAL",
+      "confidence": "Medium",
+      "detail": "agent CP 100.0% \u00b7 ES 80.0% (goal engine)",
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
       "evidence_age_hours": 0.0,
-      "score_pct": 100.0
+      "score_pct": 90.0
     },
     "Testing": {
       "area": "Testing",
@@ -33,26 +33,26 @@
       "evidence": [
         "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
       ],
-      "evidence_age_hours": 68.7
+      "evidence_age_hours": 110.1
     },
     "Security": {
       "area": "Security",
       "status": "VERIFIED",
-      "confidence": "High",
-      "detail": "champion SECURITY=PASS; NIST posture 100.0% open=0 high=0",
+      "confidence": "Medium",
+      "detail": "champion SECURITY=PASS; NIST posture 84.6% open=2 high=0",
       "evidence": [
         "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
         "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
         "coordination/security/helm_control_posture.json"
       ],
-      "evidence_age_hours": 161.1,
-      "posture_percent": 100.0
+      "evidence_age_hours": 202.4,
+      "posture_percent": 84.6
     },
     "Evidence": {
       "area": "Evidence",
-      "status": "VERIFIED",
-      "confidence": "High",
-      "detail": "GOV agent 100.0% \u00b7 evidence_coverage field 100.0",
+      "status": "PARTIAL",
+      "confidence": "Medium",
+      "detail": "GOV agent 48.0% \u00b7 evidence_coverage field 100.0",
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
@@ -70,9 +70,9 @@
     },
     "Apple Review": {
       "area": "Apple Review",
-      "status": "VERIFIED",
+      "status": "Waiting on Founder",
       "confidence": "Certain",
-      "detail": "TestFlight=PASS ASC=PASS",
+      "detail": "TestFlight=UNKNOWN ASC=UNKNOWN",
       "evidence": [],
       "evidence_age_hours": null
     },
@@ -89,9 +89,9 @@
     },
     "Overall Mission": {
       "area": "Overall Mission",
-      "status": "READY_INTERNAL",
+      "status": "BLOCKED_EXTERNAL",
       "confidence": "High",
-      "detail": "",
+      "detail": "REQ-GOV-002",
       "evidence": [],
       "evidence_age_hours": null
     }
@@ -99,8 +99,8 @@
   "dashboard": [
     {
       "area": "Engineering",
-      "status": "100.0%",
-      "confidence": "High"
+      "status": "90.0%",
+      "confidence": "Medium"
     },
     {
       "area": "Testing",
@@ -110,12 +110,12 @@
     {
       "area": "Security",
       "status": "VERIFIED",
-      "confidence": "High"
+      "confidence": "Medium"
     },
     {
       "area": "Evidence",
-      "status": "VERIFIED",
-      "confidence": "High"
+      "status": "PARTIAL",
+      "confidence": "Medium"
     },
     {
       "area": "Runtime Truth",
@@ -124,7 +124,7 @@
     },
     {
       "area": "Apple Review",
-      "status": "VERIFIED",
+      "status": "Waiting on Founder",
       "confidence": "Certain"
     },
     {
@@ -134,15 +134,15 @@
     },
     {
       "area": "Overall Mission",
-      "status": "READY_INTERNAL",
+      "status": "BLOCKED_EXTERNAL",
       "confidence": "High"
     }
   ],
   "critical_path": [
     {
       "name": "Engineering",
-      "status": "DONE",
-      "mark": "\u2713"
+      "status": "PENDING",
+      "mark": "\u00b7"
     },
     {
       "name": "Security",
@@ -151,42 +151,46 @@
     },
     {
       "name": "Evidence",
-      "status": "DONE",
-      "mark": "\u2713"
+      "status": "PENDING",
+      "mark": "\u00b7"
     },
     {
       "name": "Founder Review",
-      "status": "DONE",
-      "mark": "\u2713"
+      "status": "WAITING_FOUNDER",
+      "mark": "\u23f3"
     },
     {
       "name": "Apple Review",
-      "status": "DONE",
-      "mark": "\u2713"
+      "status": "WAITING_EXTERNAL",
+      "mark": "\u23f3"
     },
     {
       "name": "Production Release",
-      "status": "DONE",
-      "mark": "\u2713"
+      "status": "WAITING_EXTERNAL",
+      "mark": "\u23f3"
     }
   ],
   "approvals": {
     "founder": {
-      "status": "CLEAR",
-      "pending": [],
+      "status": "PENDING",
+      "pending": [
+        "REQ-TO-002",
+        "REQ-CP-TESTFLIGHT",
+        "REQ-CP-APP_STORE_CONNECT"
+      ],
       "confidence": "Certain"
     },
     "apple": {
-      "status": "VERIFIED",
-      "testflight": "PASS",
-      "app_store_connect": "PASS",
+      "status": "BLOCKED_EXTERNAL",
+      "testflight": "UNKNOWN",
+      "app_store_connect": "UNKNOWN",
       "confidence": "Certain",
       "detail": "Live Apple state requires founder credentials; local ledger claims are not re-verified here"
     }
   },
   "distribution": {
     "area": "Distribution",
-    "status": "VERIFIED",
+    "status": "BLOCKED_EXTERNAL",
     "confidence": "Certain",
     "detail": "Production distribution blocked until TestFlight + App Store Connect are founder-cleared",
     "evidence": [
@@ -207,27 +211,27 @@
   },
   "engineering": {
     "area": "Engineering",
-    "status": "VERIFIED",
-    "confidence": "High",
-    "detail": "agent CP 100.0% \u00b7 ES 100.0% (goal engine)",
+    "status": "PARTIAL",
+    "confidence": "Medium",
+    "detail": "agent CP 100.0% \u00b7 ES 80.0% (goal engine)",
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
     "evidence_age_hours": 0.0,
-    "score_pct": 100.0
+    "score_pct": 90.0
   },
   "security": {
     "area": "Security",
     "status": "VERIFIED",
-    "confidence": "High",
-    "detail": "champion SECURITY=PASS; NIST posture 100.0% open=0 high=0",
+    "confidence": "Medium",
+    "detail": "champion SECURITY=PASS; NIST posture 84.6% open=2 high=0",
     "evidence": [
       "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
       "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
       "coordination/security/helm_control_posture.json"
     ],
-    "evidence_age_hours": 161.1,
-    "posture_percent": 100.0
+    "evidence_age_hours": 202.4,
+    "posture_percent": 84.6
   },
   "testing": {
     "area": "Testing",
@@ -237,13 +241,13 @@
     "evidence": [
       "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
     ],
-    "evidence_age_hours": 68.7
+    "evidence_age_hours": 110.1
   },
   "evidence": {
     "area": "Evidence",
-    "status": "VERIFIED",
-    "confidence": "High",
-    "detail": "GOV agent 100.0% \u00b7 evidence_coverage field 100.0",
+    "status": "PARTIAL",
+    "confidence": "Medium",
+    "detail": "GOV agent 48.0% \u00b7 evidence_coverage field 100.0",
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
@@ -260,17 +264,19 @@
     "evidence_age_hours": 0.0
   },
   "overall": {
-    "status": "READY_INTERNAL",
+    "status": "BLOCKED_EXTERNAL",
     "confidence": "High",
-    "blocker": null,
+    "blocker": "REQ-GOV-002",
     "next": {
-      "id": null
+      "id": "REQ-GOV-002",
+      "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible.",
+      "why": "highest-weight unresolved BLOCKING requirement on the canonical critical path that an agent can act on"
     }
   },
   "metrics_snapshot": {
     "north_star_completion": 100.0,
     "champion_product_completion": 100.0,
-    "autonomous_execution_coverage": 100.0,
+    "autonomous_execution_coverage": 81.2,
     "evidence_coverage": 100.0
   },
   "doctrine": [

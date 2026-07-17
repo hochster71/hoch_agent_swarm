@@ -134,9 +134,10 @@
       "vercel_project_name": "UNKNOWN",
       "live_url": "UNKNOWN",
       "health_check": "N/A yet.",
-      "source_of_truth": "UNKNOWN — no product build or spec file found on disk this pass (searched clarity/research). Exists only as moonshot mission MOON-HRF-01 (rung 2->3).",
+      "source_dir": "products/hrf-clarity-briefs",
+      "source_of_truth": "products/hrf-clarity-briefs (engine + public present; not sellable live). Spec also at docs if any.",
       "monetization_rung": "2_BUILT_NOT_SELLABLE",
-      "notes": "Defined only in the 8-factory moonshot manifest. No code, price, or checkout located. Founder gate: KEYS/DEPLOY when spec is ready."
+      "notes": "Source on disk in monorepo; no live checkout/Stripe. Founder gate: price + keys + deploy when ready."
     },
     {
       "product_id": "HFF_RUNWAY_PACKET",
@@ -155,9 +156,10 @@
       "vercel_project_name": "UNKNOWN",
       "live_url": "UNKNOWN (no checkout built)",
       "health_check": "N/A yet.",
-      "source_of_truth": "docs/factories/products/HFF_runway.md (mission spec only). No app/checkout on disk.",
-      "monetization_rung": "3_PRODUCTIZED_DEFINED_ONLY",
-      "notes": "Product DEFINITION only (name + $15/mo). Guardrail: organizational tooling only, NOT financial/tax/investment advice. Moonshot MOON-HFF-01 rung 0->2. $0 earned."
+      "source_dir": "products/hff-runway",
+      "source_of_truth": "products/hff-runway (engine + api + tests on disk; companion products/hff-invoice-aging). Not sellable live.",
+      "monetization_rung": "2_BUILT_NOT_SELLABLE",
+      "notes": "Code on disk; Stripe/live URL not wired. Guardrail: organizational tooling only, NOT financial/tax/investment advice. $0 earned."
     },
     {
       "product_id": "HMF_CUE_LIBRARY",
@@ -176,9 +178,10 @@
       "vercel_project_name": "UNKNOWN",
       "live_url": "UNKNOWN (no checkout built)",
       "health_check": "N/A yet.",
-      "source_of_truth": "docs/factories/products/HMF_cue_library.md (mission spec only). No app/checkout on disk.",
-      "monetization_rung": "3_PRODUCTIZED_DEFINED_ONLY",
-      "notes": "Product DEFINITION only (name + $9/mo). Guardrail: instrumental-first, license-cleared, no vocal/voice-likeness. Moonshot MOON-HMF-01 rung 0->2 (one-time pack). $0 earned."
+      "source_dir": "products/hmf-cue-library",
+      "source_of_truth": "products/hmf-cue-library (engine + tests; audio catalog intentionally PLACEHOLDER / empty cues by design).",
+      "monetization_rung": "2_BUILT_NOT_SELLABLE",
+      "notes": "Code on disk; ships zero audio by design until founder supplies cues. No live checkout. $0 earned."
     }
   ],
   "non_monetized_factories": {

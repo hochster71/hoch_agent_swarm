@@ -1,20 +1,20 @@
 {
   "schema": "HELM_E2E_VALIDATION_REPORT_v1",
-  "updated_at": "2026-07-14T14:33:45Z",
+  "updated_at": "2026-07-14T16:23:00Z",
   "executive_verdict": "HOLD",
   "why_not_pass": [
-    "Clean Phase A not sealed",
-    "Phase B/C not run",
+    "Phase A completed with SOAK_PHASE_A_FAIL (unexplained residue / stranded lock files on disk)",
+    "Phase B/C blocked",
     "No independent full seal",
     "No verified external revenue",
-    "Cloud cutover not complete on this host"
+    "Cloud cutover blocked"
   ],
-  "positive_midflight": {
+  "completed_run": {
     "phase_a_package": "HELM-SOAK-2H-20260714T141914Z",
     "pid": 17876,
-    "auth_binding": "52/52 ACQUIRED fully bound (sample at ~14m)",
-    "release_honesty": "all RELEASED have lock_file_removed=true",
-    "jspace_auto_quarantine": "disabled"
+    "verdict": "SOAK_PHASE_A_FAIL",
+    "cycles": 129,
+    "stranded_lock_files": ["SOAK-HSF-31", "SOAK-HRF-24", "SOAK-HSF-24", "SOAK-HASF-116"]
   },
-  "forensics": "coordination/forensics/HELM_E2E_CLOSURE_20260714T143237Z"
+  "forensics": "coordination/forensics/PHASE_A_141914Z_COMPLETED_FAIL.json"
 }
