@@ -1,14 +1,14 @@
 {
   "active_alerts": 1,
   "contained_findings": 1,
-  "cycle_id": "JCYC-20260717-3949C9",
+  "cycle_id": "JCYC-20260717-2C9A38",
   "governance": {
     "authorizing_policy_id": null,
     "automatic_quarantine_enabled": false,
     "orphan_lease_hygiene": "manual_approval"
   },
-  "health_digest": "ff950ef033402ea7939c8e92f631b92ac524357603d24fc538e01834b684586f",
-  "historical_findings": 5930,
+  "health_digest": "1b9d39c771fa5260ff710c08937c44c125a545fe48fcd912f07f003e391441fc",
+  "historical_findings": 5948,
   "mutation_truth": {
     "authoritative_state_mutated": false,
     "containment_authorized": false,
@@ -17,7 +17,7 @@
     "containment_state_mutated": false,
     "observation_state_mutated": false
   },
-  "observed_at": "2026-07-17T16:24:58Z",
+  "observed_at": "2026-07-17T16:33:58Z",
   "observer_counts": {
     "CONFIRMED_LIVE": 11,
     "CONTRADICTED": 1
@@ -27,12 +27,12 @@
   "promotion_authority": "NONE",
   "recommended_action": "WITHHOLD_PROMOTION",
   "schema": "JSPACE_HEALTH_v1",
-  "unresolved_findings": 5929,
+  "unresolved_findings": 5947,
   "worst_findings": [
     {
       "assessment": "CONTRADICTED",
       "detail": "Runtime pointer declares a ledger path that does not exist.",
-      "observation_id": "JOBS-20260717-F3D0FD",
+      "observation_id": "JOBS-20260717-7E45CF",
       "observer": "jspace_evidence_auditor",
       "recommended_action": "WITHHOLD_PROMOTION",
       "subject": "canonical_lease_ledger"

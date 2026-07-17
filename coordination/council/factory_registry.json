@@ -349,7 +349,7 @@
    "readiness": "NOT_READY"
   }
  },
- "republished_at": "2026-07-17T16:24:21Z",
+ "republished_at": "2026-07-17T16:33:25Z",
  "readiness_reconciled_at": "2026-07-17T12:57:42Z",
  "readiness_doctrine": "health/readiness derived from coordination/products/products.json monetization rungs + on-disk source checks; READY is not stamped by identity alone (no fake green)"
 }

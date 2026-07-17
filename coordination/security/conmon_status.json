@@ -1,0 +1,13 @@
+{
+  "schema": "HELM_CONMON_STATUS_v1",
+  "ran_at": "2026-07-17T16:31:39Z",
+  "framework": "NIST SP 800-53 Rev. 5",
+  "conmon_standard": "NIST SP 800-137",
+  "posture_percent": 84.6,
+  "controls_assessed": 13,
+  "implemented": 11,
+  "not_implemented": 2,
+  "unknown": 0,
+  "open_findings": 2,
+  "high_findings": 0
+}

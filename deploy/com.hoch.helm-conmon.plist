@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- HELM Continuous Monitoring (ConMon) — runs the posture assessment every 30 min.
+     Install (founder):
+       cp deploy/com.hoch.helm-conmon.plist ~/Library/LaunchAgents/
+       launchctl load ~/Library/LaunchAgents/com.hoch.helm-conmon.plist
+     Emits evidence only (conmon_status.json); never commits (EDR-0005). -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.hoch.helm-conmon</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/Users/michaelhoch/hoch_agent_swarm/scripts/run_conmon.py</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/michaelhoch/hoch_agent_swarm</string>
+  <key>StartInterval</key><integer>1800</integer>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>/tmp/helm-conmon.out.log</string>
+  <key>StandardErrorPath</key><string>/tmp/helm-conmon.err.log</string>
+</dict>
+</plist>
