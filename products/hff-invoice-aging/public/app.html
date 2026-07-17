@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate your Invoice Aging report</title>
+  <style>
+    :root { --ink:#12233a; --muted:#546981; --bg:#f3f6fb; --accent:#2563c9; --line:#dbe4f0; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.55; }
+    .wrap { max-width:760px; margin:0 auto; padding:56px 24px 96px; }
+    h1 { font-size:30px; margin:0 0 8px; }
+    .muted { color:var(--muted); }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:24px; margin:20px 0; }
+    label { display:block; font-weight:700; margin:14px 0 6px; }
+    input[type=text], textarea { width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+      font-size:14px; font-family:inherit; }
+    textarea { min-height:150px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .row > div { flex:1; min-width:180px; }
+    button { appearance:none; border:0; cursor:pointer; font-weight:700; font-size:16px;
+      padding:13px 20px; border-radius:12px; background:var(--accent); color:#fff; margin-top:18px; }
+    button:disabled { opacity:.6; cursor:progress; }
+    .dl { display:inline-block; margin:8px 12px 0 0; padding:11px 16px; border-radius:10px;
+      background:#0f9d67; color:#fff; font-weight:700; text-decoration:none; }
+    #msg { min-height:20px; margin-top:10px; font-size:14px; }
+    .err { color:#b23; } .ok { color:#0a7d4d; }
+    .banner { background:#fff7e6; border:1px solid #f2d999; color:#7a5a12; border-radius:12px;
+      padding:12px 14px; font-size:13px; margin-top:18px; }
+    table { border-collapse:collapse; width:100%; margin-top:14px; font-size:14px; }
+    th,td { border:1px solid var(--line); padding:6px 8px; text-align:right; }
+    th:first-child, td:first-child { text-align:left; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Generate your Invoice Aging report</h1>
+    <p class="muted">Paste your accounts-receivable / invoice CSV (or upload a .csv file). We detect common
+      columns automatically: customer, due date, and amount or balance.</p>
+
+    <div class="card">
+      <label for="sid">Purchase reference (session_id)</label>
+      <input type="text" id="sid" placeholder="cs_… (filled automatically after purchase)" />
+
+      <label for="file">Upload invoice CSV</label>
+      <input type="file" id="file" accept=".csv,text/csv" />
+
+      <label for="csv">…or paste CSV here</label>
+      <textarea id="csv" placeholder="Invoice,Customer,Due Date,Amount,Amount Paid&#10;INV-1001,Acme Corp,2026-03-31,4200,0"></textarea>
+
+      <div class="row">
+        <div>
+          <label for="asof">As-of date (optional)</label>
+          <input type="text" id="asof" placeholder="YYYY-MM-DD (defaults to latest due date)" />
+        </div>
+      </div>
+
+      <button id="gen">Generate report</button>
+      <div id="msg"></div>
+      <div id="downloads"></div>
+      <div id="preview"></div>
+    </div>
+
+    <div class="banner">
+      <strong>Organizational tooling only.</strong> Not financial, collections, or legal advice.
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.get('session_id')) document.getElementById('sid').value = params.get('session_id');
+
+    const fileEl = document.getElementById('file');
+    const csvEl = document.getElementById('csv');
+    fileEl.addEventListener('change', () => {
+      const f = fileEl.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => { csvEl.value = reader.result; };
+      reader.readAsText(f);
+    });
+
+    function b64ToBlob(b64, type) {
+      const bin = atob(b64); const len = bin.length; const arr = new Uint8Array(len);
+      for (let i = 0; i < len; i++) arr[i] = bin.charCodeAt(i);
+      return new Blob([arr], { type });
+    }
+    function money(n){ return '$' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+    document.getElementById('gen').addEventListener('click', async () => {
+      const btn = document.getElementById('gen');
+      const msg = document.getElementById('msg');
+      const dl = document.getElementById('downloads');
+      const pv = document.getElementById('preview');
+      msg.textContent = ''; msg.className = ''; dl.innerHTML = ''; pv.innerHTML = '';
+      const csv = csvEl.value.trim();
+      const session_id = document.getElementById('sid').value.trim();
+      const asOf = document.getElementById('asof').value.trim();
+      if (!csv) { msg.textContent = 'Paste or upload a CSV first.'; msg.className = 'err'; return; }
+      btn.disabled = true; msg.textContent = 'Generating…';
+      try {
+        const body = { csv, session_id };
+        if (asOf) body.profile = { as_of: asOf };
+        const r = await fetch('/api/generate-report', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        });
+        const data = await r.json();
+        if (!r.ok || !data.ok) { msg.textContent = data.message || 'Could not generate report.'; msg.className = 'err'; btn.disabled = false; return; }
+
+        msg.textContent = 'Done. Total outstanding ' + money(data.summary.totalOutstanding) +
+          ' across ' + data.summary.outstandingInvoices + ' invoices (as of ' + (data.summary.asOf||'n/a') + ').';
+        msg.className = 'ok';
+
+        const xlsxBlob = b64ToBlob(data.files.xlsxBase64, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        const pdfBlob = b64ToBlob(data.files.pdfBase64, 'application/pdf');
+        const ax = document.createElement('a'); ax.className='dl'; ax.href = URL.createObjectURL(xlsxBlob); ax.download = data.files.xlsxName; ax.textContent = 'Download XLSX';
+        const ap = document.createElement('a'); ap.className='dl'; ap.href = URL.createObjectURL(pdfBlob); ap.download = data.files.pdfName; ap.textContent = 'Download PDF';
+        dl.appendChild(ax); dl.appendChild(ap);
+
+        let html = '<table><tr><th>Aging bucket</th><th>Balance</th><th>Invoices</th></tr>';
+        for (const b of data.summary.buckets) html += '<tr><td>'+b.label+'</td><td>'+money(b.balance)+'</td><td>'+b.count+'</td></tr>';
+        html += '</table>';
+        pv.innerHTML = html;
+      } catch (e) {
+        msg.textContent = 'Request failed. Please try again.'; msg.className = 'err';
+      }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>

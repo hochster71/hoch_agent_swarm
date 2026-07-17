@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Aging Snapshot — Who owes you, and how late</title>
+  <style>
+    :root { --ink:#12233a; --muted:#546981; --bg:#f3f6fb; --accent:#2563c9; --line:#dbe4f0; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.55; }
+    .wrap { max-width:720px; margin:0 auto; padding:64px 24px 96px; }
+    .kicker { text-transform:uppercase; letter-spacing:.12em; font-size:13px; color:var(--accent); font-weight:700; }
+    h1 { font-size:40px; line-height:1.1; margin:12px 0 16px; }
+    .lede { font-size:19px; color:var(--muted); margin:0 0 32px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:28px; margin:20px 0;
+      box-shadow:0 1px 3px rgba(18,35,58,.05); }
+    .price { font-size:32px; font-weight:800; }
+    .price span { font-size:16px; font-weight:500; color:var(--muted); }
+    .list { padding-left:20px; margin:16px 0 0; color:var(--muted); }
+    .list li { margin:6px 0; }
+    button { appearance:none; border:0; cursor:pointer; font-weight:700; font-size:16px;
+      padding:14px 22px; border-radius:12px; background:var(--accent); color:#fff; width:100%; margin-top:20px; }
+    button:disabled { opacity:.6; cursor:progress; }
+    .banner { background:#fff7e6; border:1px solid #f2d999; color:#7a5a12; border-radius:12px;
+      padding:14px 16px; font-size:14px; margin-top:24px; }
+    #msg { font-size:14px; color:#b23; min-height:20px; margin-top:8px; }
+    footer { margin-top:48px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">HFF · Invoice Aging</p>
+    <h1>See who owes you — and how overdue they are.</h1>
+    <p class="lede">Upload your accounts-receivable / invoice CSV and get a clean 30/60/90 aging report and a
+      who-owes-what summary, as an XLSX workbook and a one-page PDF. Built for freelancers and small shops
+      chasing unpaid invoices without accounting software.</p>
+
+    <div class="card">
+      <div class="price">$9<span> · one-time</span></div>
+      <ul class="list">
+        <li>30/60/90-day aging buckets (Current, 1–30, 31–60, 61–90, 90+)</li>
+        <li>Who-owes-what summary rolled up by customer</li>
+        <li>Per-invoice detail with days past due</li>
+        <li>Clean XLSX workbook + one-page PDF snapshot</li>
+        <li>Works with common bank / invoicing CSV exports</li>
+      </ul>
+      <button id="buy">Get my aging report — $9</button>
+      <p style="text-align:center;margin:14px 0 0;font-size:14px;">
+        Already purchased? <a href="/app.html" style="color:var(--accent);font-weight:700;">Generate your report →</a>
+      </p>
+    </div>
+
+    <div id="msg"></div>
+
+    <div class="banner">
+      <strong>Organizational tooling only.</strong> This report organizes your own numbers to show which
+      invoices are outstanding and how old they are. It is <strong>not</strong> financial, collections, or
+      legal advice, and it does not contact anyone or collect anything for you.
+    </div>
+
+    <footer>HFF — Invoice Aging Snapshot. Your CSV is processed to generate your report and is not sold or shared.</footer>
+  </div>
+
+  <script>
+    const btn = document.getElementById('buy');
+    const msg = document.getElementById('msg');
+    btn.addEventListener('click', async () => {
+      btn.disabled = true; msg.textContent = '';
+      try {
+        const r = await fetch('/api/create-checkout-session', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier: 'report' }),
+        });
+        const data = await r.json();
+        if (r.ok && data.url) { window.location.href = data.url; return; }
+        msg.textContent = data.message || 'Checkout is not available yet.';
+      } catch (e) {
+        msg.textContent = 'Could not reach checkout. Please try again.';
+      }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>

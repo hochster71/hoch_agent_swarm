@@ -1,0 +1,8 @@
+Number,Client,Due,Balance Due,Status
+A-77,Northwind Traders,2026-04-15,5000.00,Open
+A-78,Northwind Traders,2026-05-15,0,Paid
+A-79,Contoso Ltd,2026-03-01,12000.00,Open
+A-80,Contoso Ltd,2026-06-30,3400.00,Open
+A-81,Fabrikam Inc,2026-02-01,880.00,Open
+A-82,Fabrikam Inc,2026-07-10,0,Void
+A-83,Litware Inc,2026-07-25,1500.00,Open

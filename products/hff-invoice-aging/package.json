@@ -1,0 +1,13 @@
+{
+  "name": "hff-invoice-aging",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HFF — Invoice Aging Snapshot: deterministic AR/invoice CSV -> 30/60/90 aging report + who-owes-what summary (XLSX + one-page PDF) + Stripe one-time checkout scaffold. Organizational tooling only, not advice.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "stripe": "^16.0.0"
+  }
+}

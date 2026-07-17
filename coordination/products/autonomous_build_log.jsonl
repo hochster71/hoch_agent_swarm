@@ -1,0 +1,1 @@
+{"ts":"2026-07-17T11:17:32.748Z","product_id":"HFF_INVOICE_AGING","factory":"HFF","tests":"48 engine + 10 buyloop","result":"PASS","founder_gate":"create $9 one-time Stripe price + set env (STRIPE_SECRET_KEY/STRIPE_PRICE_REPORT/STRIPE_WEBHOOK_SECRET/BASE_URL) + deploy via scripts/factory_deploy.sh"}

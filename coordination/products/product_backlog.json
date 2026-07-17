@@ -1,0 +1,64 @@
+{
+  "schema": "HELM_PRODUCT_BACKLOG_v1",
+  "note": "Candidate products the autonomous factory loop builds to CODE-COMPLETE (doorstep), one per run, in priority order. Founder gates (deploy/keys/money/publish) are never crossed autonomously. The loop may also append new candidates it generates, honoring each factory's guardrail.",
+  "candidates": [
+    {
+      "id": "HFF_INVOICE_AGING",
+      "factory": "HFF",
+      "name": "Invoice Aging Snapshot",
+      "what_it_is": "Upload an AR/invoice CSV -> a clean 30/60/90 aging report + who-owes-what summary as XLSX + one-page PDF. Organizational tooling only.",
+      "buyer": "Freelancers and small shops chasing unpaid invoices without accounting software.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "guardrail": "organizational tooling only; no financial/collections advice",
+      "status": "BUILT",
+      "slug": "hff-invoice-aging",
+      "built_at": "2026-07-17",
+      "tests": "48 engine + 10 buyloop, all pass"
+    },
+    {
+      "id": "HCF_PHISH_CHECKER",
+      "factory": "HCF",
+      "name": "Link & QR Safety Report",
+      "what_it_is": "Paste a URL or upload a QR image -> an offline heuristic safety report (redirect chain, punycode/homoglyph, known-bad patterns, TLS surface). Clearly labeled heuristic, not a guarantee.",
+      "buyer": "Cautious consumers and small-biz owners vetting a link before clicking.",
+      "price_usd": 5,
+      "billing": "one_time",
+      "guardrail": "heuristic only; never claim certainty; no real-world security decision advice",
+      "status": "BACKLOG"
+    },
+    {
+      "id": "HRF_COMPLIANCE_DIGEST",
+      "factory": "HRF",
+      "name": "Compliance Change Digest",
+      "what_it_is": "Given provided regulatory/source docs -> a cited plain-English digest of what changed, who it affects, and an explicit uncertainty section. Citation-per-claim enforced.",
+      "buyer": "Small compliance/ops teams tracking rule changes without a research staff.",
+      "price_usd": 12,
+      "billing": "monthly",
+      "guardrail": "information not legal advice; every claim cited; uncertainty section mandatory",
+      "status": "BACKLOG"
+    },
+    {
+      "id": "HMF_PODCAST_STINGS",
+      "factory": "HMF",
+      "name": "Podcast Intro & Transition Sting Pack",
+      "what_it_is": "Themed packs of short instrumental stings/transitions with an attached usage license. License-gated delivery. Founder supplies cleared audio.",
+      "buyer": "Independent podcasters needing cheap, license-clean audio furniture.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "guardrail": "instrumental-only; no vocals/voice-likeness; license-gate mandatory; no fabricated audio",
+      "status": "BACKLOG"
+    },
+    {
+      "id": "HSF_COLORING_EXPORT",
+      "factory": "HSF",
+      "name": "Coloring Book Export",
+      "what_it_is": "Turn an in-browser created story into a printable line-art coloring PDF; pay to export watermark-free. Child-safe.",
+      "buyer": "Parents and teachers wanting a printable activity from a story.",
+      "price_usd": 7,
+      "billing": "one_time",
+      "guardrail": "child-facing -> safe content; watermark-free only after purchase",
+      "status": "BACKLOG"
+    }
+  ]
+}
