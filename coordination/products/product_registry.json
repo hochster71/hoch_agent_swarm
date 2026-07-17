@@ -194,6 +194,29 @@
       "real_vs_stub": "REAL: catalog load/validate/preview, per-pack license-gate + instrumental-only policy gate, license generation, dependency-free ZIP packager, checkout/webhook/entitlement/gated delivery, storefront+delivery UI. STUB/by-design: NO fabricated audio — every pack is available:false with non-existent track files; founder must drop license-cleared instrumental-only stings into stings/<pack_id>/ and flip available:true; no live Stripe account/price/keys, no deploy; buy-loop tests MOCK stripe and use a temp JSON store.",
       "rung_note": "NO FAKE GREEN. Code-complete to the doorstep and fully tested. $0 earned, no checkout live, no real audio yet. Founder go-live: (1) load license-cleared instrumental stings + flip pack available:true; (2) create a $9 one-time Stripe price; (3) set STRIPE_SECRET_KEY / STRIPE_PRICE_STING / STRIPE_WEBHOOK_SECRET / BASE_URL; (4) deploy via scripts/factory_deploy.sh. Inert (501) until keys set; entitled buyers of an unavailable pack get 503 no_audio_yet — never fake audio.",
       "guardrail": "instrumental-only; no vocals/voice-likeness; license-gate mandatory; no fabricated audio (all enforced by the fail-closed policy gate + placeholder catalog)"
+    },
+    {
+      "product_id": "HSF_COLORING_EXPORT",
+      "factory": "HSF",
+      "name": "Coloring Book Export",
+      "slug": "hsf-coloring-export",
+      "what_it_is": "Turn a Story Studio story into a printable line-art coloring book PDF: cover + one deterministic vector drawing per scene (outlined colorable headings, read-aloud caption) + a 'colored by' certificate back page. Free preview is ALWAYS watermarked; $7 one-time unlocks watermark-free export for that story session. Child-safe by design (fail-closed safety gate).",
+      "buyer": "Parents and teachers wanting a printable activity from a story.",
+      "price_usd": 7,
+      "billing": "one_time",
+      "merchant_of_record": "stripe_managed_payments",
+      "checkout_url": null,
+      "checkout_blocked_by": "no live Stripe account/price/keys and no deploy yet; code-complete at products/hsf-coloring-export/. Founder go-live only.",
+      "entitlement_source": "signed Stripe webhook (checkout.session.completed) -> per-session entitlement (sess:<id>) via lib/store.js (@vercel/kv when env present, in-memory fallback otherwise)",
+      "revenue_gross_usd": 0,
+      "revenue_settled_usd": 0,
+      "revenue_state": "NOT_STARTED",
+      "monetization_rung": "3_PRODUCTIZED_CODE_COMPLETE",
+      "built_at": "2026-07-17",
+      "tests": "14 engine assertions (normalization via vendored story engine, fail-closed child-safety gate incl. title scan + paid exports, valid multi-page PDF envelope, deterministic bytes, watermark on every page unless strict-boolean watermarkFree, escaping hardened vs hostile story text) + 11 mocked buy-loop tests, all pass (node v22, no install, no network).",
+      "real_vs_stub": "REAL: story normalization (spec via vendored hsf/story-engine.js + direct scenes path), fail-closed child-safety gate, deterministic vector line-art motif library, dependency-free multi-page PDF renderer, watermark guardrail, checkout/webhook/entitlement/gated delivery, landing+studio+success UI. STUB/by-design: line-art comes from a fixed motif library keyed to the story arc (real vector art, NOT an illustration of the user's specific text; no image model); safety gate is keyword-based, not semantic; no live Stripe account/price/keys, no deploy; buy-loop tests MOCK stripe and run store in-memory.",
+      "rung_note": "NO FAKE GREEN. Code-complete to the doorstep and fully tested (real pass output recorded in autonomous_build_log.jsonl). $0 earned, no checkout live. Only a founder deploy remains: create a $7 one-time Stripe price, set STRIPE_SECRET_KEY / STRIPE_PRICE_EXPORT / STRIPE_WEBHOOK_SECRET / BASE_URL (+ optional Vercel KV) in Vercel env, then deploy via scripts/factory_deploy.sh. Inert (501) on paid paths until keys set; free preview stays watermarked always.",
+      "guardrail": "child-facing -> fail-closed safety gate on every rendered string (applies to paid exports too); watermark-free only after purchase (strict-boolean gate behind entitlement)"
     }
   ],
   "non_monetized_factories": {

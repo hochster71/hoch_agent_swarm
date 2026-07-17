@@ -67,7 +67,10 @@
       "price_usd": 7,
       "billing": "one_time",
       "guardrail": "child-facing -> safe content; watermark-free only after purchase",
-      "status": "BACKLOG"
+      "status": "BUILT",
+      "slug": "hsf-coloring-export",
+      "built_at": "2026-07-17",
+      "tests": "14 engine + 11 buyloop, all pass (node v22)"
     }
   ]
 }

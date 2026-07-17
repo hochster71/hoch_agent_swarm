@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payment received — Coloring Book Export</title>
+<style>
+  body { font-family: Georgia, serif; background: #fffdf7; color: #1f2437; display: grid; place-items: center; min-height: 100vh; text-align: center; padding: 24px; }
+  .box { max-width: 520px; }
+  h1 { font-size: 32px; margin-bottom: 12px; }
+  p { color: #6b7280; line-height: 1.6; }
+  a.btn { display: inline-block; margin-top: 24px; background: #f59e0b; color: #fff; text-decoration: none; font-family: Verdana, sans-serif; font-weight: bold; padding: 13px 28px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>🎨 Payment received!</h1>
+  <p>Thanks — your watermark-free export is unlocked for this purchase. Head back to the studio; your session is attached automatically and the export button will light up.</p>
+  <p id="sid" style="font-size:12px;"></p>
+  <a class="btn" id="back" href="app.html">Export my coloring book</a>
+</div>
+<script>
+  var params = new URLSearchParams(location.search);
+  var sid = params.get('session_id');
+  if (sid) {
+    document.getElementById('sid').textContent = 'Receipt session: ' + sid;
+    document.getElementById('back').href = 'app.html?session_id=' + encodeURIComponent(sid);
+    try { localStorage.setItem('coloring_session_id', sid); } catch (e) {}
+  }
+</script>
+</body>
+</html>

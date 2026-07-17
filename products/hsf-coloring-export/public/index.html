@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coloring Book Export — turn your story into a printable coloring book</title>
+<meta name="description" content="Turn your Story Studio story into a printable line-art coloring book PDF. Free watermarked preview; $7 one-time for a watermark-free export. Child-safe by design.">
+<style>
+  :root { --ink:#1f2437; --paper:#fffdf7; --accent:#f59e0b; --accent2:#38bdf8; --soft:#6b7280; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: var(--paper); color: var(--ink); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 24px; }
+  header { text-align: center; padding: 56px 16px 32px; }
+  .kicker { font-family: Verdana, sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-size: 42px; margin: 12px 0; }
+  .sub { font-size: 19px; color: var(--soft); max-width: 620px; margin: 0 auto; }
+  .cta { display: inline-block; margin-top: 28px; background: var(--accent); color: #fff; text-decoration: none; font-family: Verdana, sans-serif; font-weight: bold; padding: 14px 30px; border-radius: 999px; font-size: 16px; }
+  .cta.ghost { background: transparent; color: var(--ink); border: 2px solid var(--ink); margin-left: 10px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 18px; margin: 44px 0; }
+  .card { background: #fff; border: 2px solid #eadfc8; border-radius: 14px; padding: 22px; }
+  .card h3 { font-size: 18px; margin-bottom: 8px; }
+  .card p { font-size: 15px; color: var(--soft); }
+  .price { text-align: center; background: #fff; border: 3px solid var(--ink); border-radius: 18px; padding: 36px 24px; margin: 32px 0; }
+  .price .amount { font-size: 52px; font-weight: bold; }
+  .price .per { color: var(--soft); }
+  ul.checks { list-style: none; margin: 16px auto; max-width: 420px; text-align: left; }
+  ul.checks li { padding: 5px 0 5px 28px; position: relative; font-size: 15px; }
+  ul.checks li::before { content: "✏️"; position: absolute; left: 0; }
+  .fine { font-size: 13px; color: var(--soft); text-align: center; margin: 28px 0 60px; }
+  footer { text-align: center; font-family: Verdana, sans-serif; font-size: 12px; color: var(--soft); padding: 24px; border-top: 1px solid #eadfc8; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="kicker">Hoch Storybook Factory · Story Studio</div>
+  <h1>Your story. Their crayons.</h1>
+  <p class="sub">Turn the story you built in Story Studio into a printable <strong>line-art coloring book</strong> — a cover, a drawing for every scene, and a "colored by" certificate page. Child-safe by design.</p>
+  <a class="cta" href="app.html">Make my coloring book</a>
+  <a class="cta ghost" href="app.html">Try the free preview</a>
+</header>
+
+<main class="wrap">
+  <div class="cards">
+    <div class="card"><h3>1 · Bring your story</h3><p>Use the story you made in Story Studio (or type a quick spec: who it's about, the journey, the big moments, the ending).</p></div>
+    <div class="card"><h3>2 · Preview free</h3><p>We draw a full coloring book — outlined titles kids can color, a big picture per scene, a read-aloud caption. The free preview carries a watermark on every page.</p></div>
+    <div class="card"><h3>3 · Export &amp; print</h3><p>One $7 payment removes the watermark for that story. Download the PDF, print it at home, grab the crayons.</p></div>
+  </div>
+
+  <div class="price">
+    <div class="kicker">One-time export</div>
+    <div class="amount">$7</div>
+    <div class="per">per story · watermark-free PDF · re-download anytime with your receipt session</div>
+    <ul class="checks">
+      <li>Cover + up to 12 scene pages + certificate back page</li>
+      <li>Real vector line-art — crisp at any print size</li>
+      <li>Child-safety gate on every word that reaches the page</li>
+      <li>Free watermarked preview before you pay</li>
+    </ul>
+    <a class="cta" href="app.html">Start free</a>
+  </div>
+
+  <p class="fine">Made for parents and teachers. All story text passes a fail-closed child-safety filter before anything is drawn; if a story trips the filter, the export is refused — paid or not.</p>
+</main>
+
+<footer>Story Studio · Coloring Book Export — Hoch Storybook Factory</footer>
+</body>
+</html>
