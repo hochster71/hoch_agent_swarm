@@ -1,0 +1,5 @@
+{
+  "_note": "SAMPLE entitlement store. In production a Stripe webhook writes tokens here after real payment. 'remaining: null' = active subscription (unlimited in period); an integer = one-off credits.",
+  "tok_demo": { "tier": "brief", "remaining": 1 },
+  "sub_demo": { "tier": "monthly", "remaining": null }
+}

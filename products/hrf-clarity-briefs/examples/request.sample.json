@@ -1,0 +1,45 @@
+{
+  "_note": "SYNTHETIC TEST FIXTURE — not a real published brief. URLs are example.org placeholders and the source text is illustrative. In production, sources come from live retrieval (WebSearch / web_fetch / research MCPs) and claims from an LLM compose step; this engine VERIFIES them. See README.",
+  "topic": "Staying hydrated during exercise",
+  "depth": "brief",
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Illustrative hydration reference (example)",
+      "url": "https://example.org/hydration-basics",
+      "retrieved_at": "2026-07-16T00:00:00Z",
+      "text": "Drinking water supports normal body temperature regulation during exercise. Thirst is a reasonable early guide to fluid needs for most people in typical conditions."
+    },
+    {
+      "id": "s2",
+      "title": "Illustrative electrolyte reference (example)",
+      "url": "https://example.org/electrolytes",
+      "retrieved_at": "2026-07-16T00:00:00Z",
+      "text": "Electrolyte loss through sweat can affect performance in long endurance events lasting more than about an hour."
+    }
+  ],
+  "claims": [
+    {
+      "text": "Water helps regulate body temperature during exercise.",
+      "citations": [
+        { "source_id": "s1", "quote": "supports normal body temperature regulation during exercise" }
+      ]
+    },
+    {
+      "text": "For most people in typical conditions, thirst is a reasonable early guide to fluid needs.",
+      "citations": [
+        { "source_id": "s1", "quote": "Thirst is a reasonable early guide to fluid needs" }
+      ]
+    },
+    {
+      "text": "In endurance events lasting over about an hour, electrolyte loss from sweat can affect performance.",
+      "citations": [
+        { "source_id": "s2", "quote": "Electrolyte loss through sweat can affect performance in long endurance events" }
+      ]
+    }
+  ],
+  "uncertainty": [
+    "Individual fluid and electrolyte needs vary with body size, climate, and intensity; these are general patterns, not a personal prescription.",
+    "The sources here are illustrative examples; a production brief would cite live, retrievable references."
+  ]
+}
