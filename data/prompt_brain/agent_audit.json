@@ -1,6 +1,6 @@
 {
   "schema": "hoch-agent-audit-v1",
-  "at": "2026-07-17T16:07:11.948706Z",
+  "at": "2026-07-17T16:22:22.326902Z",
   "totals": {
     "active": 2,
     "idle": 4,
@@ -18,7 +18,7 @@
       "agent": "HASF factory (software)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 7,
+      "last_activity_s": 8,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -26,7 +26,7 @@
       "agent": "HMF factory (music)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 2,
+      "last_activity_s": 3,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -34,7 +34,7 @@
       "agent": "HRF factory (research)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 2,
+      "last_activity_s": 3,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -58,7 +58,7 @@
       "agent": "Cyber Swarm (Red/Blue/Purple)",
       "status": "ACTIVE",
       "state": "NOT_SECURE",
-      "last_activity_s": 1,
+      "last_activity_s": 2,
       "goal_aligned": true,
       "work_left": "continuous adversarial hardening of HAS + products (real scanners + seeded faults)"
     }

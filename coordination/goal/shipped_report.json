@@ -4,7 +4,7 @@
   "appStoreState": null,
   "asc_state": "UNKNOWN",
   "asc_detail": "APP_STORE_CONNECT_KEY_ID / ISSUER_ID not set",
-  "read_at": "2026-07-17T15:51:26.057517+00:00",
+  "read_at": "2026-07-17T16:11:35.623654+00:00",
   "bundle_id": "com.epicfury.dashboard",
   "evidence": "asc:appStoreVersions (live App Store Connect read)",
   "reason": "Not confirmed shipped-to-production (asc_state=UNKNOWN, appStoreState=None). Fail-closed: requires a live READY_FOR_SALE/READY_FOR_DISTRIBUTION read from Apple (and valid ASC credentials in the environment).",

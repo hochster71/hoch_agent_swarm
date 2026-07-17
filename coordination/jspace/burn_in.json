@@ -3,162 +3,10 @@
   "burn_in_complete": false,
   "burn_in_completed_at": "2026-07-14T12:52:19Z",
   "clean_cycles": 0,
-  "completed_cycles": 4414,
+  "completed_cycles": 4433,
   "disabled_by_audit": true,
   "disabled_reason": "Independent audit: 5-cycle burn-in is not approved production maturity evidence; mutation gated fail-closed via quarantine_governance.json",
   "history": [
-    {
-      "at": "2026-07-17T15:19:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-85DB64",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:20:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-CFFBC3",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:21:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-B124AE",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:22:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-27A5D6",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:23:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-F832A6",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:24:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-C1C1B3",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:25:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-DAE5A8",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:26:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-831CB5",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:27:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-FDEB1E",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:28:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-60DD91",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:29:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-E256D9",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:30:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-891646",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:31:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-B1647D",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:32:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-905D85",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:33:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-B8C1E8",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:34:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-E45E95",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:35:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-B44008",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:36:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-88CAFE",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-17T15:37:58Z",
-      "clean": false,
-      "cycle_id": "JCYC-20260717-43D6E2",
-      "exception": null,
-      "overall": "UNKNOWN",
-      "state_mutated": false
-    },
     {
       "at": "2026-07-17T15:38:58Z",
       "clean": false,
@@ -406,16 +254,168 @@
       "exception": null,
       "overall": "UNKNOWN",
       "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:09:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-9F5004",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:10:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-984E5B",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:11:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-A1DCC5",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:12:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-5D70D6",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:13:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-576656",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:14:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-C4A5AB",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:15:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-068B67",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:16:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-8CF081",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:17:06Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-61856E",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:17:59Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-2A1531",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:18:01Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260717-607F71",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:18:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-BAFF0D",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:19:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-DC02FB",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:20:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-7EF7E4",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:20:59Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260717-9899A3",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:21:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-2A48BE",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:22:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-A7F334",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:23:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-CADA91",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-17T16:24:58Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260717-3949C9",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
     }
   ],
   "last_dirty": {
-    "at": "2026-07-17T16:08:58Z",
-    "cycle_id": "JCYC-20260717-E32533",
+    "at": "2026-07-17T16:24:58Z",
+    "cycle_id": "JCYC-20260717-3949C9",
     "exception": null,
-    "overall": "UNKNOWN",
+    "overall": "CONTRADICTED",
     "state_mutated": false
   },
   "min_cycles": 5,
   "schema": "HJOS_BURN_IN_v1",
-  "updated_at": "2026-07-17T16:08:58Z"
+  "updated_at": "2026-07-17T16:24:58Z"
 }

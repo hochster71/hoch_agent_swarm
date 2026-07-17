@@ -1,9 +1,9 @@
 {
   "scheduler_instance_id": "native-cadence",
-  "ledger_path": "",
-  "evidence_dir": "coordination/council/native_runtime",
+  "ledger_path": "/sessions/gallant-magical-albattani/tmp/pytest-of-gallant-magical-albattani/pytest-39/test_e2e_scheduler_path_with_m0/evid/task_lease_ledger.jsonl",
+  "evidence_dir": "/sessions/gallant-magical-albattani/tmp/pytest-of-gallant-magical-albattani/pytest-39/test_e2e_scheduler_path_with_m0/evid",
   "runtime": "freshness_refresher+autoloop",
   "pid": 59168,
-  "published_at": "2026-07-17T16:09:18Z",
+  "published_at": "2026-07-17T16:24:21Z",
   "note": "HELM on native cadence: freshness refresher + helm autoloop live; product work runs on the scheduled-task loop; no soak active"
 }

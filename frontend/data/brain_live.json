@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-17T16:07:12.009112Z",
+  "ts": "2026-07-17T16:22:22.391756Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,7 +9,7 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 1898,
+  "generation": 1900,
   "genes": 737,
   "champions": 30,
   "mean_score": 96.167,
@@ -40,14 +40,6 @@
       "state": "CONVERGED",
       "gates": 4,
       "history": [
-        {
-          "g": 1883,
-          "m": 96.167
-        },
-        {
-          "g": 1884,
-          "m": 96.167
-        },
         {
           "g": 1885,
           "m": 96.167
@@ -103,6 +95,14 @@
         {
           "g": 1898,
           "m": 96.167
+        },
+        {
+          "g": 1899,
+          "m": 96.167
+        },
+        {
+          "g": 1900,
+          "m": 96.167
         }
       ]
     },
@@ -116,14 +116,6 @@
       "state": "CONVERGED",
       "gates": 4,
       "history": [
-        {
-          "g": 1869,
-          "m": 96.938
-        },
-        {
-          "g": 1870,
-          "m": 96.938
-        },
         {
           "g": 1871,
           "m": 96.938
@@ -179,6 +171,14 @@
         {
           "g": 1884,
           "m": 96.938
+        },
+        {
+          "g": 1885,
+          "m": 96.938
+        },
+        {
+          "g": 1886,
+          "m": 96.938
         }
       ]
     },
@@ -192,14 +192,6 @@
       "state": "CONVERGED",
       "gates": 5,
       "history": [
-        {
-          "g": 1868,
-          "m": 96.5
-        },
-        {
-          "g": 1869,
-          "m": 96.5
-        },
         {
           "g": 1870,
           "m": 96.5
@@ -254,6 +246,14 @@
         },
         {
           "g": 1883,
+          "m": 96.5
+        },
+        {
+          "g": 1884,
+          "m": 96.5
+        },
+        {
+          "g": 1885,
           "m": 96.5
         }
       ]
@@ -479,7 +479,7 @@
       "never_executes": true,
       "all_actions_pending_operator_T3": true
     },
-    "at": "2026-07-17T12:45:46.252869Z"
+    "at": "2026-07-17T16:16:19.094244Z"
   },
   "buyer_signals": {
     "outreach_queued": 12,
@@ -554,16 +554,6 @@
     }
   ],
   "history": [
-    {
-      "g": 1875,
-      "m": 96.167,
-      "gain": 0.0
-    },
-    {
-      "g": 1876,
-      "m": 96.167,
-      "gain": 0.0
-    },
     {
       "g": 1877,
       "m": 96.167,
@@ -673,6 +663,16 @@
       "g": 1898,
       "m": 96.167,
       "gain": 0.0
+    },
+    {
+      "g": 1899,
+      "m": 96.167,
+      "gain": 0.0
+    },
+    {
+      "g": 1900,
+      "m": 96.167,
+      "gain": 0.0
     }
   ],
   "recent_improvements": [
@@ -776,13 +776,13 @@
     }
   ],
   "combat": {
-    "at": "2026-07-17T16:07:12.020097Z",
+    "at": "2026-07-17T16:22:22.473878Z",
     "genes_with_combat_record": 0,
     "total_champion_executions": 0,
     "gates": {
       "m0_generation": {
-        "total": 1079,
-        "VERIFIED": 1079
+        "total": 1081,
+        "VERIFIED": 1081
       }
     },
     "top": []
@@ -798,7 +798,7 @@
         "id": "L1",
         "status": "Active",
         "cpu": 0,
-        "ram": 70,
+        "ram": 91,
         "agents": 23,
         "latency_ms": 0.0,
         "authority": "MEASURED_LOCAL",
@@ -902,17 +902,17 @@
         "name": "lmstudio",
         "alive": true,
         "model": "google/gemma-4-12b-qat",
-        "latency_ms": 222.3,
+        "latency_ms": 342.0,
         "failures": 0,
-        "last_probe": 1784304433.836865
+        "last_probe": 1784305344.412989
       },
       {
         "name": "mac-local",
         "alive": true,
         "model": "llama3.1:8b",
-        "latency_ms": 2140.0,
+        "latency_ms": 2284.8,
         "failures": 0,
-        "last_probe": 1784304435.7547562
+        "last_probe": 1784305346.355959
       },
       {
         "name": "relay-001",
@@ -920,7 +920,7 @@
         "model": null,
         "latency_ms": null,
         "failures": 0,
-        "last_probe": 1784304433.79387
+        "last_probe": 1784305344.25007
       }
     ],
     "primary": "lmstudio",

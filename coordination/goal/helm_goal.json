@@ -1,0 +1,20 @@
+{
+  "schema": "HELM_GOAL_v1",
+  "goal_id": "GOAL_HELM",
+  "authored": "2026-07-17",
+  "statement": "HELM is a VERIFIED, OPERATIONAL, GOVERNED Executive Operating System: the constitutional baseline is ratified, the implementation is independently verified as conformant, all HELM subsystems pass end-to-end System Integration testing, and the Executive Command Center operates as the single interface over a runtime that coordinates frontier and local models under governance.",
+  "note": "This is the PLATFORM goal (operable governed OS). First settled revenue dollar is a separate, externally-gated milestone tracked under external_milestones (Stripe settlement).",
+  "acceptance_criteria": [
+    {"id": "AC1", "layer": "Governance", "criterion": "Constitution v1.0 RATIFIED; changes only via EDR", "measure": "FOUNDER_RATIFICATION.md present + status RATIFIED"},
+    {"id": "AC2", "layer": "Write-path", "criterion": "Single-writer commit discipline defined + fail-closed", "measure": "EDR-0005 present; recovery script lsof-guarded"},
+    {"id": "AC3", "layer": "Runtime", "criterion": "HELM platform passes System Integration testing", "measure": "HELM SI suite green (target: all pass)"},
+    {"id": "AC4", "layer": "Verification", "criterion": "Independent implementation verification conformant", "measure": "Grok verdict artifact vs frozen target d8d5139a"},
+    {"id": "AC5", "layer": "Normalization", "criterion": "EDR-0003 normalization implemented", "measure": "duplicate EDR/route resolved; regression green"},
+    {"id": "AC6", "layer": "Knowledge", "criterion": "Knowledge Engine (governed retrieval) operational", "measure": "EDR-0004 built; /knowledge returns provenance"},
+    {"id": "AC7", "layer": "Execution", "criterion": "Executive Command Center is the single interface", "measure": "/command integrates all projections, runtime-truth backed"},
+    {"id": "AC8", "layer": "Cyber", "criterion": "ConMon + NIST 800-53 Rev5 posture continuous", "measure": "helm_conmon posture computed; drift monitored"},
+    {"id": "AC9", "layer": "Dispatch", "criterion": "Provider dispatch enabled (frontier + local) under governance", "measure": "founder credentials supplied; adapters live; fail-closed until then"}
+  ],
+  "externally_gated": ["AC4 (auditor)", "AC9 (founder credentials)"],
+  "doctrine": "No fake green. A criterion is DONE only on authoritative evidence; PARTIAL and PENDING are reported honestly."
+}

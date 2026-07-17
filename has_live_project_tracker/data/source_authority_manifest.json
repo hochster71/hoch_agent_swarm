@@ -1,16 +1,16 @@
 {
   "status": "STALE",
-  "last_updated": "2026-07-17T12:58:33.165498Z",
+  "last_updated": "2026-07-03T16:02:07.461670Z",
   "sources": {
     "naics_2022": {
       "source_id": "naics_2022",
       "label": "NAICS 2022 Structure",
-      "path": "/Users/michaelhoch/hoch_agent_swarm/data/prompt_brain/sources/naics_2022.csv",
+      "path": "/sessions/gallant-magical-albattani/mnt/hoch_agent_swarm/data/prompt_brain/sources/naics_2022.csv",
       "authority": "US Census Bureau",
       "allowed_for_live_ui": false,
       "freshness": "stale",
       "last_modified": "2026-07-03T16:02:07.415075Z",
-      "age_seconds": 1198585.7496869564,
+      "age_seconds": 1210733.2712190151,
       "checksum_sha256": "b22fb484f03fbb1ee8d12832ea3deff6314c07b8f56a6a36813f3b1bc6ba69d2",
       "validation_method": "SHA256 checksum matching",
       "fallback_policy": "Local static cache",
@@ -19,12 +19,12 @@
     "onet_28": {
       "source_id": "onet_28",
       "label": "O*NET 28.0 Database",
-      "path": "/Users/michaelhoch/hoch_agent_swarm/data/prompt_brain/sources/onet_tasks_28.csv",
+      "path": "/sessions/gallant-magical-albattani/mnt/hoch_agent_swarm/data/prompt_brain/sources/onet_tasks_28.csv",
       "authority": "O*NET Center",
       "allowed_for_live_ui": false,
       "freshness": "stale",
       "last_modified": "2026-07-03T16:02:07.438991Z",
-      "age_seconds": 1198585.7262339592,
+      "age_seconds": 1210733.2480390072,
       "checksum_sha256": "05e528c873c2e6618893bde016e5d64341de4d0abaf45fa9f9f1bda2ff00d9a4",
       "validation_method": "SHA256 checksum matching",
       "fallback_policy": "Local static cache",
@@ -33,17 +33,16 @@
     "bls_oews_24": {
       "source_id": "bls_oews_24",
       "label": "BLS OEWS 2024 Statistics",
-      "path": "/Users/michaelhoch/hoch_agent_swarm/data/prompt_brain/sources/bls_oews_2024.csv",
+      "path": "/sessions/gallant-magical-albattani/mnt/hoch_agent_swarm/data/prompt_brain/sources/bls_oews_2024.csv",
       "authority": "Bureau of Labor Statistics",
       "allowed_for_live_ui": false,
       "freshness": "stale",
       "last_modified": "2026-07-03T16:02:07.461200Z",
-      "age_seconds": 1198585.704159975,
+      "age_seconds": 1210733.226336956,
       "checksum_sha256": "4d8eff4604dfe247473734c75997591fb774dabca2ed9a94bec4b34dd18c40df",
       "validation_method": "SHA256 checksum matching",
       "fallback_policy": "Local static cache",
       "status": "STALE"
     }
-  },
-  "remediation": "OMEGA_R1: allowed_for_live_ui fail-closed on STALE/UNKNOWN/MALFORMED"
+  }
 }

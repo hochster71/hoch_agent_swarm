@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HELM · LIVE PERT → GOAL</title>
+<style>
+  :root{
+    --bg:#070b12;--panel:#0e1622;--panel2:#0b111a;--line:#1b2838;--ink:#e6edf3;--muted:#7d8ea3;--dim:#45566b;
+    --green:#22e0a1;--amber:#f5a623;--red:#ff5c6c;--grey:#54637a;--blue:#4aa8ff;--purple:#9a7cff;
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;--mono:'SF Mono',ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1400px 700px at 55% -20%,#0d1a2b,var(--bg));color:var(--ink);font-family:var(--font)}
+  .wrap{max-width:1200px;margin:0 auto;padding:18px 18px 60px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px}
+  h1{font-size:14px;letter-spacing:.24em;font-weight:700;margin:0}h1 b{color:var(--green)}
+  .goal{font-size:11px;color:var(--muted);margin-top:6px;max-width:820px;line-height:1.5}
+  .conn{font-size:10.5px;color:var(--muted);font-family:var(--mono);text-align:right;white-space:nowrap}
+  .top{display:grid;grid-template-columns:220px 1fr;gap:16px;margin-bottom:18px;align-items:center}
+  .prog-wrap{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;text-align:center}
+  .pct{font-size:44px;font-weight:800;color:var(--green);line-height:1}
+  .pctlbl{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:4px}
+  .bar{height:9px;background:#0a121c;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:12px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--blue))}
+  .si{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px 16px}
+  .si h3,.pert h3,.tbl h3{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:600}
+  .si .big{font-size:30px;font-weight:800}
+  .si .row{display:flex;gap:20px;flex-wrap:wrap;align-items:baseline}
+  .chip{font-size:11px;font-family:var(--mono);border:1px solid var(--line);border-radius:7px;padding:6px 10px;color:var(--muted)}
+  .flow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:6px 2px 12px}
+  .node{min-width:132px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 11px;position:relative}
+  .node.crit{border-color:#2f4a63;box-shadow:inset 0 0 0 1px #22e0a122}
+  .node .lbl{font-size:11px;font-weight:600;line-height:1.25;min-height:28px}
+  .node .st{font-size:9.5px;font-family:var(--mono);margin-top:7px;display:flex;align-items:center;gap:6px}
+  .node .te{font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:4px}
+  .arrow{align-self:center;color:var(--dim);font-size:16px;padding:0 5px;flex:0 0 auto}
+  .dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 7px currentColor}
+  .s-green{color:var(--green)}.s-amber{color:var(--amber)}.s-red{color:var(--red)}.s-grey{color:var(--grey)}.s-blue{color:var(--blue)}.s-purple{color:var(--purple)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+  table{width:100%;border-collapse:collapse;font-size:11.5px}
+  th{text-align:left;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:7px 8px;border-bottom:1px solid #12202e;font-family:var(--mono);font-size:11px}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:10px}
+  .foot{margin-top:18px;font-size:10px;color:var(--dim);font-family:var(--mono);text-align:center}
+  .oos{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2 class="sr-only" style="position:absolute;left:-9999px">Live PERT to GOAL HELM — critical path and System Integration status, runtime-truth backed.</h2>
+  <header>
+    <div>
+      <h1>HELM · <b>LIVE PERT → GOAL</b></h1>
+      <div class="goal" id="goal">—</div>
+    </div>
+    <div class="conn" id="conn"><span class="dot s-grey">●</span> connecting…<br><span id="ts" style="color:var(--dim)"></span></div>
+  </header>
+
+  <div class="top">
+    <div class="prog-wrap">
+      <div class="pct" id="pct">—</div>
+      <div class="pctlbl">to GOAL HELM</div>
+      <div class="bar"><i id="barfill" style="width:0%"></i></div>
+      <div class="pctlbl" id="remaining" style="margin-top:10px;color:var(--dim)"></div>
+    </div>
+    <div class="si">
+      <h3>System Integration — live test status</h3>
+      <div class="row">
+        <div><span class="big" id="si-pass">—</span> <span style="font-size:11px;color:var(--muted)">passed</span></div>
+        <div><span class="big" id="si-fail" style="font-size:20px">—</span> <span style="font-size:11px;color:var(--muted)">failed</span></div>
+        <div><span class="big" id="si-err" style="font-size:20px">—</span> <span style="font-size:11px;color:var(--muted)">errors</span></div>
+        <div id="si-badge" class="chip">—</div>
+      </div>
+      <div class="oos" id="si-meta"></div>
+      <div class="oos" id="si-oos"></div>
+    </div>
+  </div>
+
+  <div class="pert">
+    <h3>Critical Path to GOAL</h3>
+    <div class="flow" id="flow"><div class="chip">loading…</div></div>
+    <div class="legend">
+      <span><span class="dot s-green" style="display:inline-block"></span> DONE</span>
+      <span><span class="dot s-blue" style="display:inline-block"></span> IN_PROGRESS</span>
+      <span><span class="dot s-amber" style="display:inline-block"></span> PARTIAL / PENDING / BLOCKED</span>
+      <span><span class="dot s-purple" style="display:inline-block"></span> PLANNED</span>
+      <span style="color:var(--dim)">bordered = on critical path · TE = expected days</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="tbl si"><h3>All Nodes (PERT)</h3>
+      <table><thead><tr><th>Node</th><th>Status</th><th>TE</th><th>EF</th></tr></thead><tbody id="rows"></tbody></table>
+    </div>
+    <div class="tbl si"><h3>Acceptance Criteria → GOAL</h3>
+      <table><thead><tr><th>#</th><th>Layer</th><th>Criterion</th></tr></thead><tbody id="acs"></tbody></table>
+    </div>
+  </div>
+
+  <div class="foot">Every value is live runtime truth. SI status from scripts/run_helm_si.py → si_status.json. No fake green. Source: /api/v1/helm/goal-pert</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function cls(s){s=(s||"").toUpperCase();
+  if(s==="DONE")return"s-green"; if(s==="IN_PROGRESS")return"s-blue"; if(s==="PLANNED")return"s-purple";
+  if(["PARTIAL","PENDING","BLOCKED_EXTERNAL","BLOCKED_FOUNDER","BLOCKED"].includes(s))return"s-amber";
+  if(["FAILED","ERROR"].includes(s))return"s-red"; return"s-grey";}
+async function refresh(){
+  let g; try{ g=await (await fetch("/api/v1/helm/goal-pert",{cache:"no-store"})).json(); }
+  catch(e){ $("conn").innerHTML='<span class="dot s-red"></span> runtime unreachable'; return; }
+  $("conn").innerHTML='<span class="dot s-green"></span> live'; $("ts").textContent=new Date().toLocaleTimeString();
+  $("goal").textContent=(g.goal&&g.goal.statement)||"";
+  const pct=g.percent_to_goal||0; $("pct").textContent=pct+"%"; $("barfill").style.width=pct+"%";
+  $("remaining").textContent="critical-path remaining ≈ "+(g.critical_path_remaining_days??"—")+" days";
+
+  // SI
+  const si=g.system_integration||{};
+  $("si-pass").textContent=si.passed??"—"; $("si-fail").textContent=si.failed??"—"; $("si-err").textContent=si.errors??"—";
+  $("si-fail").className="big "+((si.failed>0)?"s-red":""); $("si-err").className="big "+((si.errors>0)?"s-red":"");
+  const badge=$("si-badge"); badge.textContent=si.green?"GREEN":(si.present?"ATTENTION":"NOT RUN");
+  badge.style.color=si.green?"var(--green)":(si.present?"var(--amber)":"var(--grey)"); badge.style.borderColor=badge.style.color;
+  $("si-meta").textContent = si.present? `ran ${si.ran_at} · ${si.duration_s}s · HELM platform scope` : "run scripts/run_helm_si.py to populate";
+  $("si-oos").textContent = (si.out_of_scope&&si.out_of_scope.length)? `out of scope (legacy/env, not HELM defects): ${si.out_of_scope.length} modules` : "";
+
+  // Critical path flow
+  const nodes=g.nodes||[]; const byId={}; nodes.forEach(n=>byId[n.id]=n);
+  const cp=g.critical_path||[];
+  $("flow").innerHTML = cp.map((id,i)=>{
+    const n=byId[id]||{label:id,status:"UNKNOWN"}; const c=cls(n.status);
+    const box=`<div class="node crit"><div class="lbl">${n.label||id}</div>
+      <div class="st"><span class="dot ${c}" style="display:inline-block"></span><span class="${c}">${n.status||"—"}</span></div>
+      <div class="te">TE ${n.TE??0}d · EF ${n.earliest_finish??0}d</div></div>`;
+    return box + (i<cp.length-1?'<span class="arrow">→</span>':'');
+  }).join("");
+
+  // Node table
+  $("rows").innerHTML = nodes.map(n=>`<tr><td>${n.label||n.id}</td><td class="${cls(n.status)}">${n.status||"—"}</td><td>${n.TE??0}</td><td>${n.earliest_finish??0}</td></tr>`).join("");
+
+  // Acceptance criteria
+  const acs=(g.goal&&g.goal.acceptance_criteria)||[];
+  $("acs").innerHTML = acs.map(a=>`<tr><td>${a.id}</td><td>${a.layer}</td><td style="font-family:var(--font);white-space:normal">${a.criterion}</td></tr>`).join("");
+}
+refresh(); setInterval(refresh,8000);
+</script>
+</body>
+</html>

@@ -900,6 +900,33 @@ def serve_command_center() -> str:
     return f.read_text(encoding="utf-8") if f.exists() else "<h1>command_center.html missing</h1>"
 
 
+@app.get("/api/v1/helm/goal-pert")
+def api_goal_pert():
+    """Backcast PERT to GOAL_HELM: nodes with 3-point expected times, critical path,
+    honest percent-to-GOAL, and live System-Integration status (si_status.json)."""
+    from backend.helm_goal_pert import build_goal_pert
+    return build_goal_pert()
+
+
+@app.get("/pert-live", response_class=HTMLResponse)
+def serve_pert_live() -> str:
+    """LIVE PERT → GOAL — dark-theme critical-path + System Integration watch board.
+    Reads /api/v1/helm/goal-pert; refreshes so the founder can watch the push to GOAL."""
+    f = ROOT / "frontend_live" / "pert_live.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>pert_live.html missing</h1>"
+
+
+@app.get("/favicon.ico")
+def _favicon():
+    # Silence the browser favicon 404 on the HELM dark pages (1x1 transparent).
+    import base64
+    from starlette.responses import Response
+    png = base64.b64decode(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+    )
+    return Response(content=png, media_type="image/png")
+
+
 @app.get("/api/v1/helm/jspace/lens")
 def api_v1_jspace_lens():
     """Semantic Jacobian Lens — which findings actually hold the promotion gate closed, ranked by how

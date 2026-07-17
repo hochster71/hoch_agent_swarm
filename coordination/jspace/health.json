@@ -1,14 +1,14 @@
 {
   "active_alerts": 1,
   "contained_findings": 1,
-  "cycle_id": "JCYC-20260717-E32533",
+  "cycle_id": "JCYC-20260717-3949C9",
   "governance": {
     "authorizing_policy_id": null,
     "automatic_quarantine_enabled": false,
     "orphan_lease_hygiene": "manual_approval"
   },
-  "health_digest": "e4420a33fa55ebad246872f6cde7b627c6e5579385279bd9a5139965b110c064",
-  "historical_findings": 5914,
+  "health_digest": "ff950ef033402ea7939c8e92f631b92ac524357603d24fc538e01834b684586f",
+  "historical_findings": 5930,
   "mutation_truth": {
     "authoritative_state_mutated": false,
     "containment_authorized": false,
@@ -17,17 +17,25 @@
     "containment_state_mutated": false,
     "observation_state_mutated": false
   },
-  "observed_at": "2026-07-17T16:08:58Z",
+  "observed_at": "2026-07-17T16:24:58Z",
   "observer_counts": {
-    "CONFIRMED_LIVE": 10,
-    "UNCONFIRMED": 1,
-    "UNKNOWN": 1
+    "CONFIRMED_LIVE": 11,
+    "CONTRADICTED": 1
   },
   "open_alerts": 1,
-  "overall": "UNKNOWN",
+  "overall": "CONTRADICTED",
   "promotion_authority": "NONE",
-  "recommended_action": "REQUIRE_EVIDENCE",
+  "recommended_action": "WITHHOLD_PROMOTION",
   "schema": "JSPACE_HEALTH_v1",
-  "unresolved_findings": 5913,
-  "worst_findings": []
+  "unresolved_findings": 5929,
+  "worst_findings": [
+    {
+      "assessment": "CONTRADICTED",
+      "detail": "Runtime pointer declares a ledger path that does not exist.",
+      "observation_id": "JOBS-20260717-F3D0FD",
+      "observer": "jspace_evidence_auditor",
+      "recommended_action": "WITHHOLD_PROMOTION",
+      "subject": "canonical_lease_ledger"
+    }
+  ]
 }
