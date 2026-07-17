@@ -4,7 +4,7 @@
   "private": true,
   "description": "HFF — Runway: monthly cash-flow & tax-prep packet. Deterministic CSV->packet engine + landing page + Stripe checkout scaffold. Organizational tooling only, not advice.",
   "scripts": {
-    "test": "node test/engine.test.js"
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
   },
   "dependencies": {
     "exceljs": "^4.4.0",

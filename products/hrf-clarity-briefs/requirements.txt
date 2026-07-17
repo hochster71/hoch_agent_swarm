@@ -1,0 +1,3 @@
+# HRF Clarity Briefs — Python delivery route (api/generate.py).
+# The engine is intentionally stdlib-only, so there are NO runtime dependencies.
+# This file exists so Vercel detects and builds the Python serverless function.

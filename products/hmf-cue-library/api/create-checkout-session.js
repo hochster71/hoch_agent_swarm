@@ -62,6 +62,14 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  // Optional purchase details the WEBHOOK will read back to grant access:
+  //   * pack    -> entitle only that pack id (omit for full-library subscription)
+  //   * subject -> stable buyer id the delivery gate keys on (e.g. an app user id);
+  //                if omitted, the webhook falls back to the customer email.
+  // Both are clamped and stamped into the session metadata / client_reference_id.
+  const pack = body.pack ? String(body.pack).slice(0, 64) : '';
+  const subject = body.subject ? String(body.subject).slice(0, 128) : '';
+
   try {
     const Stripe = require('stripe');
     const stripe = new Stripe(secretKey, { apiVersion: '2024-06-20' });
@@ -74,7 +82,11 @@ module.exports = async function handler(req, res) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?canceled=1`,
-      metadata: { product: 'hmf-cue-library', tier },
+      // client_reference_id mirrors subject so the webhook can recover identity
+      // even if metadata is stripped by an intermediary.
+      client_reference_id: subject || undefined,
+      // The webhook (api/webhook.js) reads pack + subject to call grantEntitlement.
+      metadata: { product: 'hmf-cue-library', tier, pack, subject },
     });
 
     return res.status(200).json({ url: session.url });

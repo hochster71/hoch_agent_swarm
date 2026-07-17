@@ -15,7 +15,19 @@
   <div class="card">
     <h1>You're set.</h1>
     <p>Thank you for subscribing to Runway. Upload your bank CSV to generate your first monthly packet.</p>
+    <p><a id="gen" href="/app.html">Generate your packet →</a></p>
     <p><a href="/">Back to home</a></p>
   </div>
+  <script>
+    // Carry the Checkout session_id into the generate page so the first run
+    // works immediately (before the webhook-written entitlement is queried).
+    (function () {
+      var sid = new URLSearchParams(location.search).get('session_id');
+      if (sid) {
+        var a = document.getElementById('gen');
+        a.href = '/app.html?session_id=' + encodeURIComponent(sid);
+      }
+    })();
+  </script>
 </body>
 </html>

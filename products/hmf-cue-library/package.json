@@ -4,7 +4,9 @@
   "private": true,
   "description": "HMF — HOCH Cue Library: cleared instrumental cues for creators. Storefront + license-gated delivery engine + Stripe checkout scaffold. Instrumental-only, license-cleared.",
   "scripts": {
-    "test": "node test/test_license_gate.js"
+    "test": "node test/test_license_gate.js && node test/test_webhook.js",
+    "test:gate": "node test/test_license_gate.js",
+    "test:webhook": "node test/test_webhook.js"
   },
   "dependencies": {
     "stripe": "^16.0.0"

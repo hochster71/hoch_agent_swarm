@@ -58,7 +58,24 @@ uncertainty + **lint, fail-closed**) → `assembler` (MD/HTML/JSON). Gated by
 - `POST /api/create-checkout-session` — reads `STRIPE_SECRET_KEY` +
   `STRIPE_PRICE_MONTHLY`/`STRIPE_PRICE_BRIEF` from env, returns `{ "url": ... }`.
   Fails safe with a 501 when keys are absent (INERT until the founder sets keys).
-- `vercel.json`, `.env.example` (placeholders only), success page.
+- **`POST /api/webhook`** (`api/webhook.js`) — verifies the Stripe signature
+  (`STRIPE_WEBHOOK_SECRET`) with a zero-dependency HMAC implementation of Stripe's
+  v1 scheme (constant-time compare + timestamp tolerance), **fails closed** (400)
+  on a bad/missing signature, and on `checkout.session.completed` **grants an
+  entitlement token** (the checkout session id) into the SAME JSON store the Python
+  gate reads (`lib/entitlements.js` → `HRF_ENTITLEMENTS_PATH`; `brief`→1 credit,
+  `monthly`→unlimited). 501 until `STRIPE_WEBHOOK_SECRET` is set. Proven by
+  `tests/test_webhook.mjs` (14 assertions, incl. a cross-language check that the
+  Python gate accepts+consumes the granted token).
+- **`POST /api/generate`** (`api/generate.py`) — the delivery route: an entitled
+  token + topic + sources + drafted claims runs the real engine and returns the
+  rendered brief; 402 un-entitled, 422 fail-closed on an uncited claim. Proven by
+  `tests/test_generate.py` (5 tests).
+- **`public/request.html`** — the redeem/generate page (token + topic + sources +
+  claims → rendered brief inline); `success.html` surfaces the token; `index.html`
+  links to it.
+- `vercel.json` (JS + Python functions), `requirements.txt`, `.env.example`
+  (placeholders only), success page.
 
 **STUB / INTEGRATION POINTS (must not be claimed as done — no fabrication):**
 - **Live source gathering** (`engine/retrieval.py` → `LiveWebSourceProvider`) is
@@ -74,8 +91,14 @@ uncertainty + **lint, fail-closed**) → `assembler` (MD/HTML/JSON). Gated by
 - **PDF** — HTML output is print-ready; PDF conversion is an optional handoff to
   the `anthropic-skills:pdf` skill or any html→pdf tool (keeps the core
   dependency-free).
-- **Webhook + delivery** — a Stripe `/api/webhook` that writes entitlement tokens,
-  and email/reader delivery, are not built.
+- **Durable shared store on Vercel** — the webhook and the generate route share a
+  file-backed store (`HRF_ENTITLEMENTS_PATH`). This is durable on any host with a
+  persistent writable filesystem, but Vercel's serverless filesystem is ephemeral
+  per-invocation, so on Vercel this path must point at a mounted/persistent volume
+  (or `lib/entitlements.js` be swapped for a KV backend). The JSON format contract
+  with the engine does not change either way.
+- **Email/reader delivery** — the brief is returned to the browser and rendered
+  inline; emailing it or hosting a reader is not built.
 
 ## Remaining work to make it genuinely sellable
 
@@ -84,9 +107,14 @@ uncertainty + **lint, fail-closed**) → `assembler` (MD/HTML/JSON). Gated by
    "verifies your sources" and "gathers its own").
 2. **Wire the LLM compose + council fact-check** so a bare topic (no hand-fed
    claims) produces the draft the linter then polices.
-3. Add `/api/webhook` → write tokens into the entitlement store; add delivery.
+3. ~~Add `/api/webhook` → write tokens into the entitlement store; add delivery.~~
+   **DONE** — `api/webhook.js` + `api/generate.py` + `public/request.html`. Still
+   open: durable shared store on Vercel (persistent volume or KV) and email/reader
+   delivery (see STUB list).
 4. **Founder-gated:** create the two Stripe Prices ($5/mo, $2 one-off), set env
-   vars, deploy to Vercel via the guard-railed pipeline.
+   vars (`STRIPE_SECRET_KEY`, `STRIPE_PRICE_*`, `STRIPE_WEBHOOK_SECRET`, `BASE_URL`,
+   `HRF_ENTITLEMENTS_PATH`), add the webhook endpoint in Stripe, and deploy to
+   Vercel via the guard-railed pipeline.
 5. Pick one concrete launch vertical (e.g. "everyday health claims, decoded").
 
 ## Founder step to go live (exact)

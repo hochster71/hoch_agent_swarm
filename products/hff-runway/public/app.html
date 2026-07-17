@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate your packet — Runway</title>
+  <style>
+    :root { --ink:#0e2a24; --muted:#4d6b62; --bg:#f2f8f5; --accent:#0f9d67; --line:#d9e8e1; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.55; }
+    .wrap { max-width:720px; margin:0 auto; padding:56px 24px 96px; }
+    .kicker { text-transform:uppercase; letter-spacing:.12em; font-size:13px; color:var(--accent); font-weight:700; }
+    h1 { font-size:32px; line-height:1.15; margin:12px 0 8px; }
+    .lede { font-size:17px; color:var(--muted); margin:0 0 28px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:24px; margin:18px 0;
+      box-shadow:0 1px 3px rgba(14,42,36,.04); }
+    label { display:block; font-weight:700; font-size:14px; margin:14px 0 6px; }
+    input[type=email], input[type=file], input[type=text] { width:100%; padding:12px 14px; border:1px solid var(--line);
+      border-radius:10px; font-size:15px; background:#fbfefc; }
+    button { appearance:none; border:0; cursor:pointer; font-weight:700; font-size:16px;
+      padding:14px 22px; border-radius:12px; background:var(--accent); color:#fff; width:100%; margin-top:18px; }
+    button.secondary { background:#eaf5ef; color:var(--accent); }
+    button:disabled { opacity:.6; cursor:progress; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .msg { font-size:14px; min-height:20px; margin-top:12px; }
+    .msg.err { color:#b23; }
+    .msg.ok { color:var(--accent); }
+    .files a { display:inline-block; margin:8px 12px 0 0; font-weight:700; color:var(--accent); }
+    .summary { font-size:14px; color:var(--muted); margin-top:12px; }
+    .summary b { color:var(--ink); }
+    .banner { background:#fff7e6; border:1px solid #f2d999; color:#7a5a12; border-radius:12px;
+      padding:14px 16px; font-size:13px; margin-top:24px; }
+    .hint { font-size:13px; color:var(--muted); margin-top:6px; }
+    footer { margin-top:40px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:18px; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">HFF · Runway</p>
+    <h1>Generate your monthly packet</h1>
+    <p class="lede">Upload your bank CSV export. Runway assembles the cash-flow snapshot,
+      categorized rollup, estimated quarterly-tax worksheet, and 1099-candidate list into a
+      single XLSX + PDF handoff for your accountant.</p>
+
+    <div class="card">
+      <form id="gen-form">
+        <label for="email">Your subscription email</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required />
+        <div class="hint">This is the email you subscribed with. It unlocks repeat generation.</div>
+
+        <label for="csv">Bank transactions CSV</label>
+        <input type="file" id="csv" accept=".csv,text/csv" required />
+        <div class="hint">Columns like Date, Description, Amount (or debit/credit). Stays in your browser until you submit.</div>
+
+        <div class="row">
+          <div>
+            <label for="cashOnHand">Cash on hand (optional)</label>
+            <input type="text" id="cashOnHand" inputmode="decimal" placeholder="e.g. 24000" />
+          </div>
+          <div>
+            <label for="filingStatus">Filing status (optional)</label>
+            <input type="text" id="filingStatus" placeholder="single / married" />
+          </div>
+        </div>
+
+        <button type="submit" id="go">Generate packet</button>
+      </form>
+      <div class="msg" id="msg"></div>
+      <div class="files" id="files"></div>
+      <div class="summary hidden" id="summary"></div>
+
+      <div id="upsell" class="hidden">
+        <button class="secondary" id="subscribe">Not subscribed yet? Subscribe — $15/mo</button>
+      </div>
+    </div>
+
+    <div class="banner">
+      <strong>Organizational tooling only.</strong> Runway prepares and organizes your own numbers for
+      your accountant. It is <strong>not</strong> financial, investment, or tax advice, and it does not
+      file anything for you.
+    </div>
+
+    <footer>HFF · Hoch Finance Factory · <a href="/">Home</a> · Payments by Stripe.</footer>
+  </div>
+
+  <script>
+    // Carry a fresh Checkout session_id (right after subscribing) so the very
+    // first generation works even before the webhook-written entitlement is read.
+    var params = new URLSearchParams(location.search);
+    var sessionId = params.get('session_id') || null;
+
+    function readFileText(file) {
+      return new Promise(function (resolve, reject) {
+        var r = new FileReader();
+        r.onload = function () { resolve(String(r.result || '')); };
+        r.onerror = function () { reject(new Error('Could not read file.')); };
+        r.readAsText(file);
+      });
+    }
+
+    function b64ToBlob(b64, mime) {
+      var bin = atob(b64);
+      var len = bin.length;
+      var bytes = new Uint8Array(len);
+      for (var i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+      return new Blob([bytes], { type: mime });
+    }
+
+    function downloadLink(container, b64, name, mime, label) {
+      var url = URL.createObjectURL(b64ToBlob(b64, mime));
+      var a = document.createElement('a');
+      a.href = url; a.download = name; a.textContent = label;
+      container.appendChild(a);
+    }
+
+    function showUpsell() {
+      document.getElementById('upsell').classList.remove('hidden');
+    }
+
+    document.getElementById('subscribe').addEventListener('click', async function () {
+      this.disabled = true;
+      try {
+        var r = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier: 'monthly' }),
+        });
+        var d = await r.json();
+        if (r.ok && d.url) { window.location.href = d.url; return; }
+        document.getElementById('msg').className = 'msg err';
+        document.getElementById('msg').textContent = d.message || 'Checkout is not available yet.';
+      } catch (e) {
+        document.getElementById('msg').className = 'msg err';
+        document.getElementById('msg').textContent = 'Network error. Please try again.';
+      }
+      this.disabled = false;
+    });
+
+    document.getElementById('gen-form').addEventListener('submit', async function (ev) {
+      ev.preventDefault();
+      var msg = document.getElementById('msg');
+      var files = document.getElementById('files');
+      var summaryEl = document.getElementById('summary');
+      var btn = document.getElementById('go');
+      msg.className = 'msg'; msg.textContent = '';
+      files.innerHTML = '';
+      summaryEl.className = 'summary hidden'; summaryEl.innerHTML = '';
+      document.getElementById('upsell').classList.add('hidden');
+
+      var email = document.getElementById('email').value.trim();
+      var fileInput = document.getElementById('csv');
+      if (!fileInput.files || !fileInput.files[0]) {
+        msg.className = 'msg err'; msg.textContent = 'Choose a CSV file first.';
+        return;
+      }
+
+      btn.disabled = true;
+      msg.textContent = 'Reading CSV and generating packet…';
+      try {
+        var csv = await readFileText(fileInput.files[0]);
+        var profile = {};
+        var cash = document.getElementById('cashOnHand').value.trim();
+        var status = document.getElementById('filingStatus').value.trim();
+        if (cash) profile.cashOnHand = Number(cash.replace(/[^0-9.\-]/g, ''));
+        if (status) profile.filingStatus = status;
+
+        var payload = { email: email, csv: csv, profile: profile };
+        if (sessionId) payload.session_id = sessionId;
+
+        var r = await fetch('/api/generate-packet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        var d = await r.json();
+
+        if (r.status === 402 || r.status === 401 || r.status === 501) {
+          msg.className = 'msg err';
+          msg.textContent = d.message || 'Subscription required to generate your packet.';
+          showUpsell();
+          btn.disabled = false;
+          return;
+        }
+        if (!r.ok || !d.ok) {
+          msg.className = 'msg err';
+          msg.textContent = d.message || 'Could not generate the packet.';
+          btn.disabled = false;
+          return;
+        }
+
+        // Success — offer the XLSX + PDF downloads.
+        msg.className = 'msg ok';
+        msg.textContent = 'Your packet is ready. Download below.';
+        downloadLink(files, d.files.xlsxBase64, d.files.xlsxName,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Download workbook (.xlsx)');
+        downloadLink(files, d.files.pdfBase64, d.files.pdfName, 'application/pdf', 'Download summary (.pdf)');
+
+        var s = d.summary || {};
+        summaryEl.className = 'summary';
+        summaryEl.innerHTML =
+          'As of <b>' + (s.asOf || '—') + '</b> · <b>' + (s.transactions || 0) + '</b> transactions · ' +
+          '<b>' + (s.flaggedRows || 0) + '</b> flagged rows · est. quarterly payment <b>$' +
+          (s.estimatedQuarterlyPayment != null ? s.estimatedQuarterlyPayment : '—') + '</b> · <b>' +
+          (s.candidates1099 || 0) + '</b> 1099 candidates.';
+      } catch (e) {
+        msg.className = 'msg err';
+        msg.textContent = 'Something went wrong reading or sending your file.';
+      }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>

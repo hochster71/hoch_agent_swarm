@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate your Clarity Brief</title>
+  <style>
+    :root { --ink:#12203a; --muted:#5b6b86; --bg:#f6f8fc; --accent:#2b6cff; --line:#e2e8f4; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); line-height:1.55; }
+    .wrap { max-width:760px; margin:0 auto; padding:48px 24px 96px; }
+    .kicker { text-transform:uppercase; letter-spacing:.12em; font-size:13px; color:var(--accent); font-weight:700; }
+    h1 { font-size:32px; line-height:1.15; margin:10px 0 8px; }
+    .lede { font-size:16px; color:var(--muted); margin:0 0 24px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:24px; margin:16px 0; }
+    label { display:block; font-weight:700; font-size:14px; margin:14px 0 6px; }
+    .hint { font-weight:400; color:var(--muted); font-size:12px; }
+    input[type=text], textarea { width:100%; border:1px solid var(--line); border-radius:10px;
+      padding:10px 12px; font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--ink); background:#fbfcff; }
+    input[type=text] { font-family:inherit; }
+    textarea { resize:vertical; min-height:120px; }
+    button { appearance:none; border:0; cursor:pointer; font-weight:700; font-size:16px;
+      padding:14px 22px; border-radius:12px; background:var(--accent); color:#fff; width:100%; margin-top:18px; }
+    button:disabled { opacity:.6; cursor:progress; }
+    #msg { font-size:14px; min-height:20px; margin-top:12px; }
+    #msg.err { color:#b23; }
+    #msg.ok { color:#137a3f; }
+    .brief { background:#fff; border:1px solid var(--line); border-radius:16px; margin-top:20px; overflow:hidden; display:none; }
+    .brief iframe { width:100%; border:0; height:640px; background:#fff; }
+    .buybar { display:none; background:#fff8e1; border:1px solid #f0d98c; border-radius:12px; padding:14px 16px; margin-top:14px; font-size:14px; }
+    a { color:var(--accent); }
+    .note { font-size:13px; color:var(--muted); margin-top:20px; }
+    footer { margin-top:40px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">HRF · Clarity Briefs</p>
+    <h1>Generate your cited brief</h1>
+    <p class="lede">Paste your entitlement token (from the checkout success page), give a topic, and
+      provide the sources plus the claims you want checked. The engine verifies that every claim is
+      backed by a source and that every quote appears verbatim — then renders the brief. It fails
+      closed: an uncited or ungrounded claim means no brief.</p>
+
+    <div class="card">
+      <form id="form">
+        <label>Entitlement token <span class="hint">— e.g. the <code>cs_…</code> id shown on your success page</span></label>
+        <input type="text" id="token" placeholder="cs_test_…" autocomplete="off" />
+
+        <label>Topic</label>
+        <input type="text" id="topic" placeholder="Staying hydrated during exercise" />
+
+        <label>Sources <span class="hint">— JSON array: {id, title, url, retrieved_at, text}. <code>text</code> is the passage quotes are grounded against.</span></label>
+        <textarea id="sources"></textarea>
+
+        <label>Claims <span class="hint">— JSON array: {text, citations:[{source_id, quote}]}. Each quote must appear verbatim in its source's text.</span></label>
+        <textarea id="claims"></textarea>
+
+        <label>What's still uncertain <span class="hint">— optional JSON array of strings; auto-seeded if left empty</span></label>
+        <textarea id="uncertainty" style="min-height:70px"></textarea>
+
+        <button type="submit" id="go">Generate brief</button>
+      </form>
+      <div id="msg"></div>
+      <div class="buybar" id="buybar">
+        No valid entitlement for that token. <a href="/">Buy a brief ($2) or subscribe ($5/mo)</a>, then
+        redeem the token shown on your success page.
+      </div>
+    </div>
+
+    <div class="brief" id="briefBox"><iframe id="briefFrame" title="Your Clarity Brief"></iframe></div>
+
+    <p class="note">Clarity Briefs summarize and cite sources you can verify yourself. They are
+      information, not professional (medical, legal, or financial) advice.</p>
+    <footer>HRF · Hoch Research Factory · Powered by the fail-closed citation engine.</footer>
+  </div>
+
+  <script>
+    // Prefill with a working sample so an entitled user can generate immediately.
+    const SAMPLE_SOURCES = [
+      { id: "s1", title: "Illustrative hydration reference (example)", url: "https://example.org/hydration-basics",
+        retrieved_at: "2026-07-16T00:00:00Z",
+        text: "Drinking water supports normal body temperature regulation during exercise. Thirst is a reasonable early guide to fluid needs for most people in typical conditions." },
+      { id: "s2", title: "Illustrative electrolyte reference (example)", url: "https://example.org/electrolytes",
+        retrieved_at: "2026-07-16T00:00:00Z",
+        text: "Electrolyte loss through sweat can affect performance in long endurance events lasting more than about an hour." }
+    ];
+    const SAMPLE_CLAIMS = [
+      { text: "Water helps regulate body temperature during exercise.",
+        citations: [{ source_id: "s1", quote: "supports normal body temperature regulation during exercise" }] },
+      { text: "In endurance events lasting over about an hour, electrolyte loss from sweat can affect performance.",
+        citations: [{ source_id: "s2", quote: "Electrolyte loss through sweat can affect performance in long endurance events" }] }
+    ];
+    document.getElementById('topic').value = 'Staying hydrated during exercise';
+    document.getElementById('sources').value = JSON.stringify(SAMPLE_SOURCES, null, 2);
+    document.getElementById('claims').value = JSON.stringify(SAMPLE_CLAIMS, null, 2);
+
+    // Pull token from ?token= or ?session_id= if present.
+    const qs = new URLSearchParams(location.search);
+    const preTok = qs.get('token') || qs.get('session_id');
+    if (preTok) document.getElementById('token').value = preTok;
+
+    const msg = document.getElementById('msg');
+    const buybar = document.getElementById('buybar');
+    const briefBox = document.getElementById('briefBox');
+    const briefFrame = document.getElementById('briefFrame');
+
+    function setMsg(text, ok) { msg.textContent = text; msg.className = ok ? 'ok' : 'err'; }
+
+    document.getElementById('form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const go = document.getElementById('go');
+      setMsg('', true); buybar.style.display = 'none'; briefBox.style.display = 'none';
+
+      let sources, claims, uncertainty = [];
+      try {
+        sources = JSON.parse(document.getElementById('sources').value || '[]');
+        claims = JSON.parse(document.getElementById('claims').value || '[]');
+        const uRaw = document.getElementById('uncertainty').value.trim();
+        if (uRaw) uncertainty = JSON.parse(uRaw);
+      } catch (err) {
+        setMsg('Sources / claims / uncertainty must be valid JSON. ' + err.message, false);
+        return;
+      }
+
+      const payload = {
+        token: document.getElementById('token').value.trim(),
+        topic: document.getElementById('topic').value.trim(),
+        sources, claims, uncertainty
+      };
+
+      go.disabled = true; setMsg('Verifying claims and rendering…', true);
+      try {
+        const r = await fetch('/api/generate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+        const data = await r.json();
+        if (r.status === 200 && data.html) {
+          setMsg('Brief rendered — coverage ' + Math.round(data.coverage_pct) + '%. One credit used.', true);
+          briefFrame.srcdoc = data.html; briefBox.style.display = 'block';
+        } else if (r.status === 402) {
+          setMsg(data.message || 'Not entitled.', false); buybar.style.display = 'block';
+        } else if (r.status === 422) {
+          setMsg((data.message || 'The brief failed the citation check.') + '\n\n' + (data.summary || ''), false);
+        } else {
+          setMsg(data.message || 'Could not generate the brief.', false);
+        }
+      } catch (err) {
+        setMsg('Network error. Please try again.', false);
+      }
+      go.disabled = false;
+    });
+  </script>
+</body>
+</html>

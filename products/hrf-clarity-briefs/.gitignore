@@ -3,3 +3,11 @@ node_modules/
 .env.local
 .vercel
 out/
+
+# Runtime entitlement store — written by api/webhook.js, read by the engine.
+# Holds live customer tokens; never commit it. (examples/ fixtures are fine.)
+entitlements.json
+
+# Python bytecode caches
+__pycache__/
+*.pyc

@@ -3,12 +3,18 @@
 // HFF — Runway packet generator endpoint. The paid/entitled user POSTs their transactions
 // CSV here and gets back the XLSX + PDF packet.
 //
-// ENTITLEMENT (mirrors the checkout's fail-safe shape):
-//   * Access is gated on a PAID Stripe Checkout Session. Caller passes { session_id }.
-//     If STRIPE_SECRET_KEY is set, we verify session.payment_status === 'paid' before running.
-//   * If STRIPE_SECRET_KEY is NOT set, the route is INERT (501) UNLESS RUNWAY_DEV_UNLOCK=1 is
-//     set (local/dev only) — this lets the founder test the engine without wiring payments.
-//     This is NOT real payment; the real gate is the Stripe session check.
+// ENTITLEMENT (subscription-aware; mirrors the proven hsf entitlement store):
+//   Runway is a $15/mo subscription, so an active subscriber must be able to
+//   generate packets REPEATEDLY. Access is granted if ANY of these holds:
+//     1. STORE ENTITLEMENT — the signed webhook wrote `email:<addr>` paid:true
+//        when the buyer checked out. Caller passes { email }; we read the store.
+//        This is the durable, repeat-use gate for subscribers.
+//     2. PAID SESSION — caller passes { session_id } and (when STRIPE_SECRET_KEY
+//        is set) we verify the Checkout Session is paid. This covers the very
+//        first generation right after checkout, before/without the email lookup.
+//     3. DEV UNLOCK — RUNWAY_DEV_UNLOCK=1 (local/dev only) lets the founder test
+//        the engine with no payments wired. NOT real payment.
+//   Fails CLOSED otherwise (402 if we can point them to checkout, 501 if inert).
 //   * No secrets are hardcoded. No money is moved here.
 //
 // GUARDRAIL: organizational tooling only; the engine itself refuses to emit advice language.
@@ -16,35 +22,46 @@
 'use strict';
 
 const { generateRunwayPacket } = require('../engine');
+const store = require('../lib/store');
 
 async function isEntitled(req, body) {
   const devUnlock = process.env.RUNWAY_DEV_UNLOCK === '1';
   const secretKey = process.env.STRIPE_SECRET_KEY;
+  const email = (body.email || (req.query && req.query.email) || '').toString().trim().toLowerCase();
+  const sessionId = body.session_id || (req.query && req.query.session_id);
 
-  // Real gate: verify a paid Stripe checkout session.
-  if (secretKey && secretKey.trim() !== '') {
-    const sessionId = body.session_id || (req.query && req.query.session_id);
-    if (!sessionId) return { ok: false, code: 401, message: 'Missing session_id (paid checkout required).' };
+  // 1. Durable store entitlement (active subscriber) — allows repeat generation.
+  if (email) {
+    if (await store.isPaid('email:' + email)) return { ok: true, via: 'subscription' };
+  }
+
+  // 2. Fresh paid Checkout Session (first run right after checkout).
+  if (secretKey && secretKey.trim() !== '' && sessionId) {
     try {
       const Stripe = require('stripe');
       const stripe = new Stripe(secretKey, { apiVersion: '2024-06-20' });
       const session = await stripe.checkout.sessions.retrieve(sessionId);
       const paid = session && (session.payment_status === 'paid' || session.status === 'complete');
-      if (!paid) return { ok: false, code: 402, message: 'Checkout session is not paid.' };
-      return { ok: true };
+      if (paid) return { ok: true, via: 'session' };
+      return { ok: false, code: 402, message: 'Checkout session is not paid.' };
     } catch (e) {
       return { ok: false, code: 402, message: 'Could not verify checkout session.' };
     }
   }
 
-  // No payment configured: allow only if the founder explicitly opted into dev-unlock.
+  // 3. Dev unlock (no payments wired).
   if (devUnlock) return { ok: true, dev: true };
 
+  // Not entitled. If Stripe is configured, this is a payment-required case;
+  // otherwise the route is inert until the founder wires keys.
+  if (secretKey && secretKey.trim() !== '') {
+    return { ok: false, code: 402, message: 'Subscription required. Subscribe, then retry with your email.' };
+  }
   return {
     ok: false,
     code: 501,
     message:
-      'Packet generation is not configured. Set STRIPE_SECRET_KEY (and gate on a paid session), ' +
+      'Packet generation is not configured. Set STRIPE_SECRET_KEY (subscribers gate on their email), ' +
       'or set RUNWAY_DEV_UNLOCK=1 for local testing. See README.md.',
   };
 }
