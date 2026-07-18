@@ -31,6 +31,29 @@ def _now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
+def _is_ephemeral_evidence(evidence_dir: Path) -> bool:
+    """True if evidence_dir is a throwaway TEST/tmp location that must NEVER be published as
+    the canonical PRODUCTION runtime pointer.
+
+    On 2026-07-18 a test (test_e2e_scheduler_path_with_m0) constructed a scheduler with a
+    pytest tmp evidence_dir and publish_runtime_source=True; that pytest path leaked into
+    coordination/council/active_runtime_source.json, so the independent observer saw the
+    canonical lease ledger point at a directory that no longer exists and flagged the whole
+    runtime CONTRADICTED. Production runtime config must be separate from test config.
+    """
+    import tempfile
+    try:
+        s = str(Path(evidence_dir).resolve())
+    except Exception:
+        s = str(evidence_dir)
+    tmp = str(Path(tempfile.gettempdir()).resolve())
+    return (
+        s.startswith(tmp)
+        or "pytest-" in s
+        or os.environ.get("PYTEST_CURRENT_TEST") is not None
+    )
+
+
 def publish(evidence_dir: Path, instance_id: str) -> None:
     """The DAEMON declares which ledger is canonical. Written at scheduler start."""
     evidence_dir = Path(evidence_dir)
@@ -48,6 +71,13 @@ def publish(evidence_dir: Path, instance_id: str) -> None:
         "pid": os.getpid(),
         "published_at": _now(),
     }, indent=2) + "\n", encoding="utf-8")
+
+    # GUARD: never let a test/tmp evidence_dir become the canonical production pointer.
+    # The local sidecar (inside evidence_dir) is still written so a test scheduler has its
+    # own context; only the shared canonical POINTER is protected.
+    if _is_ephemeral_evidence(evidence_dir):
+        return
+
     POINTER.parent.mkdir(parents=True, exist_ok=True)
     POINTER.write_text(json.dumps({
         "scheduler_instance_id": instance_id,
