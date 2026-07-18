@@ -93,7 +93,16 @@ def _with_locked_retry(op, *, what: str = "db", attempts: int = 8, base: float =
             if "locked" not in str(e).lower():
                 raise
             last = e
-            time.sleep(min(base * (2 ** i), 8.0))
+            waited = min(base * (2 ** i), 8.0)
+            # INSTRUMENTATION: every locked-retry is the leading indicator of the exact
+            # 2026-07-15 failure mode. Recording it lets HELM SEE contention rising before
+            # it hits the wall. Best-effort — telemetry must never break the write path.
+            try:
+                from backend.mission_control import loop_metrics
+                loop_metrics.get().record_lock_retry(what, waited)
+            except Exception:
+                pass
+            time.sleep(waited)
     logger.error("%s: gave up after %d locked-retries: %s", what, attempts, last)
     raise last  # type: ignore[misc]
 

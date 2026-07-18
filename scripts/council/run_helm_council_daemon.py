@@ -53,6 +53,30 @@ def now() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
+def _instrument(rec: dict) -> None:
+    """Fold executive-loop telemetry into the heartbeat: record this cycle, flush the
+    metrics snapshot to disk, and attach loop_metrics + loop_health so the same numbers
+    ride the append-only heartbeat. Best-effort — telemetry never breaks the loop."""
+    try:
+        from backend.mission_control import loop_metrics
+        m = loop_metrics.get()
+
+        def _count(v):
+            return len(v) if isinstance(v, list) else (v or 0)
+
+        m.record_cycle(state=rec.get("state", "?"),
+                       dispatched=rec.get("dispatched", 0) or 0,
+                       passed=_count(rec.get("passed")),
+                       failed=_count(rec.get("failed")),
+                       seconds=rec.get("seconds", 0.0) or 0.0)
+        snap = m.flush()
+        rec["loop_metrics"] = {k: snap[k] for k in
+                               ("uptime_seconds", "boot_count", "cycles", "missions", "lock_contention")}
+        rec["loop_health"] = snap["health"]
+    except Exception:
+        pass
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--interval", type=float, default=20.0, help="seconds between cycles")
@@ -66,6 +90,12 @@ def main() -> int:
     evidence = ROOT / "coordination" / "council" / "daemon"
     evidence.mkdir(parents=True, exist_ok=True)
     sched = PersistentScheduler(evidence_dir=evidence)
+    try:
+        from backend.mission_control import loop_metrics
+        boot = loop_metrics.get().mark_boot()
+        print(f"[council] loop boot #{boot} — telemetry armed", flush=True)
+    except Exception:
+        pass
 
     conc = sched.concurrency_report()
     print(f"[council] HELM council daemon online", flush=True)
@@ -118,6 +148,7 @@ def main() -> int:
                 rec["security_posture_percent"] = "UNKNOWN"
                 rec["conmon_error"] = str(e)[:120]
 
+            _instrument(rec)
             with open(HEARTBEAT, "a", encoding="utf-8") as f:
                 f.write(json.dumps(rec) + "\n")
 
@@ -137,6 +168,7 @@ def main() -> int:
                 rec["security_posture_percent"] = "UNKNOWN"
                 rec["conmon_error"] = str(e)[:120]
 
+            _instrument(rec)
             with open(HEARTBEAT, "a", encoding="utf-8") as f:
                 f.write(json.dumps(rec) + "\n")
             print(f"[council] cycle {cycle}: ERROR {e}", flush=True)
