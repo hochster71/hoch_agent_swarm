@@ -1,0 +1,12 @@
+{
+  "name": "hff-recurring-charges",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HFF — Recurring Charge Finder: deterministic bank/card CSV -> every repeating charge with cadence, price drift, and annualized cost (XLSX + one-page PDF) + Stripe one-time checkout scaffold. Organizational tooling only, not advice.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recurring Charge Finder — find every charge that repeats</title>
+<meta name="description" content="Upload a bank or card CSV and get every repeating charge, its cadence, and what it costs per year. Organizational tooling, not advice.">
+<style>
+:root{--ink:#101418;--mut:#5c6672;--line:#e3e7eb;--accent:#0f6f5c;--bg:#fbfcfd}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px}
+header{padding:56px 0 8px}
+h1{font-size:40px;line-height:1.12;margin:0 0 14px;letter-spacing:-.02em}
+.lede{font-size:19px;color:var(--mut);margin:0 0 28px;max-width:60ch}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;margin:22px 0}
+.price{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.price b{font-size:34px;letter-spacing:-.02em}
+.price span{color:var(--mut)}
+button{font:inherit;font-weight:600;border:0;border-radius:9px;padding:13px 22px;cursor:pointer}
+.buy{background:var(--accent);color:#fff}
+.buy:disabled{opacity:.5;cursor:not-allowed}
+.ghost{background:#eef1f4;color:var(--ink)}
+ul{padding-left:20px}li{margin:7px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:680px){.grid{grid-template-columns:1fr}h1{font-size:31px}}
+.k{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:0 0 4px}
+.v{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.note{font-size:13.5px;color:var(--mut)}
+.disc{background:#fff8ec;border:1px solid #f0dfc0;border-radius:10px;padding:14px 16px;font-size:13.5px;color:#5b4a2c}
+footer{padding:40px 0 60px;color:var(--mut);font-size:13.5px;border-top:1px solid var(--line);margin-top:40px}
+code{background:#eef1f4;padding:2px 6px;border-radius:5px;font-size:13px}
+input[type=file]{font:inherit}
+.msg{font-size:14px;margin-top:12px}
+.err{color:#a2231d}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14.5px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Find every charge that repeats.</h1>
+  <p class="lede">Upload a bank or card CSV. Get every recurring charge the file contains — its cadence, what it typically costs, whether the price moved, and what it adds up to per year — as an Excel workbook and a one-page PDF.</p>
+</header>
+
+<div class="card">
+  <div class="price"><b>$9</b><span>one-time · one report · no account</span></div>
+  <p class="note">Your file is analysed in the request and is not stored. Nothing is emailed anywhere.</p>
+  <p style="margin:18px 0 0">
+    <button class="buy" id="buy">Buy a report — $9</button>
+    <button class="ghost" id="try">Try the free preview</button>
+  </p>
+  <div class="msg" id="msg"></div>
+</div>
+
+<div class="card" id="previewCard" style="display:none">
+  <h2 style="margin:0 0 6px;font-size:20px">Free preview</h2>
+  <p class="note">Runs the real engine on your file and shows the top line. The full table and the downloadable files unlock after purchase.</p>
+  <p><input type="file" id="csv" accept=".csv,text/csv"> <button class="ghost" id="run">Run preview</button></p>
+  <div id="out"></div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2 style="margin:0 0 8px;font-size:19px">What it detects</h2>
+    <ul>
+      <li>Weekly, biweekly, monthly, quarterly, semiannual and annual cadences</li>
+      <li>Merchant names normalised across POS prefixes, store numbers and reference codes</li>
+      <li>Price drift — the latest charge vs the first one observed</li>
+      <li>Patterns that stopped charging earlier than their own cadence predicts</li>
+      <li>Distinct merchants in this file that share a category tag</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 style="margin:0 0 8px;font-size:19px">What you get</h2>
+    <ul>
+      <li><b>XLSX</b> — Summary, Recurring Charges, All Occurrences, Flagged Rows</li>
+      <li><b>PDF</b> — one page you can hand to someone else</li>
+      <li>Every unreadable row is <b>flagged with its line number</b>, never silently dropped</li>
+      <li>Handles ISO / US / UK dates, currency symbols, thousands separators and parenthesised negatives</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="margin:0 0 8px;font-size:19px">The CSV it expects</h2>
+  <p class="note">Any export with a date, a description and an amount column. Common header names are matched automatically (<code>Transaction Date</code>, <code>Posted Date</code>, <code>Description</code>, <code>Merchant</code>, <code>Payee</code>, <code>Amount</code>, <code>Debit</code>…).</p>
+  <pre style="background:#f3f5f7;padding:14px;border-radius:8px;overflow:auto;font-size:13px">Transaction Date,Description,Amount
+01/03/2026,NETFLIX.COM #1000,15.49
+01/09/2026,SQ *SPOTIFY USA INC NY,11.99</pre>
+</div>
+
+<div class="disc" id="disclaimer">
+  This report is organizational tooling only. It lists charges that repeat in the file you uploaded. It is not financial, tax, or legal advice, and it does not tell you what to keep, cancel, or dispute. Verify every line against your own statements before acting.
+</div>
+
+<footer>
+  Hoch Finance Factory · Recurring Charge Finder · one-time purchase, no subscription, no account.
+</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+$('try').onclick = () => { $('previewCard').style.display = 'block'; $('previewCard').scrollIntoView({behavior:'smooth'}); };
+
+$('buy').onclick = async () => {
+  const b = $('buy'); b.disabled = true; $('msg').textContent = 'Opening checkout…'; $('msg').className='msg';
+  try {
+    const r = await fetch('/api/create-checkout-session', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({tier:'report'})
+    });
+    const j = await r.json();
+    if (j.url) { window.location = j.url; return; }
+    $('msg').className='msg err';
+    $('msg').textContent = j.message || 'Checkout is not available yet.';
+  } catch (e) {
+    $('msg').className='msg err'; $('msg').textContent = 'Could not reach checkout.';
+  }
+  b.disabled = false;
+};
+
+$('run').onclick = async () => {
+  const f = $('csv').files[0];
+  if (!f) { $('out').innerHTML = '<p class="msg err">Choose a CSV first.</p>'; return; }
+  $('out').innerHTML = '<p class="msg">Reading…</p>';
+  const text = await f.text();
+  try {
+    const r = await fetch('/api/preview', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({csv:text}) });
+    const j = await r.json();
+    if (!j.ok) { $('out').innerHTML = '<p class="msg err">' + (j.message || 'Could not read that file.') + '</p>'; return; }
+    const rows = (j.sampleMerchants||[]).map(m => '<tr><td>'+m.label+'</td><td>'+m.cadence+'</td><td>'+m.occurrences+'</td></tr>').join('');
+    $('out').innerHTML =
+      '<div class="grid" style="margin-top:14px">' +
+        '<div><p class="k">Recurring patterns</p><p class="v">'+j.counts.recurringPatterns+'</p></div>' +
+        '<div><p class="k">Annualized</p><p class="v">$'+j.totals.annualized.toFixed(2)+'</p></div>' +
+      '</div>' +
+      '<p class="note">Window '+(j.window.start||'n/a')+' → '+(j.window.end||'n/a')+' · '+j.counts.chargeRows+' charge rows read · '+j.counts.skippedRows+' flagged</p>' +
+      (rows ? '<table><tr><th>Merchant</th><th>Cadence</th><th>Seen</th></tr>'+rows+'</table>' : '') +
+      '<p class="note" style="margin-top:14px">'+j.withheld+'</p>';
+  } catch (e) {
+    $('out').innerHTML = '<p class="msg err">Preview failed.</p>';
+  }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your Recurring Charge report</title>
+<style>
+:root{--ink:#101418;--mut:#5c6672;--line:#e3e7eb;--accent:#0f6f5c;--bg:#fbfcfd}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:900px;margin:0 auto;padding:44px 22px 80px}
+h1{font-size:31px;margin:0 0 8px;letter-spacing:-.02em}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;margin:20px 0}
+button{font:inherit;font-weight:600;border:0;border-radius:9px;padding:12px 20px;cursor:pointer}
+.buy{background:var(--accent);color:#fff}.ghost{background:#eef1f4;color:var(--ink)}
+.note{font-size:13.5px;color:var(--mut)}
+.pill{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;background:#e7f3ef;color:#0f6f5c;font-weight:600}
+.pill.no{background:#fdeceb;color:#a2231d}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+td.n,th.n{text-align:right}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:680px){.grid{grid-template-columns:1fr}}
+.k{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:0 0 4px}
+.v{font-size:25px;font-weight:700}
+.disc{background:#fff8ec;border:1px solid #f0dfc0;border-radius:10px;padding:14px 16px;font-size:13.5px;color:#5b4a2c}
+.err{color:#a2231d}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Your report</h1>
+  <p class="note">Status: <span class="pill" id="status">checking…</span> <span id="sid" class="note"></span></p>
+
+  <div class="card">
+    <p>Upload the CSV you want analysed. It runs in this request and is not stored.</p>
+    <p><input type="file" id="csv" accept=".csv,text/csv"> <button class="buy" id="run">Generate report</button></p>
+    <p class="note" id="msg"></p>
+  </div>
+
+  <div id="out"></div>
+
+  <div class="disc">This report is organizational tooling only. It lists charges that repeat in the file you uploaded. It is not financial, tax, or legal advice, and it does not tell you what to keep, cancel, or dispute. Verify every line against your own statements before acting.</div>
+</div>
+
+<script>
+const $ = (id)=>document.getElementById(id);
+const sid = new URLSearchParams(location.search).get('session_id');
+$('sid').textContent = sid ? '(' + sid.slice(0,18) + '…)' : '(no session id in the link)';
+
+(async () => {
+  if (!sid) { $('status').textContent = 'no session'; $('status').className='pill no'; return; }
+  try {
+    const r = await fetch('/api/entitlement?session_id=' + encodeURIComponent(sid));
+    const j = await r.json();
+    $('status').textContent = j.paid ? 'unlocked' : 'not unlocked yet';
+    $('status').className = 'pill' + (j.paid ? '' : ' no');
+  } catch (e) { $('status').textContent = 'unknown'; $('status').className='pill no'; }
+})();
+
+function dl(name, b64, mime) {
+  const bin = atob(b64); const arr = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+  const url = URL.createObjectURL(new Blob([arr], {type:mime}));
+  const a = document.createElement('a'); a.href=url; a.download=name; a.textContent='Download ' + name;
+  a.className='note'; a.style.display='inline-block'; a.style.marginRight='16px';
+  return a;
+}
+
+$('run').onclick = async () => {
+  const f = $('csv').files[0];
+  if (!f) { $('msg').className='note err'; $('msg').textContent='Choose a CSV first.'; return; }
+  $('msg').className='note'; $('msg').textContent='Analysing…'; $('out').innerHTML='';
+  const text = await f.text();
+  try {
+    const r = await fetch('/api/generate-report', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ session_id: sid, csv: text })
+    });
+    const j = await r.json();
+    if (!j.ok) { $('msg').className='note err'; $('msg').textContent = j.message || 'Could not generate the report.'; return; }
+    $('msg').textContent = '';
+    const s = j.report.summary;
+    const rows = j.report.recurring.map(x =>
+      '<tr><td>'+x.label+'</td><td>'+x.cadence+'</td><td class="n">'+x.occurrences+'</td>'+
+      '<td class="n">$'+x.typicalAmount.toFixed(2)+'</td><td class="n">$'+x.annualizedAmount.toFixed(2)+'</td>'+
+      '<td>'+x.confidence+'</td></tr>').join('');
+    const notes = s.notes.map(n=>'<li>'+n+'</li>').join('');
+    const box = document.createElement('div');
+    box.className='card';
+    box.innerHTML =
+      '<div class="grid">'+
+        '<div><p class="k">Patterns</p><p class="v">'+s.counts.recurringPatterns+'</p></div>'+
+        '<div><p class="k">Monthly equivalent</p><p class="v">$'+s.totals.monthlyEquivalent.toFixed(2)+'</p></div>'+
+        '<div><p class="k">Annualized</p><p class="v">$'+s.totals.annualized.toFixed(2)+'</p></div>'+
+      '</div>'+
+      '<p class="note">Window '+(s.window.start||'n/a')+' → '+(s.window.end||'n/a')+' · '+s.counts.chargeRows+' charge rows · '+s.counts.creditRows+' credits excluded · '+s.counts.skippedRows+' flagged</p>'+
+      '<table><tr><th>Merchant</th><th>Cadence</th><th class="n">Seen</th><th class="n">Typical</th><th class="n">Annualized</th><th>Confidence</th></tr>'+rows+'</table>'+
+      (notes ? '<h3 style="font-size:15px;margin:20px 0 6px">Observations</h3><ul class="note">'+notes+'</ul>' : '')+
+      '<p id="dls" style="margin-top:18px"></p>';
+    $('out').appendChild(box);
+    const dls = box.querySelector('#dls');
+    dls.appendChild(dl(j.files.xlsx.filename, j.files.xlsx.base64, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
+    dls.appendChild(dl(j.files.pdf.filename, j.files.pdf.base64, 'application/pdf'));
+  } catch (e) {
+    $('msg').className='note err'; $('msg').textContent='Report generation failed.';
+  }
+};
+</script>
+</body>
+</html>

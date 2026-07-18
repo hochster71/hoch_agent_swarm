@@ -71,6 +71,21 @@
       "slug": "hsf-coloring-export",
       "built_at": "2026-07-17",
       "tests": "14 engine + 11 buyloop, all pass (node v22)"
+    },
+    {
+      "id": "HFF_RECURRING_CHARGES",
+      "factory": "HFF",
+      "name": "Recurring Charge Finder",
+      "what_it_is": "Upload a bank/card transaction CSV -> every charge that repeats, with cadence (weekly..annual), typical amount, price drift, dormancy, and annualized cost, as an XLSX workbook + one-page PDF. Organizational tooling only.",
+      "buyer": "Solo operators and households who want to see every repeating charge in one place without connecting a bank account.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "guardrail": "organizational tooling only; no financial/tax/legal advice; never tells the user what to cancel",
+      "generated_by": "autonomous factory loop 2026-07-18 (all prior candidates already BUILT)",
+      "status": "BUILT",
+      "slug": "hff-recurring-charges",
+      "built_at": "2026-07-18",
+      "tests": "28 engine + 17 buyloop, all pass (node v22.22.3)"
     }
   ]
 }
