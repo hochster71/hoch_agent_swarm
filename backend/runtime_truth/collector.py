@@ -23,7 +23,8 @@ def get_path_hash(path: Path) -> str:
 def collect_git_status():
     dirty = []
     try:
-        res = subprocess.run(["git", "status", "--porcelain"], cwd=PROJECT_ROOT, capture_output=True, text=True)
+        res = subprocess.run(["git", "status", "--porcelain"], cwd=PROJECT_ROOT,
+                             capture_output=True, text=True, timeout=10)
         if res.stdout.strip():
             dirty = [line.strip() for line in res.stdout.strip().split("\n")]
     except Exception:
@@ -56,7 +57,16 @@ def collect_sqlite_status():
         return {"healthy": False, "error": str(e)}
 
 def collect_and_store_all():
-    conn = sqlite3.connect(DB_PATH, timeout=30)
+    # AUTOCOMMIT (isolation_level=None): each INSERT is its own short transaction, so the
+    # swarm_ledger.db write lock is NEVER held across the slow collection below (a `git
+    # status` subprocess, a model-health network scan, socket probes). Previously this
+    # opened ONE implicit write transaction at the first INSERT and did not commit until
+    # ~940 lines later (line ~1000), pinning the write lock across all that blocking I/O.
+    # A `git status` with no timeout (collect_git_status) could hang and hold the lock
+    # INDEFINITELY, blocking every other writer — the 'database is locked' defect that
+    # idled the executive loop. Telemetry signals here are independent INSERT OR REPLACE
+    # rows, so per-statement autocommit is correct: no cross-row atomic invariant is lost.
+    conn = sqlite3.connect(DB_PATH, timeout=30, isolation_level=None)
     apply_pragmas(conn)
     
     # 1. Collect Uptime / Heartbeats

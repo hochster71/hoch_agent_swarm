@@ -27,7 +27,14 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 DB = ROOT / "backend" / "swarm_ledger.db"
+
+# Reuse the SAME hardened connection + locked-retry the scheduler uses. The seeder is a
+# peer writer of swarm_ledger.db; under a live runtime (the :8000/:8770 services hold the
+# DB) a bare connect + ALTER TABLE fails immediately on 'database is locked'. One source
+# of truth for durability, not a second ad-hoc copy.
+from backend.mission_control.persistent_scheduler import _sqlite_connect, _with_locked_retry
 
 SUBJECT_MODULE = "backend/mission_control/factory_validators.py"
 
@@ -107,42 +114,51 @@ def main() -> int:
         print(f"task DB missing: {DB}", file=sys.stderr)
         return 2
 
-    conn = sqlite3.connect(str(DB))
-    try:
-        # Carry the real mission instruction + validator context on the task row.
-        cols = {r[1] for r in conn.execute("PRAGMA table_info(mission_control_tasks)")}
-        if "mission_prompt" not in cols:
-            conn.execute("ALTER TABLE mission_control_tasks ADD COLUMN mission_prompt TEXT")
-        if "validator_ctx" not in cols:
-            conn.execute("ALTER TABLE mission_control_tasks ADD COLUMN validator_ctx TEXT")
+    def _seed_write():
+        conn = _sqlite_connect(DB)
+        try:
+            # Carry the real mission instruction + validator context on the task row.
+            cols = {r[1] for r in conn.execute("PRAGMA table_info(mission_control_tasks)")}
+            if "mission_prompt" not in cols:
+                conn.execute("ALTER TABLE mission_control_tasks ADD COLUMN mission_prompt TEXT")
+            if "validator_ctx" not in cols:
+                conn.execute("ALTER TABLE mission_control_tasks ADD COLUMN validator_ctx TEXT")
 
-        for m in MISSIONS:
-            # EXPLICIT column lists -- the fix for the misalignment defect.
-            conn.execute(
-                "INSERT OR REPLACE INTO mission_control_missions "
-                "(mission_id, name, target_pod, command, status, created_at, updated_at) "
-                "VALUES (?,?,?,?,?,?,?)",
-                (m["mission_id"], m["name"], m["factory"],
-                 f"factory:{m['factory']}", "PENDING", now(), now()),
-            )
-            conn.execute(
-                "INSERT OR REPLACE INTO mission_control_tasks "
-                "(task_id, mission_id, name, assigned_agent, status, step_index, "
-                " dependencies, error_message, evidence_path, created_at, updated_at, "
-                " mission_prompt, validator_ctx) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                (m["task_id"], m["mission_id"], m["name"], f"Agent{m['factory']}",
-                 "PENDING",                      # <-- a real status, in the real column
-                 1, "", "", "", now(), now(),
-                 m["prompt"], json.dumps(m["validator_ctx"])),
-            )
-        conn.commit()
+            for m in MISSIONS:
+                # EXPLICIT column lists -- the fix for the misalignment defect.
+                conn.execute(
+                    "INSERT OR REPLACE INTO mission_control_missions "
+                    "(mission_id, name, target_pod, command, status, created_at, updated_at) "
+                    "VALUES (?,?,?,?,?,?,?)",
+                    (m["mission_id"], m["name"], m["factory"],
+                     f"factory:{m['factory']}", "PENDING", now(), now()),
+                )
+                conn.execute(
+                    "INSERT OR REPLACE INTO mission_control_tasks "
+                    "(task_id, mission_id, name, assigned_agent, status, step_index, "
+                    " dependencies, error_message, evidence_path, created_at, updated_at, "
+                    " mission_prompt, validator_ctx) "
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (m["task_id"], m["mission_id"], m["name"], f"Agent{m['factory']}",
+                     "PENDING",                      # <-- a real status, in the real column
+                     1, "", "", "", now(), now(),
+                     m["prompt"], json.dumps(m["validator_ctx"])),
+                )
+            conn.commit()
+        finally:
+            conn.close()
 
-        rows = list(conn.execute(
-            "SELECT task_id, status, step_index, assigned_agent FROM mission_control_tasks "
-            "WHERE task_id LIKE 'T-%-REAL-%'"))
-    finally:
-        conn.close()
+    def _seed_read():
+        conn = _sqlite_connect(DB)
+        try:
+            return list(conn.execute(
+                "SELECT task_id, status, step_index, assigned_agent FROM mission_control_tasks "
+                "WHERE task_id LIKE 'T-%-REAL-%'"))
+        finally:
+            conn.close()
+
+    _with_locked_retry(_seed_write, what="seed_real_factory_missions")
+    rows = _with_locked_retry(_seed_read, what="seed_real_read")
 
     seeded = [{"task_id": r[0], "status": r[1], "step_index": r[2], "assigned_agent": r[3]}
               for r in rows]
