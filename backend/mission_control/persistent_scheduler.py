@@ -73,6 +73,31 @@ def _sqlite_connect(db_path, *, ro: bool = False):
     return c
 
 
+def _with_locked_retry(op, *, what: str = "db", attempts: int = 8, base: float = 0.4):
+    """Run a DB unit-of-work, retrying ONLY on 'database is locked'.
+
+    busy_timeout (above) makes ONE connection wait up to 30s for the lock. This wraps
+    the whole connect->write->commit unit so that when a peer holds the WAL write lock
+    LONGER than the busy_timeout (a bulk seeder, a slow transaction, a checkpoint), a
+    transient lock becomes a WAIT-AND-RETRY, never a failed scheduler cycle. That is the
+    difference between "HELM is operational" and the 2026-07-15 crash ('database is
+    locked' killed cycle 506). Bounded: after `attempts` it re-raises, so a genuine
+    deadlock is surfaced, not hidden. The op MUST open its own connection each call so a
+    retry starts from a clean transaction.
+    """
+    last: Exception | None = None
+    for i in range(attempts):
+        try:
+            return op()
+        except sqlite3.OperationalError as e:
+            if "locked" not in str(e).lower():
+                raise
+            last = e
+            time.sleep(min(base * (2 ** i), 8.0))
+    logger.error("%s: gave up after %d locked-retries: %s", what, attempts, last)
+    raise last  # type: ignore[misc]
+
+
 class PersistentScheduler:
     def __init__(self, evidence_dir: Optional[Path] = None,
                  publish_runtime_source: bool = False):
@@ -195,34 +220,37 @@ class PersistentScheduler:
     def evaluate_runnable_tasks(self) -> List[Dict[str, Any]]:
         if not self.db_path.exists():
             return []
-        
-        conn = _sqlite_connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        try:
-            # Load pending/failed tasks
-            tasks = [dict(r) for r in conn.execute("""
-                SELECT t.*, m.target_pod, m.name as mission_name
-                FROM mission_control_tasks t
-                JOIN mission_control_missions m ON t.mission_id = m.mission_id
-                WHERE t.status IN ('PENDING', 'FAILED')
-                ORDER BY t.step_index ASC
-            """).fetchall()]
-            
-            # Load completed tasks
-            completed = {r["task_id"] for r in conn.execute(
-                "SELECT task_id FROM mission_control_tasks WHERE status = 'COMPLETED'"
-            ).fetchall()}
-            
-            # Filter by dependency
-            runnable = []
-            for t in tasks:
-                dep_str = t.get("dependencies", "")
-                deps = [d.strip() for d in dep_str.split(",") if d.strip()]
-                if all(d in completed for d in deps):
-                    runnable.append(t)
-            return runnable
-        finally:
-            conn.close()
+
+        def _read() -> List[Dict[str, Any]]:
+            conn = _sqlite_connect(self.db_path)
+            conn.row_factory = sqlite3.Row
+            try:
+                # Load pending/failed tasks
+                tasks = [dict(r) for r in conn.execute("""
+                    SELECT t.*, m.target_pod, m.name as mission_name
+                    FROM mission_control_tasks t
+                    JOIN mission_control_missions m ON t.mission_id = m.mission_id
+                    WHERE t.status IN ('PENDING', 'FAILED')
+                    ORDER BY t.step_index ASC
+                """).fetchall()]
+
+                # Load completed tasks
+                completed = {r["task_id"] for r in conn.execute(
+                    "SELECT task_id FROM mission_control_tasks WHERE status = 'COMPLETED'"
+                ).fetchall()}
+
+                # Filter by dependency
+                runnable = []
+                for t in tasks:
+                    dep_str = t.get("dependencies", "")
+                    deps = [d.strip() for d in dep_str.split(",") if d.strip()]
+                    if all(d in completed for d in deps):
+                        runnable.append(t)
+                return runnable
+            finally:
+                conn.close()
+
+        return _with_locked_retry(_read, what="evaluate_runnable_tasks")
 
     def rank_tasks(self, tasks: List[Dict[str, Any]], blockers: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         # Evaluate states to check lane blockers
@@ -793,27 +821,29 @@ class PersistentScheduler:
             "details": f"exit={exit_code} status={status_val} validator={val.get('verdict')}"
         })
         
-        # Update DB state
-        conn = _sqlite_connect(self.db_path)
-        try:
-            if passed:
-                new_status = "COMPLETED"
-            else:
-                retry_count = self.retries.get(task_id, 0) + 1
-                self.retries[task_id] = retry_count
-                if retry_count >= self.max_retries:
-                    new_status = "FAILED"
-                else:
-                    new_status = "PENDING"
-                    
-            conn.execute("""
-                UPDATE mission_control_tasks
-                SET status = ?, updated_at = ?, evidence_path = ?
-                WHERE task_id = ?
-            """, (new_status, get_utc_now_str(), f"artifacts/evidence/{task_id}_proof.json", task_id))
-            conn.commit()
-        finally:
-            conn.close()
+        # Decide the new status ONCE (this mutates self.retries — must not run per retry).
+        if passed:
+            new_status = "COMPLETED"
+        else:
+            retry_count = self.retries.get(task_id, 0) + 1
+            self.retries[task_id] = retry_count
+            new_status = "FAILED" if retry_count >= self.max_retries else "PENDING"
+
+        # Persist it with locked-retry: a peer holding the write lock must never turn a
+        # completed task's result into a lost write / a dead cycle.
+        def _persist() -> None:
+            conn = _sqlite_connect(self.db_path)
+            try:
+                conn.execute("""
+                    UPDATE mission_control_tasks
+                    SET status = ?, updated_at = ?, evidence_path = ?
+                    WHERE task_id = ?
+                """, (new_status, get_utc_now_str(), f"artifacts/evidence/{task_id}_proof.json", task_id))
+                conn.commit()
+            finally:
+                conn.close()
+
+        _with_locked_retry(_persist, what=f"persist_status:{task_id}")
             
         # 5. Release lease -- AND RECORD WHAT ACTUALLY HAPPENED.
         # Never write RELEASED unless the lock file was actually removed.
