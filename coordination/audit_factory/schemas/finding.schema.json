@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HAF Finding Schema",
+  "type": "object",
+  "properties": {
+    "finding_id": { "type": "string", "pattern": "^FND-HAF-[0-9]{8}-[a-f0-9]{4}$" },
+    "control_id": { "type": "string", "pattern": "^HAF-[A-Z]+-[0-9]{3}$" },
+    "assessment_run_id": { "type": "string", "pattern": "^HAF-RUN-[0-9]{8}-[0-9]{6}$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "status": { "type": "string", "enum": ["OPEN", "CLOSED", "RISK_ACCEPTED"] },
+    "technical_result": { "type": "string", "enum": ["FAIL", "HOLD", "PASS_WITH_LIMITATIONS"] },
+    "affected_components": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "root_cause": { "type": ["string", "null"] },
+    "recommended_action": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "due_at": { "type": ["string", "null"], "format": "date-time" },
+    "closed_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "required": ["finding_id", "control_id", "assessment_run_id", "title", "description", "severity", "status", "technical_result", "created_at"]
+}

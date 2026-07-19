@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HAF ConMon Signal Schema",
+  "type": "object",
+  "properties": {
+    "signal_id": { "type": "string", "pattern": "^SIG-HAF-[0-9]{8}-[a-f0-9]{4}$" },
+    "signal_type": { "type": "string", "enum": ["FILE_CHANGE", "DEPENDENCY_CHANGE", "MODEL_CHANGE", "PROMPT_CHANGE", "FINDING_CHANGE", "EXPIRATION"] },
+    "target": { "type": "string" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "previous_state": { "type": "string" },
+    "new_state": { "type": "string" },
+    "impacted_controls": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^HAF-[A-Z]+-[0-9]{3}$" }
+    },
+    "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] }
+  },
+  "required": ["signal_id", "signal_type", "target", "observed_at", "impacted_controls", "severity"]
+}

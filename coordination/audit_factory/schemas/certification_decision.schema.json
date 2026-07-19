@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HAF Certification Decision Schema",
+  "type": "object",
+  "properties": {
+    "decision_id": { "type": "string", "pattern": "^DEC-HAF-[0-9]{8}-[a-f0-9]{4}$" },
+    "scope": { "type": "string" },
+    "level": { "type": "string", "pattern": "^L[0-9]$" },
+    "decision": { "type": "string", "enum": ["PASS", "PASS_WITH_LIMITATIONS", "HOLD", "FAIL", "EXPIRED"] },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "control_id": { "type": "string", "pattern": "^HAF-[A-Z]+-[0-9]{3}$" },
+          "reason": { "type": "string" }
+        },
+        "required": ["control_id", "reason"]
+      }
+    },
+    "assessed_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "evaluator": { "type": "string" },
+    "risk_decision": { "type": ["string", "null"] },
+    "operating_posture": { "type": "string" }
+  },
+  "required": ["decision_id", "scope", "level", "decision", "reasons", "assessed_at", "expires_at", "evaluator", "operating_posture"]
+}

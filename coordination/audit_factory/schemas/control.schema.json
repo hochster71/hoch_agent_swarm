@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HAF Control Schema",
+  "type": "object",
+  "properties": {
+    "control_id": { "type": "string", "pattern": "^HAF-[A-Z]+-[0-9]{3}$" },
+    "version": { "type": "string" },
+    "level": { "type": "string", "pattern": "^L[0-9]$" },
+    "domain": { "type": "string" },
+    "family": { "type": "string" },
+    "title": { "type": "string" },
+    "requirement": { "type": "string" },
+    "rationale": { "type": "string" },
+    "applicability": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "mandatory": { "type": "boolean" },
+    "framework_mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "assessment_procedure_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "freshness_period_hours": { "type": "integer", "minimum": 0 },
+    "failure_effect": { "type": "string", "enum": ["HOLD", "FAIL", "PASS_WITH_LIMITATIONS"] },
+    "owner_role": { "type": "string" },
+    "validator_role": { "type": "string" },
+    "status": { "type": "string", "enum": ["NOT_ASSESSED", "IN_PROGRESS", "PASS", "PASS_WITH_LIMITATIONS", "HOLD", "FAIL", "EXPIRED", "SUPERSEDED", "NOT_APPLICABLE"] }
+  },
+  "required": ["control_id", "version", "level", "domain", "family", "title", "requirement", "severity", "mandatory", "assessment_procedure_ids", "freshness_period_hours", "failure_effect", "status"]
+}

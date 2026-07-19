@@ -500,6 +500,13 @@ def _next_move_line(src: Dict[str, Any]) -> str:
 
 
 def build_executive_brief() -> Dict[str, Any]:
+    """VOICE-SCOPED executive briefing (speech_text + labels for the voice desk).
+
+    NOT the canonical HELM Executive Brief — that is
+    `backend.helm_executive_brief.build_executive_brief` (the unified projection surface
+    behind /api/v1/helm/executive-brief). This one is the voice stack's briefing and is
+    also exposed as `build_voice_brief` to make the distinction unambiguous at call sites.
+    """
     src = _observe_sources()
     fresh = src.get("_freshness") or {}
     speech_parts: List[str] = []
@@ -867,6 +874,27 @@ def execute_voice_command(
             "labels": {"factories": flabel},
             "data": {"lines": flines},
         }
+    elif cmd["id"] == "calendar_agenda":
+        # Real Apple Calendar + Reminders (read-only, local osascript). Honest
+        # NOT_CONNECTED if macOS hasn't granted access — never fabricated events.
+        try:
+            from backend.devices.apple_calendar_live import spoken_agenda
+            utt = (utterance or "").lower()
+            scope = "today" if "today" in utt else "tomorrow"
+            ag = spoken_agenda(scope)
+            body = {
+                "status": ag["status"],
+                "speech_text": sanitize_for_speech(ag["speech_text"]),
+                "labels": {"calendar": ag["status"]},
+                "data": ag.get("data"),
+            }
+        except Exception as e:  # fail-closed, never fake
+            body = {
+                "status": "UNKNOWN",
+                "speech_text": sanitize_for_speech("Calendar unavailable. " + str(e)[:100]),
+                "labels": {"calendar": "UNKNOWN"},
+                "data": None,
+            }
     elif cmd["id"] == "runtime_health":
         rt = src.get("runtime")
         fl = (src.get("_freshness") or {}).get("runtime")

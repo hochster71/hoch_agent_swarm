@@ -1,0 +1,23 @@
+families:
+  - id: HAF-GOV
+    name: Governance and Founder Authority
+  - id: HAF-TRUTH
+    name: Runtime Truth
+  - id: HAF-EVID
+    name: Evidence Integrity
+  - id: HAF-IND
+    name: Validator Independence
+  - id: HAF-QUEUE
+    name: Queue Integrity
+  - id: HAF-LEASE
+    name: Lease and Fencing
+  - id: HAF-AUTHZ
+    name: Agent and Tool Authority
+  - id: HAF-SEC
+    name: Secrets and Dependencies
+  - id: HAF-REC
+    name: State and Recovery
+  - id: HAF-PROM
+    name: Promotion Policy
+  - id: HAF-CONMON
+    name: Continuous Monitoring

@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HAF POA&M Schema",
+  "type": "object",
+  "properties": {
+    "poam_id": { "type": "string", "pattern": "^POAM-HAF-[0-9]{8}-[a-f0-9]{4}$" },
+    "finding_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^FND-HAF-[0-9]{8}-[a-f0-9]{4}$" }
+    },
+    "owner": { "type": "string" },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "milestone_id": { "type": "string" },
+          "description": { "type": "string" },
+          "due_date": { "type": "string", "format": "date-time" },
+          "completed_at": { "type": ["string", "null"], "format": "date-time" },
+          "status": { "type": "string", "enum": ["PENDING", "COMPLETED", "OVERDUE"] }
+        },
+        "required": ["milestone_id", "description", "due_date", "status"]
+      }
+    },
+    "due_date": { "type": "string", "format": "date-time" },
+    "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "status": { "type": "string", "enum": ["OPEN", "IN_PROGRESS", "BLOCKED", "READY_FOR_RETEST", "CLOSED", "RISK_ACCEPTED", "EXPIRED"] },
+    "remediation_plan": { "type": "string" },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "updated_by": { "type": "string" },
+          "previous_status": { "type": "string" },
+          "new_status": { "type": "string" },
+          "comment": { "type": "string" }
+        },
+        "required": ["timestamp", "updated_by", "previous_status", "new_status", "comment"]
+      }
+    }
+  },
+  "required": ["poam_id", "finding_ids", "owner", "milestones", "due_date", "severity", "status", "remediation_plan", "history"]
+}

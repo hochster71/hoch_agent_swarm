@@ -1,0 +1,23 @@
+domains:
+  - id: governance
+    name: Governance & Authority
+  - id: runtime
+    name: Runtime Operations & State
+  - id: evidence
+    name: Evidence Lifecycle
+  - id: independent
+    name: Validator Independence
+  - id: queue
+    name: Queue Integrity
+  - id: lease
+    name: Lease & Fencing
+  - id: agent_tool
+    name: Agent & Tool Permissions
+  - id: secrets_deps
+    name: Secrets & Dependencies
+  - id: recovery
+    name: State Recovery
+  - id: promotion
+    name: Promotion Policy
+  - id: conmon
+    name: Continuous Monitoring

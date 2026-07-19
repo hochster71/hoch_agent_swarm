@@ -1,0 +1,31 @@
+levels:
+  - id: L0
+    name: Repository Integrity
+    purpose: Prove source, configuration, history, and evidence baseline integrity.
+  - id: L1
+    name: Runtime Integrity
+    purpose: Prove deterministic execution, state integrity, queues, leases, and recovery.
+  - id: L2
+    name: Swarm Governance
+    purpose: Prove model, agent, council, tool, and decision-boundary governance.
+  - id: L3
+    name: Engineering Assurance
+    purpose: Prove testing, reproducibility, supply-chain, and release engineering.
+  - id: L4
+    name: Cybersecurity Assurance
+    purpose: Prove security controls are implemented and effective.
+  - id: L5
+    name: RMF and Authorization
+    purpose: Support defensible authorization evidence and control assessment.
+  - id: L6
+    name: Operational Resilience
+    purpose: Prove observability, incident response, backup, restore, and continuity.
+  - id: L7
+    name: Factory Certification
+    purpose: Certify each HOCH factory against common and specialized profiles.
+  - id: L8
+    name: Production Readiness
+    purpose: Prove product, legal, distribution, revenue, and support readiness.
+  - id: L9
+    name: Continuous Authorization
+    purpose: Continuously reassess controls based on change, drift, and evidence expiration.

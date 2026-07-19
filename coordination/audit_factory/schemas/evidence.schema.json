@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HAF Evidence Schema",
+  "type": "object",
+  "properties": {
+    "evidence_id": { "type": "string", "pattern": "^EVD-HAF-[0-9]{8}-[a-f0-9]{4}$" },
+    "control_id": { "type": "string", "pattern": "^HAF-[A-Z]+-[0-9]{3}$" },
+    "assessment_run_id": { "type": "string", "pattern": "^HAF-RUN-[0-9]{8}-[0-9]{6}$" },
+    "source_type": { "type": "string", "enum": ["FILE", "DB", "PROCESS", "API", "MANUAL", "MOCK"] },
+    "source_path": { "type": "string" },
+    "source_system": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "collected_at": { "type": "string", "format": "date-time" },
+    "commit_sha": { "type": ["string", "null"] },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "producer": { "type": "string" },
+    "validator": { "type": "string" },
+    "fresh_until": { "type": "string", "format": "date-time" },
+    "status": { "type": "string", "enum": ["VALID", "STALE", "INVALID", "UNVERIFIED"] },
+    "metadata": { "type": "object" }
+  },
+  "required": ["evidence_id", "control_id", "assessment_run_id", "source_type", "source_path", "generated_at", "collected_at", "sha256", "producer", "validator", "fresh_until", "status"]
+}

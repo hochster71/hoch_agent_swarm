@@ -1,0 +1,50 @@
+profile:
+  name: HELM Common Profile
+  description: Baseline controls required for general HELM runtime environments.
+  inherits: null
+  active_control_ids:
+    - HAF-GOV-001
+    - HAF-GOV-002
+    - HAF-GOV-003
+    - HAF-GOV-004
+    - HAF-GOV-005
+    - HAF-GOV-006
+    - HAF-GOV-007
+    - HAF-TRUTH-001
+    - HAF-TRUTH-002
+    - HAF-TRUTH-003
+    - HAF-TRUTH-004
+    - HAF-TRUTH-005
+    - HAF-TRUTH-006
+    - HAF-EVID-001
+    - HAF-EVID-002
+    - HAF-EVID-003
+    - HAF-EVID-004
+    - HAF-EVID-005
+    - HAF-EVID-006
+    - HAF-EVID-007
+    - HAF-EVID-008
+    - HAF-EVID-009
+    - HAF-EVID-010
+    - HAF-IND-001
+    - HAF-IND-002
+    - HAF-IND-003
+    - HAF-IND-004
+    - HAF-IND-005
+    - HAF-QUEUE-001
+    - HAF-QUEUE-002
+    - HAF-QUEUE-003
+    - HAF-QUEUE-004
+    - HAF-LEASE-001
+    - HAF-LEASE-002
+    - HAF-LEASE-003
+    - HAF-AUTHZ-001
+    - HAF-AUTHZ-002
+    - HAF-AUTHZ-003
+    - HAF-SEC-001
+    - HAF-SEC-002
+    - HAF-SEC-003
+    - HAF-REC-001
+    - HAF-REC-002
+    - HAF-PROM-001
+    - HAF-CONMON-001

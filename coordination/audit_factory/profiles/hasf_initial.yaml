@@ -1,0 +1,11 @@
+profile:
+  name: HASF Initial Profile
+  description: Pilot profile for HASF, inheriting HELM Common and adding supply-chain and release controls.
+  inherits: helm_common
+  active_control_ids:
+    - HAF-SEC-001
+    - HAF-SEC-002
+    - HAF-SEC-003
+    - HAF-PROM-001
+    - HAF-CONMON-001
+    # Additional pilot controls can be appended here
