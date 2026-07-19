@@ -1,0 +1,49 @@
+===== RESTART REPEATABILITY TEST =====
+Sun Jul 19 11:31:39 UTC 2026
+
+=== RESTART CYCLE 1 ===
+  Old Listener PID:          ▸
+  New Listener PID:          82550
+  Active listener count:     1
+  Route /council:            200
+  Route /council/status:     200
+
+  [LOG] ▸ HELM supervised API restart
+  [LOG] ▸ Current listener:
+  [LOG] 81761 81732 08:00:52 /Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770 --ssl-certfile /Users/michaelhoch/.helm/dev_certs/helm_dev_cert.pem --ssl-keyfile /Users/michaelhoch/.helm/dev_certs/helm_dev_key.pem
+  [LOG] ▸ Restarting canonical launchd supervisor...
+  [LOG] ▸ Waiting for the old listener to release the port...
+  [LOG] ▸ Waiting for a healthy replacement...
+  [LOG] ▸ Replacement listener:
+  [LOG] 82550 82449 00:01 /Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770 --ssl-certfile /Users/michaelhoch/.helm/dev_certs/helm_dev_cert.pem --ssl-keyfile /Users/michaelhoch/.helm/dev_certs/helm_dev_key.pem
+  [LOG] 
+  [LOG]    /council                     -> 200
+  [LOG]    /api/v1/helm/council/status  -> 200
+  [LOG] 
+  [LOG] ✓ HELM API restarted under its canonical supervisor.
+  [LOG]   Listener count: 1
+  [LOG]   Open: https://127.0.0.1:8770/council
+
+=== RESTART CYCLE 2 ===
+  Old Listener PID:          ▸
+  New Listener PID:          82876
+  Active listener count:     1
+  Route /council:            200
+  Route /council/status:     200
+
+  [LOG] ▸ HELM supervised API restart
+  [LOG] ▸ Current listener:
+  [LOG] 82550 82449 00:04 /Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770 --ssl-certfile /Users/michaelhoch/.helm/dev_certs/helm_dev_cert.pem --ssl-keyfile /Users/michaelhoch/.helm/dev_certs/helm_dev_key.pem
+  [LOG] ▸ Restarting canonical launchd supervisor...
+  [LOG] ▸ Waiting for the old listener to release the port...
+  [LOG] ▸ Waiting for a healthy replacement...
+  [LOG] ▸ Replacement listener:
+  [LOG] 82876 82767 00:02 /Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770 --ssl-certfile /Users/michaelhoch/.helm/dev_certs/helm_dev_cert.pem --ssl-keyfile /Users/michaelhoch/.helm/dev_certs/helm_dev_key.pem
+  [LOG] 
+  [LOG]    /council                     -> 200
+  [LOG]    /api/v1/helm/council/status  -> 200
+  [LOG] 
+  [LOG] ✓ HELM API restarted under its canonical supervisor.
+  [LOG]   Listener count: 1
+  [LOG]   Open: https://127.0.0.1:8770/council
+

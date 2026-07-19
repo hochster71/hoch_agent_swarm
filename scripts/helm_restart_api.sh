@@ -53,10 +53,40 @@ if ! launchctl kickstart -k "$SERVICE"; then
   exit 1
 fi
 
+if [ -n "$before" ]; then
+  echo "▸ Waiting for the old listener to release the port..."
+  for _ in $(seq 1 20); do
+    current="$(listener_pids || true)"
+    still_alive=""
+    while IFS= read -r b_pid; do
+      [ -n "$b_pid" ] || continue
+      if echo "$current" | grep -q -w "$b_pid"; then
+        still_alive=1
+      fi
+    done <<< "$before"
+    if [ -z "$still_alive" ]; then
+      break
+    fi
+    sleep 0.5
+  done
+fi
+
 echo "▸ Waiting for a healthy replacement..."
 ok=""
 for _ in $(seq 1 30); do
-  if api_up; then
+  # Ensure the listener has actually changed (it is not the old pid)
+  current="$(listener_pids || true)"
+  is_new=""
+  if [ -n "$current" ]; then
+    is_new=1
+    while IFS= read -r b_pid; do
+      [ -n "$b_pid" ] || continue
+      if echo "$current" | grep -q -w "$b_pid"; then
+        is_new=""
+      fi
+    done <<< "$before"
+  fi
+  if [ -n "$is_new" ] && api_up; then
     ok=1
     break
   fi

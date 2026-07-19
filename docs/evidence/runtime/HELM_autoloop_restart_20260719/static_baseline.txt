@@ -1,0 +1,18 @@
+===== AUDIT METADATA =====
+Sun Jul 19 11:30:05 UTC 2026
+6044f9e2c5f8766508b5602553e0a4bab96a0c1a
+ M scripts/helm_autoloop.sh
+ M scripts/helm_restart_api.sh
+
+===== STAGED DIFF CHECK =====
+
+===== SHELL SYNTAX =====
+syntax=PASS
+
+===== CURRENT LISTENER =====
+COMMAND     PID        USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+python3.1 81761 michaelhoch   10u  IPv4 0x72d568c7f738af4c      0t0  TCP 127.0.0.1:8770 (LISTEN)
+
+===== ROUTES =====
+/council -> 200
+/api/v1/helm/council/status -> 200

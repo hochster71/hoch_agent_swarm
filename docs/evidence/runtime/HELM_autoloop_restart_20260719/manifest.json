@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "git_commit": "6044f9e2c5f8766508b5602553e0a4bab96a0c1a",
+  "timestamp_utc": "2026-07-19T11:39:56Z",
+  "platform": "macOS",
+  "os_version": "26.5.2 (Build 25F84)",
+  "python": "Python 3.14.6",
+  "listener_port": 8770,
+  "script_revisions": {
+    "scripts/helm_restart_api.sh": "88bc7b5a8d3e97ef3bc42bce5c6996e5cb0643fe",
+    "scripts/helm_autoloop.sh": "4af1ca3492dc9718e8399223f0bf8ade81af45a8"
+  },
+  "artifacts": [
+    {
+      "name": "static_baseline.txt",
+      "sha256": "6539a439ad6abec694c99236afa5d4bee50fe5c0ca8948b829e6233a5cc83efe"
+    },
+    {
+      "name": "env_loader_verification.txt",
+      "sha256": "7ef05cdff57b68a497d9e1c49b57b9dd5f8416fe013651cbfff1881e53cdd5e7"
+    },
+    {
+      "name": "restart_repeatability.txt",
+      "sha256": "f770c2a2d18e295cc3ccad5ccb957df1c2aa4271c671bdc82d72a93543421eed"
+    }
+  ]
+}

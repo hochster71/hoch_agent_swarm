@@ -1,0 +1,30 @@
+===== MOCK LOADER RUNS =====
+--- RUN 1: Valid File ---
+STATUS: LOADED
+TEST_OK_VAR = healthy_val_123
+HELM_LOCAL_MODEL_URL = http://127.0.0.1:11434
+
+--- RUN 2: Malformed Key ---
+STATUS: REJECTED
+
+--- RUN 3: Subshell Attempt ---
+STATUS: REJECTED
+PROVEN SUCCESS: Code execution avoided (sentinel not found)
+
+--- RUN 4: Backticks Attempt ---
+STATUS: REJECTED
+PROVEN SUCCESS: Code execution avoided (sentinel not found)
+
+--- RUN 5: Operator Semicolon Attempt ---
+STATUS: REJECTED
+PROVEN SUCCESS: Code execution avoided (sentinel not found)
+
+===== MOCK LOG CAPTURE =====
+ERROR: Invalid assignment format at line 2 in /tmp/test_malformed_key.env (keys must be valid shell identifiers)
+ERROR: /tmp/test_malformed_key.env failed syntax validation. Skipping to protect supervisor.
+ERROR: Unsafe construct detected at line 2 in /tmp/test_subshell.env (contains subshell, operator, or inline comment)
+ERROR: /tmp/test_subshell.env failed syntax validation. Skipping to protect supervisor.
+ERROR: Unsafe construct detected at line 2 in /tmp/test_backticks.env (contains subshell, operator, or inline comment)
+ERROR: /tmp/test_backticks.env failed syntax validation. Skipping to protect supervisor.
+ERROR: Unsafe construct detected at line 2 in /tmp/test_operator.env (contains subshell, operator, or inline comment)
+ERROR: /tmp/test_operator.env failed syntax validation. Skipping to protect supervisor.
