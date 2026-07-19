@@ -144,6 +144,12 @@ class PersistentScheduler:
             self.instance_id = "UNKNOWN"
         self.retries: Dict[str, int] = {}
         self.max_retries = 3
+        # STARVATION GUARD: attempts are counted at the single execute_task entry, so a task
+        # that fails ANYWHERE (binding, lease, dispatch, or validation) is bounded — not just
+        # the validation path. After max_retries attempts a task becomes terminal EXHAUSTED
+        # and leaves the runnable rotation, so a few unpassable missions cannot starve the
+        # queue (observed 2026-07-18: 3 tasks looped PENDING forever, throughput stalled).
+        self.attempts: Dict[str, int] = {}
 
     def log_cycle(self, entry: Dict[str, Any]):
         with open(self.cycles_log, "a", encoding="utf-8") as f:
@@ -330,6 +336,21 @@ class PersistentScheduler:
         filtered.sort(key=sort_key)
         return filtered
 
+    def _set_terminal(self, task_id: str, status: str, reason: str) -> None:
+        """Move a task to a terminal status (e.g. EXHAUSTED) so it leaves the runnable
+        rotation. Uses the hardened locked-retry writer."""
+        def _w():
+            conn = _sqlite_connect(self.db_path)
+            try:
+                conn.execute(
+                    "UPDATE mission_control_tasks SET status=?, updated_at=?, error_message=? "
+                    "WHERE task_id=?",
+                    (status, get_utc_now_str(), (reason or "")[:250], task_id))
+                conn.commit()
+            finally:
+                conn.close()
+        _with_locked_retry(_w, what=f"set_terminal:{task_id}")
+
     def execute_task(self, task: Dict[str, Any]) -> bool:
         # ── FOUNDER AUTHORITY GATE ────────────────────────────────────────────
         # Makes coordination/founder/authority_matrix.json a HARD GATE at dispatch,
@@ -404,6 +425,9 @@ class PersistentScheduler:
                     self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
                         "status": "DENIED_PROHIBITED", "authority_class": ruling.authority.value,
                         "matched": ruling.matched})
+                    # Terminal: a prohibited action is not approvable — leave the runnable
+                    # rotation so it cannot loop and starve the queue.
+                    self._set_terminal(task.get("task_id"), "DENIED", f"prohibited: {ruling.matched}")
                     return False
 
                 # PROPOSE_ONLY / FOUNDER_ONLY / CONFLICTED -> withhold + escalate (decision object)
@@ -420,6 +444,11 @@ class PersistentScheduler:
                 self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
                     "status": "HELD_AUTHORITY", "authority_class": ruling.authority.value,
                     "matched": ruling.matched})
+                # Escalated ONCE — now leave the runnable rotation so the task waits for the
+                # founder instead of re-classifying + re-escalating every cycle (which spammed
+                # escalations AND starved the queue). A founder approval re-enqueues it PENDING.
+                self._set_terminal(task.get("task_id"), "HELD_FOUNDER",
+                                   f"{ruling.authority.value}: matched {ruling.matched}")
                 return False
         except Exception as _e:
             # fail CLOSED: if the gate cannot run, do not dispatch — a broken gate must
@@ -430,6 +459,22 @@ class PersistentScheduler:
 
         task_id = task["task_id"]
         pod = task.get("target_pod", "")
+
+        # ── STARVATION GUARD ──────────────────────────────────────────────────
+        # We are PAST the founder gate: this task is AUTONOMOUS/PREAUTHORIZED and genuinely
+        # proceeding to execution (held/denied tasks already returned above and are NOT
+        # counted). Count the attempt HERE, before the failure-prone lease/binding/dispatch/
+        # validation work, so a task that fails ANYWHERE downstream is bounded — not only the
+        # validation path. After max_retries genuine attempts it becomes terminal EXHAUSTED
+        # and leaves the runnable rotation, so a few unpassable missions cannot starve the
+        # queue (observed 2026-07-18: 3 tasks looped PENDING forever, throughput stalled).
+        self.attempts[task_id] = self.attempts.get(task_id, 0) + 1
+        if self.attempts[task_id] > self.max_retries:
+            self._set_terminal(task_id, "EXHAUSTED",
+                               f"exhausted after {self.attempts[task_id] - 1} failed attempts (starvation guard)")
+            logger.warning("%s: EXHAUSTED after %d attempts — terminal, removed from rotation",
+                           task_id, self.max_retries)
+            return False
 
         # 1. Acquire lease (need lease_id before minting full binding)
         lease = self.lease_manager.acquire_lease(task_id, holder="persistent_scheduler")
