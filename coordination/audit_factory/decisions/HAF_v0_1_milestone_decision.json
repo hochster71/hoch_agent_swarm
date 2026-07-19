@@ -1,0 +1,36 @@
+{
+  "scope": "HAF_V0_1",
+  "decision": "PASS_WITH_LIMITATIONS",
+  "pilot_readiness": "GO",
+  "production_authority": "CONDITIONAL",
+  "timestamp": "2026-07-19T12:37:50Z",
+  "repository_ref": "d7f578bd5cfb5f6cd677335f56c2f3ebdaefa783",
+  "assessment_run_id": "HAF-RUN-20260719-123209",
+  "control_catalog_version": "1.0.0",
+  "profile": "helm_common",
+  "evidence_manifest": "coordination/audit_factory/runs/HAF-RUN-20260719-123209/manifest.json",
+  "decision_schema_version": "1.0.0",
+  "limitations": [
+    "Concurrency and atomicity stress testing pending",
+    "Long-duration ConMon burn-in pending",
+    "Remediation and independent retest lifecycle proof pending",
+    "Additional factory overlays pending"
+  ],
+  "open_findings": [
+    "HAF-QUEUE-001",
+    "HAF-TRUTH-005"
+  ],
+  "checksum_verified": true,
+  "checksum_algorithm": "SHA-256",
+  "verified_manifest": "coordination/audit_factory/runs/HAF-RUN-20260719-123209/manifest.json",
+  "verification_timestamp": "2026-07-19T12:37:50Z",
+  "verification_scope": [
+    "decision",
+    "evidence_manifest",
+    "run_manifest"
+  ],
+  "authorizers": [
+    "HAF-Independent-Auditor",
+    "AG-IDE-Kernel"
+  ]
+}

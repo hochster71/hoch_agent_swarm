@@ -171,3 +171,9 @@ coordination/council/live_proof_packages/H1B-R2-CLOSURE-*/
 coordination/council/live_proof_packages/H1C-CONTROLLED-ACTIVATION-*/
 coordination/council/live_proof_packages/H1C-DOORSTEP-COMMITBOUND-*/
 recovered_sources/story-studio-live/
+
+# HELM Voice Gateway recovery private key and naming variants globally
+coordination/security/voice_recovery_private_key.pem
+*voice_recovery_private_key*
+*recovery_private_key*
+*recovery-private-key*

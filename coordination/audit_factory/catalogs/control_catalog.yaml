@@ -1,0 +1,1165 @@
+controls:
+  # HAF-GOV — Governance and founder authority
+  - control_id: HAF-GOV-001
+    version: 1.0.0
+    level: L2
+    domain: Governance & Authority
+    family: Governance and Founder Authority
+    title: Founder-only actions explicitly registered
+    requirement: All actions classified as founder-only must be registered in the gate registry.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-GOV-001]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-GOV-002
+    version: 1.0.0
+    level: L2
+    domain: Governance & Authority
+    family: Governance and Founder Authority
+    title: Founder gates cannot be bypassed
+    requirement: Technical gates preventing automated execution of founder actions must fail closed.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-GOV-002]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-GOV-003
+    version: 1.0.0
+    level: L2
+    domain: Governance & Authority
+    family: Governance and Founder Authority
+    title: Founder approval evidence references a real gate
+    requirement: Founder approvals must be traceable to a specific registered gate ID.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-GOV-003]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-GOV-004
+    version: 1.0.0
+    level: L2
+    domain: Governance & Authority
+    family: Governance and Founder Authority
+    title: Approval evidence has timestamp and scope
+    requirement: Approvals must explicitly state their scope and include a UTC timestamp.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-GOV-004]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-GOV-005
+    version: 1.0.0
+    level: L2
+    domain: Governance & Authority
+    family: Governance and Founder Authority
+    title: Expired approvals trigger EXPIRED or HOLD
+    requirement: Approvals past their validity window must be invalidated.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-GOV-005]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-GOV-006
+    version: 1.0.0
+    level: L2
+    domain: Governance & Authority
+    family: Governance and Founder Authority
+    title: Self-generated founder authorization is rejected
+    requirement: Agents cannot authorize their own high-risk requests.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-GOV-006]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-GOV-007
+    version: 1.0.0
+    level: L2
+    domain: Governance & Authority
+    family: Governance and Founder Authority
+    title: Risk acceptance remains distinct from technical result
+    requirement: Founder risk acceptance must not overwrite technical control findings.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-GOV-007]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  # HAF-TRUTH — Runtime truth
+  - control_id: HAF-TRUTH-001
+    version: 1.0.0
+    level: L1
+    domain: Runtime Operations & State
+    family: Runtime Truth
+    title: Missing state resolves to UNKNOWN or HOLD
+    requirement: Unresolvable backend state must fail closed.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-TRUTH-001]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-TRUTH-002
+    version: 1.0.0
+    level: L1
+    domain: Runtime Operations & State
+    family: Runtime Truth
+    title: Stale state cannot remain PASS
+    requirement: Cached state past its TTL must be marked stale.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-TRUTH-002]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-TRUTH-003
+    version: 1.0.0
+    level: L1
+    domain: Runtime Operations & State
+    family: Runtime Truth
+    title: Dashboard status matches authoritative backend state
+    requirement: Dashboard must read state from the database/API directly.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-TRUTH-003]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-TRUTH-004
+    version: 1.0.0
+    level: L1
+    domain: Runtime Operations & State
+    family: Runtime Truth
+    title: Default-green percentages are prohibited
+    requirement: UI elements must not display green/passing metrics unless evidence exists.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-TRUTH-004]
+    freshness_period_hours: 168
+    failure_effect: PASS_WITH_LIMITATIONS
+    status: NOT_ASSESSED
+
+  - control_id: HAF-TRUTH-005
+    version: 1.0.0
+    level: L1
+    domain: Runtime Operations & State
+    family: Runtime Truth
+    title: Runtime claims reference current execution evidence
+    requirement: Claims of runtime health must be supported by active, non-expired logs.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-TRUTH-005]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-TRUTH-006
+    version: 1.0.0
+    level: L1
+    domain: Runtime Operations & State
+    family: Runtime Truth
+    title: Contradictory state sources trigger HOLD
+    requirement: Mismatches between ledger and DB state must freeze certifications.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-TRUTH-006]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  # HAF-EVID — Evidence integrity
+  - control_id: HAF-EVID-001
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Evidence has a unique identifier
+    requirement: All collected evidence records must have a unique, non-duplicable ID.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-001]
+    freshness_period_hours: 720
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-002
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Evidence includes source path or source system
+    requirement: Evidence records must identify their origin path or database context.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-002]
+    freshness_period_hours: 720
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-003
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Evidence includes generation timestamp
+    requirement: Evidence records must contain a precise ISO UTC generation timestamp.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-003]
+    freshness_period_hours: 720
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-004
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Evidence includes run ID
+    requirement: Evidence collected during an assessment must include the execution run ID.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-004]
+    freshness_period_hours: 720
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-005
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Evidence includes commit or version reference
+    requirement: Code-related evidence must record the active Git commit SHA.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-005]
+    freshness_period_hours: 720
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-006
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Evidence includes SHA-256 hash
+    requirement: Every file-based evidence record must store the SHA-256 hash of its target file.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-006]
+    freshness_period_hours: 720
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-007
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Hash mismatch triggers FAIL
+    requirement: Recalculating evidence file hashes must match recorded hashes; mismatch fails.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-007]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-008
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Missing evidence triggers HOLD
+    requirement: Absence of mandatory evidence artifacts blocks certification.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-008]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-009
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Evidence freshness is evaluated
+    requirement: Expired evidence signals must be detected.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-009]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-EVID-010
+    version: 1.0.0
+    level: L0
+    domain: Evidence Lifecycle
+    family: Evidence Integrity
+    title: Superseded evidence cannot satisfy a current control
+    requirement: Outdated runs/artifacts cannot be used in a new certification.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-EVID-010]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  # HAF-IND — Validator independence
+  - control_id: HAF-IND-001
+    version: 1.0.0
+    level: L3
+    domain: Validator Independence
+    family: Validator Independence
+    title: Control author and validator identities are recorded
+    requirement: The validation system must track who wrote the check and who validated it.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-IND-001]
+    freshness_period_hours: 720
+    failure_effect: PASS_WITH_LIMITATIONS
+    status: NOT_ASSESSED
+
+  - control_id: HAF-IND-002
+    version: 1.0.0
+    level: L3
+    domain: Validator Independence
+    family: Validator Independence
+    title: Assessed component cannot be sole validator
+    requirement: Components under test cannot certify themselves without independent validation.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-IND-002]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-IND-003
+    version: 1.0.0
+    level: L3
+    domain: Validator Independence
+    family: Validator Independence
+    title: Validator output cannot cite itself as implementation evidence
+    requirement: Self-referential validation structures are prohibited.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-IND-003]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-IND-004
+    version: 1.0.0
+    level: L3
+    domain: Validator Independence
+    family: Validator Independence
+    title: Certification evaluator must consume independent assessment results
+    requirement: Final evaluator must read validator outcomes from structured, separate databases.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-IND-004]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-IND-005
+    version: 1.0.0
+    level: L3
+    domain: Validator Independence
+    family: Validator Independence
+    title: Circular evidence chains are detected
+    requirement: The system must run circularity validation before declaring green.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-IND-005]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  # HAF-QUEUE — Queue integrity
+  - control_id: HAF-QUEUE-001
+    version: 1.0.0
+    level: L1
+    domain: Queue Integrity
+    family: Queue Integrity
+    title: Queued task IDs are unique
+    requirement: Ensure the queue registry enforces unique constraints on active and historic tasks.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-QUEUE-001]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-QUEUE-002
+    version: 1.0.0
+    level: L1
+    domain: Queue Integrity
+    family: Queue Integrity
+    title: Invalid task schema is rejected
+    requirement: Queued items must validate against the task Pydantic schema.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-QUEUE-002]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-QUEUE-003
+    version: 1.0.0
+    level: L1
+    domain: Queue Integrity
+    family: Queue Integrity
+    title: Duplicate execution is prevented
+    requirement: Prevent multi-processing execution of the exact same task ID.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-QUEUE-003]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-QUEUE-004
+    version: 1.0.0
+    level: L1
+    domain: Queue Integrity
+    family: Queue Integrity
+    title: Bookkept tasks cannot silently return to active state
+    requirement: Transitions from completed back to active without state logging are prohibited.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-QUEUE-004]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  # HAF-LEASE — Lease and fencing
+  - control_id: HAF-LEASE-001
+    version: 1.0.0
+    level: L1
+    domain: Lease & Fencing
+    family: Lease and Fencing
+    title: Lease acquisition is atomic
+    requirement: Lease locking operations must utilize transactions or atomic file creation.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-LEASE-001]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-LEASE-002
+    version: 1.0.0
+    level: L1
+    domain: Lease & Fencing
+    family: Lease and Fencing
+    title: Fencing token is monotonic
+    requirement: Monotonic token increments must be verified on successive writes.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-LEASE-002]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-LEASE-003
+    version: 1.0.0
+    level: L1
+    domain: Lease & Fencing
+    family: Lease and Fencing
+    title: Stale fencing token is rejected
+    requirement: Stale monotonic token values must abort write processes.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-LEASE-003]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  # HAF-AUTHZ — Agent and tool authority
+  - control_id: HAF-AUTHZ-001
+    version: 1.0.0
+    level: L2
+    domain: Agent & Tool Permissions
+    family: Agent and Tool Authority
+    title: Agent identity is registered
+    requirement: All participating agents must have explicit role registrations.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-AUTHZ-001]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-AUTHZ-002
+    version: 1.0.0
+    level: L2
+    domain: Agent & Tool Permissions
+    family: Agent and Tool Authority
+    title: Tool permission is explicit
+    requirement: Active tools must map directly to authorized agents.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-AUTHZ-002]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-AUTHZ-003
+    version: 1.0.0
+    level: L2
+    domain: Agent & Tool Permissions
+    family: Agent and Tool Authority
+    title: Default permission is deny
+    requirement: Requests without explicit permissions must default to block.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-AUTHZ-003]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  # HAF-SEC — Secrets and dependencies
+  - control_id: HAF-SEC-001
+    version: 1.0.0
+    level: L4
+    domain: Secrets & Dependencies
+    family: Secrets and Dependencies
+    title: Secrets are not committed in tracked source
+    requirement: Git repository scanning must confirm no secrets are staged/committed.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-SEC-001]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-SEC-002
+    version: 1.0.0
+    level: L4
+    domain: Secrets & Dependencies
+    family: Secrets and Dependencies
+    title: Production secrets are not embedded in frontend code
+    requirement: Production API credentials must be excluded from frontend HTML/JS/CSS.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-SEC-002]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-SEC-003
+    version: 1.0.0
+    level: L4
+    domain: Secrets & Dependencies
+    family: Secrets and Dependencies
+    title: Known dependency vulnerabilities are evaluated
+    requirement: Vulnerability scanning must be verified on lock files.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-SEC-003]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  # HAF-REC — State and recovery
+  - control_id: HAF-REC-001
+    version: 1.0.0
+    level: L1
+    domain: State Recovery
+    family: State and Recovery
+    title: State hashes are captured before and after recovery tests
+    requirement: Recovery procedures must log pre- and post-hashes to verify parity.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-REC-001]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-REC-002
+    version: 1.0.0
+    level: L1
+    domain: State Recovery
+    family: State and Recovery
+    title: Lock state is cleared correctly
+    requirement: Process recovery must clean stale file/PID locks.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-REC-002]
+    freshness_period_hours: 168
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  # HAF-PROM — Promotion policy
+  - control_id: HAF-PROM-001
+    version: 1.0.0
+    level: L3
+    domain: Promotion Policy
+    family: Promotion Policy
+    title: Mandatory failed controls block promotion
+    requirement: Promotion gate must block if any active mandatory control fails.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-PROM-001]
+    freshness_period_hours: 168
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  # HAF-CONMON — Continuous monitoring
+  - control_id: HAF-CONMON-001
+    version: 1.0.0
+    level: L9
+    domain: Continuous Monitoring
+    family: Continuous Monitoring
+    title: Controls have freshness periods
+    requirement: Check that every control defines a valid, non-zero freshness period.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-CONMON-001]
+    freshness_period_hours: 720
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  # HAF-VOICE — Voice controls
+  - control_id: HAF-VIAM-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Identity & Access Management
+    title: Voice request linked identity verified
+    requirement: Verify that voice requests cannot execute as anonymous/unauthenticated.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-001]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VIAM-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Identity & Access Management
+    title: Account linking enforcement
+    requirement: Verify that Alexa users have linked accounts.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-002]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VIAM-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Identity & Access Management
+    title: Founder voice verification
+    requirement: Founder commands require founder identity level.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-003]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUTH-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Authentication
+    title: Voice gateway assurance level check
+    requirement: Verify that write operations require HIGH assurance.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-004]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUTH-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Authentication
+    title: Replay protection via nonce caching
+    requirement: Reject requests with duplicate nonces.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-005]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUTH-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Authentication
+    title: Siri signature verification
+    requirement: Verify request signature validation on Siri input.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-006]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUTH-004
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Authentication
+    title: Timestamp freshness check
+    requirement: Voice request timestamp is within valid window (30s for siri, 150s for alexa).
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-007]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VINP-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Input Validation
+    title: Intent allowlist check
+    requirement: Reject intents not registered in allowlist.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-008]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VINP-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Input Validation
+    title: Utterance parsing sanitization
+    requirement: Spoken transcript does not execute raw shell commands.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-009]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VINP-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Input Validation
+    title: Intent parameter sanitization
+    requirement: Sanitize inputs to prevent SQL or command injection.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-010]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VPRV-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Privacy & Confirmations
+    title: Confirmation challenge generation
+    requirement: High-impact actions generate a random 3-digit challenge code.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-011]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VPRV-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Privacy & Confirmations
+    title: Confirmation challenge expiration
+    requirement: Challenges expire after 30 seconds.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-012]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VPRV-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Privacy & Confirmations
+    title: Single-use confirmation codes
+    requirement: Consumed codes are cleared immediately.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-013]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUD-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Audit Logging
+    title: Chained voice audit ledger
+    requirement: Voice requests append to a blockchain-like chained event log.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-014]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUD-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Audit Logging
+    title: Historical Epoch 1 integrity verification
+    requirement: Reconstructed Epoch 1 audit log has validated internally consistent chain link hashes.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-015]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUD-004
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Audit Logging
+    title: Epoch 2 append-only integrity verification
+    requirement: The live Epoch 2 audit chain validation script verifies the active log without tampering.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-015]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUD-005
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Audit Logging
+    title: Recovery genesis authorization verification
+    requirement: The Epoch 2 recovery genesis event carries a valid founder authorization signature.
+    rationale: "Added in July 2026 as a split from HAF-VAUD-002/HAF-VAUD-004 to isolate Epoch 2 recovery genesis signature authorization verification from historical chain verification. This avoids denominator drift by documenting the governance transition."
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-015]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAUD-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Audit Logging
+    title: Secret redaction in audit log
+    requirement: API keys, tokens, and local paths are redacted in logged events.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-016]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAVL-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Availability & Reliability
+    title: Runtime status verification
+    requirement: Return STALE when daemon heartbeat is stale.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-017]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAVL-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Availability & Reliability
+    title: Operator hold verification
+    requirement: Reject mutations when operator hold is active.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-018]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAVL-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Availability & Reliability
+    title: Backend timeout handling
+    requirement: Spoken responses fallback to UNKNOWN on backend timeout.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-019]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VAVL-004
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Availability & Reliability
+    title: Mocked adapter status
+    requirement: Mocked adapters report TEST status in gateway health.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-020]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  # Siri Provider Operational Controls
+  - control_id: HAF-VSIR-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Siri Integration
+    title: Native App Intent target compiles
+    requirement: Verify that the native iOS app companion compiles successfully.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-021]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VSIR-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Siri Integration
+    title: App Shortcut metadata validates
+    requirement: Verify that registered Siri App Shortcuts match the system intents.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-022]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VSIR-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Siri Integration
+    title: Physical device request evidence exists
+    requirement: Require audit log traces proving actual device Siri interaction.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-023]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VSIR-004
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Siri Integration
+    title: Sensitive intent requires LocalAuthentication
+    requirement: Ensure state-changing Siri intents enforce TouchID/FaceID local auth.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-024]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VSIR-005
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Siri Integration
+    title: Spoken result matches authoritative HELM state
+    requirement: Verify Siri response matches exact internal system state.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-025]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  # Alexa Provider Operational Controls
+  - control_id: HAF-VALX-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Alexa Integration
+    title: Skill package validates
+    requirement: Verify Alexa skill.json and custom interaction model files are schema compliant.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-026]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VALX-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Alexa Integration
+    title: Skill ID validation enforced
+    requirement: Reject Alexa requests targeting mismatched skill application IDs.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-027]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VALX-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Alexa Integration
+    title: Alexa signature validation enforced
+    requirement: Enforce HTTPS request signature and cert chain validation.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-028]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VALX-004
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Alexa Integration
+    title: Linked identity required
+    requirement: Block voice request if OAuth access token is absent or invalid.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-029]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VALX-005
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Alexa Integration
+    title: Live or simulator request evidence classified
+    requirement: Require audit traces showing verified Alexa API requests.
+    severity: MEDIUM
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-030]
+    freshness_period_hours: 24
+    failure_effect: HOLD
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VALX-006
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Alexa Integration
+    title: Spoken result matches authoritative HELM state
+    requirement: Verify Alexa response matches exact internal system state.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-031]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  # Voice End-to-End Operational Controls
+  - control_id: HAF-VETE-001
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: End-to-End Assurance
+    title: Request-to-execution correlation verified
+    requirement: Verify request, execution, and audit trace correlation IDs match.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-032]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VETE-002
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: End-to-End Assurance
+    title: Duplicate delivery remains idempotent
+    requirement: Replayed requests must be blocked or processed idempotently.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-033]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VETE-003
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: End-to-End Assurance
+    title: Provider timeout returns UNKNOWN
+    requirement: Client or gateway timeouts fallback to UNKNOWN speech.
+    severity: HIGH
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-034]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
+  - control_id: HAF-VETE-004
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: End-to-End Assurance
+    title: Test evidence cannot satisfy LIVE controls
+    requirement: Prevent mocked/test evidence from satisfying live-device execution controls.
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-035]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+

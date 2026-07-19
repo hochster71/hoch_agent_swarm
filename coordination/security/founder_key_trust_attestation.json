@@ -1,0 +1,10 @@
+{
+  "decision_id": "FOUNDER-KEY-TRUST-20260719-001",
+  "actor_id": "michael-bryan-hoch",
+  "decision": "APPROVED",
+  "trusted_key_id": "HELM-FOUNDER-RECOVERY-KEY-001",
+  "trusted_public_key_der_sha256": "31b24ddee05364dc9648dd77cad94704c3af0b3c75b38cc40201c69d8aa725a3",
+  "authorized_purpose": "AUDIT_RECOVERY_AUTHORIZATION",
+  "effective_at": "2026-07-19T12:38:00-05:00",
+  "status": "ACTIVE"
+}

@@ -1,0 +1,9 @@
+{
+  "chain_epoch": 2,
+  "event_count": 1,
+  "genesis_event_hash": "1a4e24c1d287eb1a31e52c97e329404d49adfcb236a5437449e767f5f254625a",
+  "current_chain_head": "1a4e24c1d287eb1a31e52c97e329404d49adfcb236a5437449e767f5f254625a",
+  "audit_file_sha256": "4b27926eef1da186627cf9e7f72a5ef0e756ce5885421af0557f5189ea80e1be",
+  "checkpointed_at": "2026-07-19T17:41:19.377324+00:00",
+  "checkpoint_location": "INDEPENDENT_EVIDENCE_STORE"
+}
