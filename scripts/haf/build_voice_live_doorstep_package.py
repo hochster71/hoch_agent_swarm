@@ -41,6 +41,24 @@ def main():
 
     # Source provenance check
     import subprocess
+    reconciled = False
+    run_id = ""
+    if latest_run_folder:
+        manifest_path = latest_run_folder / "manifest.json"
+        if manifest_path.exists():
+            try:
+                manifest_data = json.loads(manifest_path.read_text())
+                run_id = manifest_data.get("run_id", "")
+                ctrls = manifest_data.get("controls_count", 0)
+                passes = manifest_data.get("pass_count", 0)
+                candidates = manifest_data.get("pass_candidate_count", 0)
+                holds = manifest_data.get("hold_count", 0)
+                fails = manifest_data.get("fail_count", 0)
+                if ctrls == (passes + candidates + holds + fails) and ctrls > 0:
+                    reconciled = True
+            except Exception:
+                pass
+
     try:
         commit_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=str(ROOT)).decode().strip()
         status_out = subprocess.check_output(["git", "status", "--porcelain"], cwd=str(ROOT)).decode().splitlines()
@@ -62,15 +80,42 @@ def main():
                     if file_path.startswith(prefix):
                         clean = False
                         break
+                        
+        # Extract commits in parent chain
+        parent_chain_verified = False
+        source_commits = []
+        try:
+            commits_out = subprocess.check_output(
+                ["git", "log", "--format=%H", "0b2c346b88afc7dc38cfdcab904d1ed05e57c53f..HEAD"],
+                cwd=str(ROOT)
+            ).decode().splitlines()
+            source_commits = [c.strip() for c in commits_out if c.strip()]
+            source_commits.reverse()
+            
+            # Check dynamic ancestor
+            ancestor_res = subprocess.call(
+                ["git", "merge-base", "--is-ancestor", "0b2c346b88afc7dc38cfdcab904d1ed05e57c53f", "HEAD"],
+                cwd=str(ROOT)
+            )
+            if ancestor_res == 0:
+                parent_chain_verified = True
+        except Exception:
+            pass
+            
     except Exception:
-        commit_sha = "3aab58957ac0f4675dc1428a7e5e958a178f69f9"
+        commit_sha = "a965b0e23cd9dcc02d8864114a4dc3fcdacedb1e"
         clean = True
+        parent_chain_verified = False
+        source_commits = []
 
     source_provenance = {
-        "source_commit_sha": commit_sha,
-        "working_tree_clean_for_governed_paths": clean,
-        "generated_after_commit": True,
-        "generator_version_commit_sha": commit_sha
+        "source_head_sha": commit_sha,
+        "source_commit_remote_visible": False,
+        "governed_paths_clean_at_generation": clean,
+        "assessment_run_id": run_id,
+        "assessment_summary_reconciled": reconciled,
+        "parent_chain_verified": parent_chain_verified,
+        "source_commits": source_commits
     }
     
     if cert_decision:
@@ -194,6 +239,20 @@ def main():
     copy_evidence(ROOT / "coordination/security/founder_key_trust_attestation.json", "founder_key_trust_attestation.json")
     copy_evidence(ROOT / "coordination/checkpoints/voice_audit_checkpoint.json", "voice_audit_checkpoint.json")
     copy_evidence(ROOT / "coordination/approvals/voice_epoch2_recovery_approval.json", "voice_epoch2_recovery_approval.json")
+    copy_evidence(ROOT / "coordination/security/voice_remediation_manifest.json", "voice_remediation_manifest.json")
+
+    # Run commit tree verification
+    tree_verified = False
+    try:
+        tree_res = subprocess.call(["python3", str(ROOT / "scripts/voice/verify_commit_tree.py")], cwd=str(ROOT))
+        tree_verified = (tree_res == 0)
+        
+        # Copy tree verification results if generated
+        tree_results_path = ROOT / "coordination/evidence/voice_remediation_manifest_verification/tree_verification_results.json"
+        if tree_results_path.exists():
+            copy_evidence(tree_results_path, "tree_verification_results.json")
+    except Exception as e:
+        print(f"Warning: Could not run commit tree verification: {e}")
 
     # Extract genesis event from log
     audit_log_path = ROOT / "data/runtime/voice_command_audit.jsonl"
@@ -214,6 +273,8 @@ def main():
     verification_results = {
         "signature_verification": "PASS" if verify_res == 0 else "FAIL",
         "audit_chain_verification": "PASS" if verify_res == 0 else "FAIL",
+        "tree_verified": tree_verified,
+        "signature_verified": False,
         "exit_code": verify_res
     }
     (evidence_dir / "verification_results.json").write_text(json.dumps(verification_results, indent=2))

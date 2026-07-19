@@ -37,6 +37,14 @@ def _probe(provider: str, url: str, key: str) -> str:
 
 
 def main() -> int:
+    # Auto-load the founder-controlled env so presence reflects what HELM will actually see.
+    try:
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        from backend.dispatch.live_gateway import autoload_env
+        autoload_env()
+    except Exception:
+        pass
     live = "--live" in sys.argv
     rows = []
     for prov, (env, url) in PROVIDERS.items():

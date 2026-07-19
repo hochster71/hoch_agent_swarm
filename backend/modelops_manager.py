@@ -103,6 +103,11 @@ class ModelOpsManager:
                     "eval_score": 0.80
                 }
             ]
+            # NO FAKE GREEN: seeded eval_score values are capability HINTS, not measured
+            # evaluations. Stamp provenance so no surface can present them as verified.
+            for _m in default_models:
+                _m["eval_source"] = "SEED_UNVERIFIED"
+                _m["eval_verified"] = False
             self.registry_path.write_text(json.dumps(default_models, indent=2), encoding="utf-8")
 
         if not self.state_path.exists():
@@ -110,7 +115,9 @@ class ModelOpsManager:
                 "total_routed_requests": 0,
                 "failed_calls": 0,
                 "fallback_count": 0,
-                "health_breakdown": {"active": 7, "inactive": 0, "failed_eval": 0},
+                # health_breakdown is UNVERIFIED until a real health scan populates it.
+                "health_breakdown": {"active": 0, "inactive": 0, "failed_eval": 0,
+                                      "provenance": "SEED_UNVERIFIED"},
                 "average_latency_ms": 0.0,
                 "failed_requests_log": [],
                 "fallback_usage_log": []
@@ -120,9 +127,42 @@ class ModelOpsManager:
     def load_models(self) -> List[Dict[str, Any]]:
         self._ensure_files()
         try:
-            return json.loads(self.registry_path.read_text(encoding="utf-8"))
+            models = json.loads(self.registry_path.read_text(encoding="utf-8"))
         except Exception:
             return []
+        # Default-deny normalization: any registry (including ones written before this
+        # gate) is treated as UNVERIFIED unless a real eval explicitly set eval_verified.
+        for m in models:
+            if not m.get("eval_verified"):
+                m["eval_verified"] = False
+                m.setdefault("eval_source", "SEED_UNVERIFIED")
+        return models
+
+    def get_models_public(self) -> List[Dict[str, Any]]:
+        """Executive-surface view: eval_score is shown only when measured; otherwise
+        UNVERIFIED. Prevents seeded capability hints from rendering as green scores."""
+        out = []
+        for m in self.load_models():
+            verified = bool(m.get("eval_verified"))
+            out.append({
+                **m,
+                "eval_display": (m.get("eval_score") if verified else "UNVERIFIED"),
+                "eval_status": ("MEASURED" if verified else "UNVERIFIED"),
+            })
+        return out
+
+    def health_public(self) -> Dict[str, Any]:
+        """Honest model-health rollup: counts are UNVERIFIED unless a real health scan
+        stamped provenance == MEASURED on the state's health_breakdown."""
+        state = self.load_state()
+        hb = state.get("health_breakdown") or {}
+        measured = hb.get("provenance") == "MEASURED"
+        return {
+            "status": "MEASURED" if measured else "UNVERIFIED",
+            "health_breakdown": hb,
+            "models_total": len(self.load_models()),
+            "evals_verified": sum(1 for m in self.load_models() if m.get("eval_verified")),
+        }
 
     def save_models(self, models: List[Dict[str, Any]]):
         self.registry_path.write_text(json.dumps(models, indent=2), encoding="utf-8")

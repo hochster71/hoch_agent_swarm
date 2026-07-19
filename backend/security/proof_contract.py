@@ -131,10 +131,17 @@ def may_advance_state(
     *,
     require_negative_control: bool = True,
     now: float | None = None,
+    proof_record: dict[str, Any] | None = None,
 ) -> tuple[bool, str]:
     """THE governing rule, executable.
 
     Returns (allowed, reason). A HELM node may only move forward when this returns True.
+
+    HELM-GOV | extends: Evidence Resolver (this fn) | doctrine: Governance-before-Capability
+             | edr: EDR-0006-R3 | why: when a Proof Record is supplied, the governance decision is
+             | DELEGATED to the single gate governance_engine.govern_decision — this module keeps
+             | the evidence basis (freshness/controls) but never re-implements governance. When
+             | proof_record is None, behavior is byte-for-byte the pre-doctrine path (backward compat).
     """
     eff = ev.effective_class(contract.freshness_window_seconds, now)
 
@@ -157,6 +164,19 @@ def may_advance_state(
             return False, "BLOCKED: positive control not proven (validator never shown to accept a known-good state)"
         if ev.negative_control_passed is not True:
             return False, "BLOCKED: negative control not proven (validator never shown to reject a broken state)"
+
+    # EDR-0006-R3: if this advance is a governed decision, the governance verdict is delegated to
+    # the ONE gate — not re-decided here. Evidence basis above stays authoritative for the facts.
+    if proof_record is not None:
+        from backend.helm_runtime.extensions.constitutional_gate import govern_decision  # lazy: avoid load-order coupling
+
+        gov = govern_decision(proof_record)
+        if not gov.may_advance:
+            return False, f"BLOCKED (governance): {gov.reason}"
+        return True, (
+            f"ADVANCE: {eff.value} evidence, fresh, complete, negative-control proven; "
+            f"GOVERNED (missing=none, {gov.evidence_class})"
+        )
 
     return True, f"ADVANCE: {eff.value} evidence, fresh, complete, negative-control proven"
 

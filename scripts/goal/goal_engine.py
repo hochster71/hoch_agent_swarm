@@ -76,6 +76,62 @@ def evidence_freshness_hours(path: Path) -> float | None:
     return round(age / 3600.0, 2)
 
 
+_VALIDATOR_PYTHON_CACHE: str | None = None
+
+
+def _validator_python() -> str:
+    """Interpreter used to run python validators.
+
+    2026-07-19 audit fix: the engine was launched by Xcode's /usr/bin/python3
+    (no pytest), so sys.executable substitution propagated a pytest-less
+    interpreter and REQ-GOV-002/003/004 + REQ-ES-002 read FAILED
+    ("No module named pytest") even though the suites pass.
+
+    Prefer the repo venv when it can import pytest; fall back to the engine's
+    own interpreter. Fail-closed is preserved: if no candidate has pytest the
+    behavior is exactly as before (validator fails with a truthful detail).
+    """
+    global _VALIDATOR_PYTHON_CACHE
+    if _VALIDATOR_PYTHON_CACHE:
+        return _VALIDATOR_PYTHON_CACHE
+    candidates = [str(ROOT / ".venv" / "bin" / "python"), sys.executable]
+    for cand in candidates:
+        try:
+            probe = subprocess.run([cand, "-c", "import pytest"],
+                                   capture_output=True, timeout=30)
+            if probe.returncode == 0:
+                _VALIDATOR_PYTHON_CACHE = cand
+                return cand
+        except Exception:
+            continue
+    _VALIDATOR_PYTHON_CACHE = sys.executable
+    return _VALIDATOR_PYTHON_CACHE
+
+
+def _classify_failure(cmd: str, output: str) -> str:
+    """Failure-class taxonomy (2026-07-19 audit directive): a validator that could not
+    execute must never be conflated with a control that genuinely failed. All classes
+    remain fail-closed (contribute ZERO); only the REASON CODE differs.
+
+      CONTROL_FAILED                 - the validator ran and the control did not hold
+      DEPENDENCY_MISSING             - interpreter/module/tool absent; control NOT tested
+      EXECUTION_ERROR                - the validator crashed or timed out; control NOT tested
+      EVIDENCE_STALE                 - validator passed but evidence exceeds its freshness SLA
+      EVIDENCE_MISSING               - validator passed but its evidence artifact is absent
+      INTEGRITY_MISMATCH             - bound bytes/hashes differ from the verified baseline
+      INDEPENDENT_VERDICT_LIMITED    - independent verdict exists but is qualified (not clean)
+      INDEPENDENT_VERDICT_INVALIDATED- verified target changed after the verdict was issued
+      EXTERNAL_GATE_PENDING          - blocked on an external authority (Apple, Stripe, founder)
+    """
+    t = output or ""
+    if ("No module named" in t or "ModuleNotFoundError" in t
+            or "command not found" in t or "not found" in t.lower() and "pytest" in t.lower()):
+        return "DEPENDENCY_MISSING"
+    if "Traceback (most recent call last)" in t:
+        return "EXECUTION_ERROR"
+    return "CONTROL_FAILED"
+
+
 def run_validator(req: dict, execute: bool = True) -> dict:
     """Execute the requirement's validator. Its EXIT CODE is the only thing that counts."""
     cmd = req.get("validator")
@@ -94,6 +150,7 @@ def run_validator(req: dict, execute: bool = True) -> dict:
         "evidence_age_hours": evidence_freshness_hours(evidence),
         "freshness_sla_hours": req.get("freshness_sla_hours"),
         "state": "VALIDATOR_NOT_RUN",
+        "failure_class": None,
         "exit_code": None,
         "detail": "",
         "contributes": 0.0,
@@ -109,26 +166,38 @@ def run_validator(req: dict, execute: bool = True) -> dict:
         return result
 
     try:
-        # Prefer the same interpreter as the engine (.venv) so pytest/deps match CI.
+        # Prefer an interpreter that actually has the validator deps (.venv first).
         run_cmd = cmd
         if isinstance(cmd, str) and (cmd.startswith("python3 ") or cmd.startswith("python ")):
-            run_cmd = f"{sys.executable} " + cmd.split(" ", 1)[1]
+            run_cmd = f"{_validator_python()} " + cmd.split(" ", 1)[1]
         proc = subprocess.run(run_cmd, shell=True, cwd=str(ROOT), capture_output=True,
                               text=True, timeout=600)
         result["exit_code"] = proc.returncode
-        tail = (proc.stdout or proc.stderr or "").strip().splitlines()
+        combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
+        tail = combined.strip().splitlines()
         result["detail"] = tail[-1][:200] if tail else ""
     except subprocess.TimeoutExpired:
         result["state"] = "BLOCKED"
+        result["failure_class"] = "EXECUTION_ERROR"
         result["detail"] = "validator timed out"
         return result
     except Exception as e:
         result["state"] = "BLOCKED"
+        result["failure_class"] = "EXECUTION_ERROR"
         result["detail"] = f"{type(e).__name__}: {e}"
         return result
 
     if result["exit_code"] != 0:
         result["state"] = "FAILED"
+        result["failure_class"] = _classify_failure(run_cmd, combined)
+        # A validator that fails because an EXTERNAL authority hasn't spoken (founder-only
+        # gates: Apple state, credentials, release) is EXTERNAL_GATE_PENDING, not an agent
+        # control failure — still fail-closed, but honestly attributed.
+        if result["failure_class"] == "CONTROL_FAILED" and req.get("owner") == "FOUNDER_ONLY":
+            result["failure_class"] = "EXTERNAL_GATE_PENDING"
+        if result["failure_class"] != "CONTROL_FAILED":
+            result["detail"] = (f"[{result['failure_class']} — control NOT tested, "
+                                f"fail-closed] " + result["detail"])[:200]
         return result
 
     # Re-check evidence AFTER the run: a validator that PRODUCES its own evidence
@@ -140,6 +209,7 @@ def run_validator(req: dict, execute: bool = True) -> dict:
     # Validator passed. Now the evidence must ALSO exist and be fresh.
     if not result["evidence_exists"]:
         result["state"] = "UNVERIFIED"
+        result["failure_class"] = "EVIDENCE_MISSING"
         result["detail"] = "validator passed but its evidence artifact is absent"
         return result
 
@@ -147,6 +217,7 @@ def run_validator(req: dict, execute: bool = True) -> dict:
     age = result["evidence_age_hours"]
     if sla is not None and age is not None and age > float(sla):
         result["state"] = "STALE"
+        result["failure_class"] = "EVIDENCE_STALE"
         result["detail"] = f"evidence is {age}h old, SLA is {sla}h"
         return result
 

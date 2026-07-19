@@ -62,6 +62,8 @@ code cannot actually support.
 
 If you cannot prove a finding from what is supplied, label it UNKNOWN rather than asserting it.
 A finding you invented costs a human being real time. Do not invent.
+Every finding must be TRACEABLE to the source (name the behavior/line it derives from); an
+untraceable finding is UNKNOWN. Governance before capability — evidence before status (EDR-0006).
 
 Return ONLY JSON:
 {{"findings":[{{"id":"F1","issue":"...","why_it_matters":"...","adversarial_test":"...",

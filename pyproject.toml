@@ -5,7 +5,11 @@ description = "hoch_agent_swarm using crewAI"
 authors = [{ name = "Michael Hoch", email = "michaelhoch@Michaels-MacBook-Pro.local" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "crewai[tools]>=1.15.0,<2",
+    # crewai[tools] moved to the optional 'legacy-crewai-factory' extra (council-authorized
+    # dependency-surface reduction, 2026-07-19): zero backend/ imports, SI env reports crewai
+    # not installed, and its transitive graph carried both remaining A3 package risks
+    # (json-repair GHSA-xf7x-x43h-rpqh via crewai's <0.26 pin; chromadb PYSEC-2026-311).
+    # Activation runbook: docs/helm/LEGACY_CREWAI_FACTORY_RUNBOOK.md
     "mcp",
     "flask>=3.0.4",
     "flask-cors>=4.0.1",
@@ -20,6 +24,14 @@ dependencies = [
     "reportlab>=5.0.0",
     "markdown>=3.10.2",
     "stripe>=15.3.0",
+    # A3 CVE remediation 2026-07-19 (coordination/evidence/sbom_cve_20260719/): pillow is
+    # used first-party (scripts/branding, visual review tools) and 12.2.0 carries 8 PYSECs.
+    "pillow>=12.3.0",
+]
+
+[project.optional-dependencies]
+legacy-crewai-factory = [
+    "crewai[tools]>=1.15.0,<2",
 ]
 
 [project.scripts]
@@ -46,6 +58,18 @@ type = "crew"
 
 [tool.uv.sources]
 mcp = { path = "./dummy_mcp" }
+
+# A3 CVE remediation notes (2026-07-19, coordination/evidence/sbom_cve_20260719/):
+# * json-repair 0.25.3 carries GHSA-xf7x-x43h-rpqh (fix 0.60.1) but is transitively pinned by
+#   crewai to >=0.25.2,<0.26 — constraining to 0.60.1 makes resolution UNSAT (verified with
+#   `uv lock`). Remediation is BLOCKED_UPSTREAM. Options (founder/security decision):
+#   (a) [tool.uv] override-dependencies = ["json-repair>=0.60.1"] — forces past crewai's pin,
+#       UNTESTED against crewai runtime paths; (b) upgrade crewai when it lifts the pin;
+#   (c) accept: json_repair has zero first-party imports and the SI venv reports crewai not
+#       installed, so reachability in the effective runtime is unconfirmed (venv audit pending).
+# * mcp: the "mcp" package here is the LOCAL dummy_mcp stub (path source above) — the PyPI mcp
+#   CVEs (CVE-2026-52869/52870/59950) do NOT apply to installs from this lock. If the dummy
+#   source is ever removed, the registry mcp MUST be constrained to >=1.28.1 at that time.
 
 [dependency-groups]
 dev = [

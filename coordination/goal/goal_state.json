@@ -1,21 +1,20 @@
 {
   "schema": "HOCH_GOAL_STATE_v1",
-  "computed_at": "2026-07-17T16:50:13.725652Z",
+  "computed_at": "2026-07-19T18:22:55.619982Z",
   "canonical_north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete.",
   "computation_rule": "weight-sum of requirements whose validator EXECUTED SUCCESSFULLY against current, fresh evidence. Everything else contributes zero. No fallback default exists in this engine.",
   "metrics": {
-    "north_star_completion": 0.0,
-    "champion_product_completion": 0.0,
+    "north_star_completion": 100.0,
+    "champion_product_completion": 100.0,
     "champion_product_completion_state": "COMPUTED_FROM_VALIDATORS:EPIC_FURY_2026",
     "champion_product": "EPIC_FURY_2026",
-    "autonomous_execution_coverage": 0.0,
+    "autonomous_execution_coverage": 89.4,
     "founder_intervention_rate": null,
     "verified_founder_minutes_per_shipped_dollar": null,
     "evidence_coverage": 100.0,
     "runtime_truth_freshness": null,
-    "current_critical_path_blocker": "REQ-CP-SECURITY",
+    "current_critical_path_blocker": "REQ-GOV-002",
     "founder_only_actions_pending": [
-      "REQ-TO-001",
       "REQ-TO-002",
       "REQ-CP-TESTFLIGHT",
       "REQ-CP-APP_STORE_CONNECT"
@@ -30,23 +29,22 @@
   "by_layer": {
     "NS": {
       "requirements": 2,
-      "satisfied": 0,
-      "completion_pct_agent_scope": 0.0,
+      "satisfied": 2,
+      "completion_pct_agent_scope": 100.0,
       "founder_only_pending": []
     },
     "TO": {
       "requirements": 3,
-      "satisfied": 0,
-      "completion_pct_agent_scope": 0.0,
+      "satisfied": 2,
+      "completion_pct_agent_scope": 100.0,
       "founder_only_pending": [
-        "REQ-TO-001",
         "REQ-TO-002"
       ]
     },
     "CP": {
       "requirements": 10,
-      "satisfied": 0,
-      "completion_pct_agent_scope": 0.0,
+      "satisfied": 8,
+      "completion_pct_agent_scope": 100.0,
       "founder_only_pending": [
         "REQ-CP-TESTFLIGHT",
         "REQ-CP-APP_STORE_CONNECT"
@@ -54,14 +52,14 @@
     },
     "ES": {
       "requirements": 4,
-      "satisfied": 0,
-      "completion_pct_agent_scope": 0.0,
+      "satisfied": 4,
+      "completion_pct_agent_scope": 100.0,
       "founder_only_pending": []
     },
     "GOV": {
       "requirements": 6,
-      "satisfied": 0,
-      "completion_pct_agent_scope": 0.0,
+      "satisfied": 4,
+      "completion_pct_agent_scope": 64.0,
       "founder_only_pending": []
     }
   },
@@ -118,234 +116,54 @@
   },
   "critical_path": [
     {
-      "id": "REQ-CP-SECURITY",
-      "layer": "CP",
-      "weight": 5.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: SECURITY.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-CP-SUBMISSION_PACKAGE",
-      "layer": "CP",
-      "weight": 5.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: SUBMISSION_PACKAGE.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-ES-001",
-      "layer": "ES",
-      "weight": 5.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "The council autonomously dispatches a task to >=2 real model adapters, captures, validates, revises, and updates PERT state with zero founder copy/paste.",
-      "detail": ""
-    },
-    {
       "id": "REQ-GOV-002",
       "layer": "GOV",
       "weight": 5.0,
       "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
+      "state": "STALE",
       "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-GOV-005",
-      "layer": "GOV",
-      "weight": 5.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "No fake green: no completion metric may be emitted from a fallback default, and a missing timestamp may not render as fresh.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-NS-001",
-      "layer": "NS",
-      "weight": 5.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Founder is not the routine transport layer between agents, models, IDEs, or execution systems.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-TO-003",
-      "layer": "TO",
-      "weight": 5.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "The full autonomous path from intake to DOORSTEP is proven end to end.",
-      "detail": ""
+      "detail": "evidence is 172.39h old, SLA is 168h"
     },
     {
       "id": "REQ-CP-APP_STORE_CONNECT",
       "layer": "CP",
       "weight": 5.0,
       "owner": "FOUNDER_ONLY",
-      "state": "VALIDATOR_NOT_RUN",
+      "state": "FAILED",
       "statement": "Epic Fury 2026 champion gate: APP_STORE_CONNECT.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-TO-001",
-      "layer": "TO",
-      "weight": 5.0,
-      "owner": "FOUNDER_ONLY",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "A champion product is selected by the authoritative portfolio prioritization process.",
-      "detail": ""
+      "detail": "[EXTERNAL_GATE_PENDING \u2014 control NOT tested, fail-closed] APP_STORE_CONNECT: UNKNOWN \u2014 live App Store Connect read: APP_STORE_CONNECT_KEY_ID / ISSUER_ID not"
     },
     {
       "id": "REQ-TO-002",
       "layer": "TO",
       "weight": 5.0,
       "owner": "FOUNDER_ONLY",
-      "state": "VALIDATOR_NOT_RUN",
+      "state": "FAILED",
       "statement": "The champion product ships to production distribution.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-CP-MONETIZATION",
-      "layer": "CP",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: MONETIZATION.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-CP-SIGNING_READINESS",
-      "layer": "CP",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: SIGNING_READINESS.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-CP-TEST",
-      "layer": "CP",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: TEST.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-ES-003",
-      "layer": "ES",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "The direct-POST model adapter path (OpenAIAdapter.execute) is brought under the spend gate.",
-      "detail": ""
+      "detail": "[EXTERNAL_GATE_PENDING \u2014 control NOT tested, fail-closed] shipped=False appStoreState=None asc_state=UNKNOWN (live ASC read)"
     },
     {
       "id": "REQ-GOV-003",
       "layer": "GOV",
       "weight": 4.0,
       "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
+      "state": "STALE",
       "statement": "Mock or dry-run evidence can never produce frontier quorum, promotion, or safe-to-execute.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-GOV-004",
-      "layer": "GOV",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "No external model call or spend can occur outside a gate that can refuse. Missing budget evidence fails closed.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-GOV-006",
-      "layer": "GOV",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Every test in the enforcement suites reads real files; no test may substitute a string literal for a file read.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-NS-002",
-      "layer": "NS",
-      "weight": 4.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "verified_founder_minutes_per_shipped_dollar is measured, not estimated.",
-      "detail": ""
+      "detail": "evidence is 172.39h old, SLA is 168h"
     },
     {
       "id": "REQ-CP-TESTFLIGHT",
       "layer": "CP",
       "weight": 4.0,
       "owner": "FOUNDER_ONLY",
-      "state": "VALIDATOR_NOT_RUN",
+      "state": "FAILED",
       "statement": "Epic Fury 2026 champion gate: TESTFLIGHT.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-CP-BUILD",
-      "layer": "CP",
-      "weight": 3.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: BUILD.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-CP-PRIVACY",
-      "layer": "CP",
-      "weight": 3.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: PRIVACY.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-CP-STORE_METADATA",
-      "layer": "CP",
-      "weight": 3.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Epic Fury 2026 champion gate: STORE_METADATA.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-ES-002",
-      "layer": "ES",
-      "weight": 3.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "The dispatch loop is the only spawn point for model CLIs.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-ES-004",
-      "layer": "ES",
-      "weight": 3.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "The command center serves runtime truth: the council state endpoint is registered and reachable.",
-      "detail": ""
-    },
-    {
-      "id": "REQ-GOV-001",
-      "layer": "GOV",
-      "weight": 3.0,
-      "owner": "agent",
-      "state": "VALIDATOR_NOT_RUN",
-      "statement": "Exactly one authorization-eligible H1 candidate exists; test and superseded packages can never be authorized.",
-      "detail": ""
+      "detail": "[EXTERNAL_GATE_PENDING \u2014 control NOT tested, fail-closed] TESTFLIGHT: UNKNOWN \u2014 live App Store Connect read: APP_STORE_CONNECT_KEY_ID / ISSUER_ID not"
     }
   ],
   "next_recommended_task": {
-    "id": "REQ-CP-SECURITY",
-    "statement": "Epic Fury 2026 champion gate: SECURITY.",
+    "id": "REQ-GOV-002",
+    "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible.",
     "why": "highest-weight unresolved BLOCKING requirement on the canonical critical path that an agent can act on"
   },
   "h1d_relay_node": {
@@ -363,13 +181,14 @@
       "validator": "python3 scripts/council/generate_h1_candidate_registry.py --dry-run",
       "evidence_path": "coordination/council/h1_candidate_registry.json",
       "evidence_exists": true,
-      "evidence_age_hours": 129.19,
+      "evidence_age_hours": 4.9,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.724981Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "}",
+      "contributes": 3.0,
+      "checked_at": "2026-07-19T18:22:24.301154Z"
     },
     {
       "id": "REQ-GOV-002",
@@ -381,13 +200,14 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q",
       "evidence_path": "scripts/council/h1_authorization.py",
       "evidence_exists": true,
-      "evidence_age_hours": 122.85,
+      "evidence_age_hours": 172.39,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
+      "state": "STALE",
+      "failure_class": "EVIDENCE_STALE",
+      "exit_code": 0,
+      "detail": "evidence is 172.39h old, SLA is 168h",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725016Z"
+      "checked_at": "2026-07-19T18:22:24.430567Z"
     },
     {
       "id": "REQ-GOV-003",
@@ -399,13 +219,14 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q -k 'quorum or mock or dry_run or advisory or partial'",
       "evidence_path": "scripts/council/aggregate.py",
       "evidence_exists": true,
-      "evidence_age_hours": 122.85,
+      "evidence_age_hours": 172.39,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
+      "state": "STALE",
+      "failure_class": "EVIDENCE_STALE",
+      "exit_code": 0,
+      "detail": "evidence is 172.39h old, SLA is 168h",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725038Z"
+      "checked_at": "2026-07-19T18:22:43.154691Z"
     },
     {
       "id": "REQ-GOV-004",
@@ -417,13 +238,14 @@
       "validator": "python3 -m pytest tests/test_h1d_spend_gate.py -q",
       "evidence_path": "hoch_pods/compute/cost_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 20.45,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725058Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "15 passed in 0.23s",
+      "contributes": 4.0,
+      "checked_at": "2026-07-19T18:22:45.588802Z"
     },
     {
       "id": "REQ-GOV-005",
@@ -435,13 +257,14 @@
       "validator": "python3 scripts/goal/verify_no_fake_green.py",
       "evidence_path": "coordination/goal/no_fake_green_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725151Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "fallback completion defaults: 0 | missing-timestamp->now(): False",
+      "contributes": 5.0,
+      "checked_at": "2026-07-19T18:22:46.117070Z"
     },
     {
       "id": "REQ-GOV-006",
@@ -453,13 +276,14 @@
       "validator": "python3 scripts/goal/verify_no_tautological_tests.py",
       "evidence_path": "coordination/goal/tautology_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725169Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "tautological tests: 0",
+      "contributes": 4.0,
+      "checked_at": "2026-07-19T18:22:46.207228Z"
     },
     {
       "id": "REQ-ES-001",
@@ -471,13 +295,14 @@
       "validator": "python3 scripts/goal/verify_h1d_relay.py",
       "evidence_path": "coordination/council/relay/H1D_pert_node.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.49,
+      "evidence_age_hours": 49.54,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725243Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "state=COMPLETED adapters=['grok', 'ollama'] copypaste=0",
+      "contributes": 5.0,
+      "checked_at": "2026-07-19T18:22:46.368008Z"
     },
     {
       "id": "REQ-ES-002",
@@ -489,13 +314,14 @@
       "validator": "python3 -m pytest tests/test_h1d_dispatch.py -q",
       "evidence_path": "scripts/council/dispatch.py",
       "evidence_exists": true,
-      "evidence_age_hours": 113.85,
+      "evidence_age_hours": 163.39,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725263Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "10 passed in 1.27s",
+      "contributes": 3.0,
+      "checked_at": "2026-07-19T18:22:46.408919Z"
     },
     {
       "id": "REQ-ES-003",
@@ -507,13 +333,14 @@
       "validator": "python3 scripts/goal/verify_no_ungated_egress.py",
       "evidence_path": "coordination/goal/ungated_egress_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725276Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "report sha256: fc1ce8e30b93cbbcdefe113ab8762c10d3c4754c13cd8d7f3d7a118c0f7dc9a3",
+      "contributes": 4.0,
+      "checked_at": "2026-07-19T18:22:47.896836Z"
     },
     {
       "id": "REQ-ES-004",
@@ -525,13 +352,14 @@
       "validator": "python3 scripts/goal/verify_council_endpoint.py",
       "evidence_path": "coordination/goal/council_endpoint_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725294Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "route_registered=True missing_gates=0",
+      "contributes": 3.0,
+      "checked_at": "2026-07-19T18:22:53.088459Z"
     },
     {
       "id": "REQ-TO-001",
@@ -543,13 +371,14 @@
       "validator": "python3 scripts/goal/verify_champion_selected.py",
       "evidence_path": "coordination/goal/champion_selection.json",
       "evidence_exists": true,
-      "evidence_age_hours": 113.14,
+      "evidence_age_hours": 162.69,
       "freshness_sla_hours": 720,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725302Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "champion=EPIC_FURY_2026 state=SELECTED",
+      "contributes": 5.0,
+      "checked_at": "2026-07-19T18:22:53.200271Z"
     },
     {
       "id": "REQ-TO-002",
@@ -561,13 +390,14 @@
       "validator": "python3 scripts/goal/verify_shipped.py",
       "evidence_path": "coordination/goal/shipped_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.35,
       "freshness_sla_hours": 720,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
+      "state": "FAILED",
+      "failure_class": "EXTERNAL_GATE_PENDING",
+      "exit_code": 1,
+      "detail": "[EXTERNAL_GATE_PENDING \u2014 control NOT tested, fail-closed] shipped=False appStoreState=None asc_state=UNKNOWN (live ASC read)",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725309Z"
+      "checked_at": "2026-07-19T18:22:53.250671Z"
     },
     {
       "id": "REQ-TO-003",
@@ -579,13 +409,14 @@
       "validator": "python3 scripts/verify_intake_to_doorstep.py",
       "evidence_path": "coordination/goal/intake_to_doorstep.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725315Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "report sha256: 15c388631230bca8a6b1186fa6aa899b3a8b00f9764ae899901c083eb4b5afe3",
+      "contributes": 5.0,
+      "checked_at": "2026-07-19T18:22:53.517801Z"
     },
     {
       "id": "REQ-NS-001",
@@ -597,13 +428,14 @@
       "validator": "python3 scripts/goal/verify_founder_not_transport.py",
       "evidence_path": "coordination/council/relay/dispatch_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 43.07,
+      "evidence_age_hours": 92.61,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725321Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "council tasks: 6 | tasks requiring founder transport: 0",
+      "contributes": 5.0,
+      "checked_at": "2026-07-19T18:22:53.628982Z"
     },
     {
       "id": "REQ-NS-002",
@@ -615,13 +447,14 @@
       "validator": "python3 scripts/goal/verify_founder_minutes_metric.py",
       "evidence_path": "coordination/goal/founder_minutes_metric_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 168,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725328Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "instrument LIVE; settled revenue $0 \u2192 metric UNDEFINED (not estimated, not infinity)",
+      "contributes": 4.0,
+      "checked_at": "2026-07-19T18:22:53.667068Z"
     },
     {
       "id": "REQ-CP-BUILD",
@@ -633,13 +466,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py BUILD",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725334Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "BUILD: PASS \u2014 build 8 VALID, selected=True, revalidated age=97.0h",
+      "contributes": 3.0,
+      "checked_at": "2026-07-19T18:22:53.778247Z"
     },
     {
       "id": "REQ-CP-TEST",
@@ -651,13 +485,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py TEST",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725340Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "TEST: PASS \u2014 23/23 passed, 0 failed",
+      "contributes": 4.0,
+      "checked_at": "2026-07-19T18:22:53.965863Z"
     },
     {
       "id": "REQ-CP-SECURITY",
@@ -669,13 +504,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py SECURITY",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725345Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "SECURITY: PASS \u2014 gate verdict GO, open_high=0, 4 rules PASS",
+      "contributes": 5.0,
+      "checked_at": "2026-07-19T18:22:54.142284Z"
     },
     {
       "id": "REQ-CP-SIGNING_READINESS",
@@ -687,13 +523,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py SIGNING_READINESS",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725350Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "SIGNING_READINESS: PASS \u2014 founder release approval artifact present; signed by Michael Bryan Hoc",
+      "contributes": 4.0,
+      "checked_at": "2026-07-19T18:22:54.303540Z"
     },
     {
       "id": "REQ-CP-STORE_METADATA",
@@ -705,13 +542,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py STORE_METADATA",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725356Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "STORE_METADATA: PASS \u2014 7/7 listing fields DONE",
+      "contributes": 3.0,
+      "checked_at": "2026-07-19T18:22:54.507386Z"
     },
     {
       "id": "REQ-CP-PRIVACY",
@@ -723,13 +561,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py PRIVACY",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725361Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "PRIVACY: PASS \u2014 2 privacy fields DONE (policy URL + App Privacy)",
+      "contributes": 3.0,
+      "checked_at": "2026-07-19T18:22:54.672759Z"
     },
     {
       "id": "REQ-CP-MONETIZATION",
@@ -741,13 +580,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py MONETIZATION",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725367Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "MONETIZATION: PASS \u2014 pricing configured. NOTE: configured pricing is not shipped revenue --",
+      "contributes": 4.0,
+      "checked_at": "2026-07-19T18:22:54.824084Z"
     },
     {
       "id": "REQ-CP-TESTFLIGHT",
@@ -759,13 +599,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py TESTFLIGHT",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
+      "state": "FAILED",
+      "failure_class": "EXTERNAL_GATE_PENDING",
+      "exit_code": 1,
+      "detail": "[EXTERNAL_GATE_PENDING \u2014 control NOT tested, fail-closed] TESTFLIGHT: UNKNOWN \u2014 live App Store Connect read: APP_STORE_CONNECT_KEY_ID / ISSUER_ID not",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725378Z"
+      "checked_at": "2026-07-19T18:22:55.062208Z"
     },
     {
       "id": "REQ-CP-APP_STORE_CONNECT",
@@ -777,13 +618,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py APP_STORE_CONNECT",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
+      "state": "FAILED",
+      "failure_class": "EXTERNAL_GATE_PENDING",
+      "exit_code": 1,
+      "detail": "[EXTERNAL_GATE_PENDING \u2014 control NOT tested, fail-closed] APP_STORE_CONNECT: UNKNOWN \u2014 live App Store Connect read: APP_STORE_CONNECT_KEY_ID / ISSUER_ID not",
       "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725384Z"
+      "checked_at": "2026-07-19T18:22:55.234475Z"
     },
     {
       "id": "REQ-CP-SUBMISSION_PACKAGE",
@@ -795,13 +637,14 @@
       "validator": "python3 scripts/goal/verify_champion_gate_one.py SUBMISSION_PACKAGE",
       "evidence_path": "coordination/goal/champion_gates.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.15,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
-      "state": "VALIDATOR_NOT_RUN",
-      "exit_code": null,
-      "detail": "",
-      "contributes": 0.0,
-      "checked_at": "2026-07-17T16:50:13.725389Z"
+      "state": "SATISFIED",
+      "failure_class": null,
+      "exit_code": 0,
+      "detail": "SUBMISSION_PACKAGE: PASS \u2014 5/5 release docs + founder decision present",
+      "contributes": 5.0,
+      "checked_at": "2026-07-19T18:22:55.434359Z"
     }
   ],
   "hard_constraint": "No fake green. No unevidenced completion. No autonomous execution beyond explicit authorization and policy."

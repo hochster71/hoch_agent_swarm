@@ -52,6 +52,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
+# HELM boot banner — the identity, printed on boot / in status / in logs. Kept as plain
+# stdlib text here so the front door has zero third-party deps (rich lives in the venv).
+BANNER = r"""
+ ██╗  ██╗███████╗██╗     ███╗   ███╗
+ ██║  ██║██╔════╝██║     ████╗ ████║
+ ███████║█████╗  ██║     ██╔████╔██║
+ ██╔══██║██╔══╝  ██║     ██║╚██╔╝██║
+ ██║  ██║███████╗███████╗██║ ╚═╝ ██║
+ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚═╝
+ Hybrid Execution & Lifecycle Manager"""
+
 # ---- proven surfaces we reuse (paths, never re-implemented) -----------------
 GOAL_STATE = ROOT / "coordination" / "goal" / "goal_state.json"
 EXEC_MISSION = ROOT / "coordination" / "goal" / "executive_mission.json"
@@ -139,6 +150,7 @@ def _last_heartbeat() -> dict | None:
 # STATUS  — verify-first, read-only, no fake green
 # ============================================================================
 def cmd_status() -> int:
+    print(BANNER)
     print(f"\n  HELM RUNTIME STATUS   {_now()}\n  " + "─" * 58)
 
     # 1. Services

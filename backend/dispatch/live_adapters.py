@@ -22,7 +22,12 @@ from backend.helm_runtime.dispatch_gateway import (
 from backend.helm_runtime.provider_router import PROVIDER_KEY_ENV, resolve_worker
 
 DISPATCH_FLAG = "HELM_DISPATCH_ENABLED"
-_TIMEOUT = 60
+# Frontier reasoning models (Grok/o-series/Claude extended) can take minutes on a large
+# evidence bundle. Default 300s; override with HELM_DISPATCH_TIMEOUT for heavier jobs.
+try:
+    _TIMEOUT = int(os.environ.get("HELM_DISPATCH_TIMEOUT", "300"))
+except ValueError:
+    _TIMEOUT = 300
 
 
 def dispatch_globally_enabled() -> bool:
@@ -160,7 +165,8 @@ class LiveLocalAdapter(_LiveAdapter):
         base = os.environ.get("HELM_LOCAL_MODEL_URL")
         if not base:
             raise DispatchNotEnabledError("local: HELM_LOCAL_MODEL_URL not set")
-        model = self._model(request)
+        # model precedence: explicit request metadata → HELM_LOCAL_MODEL env → llama3 fallback
+        model = (request.metadata or {}).get("model") or os.environ.get("HELM_LOCAL_MODEL") or "llama3"
         out = self._post(
             base.rstrip("/") + "/api/generate", {},
             {"model": model, "prompt": request.prompt, "stream": False},

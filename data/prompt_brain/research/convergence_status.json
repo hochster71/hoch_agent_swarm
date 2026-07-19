@@ -1,6 +1,6 @@
 {
   "schema": "brain-convergence-status-m0",
-  "generation": 1891,
+  "generation": 2359,
   "mean_score": 96.5,
   "last_gain": 0.0,
   "epsilon": 0.5,
@@ -13238,6 +13238,3282 @@
       "gain": 0.0,
       "improver_online": true,
       "at": "2026-07-17T16:46:52.187090Z"
+    },
+    {
+      "generation": 1892,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T16:54:00.058355Z"
+    },
+    {
+      "generation": 1893,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:03:16.159132Z"
+    },
+    {
+      "generation": 1894,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:10:57.907310Z"
+    },
+    {
+      "generation": 1895,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:14:34.934722Z"
+    },
+    {
+      "generation": 1896,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:17:58.871985Z"
+    },
+    {
+      "generation": 1897,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:21:21.975751Z"
+    },
+    {
+      "generation": 1898,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:24:46.807186Z"
+    },
+    {
+      "generation": 1899,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:28:07.833332Z"
+    },
+    {
+      "generation": 1900,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:34:39.697872Z"
+    },
+    {
+      "generation": 1901,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:41:13.756427Z"
+    },
+    {
+      "generation": 1902,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:49:09.559164Z"
+    },
+    {
+      "generation": 1903,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:56:08.916363Z"
+    },
+    {
+      "generation": 1904,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T17:59:32.036812Z"
+    },
+    {
+      "generation": 1905,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:02:54.013035Z"
+    },
+    {
+      "generation": 1906,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:06:17.338315Z"
+    },
+    {
+      "generation": 1907,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:09:40.245323Z"
+    },
+    {
+      "generation": 1908,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:13:02.149045Z"
+    },
+    {
+      "generation": 1909,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:19:29.737451Z"
+    },
+    {
+      "generation": 1910,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:25:49.530010Z"
+    },
+    {
+      "generation": 1911,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:31:52.981335Z"
+    },
+    {
+      "generation": 1912,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:38:58.138726Z"
+    },
+    {
+      "generation": 1913,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:42:21.512783Z"
+    },
+    {
+      "generation": 1914,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:45:46.565661Z"
+    },
+    {
+      "generation": 1915,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:49:09.881568Z"
+    },
+    {
+      "generation": 1916,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:52:35.933572Z"
+    },
+    {
+      "generation": 1917,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T18:55:58.436045Z"
+    },
+    {
+      "generation": 1918,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:02:52.127449Z"
+    },
+    {
+      "generation": 1919,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:09:31.440157Z"
+    },
+    {
+      "generation": 1920,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:17:34.234734Z"
+    },
+    {
+      "generation": 1921,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:24:37.158137Z"
+    },
+    {
+      "generation": 1922,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:28:00.864265Z"
+    },
+    {
+      "generation": 1923,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:31:19.332733Z"
+    },
+    {
+      "generation": 1924,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:34:45.908018Z"
+    },
+    {
+      "generation": 1925,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:38:09.838233Z"
+    },
+    {
+      "generation": 1926,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:41:31.417401Z"
+    },
+    {
+      "generation": 1927,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:48:06.039847Z"
+    },
+    {
+      "generation": 1928,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T19:54:32.939859Z"
+    },
+    {
+      "generation": 1929,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:02:02.288873Z"
+    },
+    {
+      "generation": 1930,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:09:05.168655Z"
+    },
+    {
+      "generation": 1931,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:12:22.247266Z"
+    },
+    {
+      "generation": 1932,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:15:33.457207Z"
+    },
+    {
+      "generation": 1933,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:18:44.991603Z"
+    },
+    {
+      "generation": 1934,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:22:00.238733Z"
+    },
+    {
+      "generation": 1935,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:25:14.822988Z"
+    },
+    {
+      "generation": 1936,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:31:34.896174Z"
+    },
+    {
+      "generation": 1937,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:38:03.619743Z"
+    },
+    {
+      "generation": 1938,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:45:42.838070Z"
+    },
+    {
+      "generation": 1939,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:52:31.487103Z"
+    },
+    {
+      "generation": 1940,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:55:48.812639Z"
+    },
+    {
+      "generation": 1941,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T20:59:03.778706Z"
+    },
+    {
+      "generation": 1942,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:02:21.655247Z"
+    },
+    {
+      "generation": 1943,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:05:40.080134Z"
+    },
+    {
+      "generation": 1944,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:08:54.304656Z"
+    },
+    {
+      "generation": 1945,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:15:08.263264Z"
+    },
+    {
+      "generation": 1946,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:21:24.791594Z"
+    },
+    {
+      "generation": 1947,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:29:46.366977Z"
+    },
+    {
+      "generation": 1948,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:36:39.265236Z"
+    },
+    {
+      "generation": 1949,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:39:53.166887Z"
+    },
+    {
+      "generation": 1950,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:43:03.828654Z"
+    },
+    {
+      "generation": 1951,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:46:14.980429Z"
+    },
+    {
+      "generation": 1952,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:49:30.342207Z"
+    },
+    {
+      "generation": 1953,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:52:46.047140Z"
+    },
+    {
+      "generation": 1954,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T21:58:56.009029Z"
+    },
+    {
+      "generation": 1955,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:05:07.432429Z"
+    },
+    {
+      "generation": 1956,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:12:55.743435Z"
+    },
+    {
+      "generation": 1957,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:19:47.018488Z"
+    },
+    {
+      "generation": 1958,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:23:03.143743Z"
+    },
+    {
+      "generation": 1959,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:26:12.034110Z"
+    },
+    {
+      "generation": 1960,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:29:23.517382Z"
+    },
+    {
+      "generation": 1961,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:32:34.895153Z"
+    },
+    {
+      "generation": 1962,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:35:55.425562Z"
+    },
+    {
+      "generation": 1963,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:42:53.591466Z"
+    },
+    {
+      "generation": 1964,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:49:27.310666Z"
+    },
+    {
+      "generation": 1965,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T22:56:58.696799Z"
+    },
+    {
+      "generation": 1966,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:03:59.496954Z"
+    },
+    {
+      "generation": 1967,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:07:21.829622Z"
+    },
+    {
+      "generation": 1968,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:10:42.195589Z"
+    },
+    {
+      "generation": 1969,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:14:05.224767Z"
+    },
+    {
+      "generation": 1970,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:17:26.319940Z"
+    },
+    {
+      "generation": 1971,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:21:03.197291Z"
+    },
+    {
+      "generation": 1972,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:27:58.000267Z"
+    },
+    {
+      "generation": 1973,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:34:29.812735Z"
+    },
+    {
+      "generation": 1974,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:42:33.130545Z"
+    },
+    {
+      "generation": 1975,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:49:34.111190Z"
+    },
+    {
+      "generation": 1976,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:52:56.358689Z"
+    },
+    {
+      "generation": 1977,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-17T23:56:34.491503Z"
+    },
+    {
+      "generation": 1978,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:00:01.489392Z"
+    },
+    {
+      "generation": 1979,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:03:33.241018Z"
+    },
+    {
+      "generation": 1980,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:06:57.003755Z"
+    },
+    {
+      "generation": 1981,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:13:24.055570Z"
+    },
+    {
+      "generation": 1982,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:19:57.044766Z"
+    },
+    {
+      "generation": 1983,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:28:10.782416Z"
+    },
+    {
+      "generation": 1984,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:35:26.094064Z"
+    },
+    {
+      "generation": 1985,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:38:49.210529Z"
+    },
+    {
+      "generation": 1986,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:42:02.140381Z"
+    },
+    {
+      "generation": 1987,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:45:20.332739Z"
+    },
+    {
+      "generation": 1988,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:48:45.417453Z"
+    },
+    {
+      "generation": 1989,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:51:57.819810Z"
+    },
+    {
+      "generation": 1990,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T00:58:24.924716Z"
+    },
+    {
+      "generation": 1991,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:04:51.539328Z"
+    },
+    {
+      "generation": 1992,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:13:07.393551Z"
+    },
+    {
+      "generation": 1993,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:20:04.712562Z"
+    },
+    {
+      "generation": 1994,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:23:20.616970Z"
+    },
+    {
+      "generation": 1995,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:26:40.894397Z"
+    },
+    {
+      "generation": 1996,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:30:02.699201Z"
+    },
+    {
+      "generation": 1997,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:33:24.526474Z"
+    },
+    {
+      "generation": 1998,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:36:47.629064Z"
+    },
+    {
+      "generation": 1999,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:43:16.418062Z"
+    },
+    {
+      "generation": 2000,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:49:50.615448Z"
+    },
+    {
+      "generation": 2001,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T01:57:44.312973Z"
+    },
+    {
+      "generation": 2002,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:04:36.161987Z"
+    },
+    {
+      "generation": 2003,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:07:57.965986Z"
+    },
+    {
+      "generation": 2004,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:11:07.095556Z"
+    },
+    {
+      "generation": 2005,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:14:17.922799Z"
+    },
+    {
+      "generation": 2006,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:17:33.711136Z"
+    },
+    {
+      "generation": 2007,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:20:44.716438Z"
+    },
+    {
+      "generation": 2008,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:26:59.724702Z"
+    },
+    {
+      "generation": 2009,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:33:24.204477Z"
+    },
+    {
+      "generation": 2010,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:41:19.693635Z"
+    },
+    {
+      "generation": 2011,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:48:00.401707Z"
+    },
+    {
+      "generation": 2012,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:51:10.286752Z"
+    },
+    {
+      "generation": 2013,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:54:19.282143Z"
+    },
+    {
+      "generation": 2014,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T02:57:30.893196Z"
+    },
+    {
+      "generation": 2015,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T03:00:41.219123Z"
+    },
+    {
+      "generation": 2016,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T03:09:33.884056Z"
+    },
+    {
+      "generation": 2017,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T04:03:07.684247Z"
+    },
+    {
+      "generation": 2018,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T05:07:41.803787Z"
+    },
+    {
+      "generation": 2019,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T05:40:35.123058Z"
+    },
+    {
+      "generation": 2020,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T06:27:02.104742Z"
+    },
+    {
+      "generation": 2021,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T07:26:03.784691Z"
+    },
+    {
+      "generation": 2022,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T07:35:41.203404Z"
+    },
+    {
+      "generation": 2023,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T08:06:30.483976Z"
+    },
+    {
+      "generation": 2024,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T08:32:33.985608Z"
+    },
+    {
+      "generation": 2025,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T08:58:08.680775Z"
+    },
+    {
+      "generation": 2026,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T09:33:10.473886Z"
+    },
+    {
+      "generation": 2027,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T10:41:15.084598Z"
+    },
+    {
+      "generation": 2028,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T11:07:27.622485Z"
+    },
+    {
+      "generation": 2029,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:09:26.398240Z"
+    },
+    {
+      "generation": 2030,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:12:40.610777Z"
+    },
+    {
+      "generation": 2031,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:15:54.367145Z"
+    },
+    {
+      "generation": 2032,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:19:11.474867Z"
+    },
+    {
+      "generation": 2033,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:22:46.148005Z"
+    },
+    {
+      "generation": 2034,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:26:02.045200Z"
+    },
+    {
+      "generation": 2035,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:32:51.412239Z"
+    },
+    {
+      "generation": 2036,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:39:22.843259Z"
+    },
+    {
+      "generation": 2037,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:47:18.243441Z"
+    },
+    {
+      "generation": 2038,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:54:35.789082Z"
+    },
+    {
+      "generation": 2039,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T12:57:59.530331Z"
+    },
+    {
+      "generation": 2040,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:01:34.809808Z"
+    },
+    {
+      "generation": 2041,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:04:53.939115Z"
+    },
+    {
+      "generation": 2042,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:08:13.897901Z"
+    },
+    {
+      "generation": 2043,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:11:50.134788Z"
+    },
+    {
+      "generation": 2044,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:18:41.873243Z"
+    },
+    {
+      "generation": 2045,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:25:04.461226Z"
+    },
+    {
+      "generation": 2046,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:32:48.500059Z"
+    },
+    {
+      "generation": 2047,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:39:36.396937Z"
+    },
+    {
+      "generation": 2048,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:43:23.740158Z"
+    },
+    {
+      "generation": 2049,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:46:53.397905Z"
+    },
+    {
+      "generation": 2050,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:50:41.351545Z"
+    },
+    {
+      "generation": 2051,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:54:21.453969Z"
+    },
+    {
+      "generation": 2052,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T13:57:45.376463Z"
+    },
+    {
+      "generation": 2053,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:04:37.456415Z"
+    },
+    {
+      "generation": 2054,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:11:39.826842Z"
+    },
+    {
+      "generation": 2055,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:19:56.811922Z"
+    },
+    {
+      "generation": 2056,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:27:07.408794Z"
+    },
+    {
+      "generation": 2057,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:30:30.660857Z"
+    },
+    {
+      "generation": 2058,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:33:50.408890Z"
+    },
+    {
+      "generation": 2059,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:37:18.512387Z"
+    },
+    {
+      "generation": 2060,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:40:40.350141Z"
+    },
+    {
+      "generation": 2061,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:43:59.837805Z"
+    },
+    {
+      "generation": 2062,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:50:38.926367Z"
+    },
+    {
+      "generation": 2063,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T14:57:40.490542Z"
+    },
+    {
+      "generation": 2064,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:06:19.565747Z"
+    },
+    {
+      "generation": 2065,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:14:02.349565Z"
+    },
+    {
+      "generation": 2066,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:17:24.642029Z"
+    },
+    {
+      "generation": 2067,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:21:36.446965Z"
+    },
+    {
+      "generation": 2068,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:25:25.366094Z"
+    },
+    {
+      "generation": 2069,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:28:50.294771Z"
+    },
+    {
+      "generation": 2070,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:32:10.272799Z"
+    },
+    {
+      "generation": 2071,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:38:54.682388Z"
+    },
+    {
+      "generation": 2072,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:45:27.477217Z"
+    },
+    {
+      "generation": 2073,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T15:53:09.613872Z"
+    },
+    {
+      "generation": 2074,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:00:09.584953Z"
+    },
+    {
+      "generation": 2075,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:03:48.914978Z"
+    },
+    {
+      "generation": 2076,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:07:04.689239Z"
+    },
+    {
+      "generation": 2077,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:10:21.111722Z"
+    },
+    {
+      "generation": 2078,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:13:56.408167Z"
+    },
+    {
+      "generation": 2079,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:17:20.540480Z"
+    },
+    {
+      "generation": 2080,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:24:24.148764Z"
+    },
+    {
+      "generation": 2081,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:31:33.357590Z"
+    },
+    {
+      "generation": 2082,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:40:07.702124Z"
+    },
+    {
+      "generation": 2083,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:48:00.361652Z"
+    },
+    {
+      "generation": 2084,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:51:41.218617Z"
+    },
+    {
+      "generation": 2085,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:55:21.893746Z"
+    },
+    {
+      "generation": 2086,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T16:58:43.262335Z"
+    },
+    {
+      "generation": 2087,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:01:59.546035Z"
+    },
+    {
+      "generation": 2088,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:05:30.109365Z"
+    },
+    {
+      "generation": 2089,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:12:18.626710Z"
+    },
+    {
+      "generation": 2090,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:18:53.264549Z"
+    },
+    {
+      "generation": 2091,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:28:35.077430Z"
+    },
+    {
+      "generation": 2092,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:36:34.927059Z"
+    },
+    {
+      "generation": 2093,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:40:22.845968Z"
+    },
+    {
+      "generation": 2094,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:43:42.491993Z"
+    },
+    {
+      "generation": 2095,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:47:28.703685Z"
+    },
+    {
+      "generation": 2096,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:50:46.263010Z"
+    },
+    {
+      "generation": 2097,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T17:55:34.436780Z"
+    },
+    {
+      "generation": 2098,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:02:48.925601Z"
+    },
+    {
+      "generation": 2099,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:09:42.448280Z"
+    },
+    {
+      "generation": 2100,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:16:55.887764Z"
+    },
+    {
+      "generation": 2101,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:24:20.256681Z"
+    },
+    {
+      "generation": 2102,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:28:09.863851Z"
+    },
+    {
+      "generation": 2103,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:31:30.474316Z"
+    },
+    {
+      "generation": 2104,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:34:50.313466Z"
+    },
+    {
+      "generation": 2105,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:38:15.430179Z"
+    },
+    {
+      "generation": 2106,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:41:36.919333Z"
+    },
+    {
+      "generation": 2107,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:48:05.343005Z"
+    },
+    {
+      "generation": 2108,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T18:54:41.512281Z"
+    },
+    {
+      "generation": 2109,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:02:54.864210Z"
+    },
+    {
+      "generation": 2110,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:09:57.253325Z"
+    },
+    {
+      "generation": 2111,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:13:17.434732Z"
+    },
+    {
+      "generation": 2112,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:16:39.046880Z"
+    },
+    {
+      "generation": 2113,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:19:55.031056Z"
+    },
+    {
+      "generation": 2114,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:23:09.171661Z"
+    },
+    {
+      "generation": 2115,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:26:23.908824Z"
+    },
+    {
+      "generation": 2116,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:32:33.972469Z"
+    },
+    {
+      "generation": 2117,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:38:47.904043Z"
+    },
+    {
+      "generation": 2118,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:46:11.063666Z"
+    },
+    {
+      "generation": 2119,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:53:13.699974Z"
+    },
+    {
+      "generation": 2120,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T19:56:38.845011Z"
+    },
+    {
+      "generation": 2121,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:00:03.527107Z"
+    },
+    {
+      "generation": 2122,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:03:25.009726Z"
+    },
+    {
+      "generation": 2123,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:06:46.903599Z"
+    },
+    {
+      "generation": 2124,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:10:08.688686Z"
+    },
+    {
+      "generation": 2125,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:16:39.871173Z"
+    },
+    {
+      "generation": 2126,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:23:13.146575Z"
+    },
+    {
+      "generation": 2127,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:31:04.775866Z"
+    },
+    {
+      "generation": 2128,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:38:04.268034Z"
+    },
+    {
+      "generation": 2129,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:41:25.751814Z"
+    },
+    {
+      "generation": 2130,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:44:43.829967Z"
+    },
+    {
+      "generation": 2131,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:48:05.644452Z"
+    },
+    {
+      "generation": 2132,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:51:48.186469Z"
+    },
+    {
+      "generation": 2133,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T20:55:14.012064Z"
+    },
+    {
+      "generation": 2134,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:01:58.779195Z"
+    },
+    {
+      "generation": 2135,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:09:31.668907Z"
+    },
+    {
+      "generation": 2136,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:17:37.698526Z"
+    },
+    {
+      "generation": 2137,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:25:33.230481Z"
+    },
+    {
+      "generation": 2138,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:29:11.140438Z"
+    },
+    {
+      "generation": 2139,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:32:42.760337Z"
+    },
+    {
+      "generation": 2140,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:36:15.486891Z"
+    },
+    {
+      "generation": 2141,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:39:46.603476Z"
+    },
+    {
+      "generation": 2142,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:43:21.252194Z"
+    },
+    {
+      "generation": 2143,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T21:52:41.212599Z"
+    },
+    {
+      "generation": 2144,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:01:51.876600Z"
+    },
+    {
+      "generation": 2145,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:12:46.217325Z"
+    },
+    {
+      "generation": 2146,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:24:10.556002Z"
+    },
+    {
+      "generation": 2147,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:28:33.081921Z"
+    },
+    {
+      "generation": 2148,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:32:06.403541Z"
+    },
+    {
+      "generation": 2149,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:35:42.124716Z"
+    },
+    {
+      "generation": 2150,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:41:20.394125Z"
+    },
+    {
+      "generation": 2151,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:46:22.848480Z"
+    },
+    {
+      "generation": 2152,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T22:56:52.444272Z"
+    },
+    {
+      "generation": 2153,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:07:08.262089Z"
+    },
+    {
+      "generation": 2154,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:17:59.846656Z"
+    },
+    {
+      "generation": 2155,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:25:52.777603Z"
+    },
+    {
+      "generation": 2156,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:29:26.600542Z"
+    },
+    {
+      "generation": 2157,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:32:53.855559Z"
+    },
+    {
+      "generation": 2158,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:36:38.915695Z"
+    },
+    {
+      "generation": 2159,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:40:36.975511Z"
+    },
+    {
+      "generation": 2160,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:44:25.074712Z"
+    },
+    {
+      "generation": 2161,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:51:44.509574Z"
+    },
+    {
+      "generation": 2162,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-18T23:58:55.237105Z"
+    },
+    {
+      "generation": 2163,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:07:44.321127Z"
+    },
+    {
+      "generation": 2164,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:15:45.922437Z"
+    },
+    {
+      "generation": 2165,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:19:30.003360Z"
+    },
+    {
+      "generation": 2166,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:23:07.648476Z"
+    },
+    {
+      "generation": 2167,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:26:43.719731Z"
+    },
+    {
+      "generation": 2168,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:30:21.474552Z"
+    },
+    {
+      "generation": 2169,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:34:08.105253Z"
+    },
+    {
+      "generation": 2170,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:41:25.895864Z"
+    },
+    {
+      "generation": 2171,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T00:50:44.659649Z"
+    },
+    {
+      "generation": 2172,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:02:40.331379Z"
+    },
+    {
+      "generation": 2173,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:13:51.640586Z"
+    },
+    {
+      "generation": 2174,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:19:40.266227Z"
+    },
+    {
+      "generation": 2175,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:24:55.832639Z"
+    },
+    {
+      "generation": 2176,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:30:34.766889Z"
+    },
+    {
+      "generation": 2177,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:35:18.697352Z"
+    },
+    {
+      "generation": 2178,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:39:10.477689Z"
+    },
+    {
+      "generation": 2179,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:49:09.196496Z"
+    },
+    {
+      "generation": 2180,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T01:59:12.096287Z"
+    },
+    {
+      "generation": 2181,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:10:18.428025Z"
+    },
+    {
+      "generation": 2182,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:21:34.287217Z"
+    },
+    {
+      "generation": 2183,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:26:42.126226Z"
+    },
+    {
+      "generation": 2184,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:31:26.489791Z"
+    },
+    {
+      "generation": 2185,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:39:52.621838Z"
+    },
+    {
+      "generation": 2186,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:43:49.089653Z"
+    },
+    {
+      "generation": 2187,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:50:55.767443Z"
+    },
+    {
+      "generation": 2188,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T02:58:04.626634Z"
+    },
+    {
+      "generation": 2189,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:06:29.089854Z"
+    },
+    {
+      "generation": 2190,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:14:09.437169Z"
+    },
+    {
+      "generation": 2191,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:17:51.047706Z"
+    },
+    {
+      "generation": 2192,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:21:37.496850Z"
+    },
+    {
+      "generation": 2193,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:25:20.345991Z"
+    },
+    {
+      "generation": 2194,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:28:57.522922Z"
+    },
+    {
+      "generation": 2195,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:32:38.385734Z"
+    },
+    {
+      "generation": 2196,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:39:39.738107Z"
+    },
+    {
+      "generation": 2197,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:46:52.096813Z"
+    },
+    {
+      "generation": 2198,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T03:55:41.895071Z"
+    },
+    {
+      "generation": 2199,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:03:12.582621Z"
+    },
+    {
+      "generation": 2200,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:06:44.169625Z"
+    },
+    {
+      "generation": 2201,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:10:16.024893Z"
+    },
+    {
+      "generation": 2202,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:13:41.979921Z"
+    },
+    {
+      "generation": 2203,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:17:13.127882Z"
+    },
+    {
+      "generation": 2204,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:20:43.830064Z"
+    },
+    {
+      "generation": 2205,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:27:34.706755Z"
+    },
+    {
+      "generation": 2206,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:34:26.229245Z"
+    },
+    {
+      "generation": 2207,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:43:28.825977Z"
+    },
+    {
+      "generation": 2208,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:50:48.925309Z"
+    },
+    {
+      "generation": 2209,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:54:18.085259Z"
+    },
+    {
+      "generation": 2210,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T04:57:46.721171Z"
+    },
+    {
+      "generation": 2211,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:01:13.990767Z"
+    },
+    {
+      "generation": 2212,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:04:40.672955Z"
+    },
+    {
+      "generation": 2213,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:08:09.256972Z"
+    },
+    {
+      "generation": 2214,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:15:00.684323Z"
+    },
+    {
+      "generation": 2215,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:21:56.387339Z"
+    },
+    {
+      "generation": 2216,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:30:30.645518Z"
+    },
+    {
+      "generation": 2217,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:37:48.242257Z"
+    },
+    {
+      "generation": 2218,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:41:18.989621Z"
+    },
+    {
+      "generation": 2219,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:44:52.534965Z"
+    },
+    {
+      "generation": 2220,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:48:25.140108Z"
+    },
+    {
+      "generation": 2221,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:51:56.141957Z"
+    },
+    {
+      "generation": 2222,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T05:55:25.522790Z"
+    },
+    {
+      "generation": 2223,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:02:12.937132Z"
+    },
+    {
+      "generation": 2224,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:09:04.357356Z"
+    },
+    {
+      "generation": 2225,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:17:59.397738Z"
+    },
+    {
+      "generation": 2226,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:25:24.348482Z"
+    },
+    {
+      "generation": 2227,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:28:56.893271Z"
+    },
+    {
+      "generation": 2228,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:32:24.019214Z"
+    },
+    {
+      "generation": 2229,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:35:50.690112Z"
+    },
+    {
+      "generation": 2230,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:39:20.626531Z"
+    },
+    {
+      "generation": 2231,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:42:48.115814Z"
+    },
+    {
+      "generation": 2232,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:49:35.062732Z"
+    },
+    {
+      "generation": 2233,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T06:56:30.635746Z"
+    },
+    {
+      "generation": 2234,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:05:08.634905Z"
+    },
+    {
+      "generation": 2235,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:12:31.199255Z"
+    },
+    {
+      "generation": 2236,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:16:01.269565Z"
+    },
+    {
+      "generation": 2237,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:19:32.968972Z"
+    },
+    {
+      "generation": 2238,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:23:04.521623Z"
+    },
+    {
+      "generation": 2239,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:26:34.940142Z"
+    },
+    {
+      "generation": 2240,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:30:09.472105Z"
+    },
+    {
+      "generation": 2241,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:36:56.733410Z"
+    },
+    {
+      "generation": 2242,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:43:46.877837Z"
+    },
+    {
+      "generation": 2243,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:51:48.527212Z"
+    },
+    {
+      "generation": 2244,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T07:59:11.545870Z"
+    },
+    {
+      "generation": 2245,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:02:37.283580Z"
+    },
+    {
+      "generation": 2246,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:06:10.243593Z"
+    },
+    {
+      "generation": 2247,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:09:41.355871Z"
+    },
+    {
+      "generation": 2248,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:13:08.112929Z"
+    },
+    {
+      "generation": 2249,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:16:38.732615Z"
+    },
+    {
+      "generation": 2250,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:23:31.494259Z"
+    },
+    {
+      "generation": 2251,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:30:29.285707Z"
+    },
+    {
+      "generation": 2252,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:38:25.661337Z"
+    },
+    {
+      "generation": 2253,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:45:51.862643Z"
+    },
+    {
+      "generation": 2254,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:49:20.522916Z"
+    },
+    {
+      "generation": 2255,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:52:49.618484Z"
+    },
+    {
+      "generation": 2256,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:56:20.526358Z"
+    },
+    {
+      "generation": 2257,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T08:59:54.019806Z"
+    },
+    {
+      "generation": 2258,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:03:20.106341Z"
+    },
+    {
+      "generation": 2259,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:10:08.817654Z"
+    },
+    {
+      "generation": 2260,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:17:02.734714Z"
+    },
+    {
+      "generation": 2261,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:25:28.326330Z"
+    },
+    {
+      "generation": 2262,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:32:51.433968Z"
+    },
+    {
+      "generation": 2263,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:36:20.473555Z"
+    },
+    {
+      "generation": 2264,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:39:52.437031Z"
+    },
+    {
+      "generation": 2265,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:43:26.399566Z"
+    },
+    {
+      "generation": 2266,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:46:54.518259Z"
+    },
+    {
+      "generation": 2267,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:50:24.360912Z"
+    },
+    {
+      "generation": 2268,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T09:57:16.419213Z"
+    },
+    {
+      "generation": 2269,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:04:10.246237Z"
+    },
+    {
+      "generation": 2270,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:13:04.315627Z"
+    },
+    {
+      "generation": 2271,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:20:28.525194Z"
+    },
+    {
+      "generation": 2272,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:23:59.297472Z"
+    },
+    {
+      "generation": 2273,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:27:28.459308Z"
+    },
+    {
+      "generation": 2274,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:30:58.848608Z"
+    },
+    {
+      "generation": 2275,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:34:29.826721Z"
+    },
+    {
+      "generation": 2276,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:37:56.129759Z"
+    },
+    {
+      "generation": 2277,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:44:40.013577Z"
+    },
+    {
+      "generation": 2278,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:51:29.791725Z"
+    },
+    {
+      "generation": 2279,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T10:59:28.616961Z"
+    },
+    {
+      "generation": 2280,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:06:55.782908Z"
+    },
+    {
+      "generation": 2281,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:10:33.677385Z"
+    },
+    {
+      "generation": 2282,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:14:08.605373Z"
+    },
+    {
+      "generation": 2283,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:17:38.818081Z"
+    },
+    {
+      "generation": 2284,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:21:11.115738Z"
+    },
+    {
+      "generation": 2285,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:24:43.978299Z"
+    },
+    {
+      "generation": 2286,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:31:57.914981Z"
+    },
+    {
+      "generation": 2287,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:39:22.622190Z"
+    },
+    {
+      "generation": 2288,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:49:06.045836Z"
+    },
+    {
+      "generation": 2289,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T11:56:57.305466Z"
+    },
+    {
+      "generation": 2290,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:00:42.147335Z"
+    },
+    {
+      "generation": 2291,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:04:20.289016Z"
+    },
+    {
+      "generation": 2292,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:07:47.898572Z"
+    },
+    {
+      "generation": 2293,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:11:23.695741Z"
+    },
+    {
+      "generation": 2294,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:15:04.239860Z"
+    },
+    {
+      "generation": 2295,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:22:24.737132Z"
+    },
+    {
+      "generation": 2296,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:29:49.049489Z"
+    },
+    {
+      "generation": 2297,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:38:09.934926Z"
+    },
+    {
+      "generation": 2298,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:45:56.188502Z"
+    },
+    {
+      "generation": 2299,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:49:36.719620Z"
+    },
+    {
+      "generation": 2300,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:53:23.959251Z"
+    },
+    {
+      "generation": 2301,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T12:57:14.857032Z"
+    },
+    {
+      "generation": 2302,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:01:01.728759Z"
+    },
+    {
+      "generation": 2303,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:04:51.640435Z"
+    },
+    {
+      "generation": 2304,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:12:02.482460Z"
+    },
+    {
+      "generation": 2305,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:19:17.918157Z"
+    },
+    {
+      "generation": 2306,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:28:05.449647Z"
+    },
+    {
+      "generation": 2307,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:35:41.986708Z"
+    },
+    {
+      "generation": 2308,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:39:24.850022Z"
+    },
+    {
+      "generation": 2309,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:43:17.243132Z"
+    },
+    {
+      "generation": 2310,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:47:04.871553Z"
+    },
+    {
+      "generation": 2311,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:50:44.226436Z"
+    },
+    {
+      "generation": 2312,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T13:54:27.678694Z"
+    },
+    {
+      "generation": 2313,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:01:41.825651Z"
+    },
+    {
+      "generation": 2314,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:08:53.462386Z"
+    },
+    {
+      "generation": 2315,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:17:15.867720Z"
+    },
+    {
+      "generation": 2316,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:25:02.873209Z"
+    },
+    {
+      "generation": 2317,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:28:35.795275Z"
+    },
+    {
+      "generation": 2318,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:31:43.317980Z"
+    },
+    {
+      "generation": 2319,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:35:15.108417Z"
+    },
+    {
+      "generation": 2320,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:38:46.543574Z"
+    },
+    {
+      "generation": 2321,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:42:18.882207Z"
+    },
+    {
+      "generation": 2322,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:48:49.879381Z"
+    },
+    {
+      "generation": 2323,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T14:55:49.529046Z"
+    },
+    {
+      "generation": 2324,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:04:39.708947Z"
+    },
+    {
+      "generation": 2325,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:12:11.332949Z"
+    },
+    {
+      "generation": 2326,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:15:55.600995Z"
+    },
+    {
+      "generation": 2327,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:19:36.004240Z"
+    },
+    {
+      "generation": 2328,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:23:12.260918Z"
+    },
+    {
+      "generation": 2329,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:26:47.923781Z"
+    },
+    {
+      "generation": 2330,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:30:30.103784Z"
+    },
+    {
+      "generation": 2331,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:37:42.906787Z"
+    },
+    {
+      "generation": 2332,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:44:52.612948Z"
+    },
+    {
+      "generation": 2333,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T15:53:40.890374Z"
+    },
+    {
+      "generation": 2334,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:01:29.970176Z"
+    },
+    {
+      "generation": 2335,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:05:26.455269Z"
+    },
+    {
+      "generation": 2336,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:09:13.536784Z"
+    },
+    {
+      "generation": 2337,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:13:03.267754Z"
+    },
+    {
+      "generation": 2338,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:16:51.071837Z"
+    },
+    {
+      "generation": 2339,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:20:42.976047Z"
+    },
+    {
+      "generation": 2340,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:28:43.741810Z"
+    },
+    {
+      "generation": 2341,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:36:49.953152Z"
+    },
+    {
+      "generation": 2342,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:46:20.675612Z"
+    },
+    {
+      "generation": 2343,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:55:01.102838Z"
+    },
+    {
+      "generation": 2344,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T16:59:01.220299Z"
+    },
+    {
+      "generation": 2345,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:02:57.141954Z"
+    },
+    {
+      "generation": 2346,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:06:55.890061Z"
+    },
+    {
+      "generation": 2347,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:10:54.147292Z"
+    },
+    {
+      "generation": 2348,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:14:50.811029Z"
+    },
+    {
+      "generation": 2349,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:22:17.798721Z"
+    },
+    {
+      "generation": 2350,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:29:37.699834Z"
+    },
+    {
+      "generation": 2351,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:39:27.647781Z"
+    },
+    {
+      "generation": 2352,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:48:06.786176Z"
+    },
+    {
+      "generation": 2353,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:52:08.319066Z"
+    },
+    {
+      "generation": 2354,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T17:56:14.198857Z"
+    },
+    {
+      "generation": 2355,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T18:00:20.274863Z"
+    },
+    {
+      "generation": 2356,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T18:04:27.953156Z"
+    },
+    {
+      "generation": 2357,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T18:08:27.443182Z"
+    },
+    {
+      "generation": 2358,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T18:16:08.591463Z"
+    },
+    {
+      "generation": 2359,
+      "mean_score": 96.5,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-19T18:23:46.404432Z"
     }
   ]
 }

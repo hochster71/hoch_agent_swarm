@@ -1,6 +1,6 @@
-# EDR-0004 — Knowledge Engine (design spec; no build)
+# EDR-0004 — Knowledge Engine (design spec + v1 implementation)
 
-- **Status:** PROPOSED (design only). Implementation deferred (Phase B, after independent verification).
+- **Status:** PROPOSED design → **v1 (Governed Retrieval) IMPLEMENTED by Builder, pending Auditor verification.** The v1 scope below is built as new, non-frozen modules with tests; it does not change the frozen verification target. Independent (Auditor) sign-off and a green test run are still required before this is claimed conformant — see **Implementation status** at the end.
 - **Author (Builder):** Claude · **Date:** 2026-07-17
 - **Reviewers:** Auditor (Grok)
 - **Governed by:** `HELM_CONSTITUTION_v1.0.md` — Article I layer 5 (Knowledge Engine, currently **PLANNED**). This EDR designs that layer; it does not add or change architecture.
@@ -54,3 +54,26 @@ Constitution · EDRs · runbooks · cyber mappings (NIST/RMF/Zero-Trust) · miss
 
 ## Verification
 Auditor reviews this design for conformance to Articles I, II, and X before implementation is authorized. Build occurs in Phase B after the Phase D independent audit, per founder sequencing.
+
+## Implementation status (v1 — Governed Retrieval)
+Builder has implemented the v1 scope as **new, non-frozen modules** that import only frozen read-surfaces (`governance_engine`, `event_bus`) and index existing governed files. Nothing in the frozen verification target changed.
+
+| Artifact | Path | Role |
+|---|---|---|
+| Knowledge Engine | `backend/helm_runtime/knowledge_engine.py` | policy-bound manifest + read-only retrieval + governed ingestion (emits `KNOWLEDGE_INGESTED`) |
+| Read-only HTTP API | `backend/helm_runtime/knowledge_api.py` | `GET /api/v1/helm/knowledge`, `/knowledge/manifest`, `/knowledge/session-load` |
+| Router mount | `backend/helm_live_api.py` | mounts the knowledge router next to the runtime bridge (fail-open on import only) |
+| Tests | `tests/helm_runtime/test_knowledge_engine.py` | 16 regression + negative tests (secret denial, read-only-no-events, role rejection, founder-gated Constitution ingestion, honest UNKNOWN/STALE) |
+
+How each acceptance criterion is met:
+- **Provenance on every item** — `KnowledgeItem.provenance` carries `source_path` + git `commit` (`None` when untracked, never faked); freshness carries `mtime`/`age`/`status`.
+- **Retrieval read-only; ingestion emits an event** — `retrieve`/`build_manifest`/`governed_load_constitution_and_edrs` never write or emit; the sole state-changing path, `ingest`, is governance-checked (role + founder gate) and publishes one Event Bus event. `test_retrieve_is_read_only_no_events` locks this.
+- **Absent/stale reported honestly** — missing → `UNKNOWN`, aged past the window → `STALE`; no-match query returns `status="UNKNOWN"` with empty results, never a fabricated answer.
+- **Constitution + applicable EDRs in one call** — `governed_load_constitution_and_edrs()` / `GET /api/v1/helm/knowledge/session-load`.
+- **Policy fails closed** — `RetrievalPolicy` denies any secret-shaped or out-of-corpus path, so a query can never surface a credential.
+
+**De-scoped from v1 (unchanged):** embeddings / semantic search (needs a founder-gated local embedding model), write-back automation, and the Operations Center UI panel.
+
+**Test-harness remediation (2026-07-17, Builder):** the frozen `event_bus.tail_events` binds `path=EVENTS_PATH` as a def-time default, so the test's `monkeypatch.setattr(eb, "EVENTS_PATH", temp)` redirected event *writes* (`publish_event` reads the global at call-time) but not event *reads* — the three event-assertion tests would have read the real `coordination/events/helm_events.jsonl` instead of the temp bus. Fixed in the **non-frozen test only** (`tests/helm_runtime/test_knowledge_engine.py`) by also pinning `tail_events` to the temp bus via `functools.partial`; the frozen module is untouched. This makes the event assertions read the bus under test.
+
+**Not yet claimed (NO-FAKE-GREEN):** this is Builder work awaiting (1) the Auditor's adversarial pass for conformance to Articles I/II/X, and (2) an evidenced green run of the test suite (`bash scripts/run_knowledge_tests.sh`), which is founder-approval-gated in the current session. Until both land, N5_KNOWLEDGE stays **PARTIAL/PENDING**, not DONE.

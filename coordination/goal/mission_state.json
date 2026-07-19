@@ -5,25 +5,25 @@
     "champion_product": "EPIC_FURY_2026",
     "north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete."
   },
-  "computed_at": "2026-07-17T16:50:13.976418Z",
+  "computed_at": "2026-07-19T18:22:55.760823Z",
   "sources": {
     "goal_state": "coordination/goal/goal_state.json",
     "champion_gates": "coordination/goal/champion_gates.json",
     "control_posture": "coordination/security/helm_control_posture.json",
-    "goal_computed_at": "2026-07-17T16:50:13.725652Z",
-    "goal_age_hours": -0.0
+    "goal_computed_at": "2026-07-19T18:22:55.619982Z",
+    "goal_age_hours": 0.0
   },
   "areas": {
     "Engineering": {
       "area": "Engineering",
-      "status": "PARTIAL",
-      "confidence": "Medium",
-      "detail": "agent CP 0.0% \u00b7 ES 0.0% (goal engine)",
+      "status": "VERIFIED",
+      "confidence": "High",
+      "detail": "agent CP 100.0% \u00b7 ES 100.0% (goal engine)",
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
-      "evidence_age_hours": -0.0,
-      "score_pct": 0.0
+      "evidence_age_hours": 0.0,
+      "score_pct": 100.0
     },
     "Testing": {
       "area": "Testing",
@@ -33,40 +33,40 @@
       "evidence": [
         "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
       ],
-      "evidence_age_hours": 111.2
+      "evidence_age_hours": 160.9
     },
     "Security": {
       "area": "Security",
       "status": "VERIFIED",
       "confidence": "Medium",
-      "detail": "champion SECURITY=PASS; NIST posture 84.6% open=2 high=0",
+      "detail": "champion SECURITY=PASS; NIST posture 76.9% open=3 high=0",
       "evidence": [
         "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
         "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
         "coordination/security/helm_control_posture.json"
       ],
-      "evidence_age_hours": 203.6,
-      "posture_percent": 84.6
+      "evidence_age_hours": 253.3,
+      "posture_percent": 76.9
     },
     "Evidence": {
       "area": "Evidence",
       "status": "PARTIAL",
       "confidence": "Medium",
-      "detail": "GOV agent 0.0% \u00b7 evidence_coverage field 100.0",
+      "detail": "GOV agent 64.0% \u00b7 evidence_coverage field 100.0",
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
-      "evidence_age_hours": -0.0
+      "evidence_age_hours": 0.0
     },
     "Runtime Truth": {
       "area": "Runtime Truth",
       "status": "VERIFIED",
       "confidence": "High",
-      "detail": "goal_state age_h=-0.0; doctrine no_fake_green",
+      "detail": "goal_state age_h=0.0; doctrine no_fake_green",
       "evidence": [
         "coordination/goal/goal_state.json"
       ],
-      "evidence_age_hours": -0.0
+      "evidence_age_hours": 0.0
     },
     "Apple Review": {
       "area": "Apple Review",
@@ -91,7 +91,7 @@
       "area": "Overall Mission",
       "status": "BLOCKED_EXTERNAL",
       "confidence": "High",
-      "detail": "REQ-CP-SECURITY",
+      "detail": "REQ-GOV-002",
       "evidence": [],
       "evidence_age_hours": null
     }
@@ -99,8 +99,8 @@
   "dashboard": [
     {
       "area": "Engineering",
-      "status": "0.0%",
-      "confidence": "Medium"
+      "status": "100.0%",
+      "confidence": "High"
     },
     {
       "area": "Testing",
@@ -141,8 +141,8 @@
   "critical_path": [
     {
       "name": "Engineering",
-      "status": "PENDING",
-      "mark": "\u00b7"
+      "status": "DONE",
+      "mark": "\u2713"
     },
     {
       "name": "Security",
@@ -174,7 +174,6 @@
     "founder": {
       "status": "PENDING",
       "pending": [
-        "REQ-TO-001",
         "REQ-TO-002",
         "REQ-CP-TESTFLIGHT",
         "REQ-CP-APP_STORE_CONNECT"
@@ -197,7 +196,7 @@
     "evidence": [
       "coordination/goal/champion_gates.json"
     ],
-    "evidence_age_hours": 0.15
+    "evidence_age_hours": 0.0
   },
   "revenue": {
     "area": "Revenue",
@@ -212,27 +211,27 @@
   },
   "engineering": {
     "area": "Engineering",
-    "status": "PARTIAL",
-    "confidence": "Medium",
-    "detail": "agent CP 0.0% \u00b7 ES 0.0% (goal engine)",
+    "status": "VERIFIED",
+    "confidence": "High",
+    "detail": "agent CP 100.0% \u00b7 ES 100.0% (goal engine)",
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
-    "evidence_age_hours": -0.0,
-    "score_pct": 0.0
+    "evidence_age_hours": 0.0,
+    "score_pct": 100.0
   },
   "security": {
     "area": "Security",
     "status": "VERIFIED",
     "confidence": "Medium",
-    "detail": "champion SECURITY=PASS; NIST posture 84.6% open=2 high=0",
+    "detail": "champion SECURITY=PASS; NIST posture 76.9% open=3 high=0",
     "evidence": [
       "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
       "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
       "coordination/security/helm_control_posture.json"
     ],
-    "evidence_age_hours": 203.6,
-    "posture_percent": 84.6
+    "evidence_age_hours": 253.3,
+    "posture_percent": 76.9
   },
   "testing": {
     "area": "Testing",
@@ -242,48 +241,49 @@
     "evidence": [
       "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
     ],
-    "evidence_age_hours": 111.2
+    "evidence_age_hours": 160.9
   },
   "evidence": {
     "area": "Evidence",
     "status": "PARTIAL",
     "confidence": "Medium",
-    "detail": "GOV agent 0.0% \u00b7 evidence_coverage field 100.0",
+    "detail": "GOV agent 64.0% \u00b7 evidence_coverage field 100.0",
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
-    "evidence_age_hours": -0.0
+    "evidence_age_hours": 0.0
   },
   "runtime_truth": {
     "area": "Runtime Truth",
     "status": "VERIFIED",
     "confidence": "High",
-    "detail": "goal_state age_h=-0.0; doctrine no_fake_green",
+    "detail": "goal_state age_h=0.0; doctrine no_fake_green",
     "evidence": [
       "coordination/goal/goal_state.json"
     ],
-    "evidence_age_hours": -0.0
+    "evidence_age_hours": 0.0
   },
   "overall": {
     "status": "BLOCKED_EXTERNAL",
     "confidence": "High",
-    "blocker": "REQ-CP-SECURITY",
+    "blocker": "REQ-GOV-002",
     "next": {
-      "id": "REQ-CP-SECURITY",
-      "statement": "Epic Fury 2026 champion gate: SECURITY.",
+      "id": "REQ-GOV-002",
+      "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible.",
       "why": "highest-weight unresolved BLOCKING requirement on the canonical critical path that an agent can act on"
     }
   },
   "metrics_snapshot": {
-    "north_star_completion": 0.0,
-    "champion_product_completion": 0.0,
-    "autonomous_execution_coverage": 0.0,
+    "north_star_completion": 100.0,
+    "champion_product_completion": 100.0,
+    "autonomous_execution_coverage": 89.4,
     "evidence_coverage": 100.0
   },
   "doctrine": [
     "no_fake_green",
     "monetization_is_not_revenue",
     "founder_and_apple_gates_are_external",
-    "single_mission_state_for_all_interfaces"
+    "single_mission_state_for_all_interfaces",
+    "governance_before_capability_helm_engineering_doctrine_v1"
   ]
 }

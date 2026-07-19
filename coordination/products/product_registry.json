@@ -28,16 +28,18 @@
       "stripe_charge_id": "ch_3Tsv7qDK7Brrgheo1z3ksuF5",
       "revenue_trace": "CHARGE_PROVEN_SETTLEMENT_PENDING",
       "monetization_rung": "4_SELLABLE",
-      "rung_note": "Real livemode charge $20.52 (sub active); net $18.10 held by Stripe, PENDING until 2026-07-21. Promotes to 5_EARNING automatically when the balance transaction settles — verified against the account, not asserted.",
+      "rung_note": "Real livemode charge $20.52 (sub active); net $18.10 held by Stripe, PENDING until 2026-07-21. Promotes to 5_EARNING automatically when the balance transaction settles \u2014 verified against the account, not asserted.",
       "app_store_distribution": "READY_FOR_DISTRIBUTION",
-      "app_store_distribution_source": "FOUNDER_ATTESTED 2026-07-16 — Michael reports App Store Connect shows 'Epic Fury 2026 ready for distribution' (Apple review PASSED via console submission). API-key submission path RETIRED; do not re-initiate ASC API-key regeneration.",
-      "app_store_submission_blocked_by": null
+      "app_store_distribution_source": "FOUNDER_ATTESTED 2026-07-16 \u2014 Michael reports App Store Connect shows 'Epic Fury 2026 ready for distribution' (Apple review PASSED via console submission). API-key submission path RETIRED; do not re-initiate ASC API-key regeneration.",
+      "app_store_submission_blocked_by": null,
+      "revenue_class": "FOUNDER_TEST_REVENUE",
+      "revenue_class_note": "2026-07-19 audit directive: cardholder on charge ch_3Tsv7qDK7Brrgheo1z3ksuF5 is the founder (self-purchase). It settles as real money movement but is NOT first-customer revenue. FIRST_CUSTOMER_REVENUE requires a settled charge from a non-founder cardholder."
     },
     {
       "product_id": "HFF_RUNWAY_PACKET",
       "factory": "HFF",
-      "name": "Runway — Monthly Cash-Flow & Tax-Prep Packet",
-      "what_it_is": "An automated monthly packet for solo operators: a 30/60/90-day cash-flow snapshot, a categorized transaction rollup, an estimated-quarterly-tax worksheet, and a year-end 1099-candidate list, assembled into a clean handoff for the user's own accountant. Organizational tooling only — explicitly NOT financial, investment, or tax advice.",
+      "name": "Runway \u2014 Monthly Cash-Flow & Tax-Prep Packet",
+      "what_it_is": "An automated monthly packet for solo operators: a 30/60/90-day cash-flow snapshot, a categorized transaction rollup, an estimated-quarterly-tax worksheet, and a year-end 1099-candidate list, assembled into a clean handoff for the user's own accountant. Organizational tooling only \u2014 explicitly NOT financial, investment, or tax advice.",
       "buyer": "Solo founders, freelancers, and single-member LLCs with no bookkeeper who hand raw statements to a CPA once a quarter.",
       "price_usd": 15,
       "billing": "monthly",
@@ -51,12 +53,12 @@
       "monetization_rung": "3_PRODUCTIZED_DEFINED_ONLY",
       "defined_at": "2026-07-16",
       "rung_note": "NO FAKE GREEN: this is a product DEFINITION (name + price) only. HFF has not yet produced a validated artifact, has no checkout, and has earned $0. Defined != produced != sellable. First-mission spec staged at docs/factories/products/HFF_runway.md; dispatch only after the active soak seals.",
-      "guardrail": "no financial/tax/investment advice — packets and tooling only"
+      "guardrail": "no financial/tax/investment advice \u2014 packets and tooling only"
     },
     {
       "product_id": "HMF_CUE_LIBRARY",
       "factory": "HMF",
-      "name": "HOCH Cue Library — Cleared Instrumental Cues for Creators",
+      "name": "HOCH Cue Library \u2014 Cleared Instrumental Cues for Creators",
       "what_it_is": "Original instrumental music cues (loops, stings, beds, transitions) produced by the music factory and license-cleared for use in video, podcasts, and indie games. Instrumental-first by policy: no vocals and no artist- or voice-likeness. Delivered as themed cue packs with an attached usage license.",
       "buyer": "Video creators, podcasters, and indie game devs who need cheap, license-clean background music without a per-track marketplace hunt.",
       "price_usd": 9,
@@ -76,7 +78,7 @@
     {
       "product_id": "HSF_STORY_STUDIO",
       "factory": "HSF",
-      "name": "Story Studio — One-Story Export",
+      "name": "Story Studio \u2014 One-Story Export",
       "what_it_is": "A web app (hsf/story-studio-v2.html + hsf/story-engine.js) that lets anyone build an animated storybook in-browser for free, then pay to export a watermark-free, permanently-hosted copy. Two tiers: a $19 one-time single-story export ('onestory') and a $12/mo Creators subscription that unlocks unlimited exports. Payment loop is a deploy scaffold at hsf/deploy/ (Stripe Checkout / Payment Link + signed webhook).",
       "buyer": "Parents, teachers, and hobbyist creators who want a finished shareable animated storybook without design tools; Creators tier for people making them repeatedly.",
       "price_usd": 19,
@@ -88,9 +90,9 @@
       "checkout_api": "https://story-studio-live.vercel.app/api/create-checkout-session",
       "checkout_blocked_by": null,
       "entitlement_source": "signed Stripe webhook (checkout.session.completed) -> Vercel KV via hsf/deploy/lib/store.js (store lib IMPLEMENTED 2026-07-16; @vercel/kv when env present, in-memory fallback otherwise)",
-      "stripe_account": "acct_1Tdge9DINF9KNAIC — VERIFIED LIVE 2026-07-16: both price IDs below were retrieved from the founder's live account via his authenticated Stripe CLI (hsf/deploy/go_live.sh verify pass). The 'Stripe-live' claim is now corroborated, not just queue-asserted.",
-      "stripe_price_onestory": "price_1TqjVNDINF9KNAICvsZ4Kl3t ($19 one-time) — VERIFIED retrievable in live account 2026-07-16",
-      "stripe_price_creators": "price_1TqjVNDINF9KNAICsqE8sy0G ($12/mo) — VERIFIED retrievable in live account 2026-07-16",
+      "stripe_account": "acct_1Tdge9DINF9KNAIC \u2014 VERIFIED LIVE 2026-07-16: both price IDs below were retrieved from the founder's live account via his authenticated Stripe CLI (hsf/deploy/go_live.sh verify pass). The 'Stripe-live' claim is now corroborated, not just queue-asserted.",
+      "stripe_price_onestory": "price_1TqjVNDINF9KNAICvsZ4Kl3t ($19 one-time) \u2014 VERIFIED retrievable in live account 2026-07-16",
+      "stripe_price_creators": "price_1TqjVNDINF9KNAICsqE8sy0G ($12/mo) \u2014 VERIFIED retrievable in live account 2026-07-16",
       "verified_at": "2026-07-16T23:06:59Z",
       "revenue_gross_usd": 0,
       "revenue_net_usd": 0,
@@ -99,7 +101,7 @@
       "revenue_trace": "CHECKOUT_LIVE_NO_CHARGE_YET",
       "monetization_rung": "4_SELLABLE",
       "defined_at": "2026-07-16",
-      "rung_note": "NO FAKE GREEN. CHECKOUT VERIFIED LIVE 2026-07-16T23:06:59Z: POST https://story-studio-live.vercel.app/api/create-checkout-session returns a real Stripe URL for BOTH tiers — onestory ($19 one-time) -> https://buy.stripe.com/5kQ28rf2aeS36sq57I5J602 ; creators ($12/mo) -> https://buy.stripe.com/3cIdR9g6e7pB4ki8jU5J603. Evidence: docs/evidence/runtime/story_studio_checkout_verify_20260716T230659Z.md. A stranger can now name it, see a price, and reach a real Stripe checkout -> rung 4_SELLABLE. STILL $0 SETTLED: no charge has been taken and no balance transaction has settled, so revenue_settled_usd stays 0.0 and revenue_state stays NOT_STARTED. Promotes to 5_EARNING only when a real purchase's Stripe balance transaction reaches 'available' — verified against the account, not asserted. First-buyer kit: docs/founder/story_studio_first_buyer_kit.md.",
+      "rung_note": "NO FAKE GREEN. CHECKOUT VERIFIED LIVE 2026-07-16T23:06:59Z: POST https://story-studio-live.vercel.app/api/create-checkout-session returns a real Stripe URL for BOTH tiers \u2014 onestory ($19 one-time) -> https://buy.stripe.com/5kQ28rf2aeS36sq57I5J602 ; creators ($12/mo) -> https://buy.stripe.com/3cIdR9g6e7pB4ki8jU5J603. Evidence: docs/evidence/runtime/story_studio_checkout_verify_20260716T230659Z.md. A stranger can now name it, see a price, and reach a real Stripe checkout -> rung 4_SELLABLE. STILL $0 SETTLED: no charge has been taken and no balance transaction has settled, so revenue_settled_usd stays 0.0 and revenue_state stays NOT_STARTED. Promotes to 5_EARNING only when a real purchase's Stripe balance transaction reaches 'available' \u2014 verified against the account, not asserted. First-buyer kit: docs/founder/story_studio_first_buyer_kit.md.",
       "guardrail": "child-facing content -> keep exports watermark-free but safe; no EARNING claim until a real charge settles in Stripe"
     },
     {
@@ -130,7 +132,7 @@
       "factory": "HCF",
       "name": "Link & QR Safety Report",
       "slug": "hcf-phish-checker",
-      "what_it_is": "Paste a URL (or a decoded QR payload) -> an OFFLINE heuristic safety report: static redirect-chain extraction, punycode/homoglyph look-alike detection, ~16 known-bad URL patterns (raw-IP host, credential/@ trick, brand look-alikes, abused TLDs, shorteners with unresolved destination, risky download extensions), TLS surface from the URL, and a LOW/ELEVATED/HIGH concern band. Heuristic only, clearly disclaimed — never a guarantee.",
+      "what_it_is": "Paste a URL (or a decoded QR payload) -> an OFFLINE heuristic safety report: static redirect-chain extraction, punycode/homoglyph look-alike detection, ~16 known-bad URL patterns (raw-IP host, credential/@ trick, brand look-alikes, abused TLDs, shorteners with unresolved destination, risky download extensions), TLS surface from the URL, and a LOW/ELEVATED/HIGH concern band. Heuristic only, clearly disclaimed \u2014 never a guarantee.",
       "buyer": "Cautious consumers and small-biz owners vetting a link before clicking.",
       "price_usd": 5,
       "billing": "one_time",
@@ -168,7 +170,7 @@
       "monetization_rung": "3_PRODUCTIZED_CODE_COMPLETE",
       "built_at": "2026-07-17",
       "tests": "11 engine assertions (citation-coverage linter: coverage, unresolved-source, ungrounded-quote/anti-fabrication, empty-uncertainty, missing-disclaimer, partial-coverage) + 10 mocked buy-loop tests, all pass (node v22, no install, no network).",
-      "real_vs_stub": "REAL: citation-coverage linter (fail-closed, verbatim quote-grounding), digest assembler, auto-uncertainty seeding, markdown renderer with inline footnotes, subscription checkout/webhook/entitlement/gated generation, landing+generation UI. STUB/by-design: deterministic floor only (verbatim grounding proves a quote was present, not that it semantically supports the claim — LLM council pass is a documented, unwired integration point); customer supplies sources + drafted changes (no crawler); no live Stripe account/price/keys, no deploy; buy-loop tests MOCK stripe and run store in-memory.",
+      "real_vs_stub": "REAL: citation-coverage linter (fail-closed, verbatim quote-grounding), digest assembler, auto-uncertainty seeding, markdown renderer with inline footnotes, subscription checkout/webhook/entitlement/gated generation, landing+generation UI. STUB/by-design: deterministic floor only (verbatim grounding proves a quote was present, not that it semantically supports the claim \u2014 LLM council pass is a documented, unwired integration point); customer supplies sources + drafted changes (no crawler); no live Stripe account/price/keys, no deploy; buy-loop tests MOCK stripe and run store in-memory.",
       "rung_note": "NO FAKE GREEN. Code-complete to the doorstep and fully tested. $0 earned, no checkout live. Founder deploy remains: create a $12/mo Stripe price, set STRIPE_SECRET_KEY / STRIPE_PRICE_MONTHLY / STRIPE_WEBHOOK_SECRET / BASE_URL (+ optional Vercel KV), then deploy via scripts/factory_deploy.sh. Inert (501) until keys set.",
       "guardrail": "information not legal advice; every claim cited; uncertainty section mandatory (all enforced by the fail-closed linter)"
     },
@@ -191,8 +193,8 @@
       "monetization_rung": "3_PRODUCTIZED_CODE_COMPLETE",
       "built_at": "2026-07-17",
       "tests": "9 license-gate + packaging assertions (entitlement gate blocks/allows, per-pack isolation, license derived from terms, policy gate fails-closed on seeded vocal + artist-likeness, strict-mode fails-closed on missing audio, dependency-free zip round-trip) + 5 mocked webhook tests, all pass (node v22, no install, no network).",
-      "real_vs_stub": "REAL: catalog load/validate/preview, per-pack license-gate + instrumental-only policy gate, license generation, dependency-free ZIP packager, checkout/webhook/entitlement/gated delivery, storefront+delivery UI. STUB/by-design: NO fabricated audio — every pack is available:false with non-existent track files; founder must drop license-cleared instrumental-only stings into stings/<pack_id>/ and flip available:true; no live Stripe account/price/keys, no deploy; buy-loop tests MOCK stripe and use a temp JSON store.",
-      "rung_note": "NO FAKE GREEN. Code-complete to the doorstep and fully tested. $0 earned, no checkout live, no real audio yet. Founder go-live: (1) load license-cleared instrumental stings + flip pack available:true; (2) create a $9 one-time Stripe price; (3) set STRIPE_SECRET_KEY / STRIPE_PRICE_STING / STRIPE_WEBHOOK_SECRET / BASE_URL; (4) deploy via scripts/factory_deploy.sh. Inert (501) until keys set; entitled buyers of an unavailable pack get 503 no_audio_yet — never fake audio.",
+      "real_vs_stub": "REAL: catalog load/validate/preview, per-pack license-gate + instrumental-only policy gate, license generation, dependency-free ZIP packager, checkout/webhook/entitlement/gated delivery, storefront+delivery UI. STUB/by-design: NO fabricated audio \u2014 every pack is available:false with non-existent track files; founder must drop license-cleared instrumental-only stings into stings/<pack_id>/ and flip available:true; no live Stripe account/price/keys, no deploy; buy-loop tests MOCK stripe and use a temp JSON store.",
+      "rung_note": "NO FAKE GREEN. Code-complete to the doorstep and fully tested. $0 earned, no checkout live, no real audio yet. Founder go-live: (1) load license-cleared instrumental stings + flip pack available:true; (2) create a $9 one-time Stripe price; (3) set STRIPE_SECRET_KEY / STRIPE_PRICE_STING / STRIPE_WEBHOOK_SECRET / BASE_URL; (4) deploy via scripts/factory_deploy.sh. Inert (501) until keys set; entitled buyers of an unavailable pack get 503 no_audio_yet \u2014 never fake audio.",
       "guardrail": "instrumental-only; no vocals/voice-likeness; license-gate mandatory; no fabricated audio (all enforced by the fail-closed policy gate + placeholder catalog)"
     },
     {
@@ -237,7 +239,7 @@
       "monetization_rung": "3_PRODUCTIZED_CODE_COMPLETE",
       "built_at": "2026-07-18",
       "tests": "28 engine assertions + 17 mocked buy-loop tests, all pass (node v22.22.3, no install, no network). Advice linter fails closed even for a PAYING caller (422, no files). Webhook rejects bad signature (400) and is inert without keys (501). XLSX verified by walking the central directory and inflating every part; PDF verified by checking xref offsets resolve to real object headers.",
-      "real_vs_stub": "REAL: RFC4180 ingest with header aliasing + ISO/US/UK date auto-detection + EU decimals + parenthesised negatives, row flagging with CSV line numbers, merchant normalization, median-interval cadence detection with confidence scoring, price-drift and dormancy observations, overlap tagging, fail-closed advice linter, DEPENDENCY-FREE XLSX writer and one-page PDF renderer (both byte-deterministic), checkout/webhook/entitlement/gated delivery, free ungated preview, landing + delivery UI. STUB/by-design: no live Stripe account/price/keys and no deploy (all payment paths return 501 until env is set); buy-loop tests MOCK stripe and run the store in-memory (NOT a live or Stripe-test-mode run); detection is statistical/string-based, not semantic — no merchant database, no bank connection, no enrichment; overlap tags are a fixed keyword list, not a taxonomy.",
+      "real_vs_stub": "REAL: RFC4180 ingest with header aliasing + ISO/US/UK date auto-detection + EU decimals + parenthesised negatives, row flagging with CSV line numbers, merchant normalization, median-interval cadence detection with confidence scoring, price-drift and dormancy observations, overlap tagging, fail-closed advice linter, DEPENDENCY-FREE XLSX writer and one-page PDF renderer (both byte-deterministic), checkout/webhook/entitlement/gated delivery, free ungated preview, landing + delivery UI. STUB/by-design: no live Stripe account/price/keys and no deploy (all payment paths return 501 until env is set); buy-loop tests MOCK stripe and run the store in-memory (NOT a live or Stripe-test-mode run); detection is statistical/string-based, not semantic \u2014 no merchant database, no bank connection, no enrichment; overlap tags are a fixed keyword list, not a taxonomy.",
       "rung_note": "NO FAKE GREEN. Code-complete to the doorstep and fully tested (real pass output recorded in autonomous_build_log.jsonl). $0 earned, no checkout live, nothing deployed. Only a founder deploy remains: create a $9 one-time Stripe price, set STRIPE_SECRET_KEY / STRIPE_PRICE_REPORT / STRIPE_WEBHOOK_SECRET / BASE_URL (+ Vercel KV before taking real money, since without KV entitlements do not survive a cold start) in Vercel env, then deploy via scripts/factory_deploy.sh. Inert (501) on all paid paths until keys are set; the free preview works without keys.",
       "guardrail": "organizational tooling only; no financial/tax/legal advice; never tells the user what to keep, cancel, or dispute (enforced by a fail-closed advice linter that runs before any artifact bytes are rendered)"
     },
@@ -268,7 +270,7 @@
   ],
   "non_monetized_factories": {
     "note": "NON-MONETIZED by design per backend/mission_control/factory_census.py FACTORY_INTENT. These should be EXEMPT from the revenue/earning rollup, not defined as products.",
-    "HHF": "Hoch Home Personal Factory — serves the Hoch family; success is family utility, not earning.",
-    "HPF": "Hoch Pods Theater — cinematic swarm-launch visualization; not a product factory."
+    "HHF": "Hoch Home Personal Factory \u2014 serves the Hoch family; success is family utility, not earning.",
+    "HPF": "Hoch Pods Theater \u2014 cinematic swarm-launch visualization; not a product factory."
   }
 }

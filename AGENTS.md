@@ -19,6 +19,7 @@ This repo is worked by **two coordinating agents**: the **AG (Antigravity) IDE**
 3. **DOORSTEP is a founder gate**: never deploy, spend, provision keys, sign, or move money
    autonomously — stage those in the bus's `doorstep_for_founder`. Do all SAFE work; stage the rest.
 4. **No fake green**: truthful state only; unknown = unknown; green must be earned.
+5. **Engineering Doctrine** (`docs/helm/HELM_ENGINEERING_DOCTRINE_v1.md`, adopted by EDR-0006): governance before capability — a material decision without a valid **Proof Record** (Authorized · Explained · Traced · Proven · Audited · Reproduced) is UNKNOWN, not complete.
 
 Full protocol + connect snippet: [`coordination/CONNECT_AG_IDE.md`](coordination/CONNECT_AG_IDE.md).
 Live views: `http://100.87.18.15:3012/factoryverse` (walk-in factories), `/helm-3d` (core).

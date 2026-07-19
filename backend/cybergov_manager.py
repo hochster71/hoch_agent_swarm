@@ -235,6 +235,14 @@ def get_cybergov_scorecard() -> dict:
         "implemented_controls": impl_cnt,
         "open_poams": sum(1 for p in cybergov_poam if p["status"] == "OPEN"),
         "accepted_risks": sum(1 for r in cybergov_risks if r["acceptance_status"] == "ACCEPTED_AO"),
+        # NO FAKE GREEN — scope by surface (per audit #4 / Grok): these scores are computed
+        # from STATIC control-statement baselines, NOT independent live-assessor results.
+        # ConMon (conmon_manager) is the live-assessed layer; treat this as documentary
+        # evidence-readiness, not a verified authorization posture.
+        "evidence_provenance": "STATIC_BASELINE",
+        "assessor_type": "DOCUMENTED_SELF_ASSESSMENT",
+        "live_assessor_layer": "conmon_manager (live boundary metrics)",
+        "authorization_status": "NOT_AUTHORIZED",
         "compliance": {
             "statement": "ATO-SUPPORTING EVIDENCE PACKAGE: READY FOR REVIEW",
             "notice": "The system has ATO-supporting evidence prepared for review. Actual ATO has not been granted. No authorization claim is being made."

@@ -233,6 +233,9 @@
       lastTtsStatus: state.lastTtsStatus,
       eventCount: state.eventCount,
       policyStatus: mode,
+      listening: state.listening,
+      lastHeard: state.lastHeard,
+      sttSupported: sttSupported(),
     };
   }
 
@@ -276,8 +279,13 @@
             <input type="checkbox" id="hv-sec-poll"/> Poll security
           </label>
         </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:8px;border:1px solid #223; border-radius:8px;background:#0b1120">
+          <button id="hv-listen" type="button" style="cursor:pointer;padding:6px 14px;border-radius:20px;border:1px solid #2d6ea8;background:#123049;color:#8fd0ff;font-weight:600">🎙 Listen</button>
+          <span style="font-size:11px;color:var(--dim,#8b98a9)">wake word: say <b style="color:#8fd0ff">"HELM,&nbsp;…"</b></span>
+          <span id="hv-heard" style="flex:1;text-align:right;font-size:11px;color:#7fe0a0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</span>
+        </div>
         <div style="display:flex;gap:6px;margin-bottom:8px">
-          <input id="hv-utter" type="text" placeholder="Say a command… e.g. highest priority mission"
+          <input id="hv-utter" type="text" placeholder="…or type: what's the mission status"
             style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #30363d;background:#0d1117;color:inherit"/>
           <button id="hv-run" type="button" style="cursor:pointer;padding:4px 12px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:inherit">Run</button>
         </div>
@@ -291,9 +299,19 @@
     const statusEl = $('#hv-status');
     const outEl = $('#hv-out');
     const spokenEl = $('#hv-spoken');
+    const listenBtn = $('#hv-listen');
+    const heardEl = $('#hv-heard');
 
     function paint() {
       const s = getState();
+      if (heardEl) heardEl.textContent = s.lastHeard || '—';
+      if (listenBtn) {
+        const on = s.listening;
+        listenBtn.textContent = on ? '🎙 Listening…' : '🎙 Listen';
+        listenBtn.style.background = on ? '#1c5a2e' : '#123049';
+        listenBtn.style.color = on ? '#9af0b8' : '#8fd0ff';
+        listenBtn.style.borderColor = on ? '#2ea043' : '#2d6ea8';
+      }
       statusEl.textContent = s.policyStatus;
       statusEl.style.background = s.enabled && !s.muted
         ? 'rgba(46,160,67,.16)' : 'rgba(139,148,158,.16)';
@@ -393,12 +411,23 @@
       const u = $('#hv-utter').value.trim();
       if (!u) return;
       try {
-        await command(null, u, state.enabled && !state.muted);
+        await route(u, state.enabled && !state.muted);
         paint();
       } catch (e) {
         outEl.textContent = 'UNKNOWN — ' + e.message;
       }
     });
+    if (listenBtn) {
+      listenBtn.addEventListener('click', () => {
+        if (!sttSupported()) {
+          outEl.textContent = 'UNKNOWN — this browser has no speech recognition. Use Chrome/Edge, or type a command above.';
+          return;
+        }
+        if (!state.enabled) { setEnabled(true); $('#hv-enabled').checked = true; }
+        arm(!state.listening);
+        paint();
+      });
+    }
 
     loadPolicy().then(() => {
       // Sync dropdown to resolved provider
@@ -411,11 +440,103 @@
     paint();
   }
 
+  // ── WAKE-WORD LISTENING (speech-to-text) ──────────────────────────────────
+  // Turns HELM from talk-only into "Alexa, but HELM": say "HELM, <command>".
+  // Uses the browser Web Speech API (free, on-device on most browsers). Fail-closed:
+  // if the browser has no SpeechRecognition, arm() returns false and reports UNKNOWN.
+  const WAKE = /\bhelm\b[\s,]*/i;
+  state.listening = false;
+  state._rec = null;
+  state.lastHeard = '';
+
+  function sttSupported() {
+    return !!(global.SpeechRecognition || global.webkitSpeechRecognition);
+  }
+
+  function greetingText() {
+    const h = new Date().getHours();
+    const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    return `${part}, Michael. HELM is listening. Say "HELM" followed by a command — for example, "HELM, what's the mission status", or "HELM, what needs my approval".`;
+  }
+
+  // Route a heard command to the honest backend. Calendar isn't a HELM source yet,
+  // so calendar questions say so plainly instead of inventing events.
+  async function route(text, andSpeak) {
+    const t = String(text || '').trim();
+    state.lastHeard = t;
+    _emit();
+    if (!t) return null;
+    const low = t.toLowerCase();
+    // calendar/schedule/reminders now flow to the backend calendar_agenda intent,
+    // which reads real Apple Calendar + Reminders (honest NOT_CONNECTED if macOS
+    // hasn't granted access) — no longer a hardcoded "not connected" reply.
+    if (/\b(hello|hey|hi|good (morning|afternoon|evening)|you there|wake up)\b/.test(low) && low.length < 24) {
+      const g = greetingText();
+      state.lastResult = { status: 'OK', command: 'greeting', speech_text: g };
+      if (andSpeak) speak(g);
+      _emit();
+      return state.lastResult;
+    }
+    // Everything else → the existing voice-intent backend (brief/approvals/blocked/
+    // revenue/security/mission NLU), which returns Runtime-Truth speech_text only.
+    try {
+      return await command(null, t, andSpeak);
+    } catch (e) {
+      const msg = 'HELM could not reach the runtime. ' + (e.message || '');
+      state.lastResult = { status: 'UNKNOWN', speech_text: msg };
+      if (andSpeak) speak(msg);
+      _emit();
+      return state.lastResult;
+    }
+  }
+
+  function arm(on) {
+    if (!on) {
+      state.listening = false;
+      if (state._rec) { try { state._rec.stop(); } catch (_) {} state._rec = null; }
+      _emit();
+      return true;
+    }
+    if (!sttSupported()) { state.listening = false; _emit(); return false; }
+    const Rec = global.SpeechRecognition || global.webkitSpeechRecognition;
+    const rec = new Rec();
+    rec.continuous = true;
+    rec.interimResults = false;
+    rec.lang = 'en-US';
+    rec.onresult = (ev) => {
+      for (let i = ev.resultIndex; i < ev.results.length; i++) {
+        if (!ev.results[i].isFinal) continue;
+        const heard = (ev.results[i][0].transcript || '').trim();
+        state.lastHeard = heard; _emit();
+        if (WAKE.test(heard)) {
+          const cmd = heard.replace(WAKE, '').trim();
+          route(cmd || 'hello', state.enabled && !state.muted);
+        }
+      }
+    };
+    rec.onerror = () => { /* fail-closed; keep armed, browser auto-retries onend */ };
+    rec.onend = () => { if (state.listening) { try { rec.start(); } catch (_) {} } };
+    try {
+      rec.start();
+      state._rec = rec;
+      state.listening = true;
+      if (state.enabled && !state.muted) speak(greetingText());
+      _emit();
+      return true;
+    } catch (e) {
+      state.listening = false; _emit(); return false;
+    }
+  }
+
   global.HELMVoice = {
     sanitize,
     speak,
     brief,
     command,
+    route,
+    arm,
+    greetingText,
+    sttSupported,
     listCommands,
     loadPolicy,
     loadTtsStatus,

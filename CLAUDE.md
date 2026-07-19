@@ -41,6 +41,8 @@ No giant context dumps. No architectural re-explanation. No reconstructing weeks
 Then load the role overlay (`coordination/governance/role_overlays/ROLE_BUILDER.md`) + charter
 (`HELM_EXECUTIVE_RUNTIME_CHARTER.md`) for role context.
 
+**Engineering Doctrine (governs how work is built):** `docs/helm/HELM_ENGINEERING_DOCTRINE_v1.md` (adopted by `docs/helm/edr/EDR-0006-engineering-doctrine.md`). Governance before capability — a material decision without a valid **Proof Record** (Authorized · Explained · Traced · Proven · Audited · Reproduced) is UNKNOWN, not complete.
+
 Material writes go through **Mission Runtime transactions** (`backend/helm_runtime/transaction.py`). Architectural changes require an **EDR** under `docs/helm/edr/`. Never self-certify autonomous production OS readiness; hand assurance to Auditor with evidence paths. Close with a transaction **or** `NO_MISSION_WRITE: <reason>`.
 
 Architecture: `docs/helm/HELM_MISSION_RUNTIME_ARCHITECTURE.md`.

@@ -105,61 +105,51 @@ module.exports = async function handler(req, res) {
     // storyId ties a onestory purchase to the specific story the webhook must unlock.
     const storyId = body.storyId ? String(body.storyId).slice(0, 64) : undefined;
 
-    let checkoutUrl;
+    // Canonical hosted Checkout Session. (The previous Payment-Link detour passed an
+    // invalid `expand: ['data.line_items']` to paymentLinks.list, which throws on every
+    // call and collapsed into the fallback — masking the real error. Removed.)
+    //
+    // Auto-detect the price's mode so we never mismatch 'payment' vs 'subscription':
+    // passing mode:'payment' with a recurring price (or vice-versa) is the most common
+    // cause of a create failure. We read the price and let it decide.
+    let mode = tierConfig.mode;
     try {
-      console.log(`[create-checkout-session] Looking for active Payment Link for price ${priceId}...`);
-      const paymentLinks = await stripe.paymentLinks.list({ active: true, expand: ['data.line_items'] });
-      let paymentLink = paymentLinks.data.find(link => 
-        link.line_items && link.line_items.data.some(item => item.price && item.price.id === priceId)
-      );
-
-      if (!paymentLink) {
-        console.log(`[create-checkout-session] No Payment Link found for price ${priceId}. Creating one...`);
-        paymentLink = await stripe.paymentLinks.create({
-          line_items: [{ price: priceId, quantity: 1 }],
-          metadata: { tier },
-        });
-      }
-
-      if (paymentLink && paymentLink.url) {
-        checkoutUrl = paymentLink.url;
-        if (storyId) {
-          const separator = checkoutUrl.includes('?') ? '&' : '?';
-          checkoutUrl = `${checkoutUrl}${separator}client_reference_id=${encodeURIComponent(storyId)}`;
-        }
-        console.log('[create-checkout-session] Using Payment Link URL:', checkoutUrl);
-      }
-    } catch (linkErr) {
-      console.error('[create-checkout-session] Payment Link resolution failed, falling back to Checkout Session:', linkErr.message);
+      const priceObj = await stripe.prices.retrieve(priceId);
+      mode = priceObj && priceObj.recurring ? 'subscription' : 'payment';
+    } catch (pe) {
+      console.error('[create-checkout-session] price.retrieve failed, using configured mode:', pe && pe.message);
     }
 
-    // Fallback to standard Checkout Session if Payment Link could not be resolved/created
-    if (!checkoutUrl) {
-      const baseUrl =
-        process.env.BASE_URL ||
-        (req.headers && req.headers.origin) ||
-        'https://example.com';
+    const baseUrl =
+      (process.env.BASE_URL && /^https?:\/\//.test(process.env.BASE_URL) ? process.env.BASE_URL : null) ||
+      (req.headers && req.headers.origin) ||
+      'https://story-studio-live.vercel.app';
 
-      const session = await stripe.checkout.sessions.create({
-        mode: tierConfig.mode,
-        line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${baseUrl}/?canceled=1`,
-        client_reference_id: storyId,
-        metadata: { tier, storyId: storyId || '' },
-      });
-      checkoutUrl = session.url;
-      console.log('[create-checkout-session] Using Checkout Session fallback URL:', checkoutUrl);
-    }
+    const session = await stripe.checkout.sessions.create({
+      mode,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/?canceled=1`,
+      client_reference_id: storyId,
+      metadata: { tier, storyId: storyId || '' },
+    });
+    const checkoutUrl = session.url;
+    console.log('[create-checkout-session] Checkout Session created:', session.id, 'mode:', mode);
 
     // Return the hosted URL as JSON. The client redirects to it.
     return res.status(200).json({ url: checkoutUrl });
   } catch (err) {
     // Never leak internal details / keys. Log server-side, return a generic error.
     console.error('[create-checkout-session] Stripe error:', err && err.message);
+    // Safe diagnostics: Stripe error type/code/param/message never contain the secret
+    // key. Surfacing them turns an opaque failure into a precise, fixable cause.
     return res.status(502).json({
       error: 'stripe_error',
-      message: 'Could not create a checkout session. Please try again later.',
+      message: 'Could not create a checkout session.',
+      stripe_type: (err && err.type) || null,
+      stripe_code: (err && err.code) || null,
+      stripe_param: (err && err.param) || null,
+      detail: (err && err.message) || null,
     });
   }
 };

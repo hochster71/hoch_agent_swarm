@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-12T02:12:51.153073Z",
+  "generated_at": "2026-07-19T13:28:12.481975Z",
   "status": "RECONCILED",
   "provenance": {
     "derivation": "EVIDENCE_INSIDE_EACH_PACKAGE",
@@ -16,6 +16,230 @@
   "candidate_count": 1,
   "packages": [
     {
+      "package_id": "H1B-R2-CLOSURE-20260712T135736Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "H1B-R2-CLOSURE-COMMITBOUND-20260712T140011Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "H1B-R2-CLOSURE-COMMITBOUND-20260712T140121Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "H1C-CONTROLLED-ACTIVATION-20260712T174924Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "H1C-CONTROLLED-EXECUTION-20260712T181706Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "H1C-DOORSTEP-COMMITBOUND-20260712T175254Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "H1D7-DISPATCH-GATEWAY-20260712T230145Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MOCK",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MULTIFACTORY-20260713T115903Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MULTIFACTORY-20260713T115916Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MULTIFACTORY-20260713T120302Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MULTIFACTORY-20260713T124812Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MULTIFACTORY-20260713T130156Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MULTIFACTORY-20260713T131126Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-24X7-MULTIFACTORY-20260713T131226Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-8FACTORY-MOONSHOT-20260716T202546Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-AUTHORITY-BOUND-AUTONOMOUS-20260713T223638Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-AUTHORITY-BOUND-AUTONOMOUS-20260713T223706Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-AUTHORITY-BOUND-AUTONOMOUS-20260713T223812Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-BLOCKER-GRANULARITY-20260713T224520Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-CONCURRENCY-CONTROLS-20260713T224923Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-CONCURRENCY-CONTROLS-20260713T225200Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-CONCURRENCY-CONTROLS-20260713T225243Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-FOUNDER-DOCTRINE-RUNTIME-20260713T222026Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-FOUR-FACTORY-20260713T134450Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-FOUR-FACTORY-20260713T134837Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-FOUR-FACTORY-20260713T135121Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-FOUR-FACTORY-20260713T135337Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-FOUR-FACTORY-BURNIN-20260713T224651Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-FOUR-FACTORY-BURNIN-20260713T225243Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-GROK-CONCURRENCY-AUDIT-20260713T224954Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-GROK-SEAT-20260713T224310Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
       "package_id": "HELM-H1-CANDIDATE-20260712T011800Z-E58CF462",
       "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
       "authorization_eligible": false,
@@ -27,7 +251,7 @@
       "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "reason": "VALIDATION_EVIDENCE_DECLARES_SUPERSEDED_BY:HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
+      "reason": "VALIDATION_EVIDENCE_DECLARES_SUPERSEDED_BY:HELM-H1-CANDIDATE-20260712T013000Z-4DD41282"
     },
     {
       "package_id": "HELM-H1-CANDIDATE-20260712T013000Z-4DD41282",
@@ -70,6 +294,272 @@
       "authorization_eligible": false,
       "execution_eligible": false,
       "reason": "VALIDATION_EVIDENCE_DECLARES_NON_RUNTIME_TEST"
+    },
+    {
+      "package_id": "HELM-REAL-MULTIFACTORY-20260713T132834Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-REVENUE-TRACE-20260714T020919Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SCHEDULER-NATIVE-CONCURRENCY-20260713T225615Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SCHEDULER-NATIVE-CONCURRENCY-20260713T225635Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-24H-20260714T114143Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-24H-20260715T113622Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-24H-20260715T165726Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-24H-20260715T194547Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-24H-20260716T201324Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-24H-20260716T202005Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260713T231226Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260713T232714Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T001109Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T002308Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T002656Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T140811Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T140821Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T141033Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T141134Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T141718Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T141743Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T141914Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T163218Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T203835Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-2H-20260714T204715Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-8H-20260714T023257Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-8H-20260714T233732Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-XH-20260713T225910Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-XH-20260713T230021Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-XH-20260713T230348Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "HELM-SOAK-XH-20260713T230828Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "REQ-CP-TEST-EPIC-FURY-20260712T235035Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "REQ-CP-TEST-EPIC-FURY-20260713T002047Z-RERUN",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "REQ-CP-TEST-EPIC-FURY-20260713T003316Z-CONTRACT",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "REQ-CP-TEST-EPIC-FURY-20260713T003702Z-FINAL",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
+    },
+    {
+      "package_id": "REQ-TO-003-INTAKE-TO-DOORSTEP-20260715T214428Z",
+      "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
+      "authorization_eligible": false,
+      "execution_eligible": false,
+      "reason": "LEGACY_SCHEMA_NO_COMBINED_AUTHORIZATION_DIGEST"
     }
   ],
   "invariants": [

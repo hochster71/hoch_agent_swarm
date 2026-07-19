@@ -22,7 +22,15 @@ plan. No distinct page was deleted; consolidation is additive + documented (gove
 `/executive`, `/mission`, `/theater` (pods/swarm-launch viz), `/pert` (85″ wall), `/nist`.
 These are distinct, still-useful views — not duplicates. Left in place; surfaced via the Hub.
 
-## FINDINGS (for a future pass — require per-page review, not auto-deleted)
+## PASS 2 (2026-07-17) — RESOLVED
+- **`/command` double-registration bug FIXED.** The shadowed second handler moved to
+  `/command-wall` (command.html now reachable); `/command` is a single registration serving the
+  15-panel executive-brief Command Center.
+- **Dead pages retired via 307 redirect** (non-destructive, reversible; bookmarks still resolve):
+  `/console → /command`, `/control_plane → /council`, `/brain → /jspace`, `/helm → /hub`.
+  The old cinematic brain view is preserved at `/brain-classic`.
+
+## FINDINGS (original — now addressed in Pass 2 above)
 1. **BUG — `/command` is registered twice.** Two `@app.get("/command")` handlers exist
    (`command_center.html` at the first definition wins; `command.html` at the second is
    **shadowed / unreachable**). Decide the canonical Command Center page and remove the other

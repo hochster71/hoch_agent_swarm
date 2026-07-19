@@ -129,6 +129,9 @@ drive_to_goal() {
 }
 
 log "autoloop start (interval ${INTERVAL}s)"
+# Allow any terminating processes from a previous supervisor coalition to release ports
+sleep 3
+
 while true; do
   api_up || start_api
   ensure_tailscale

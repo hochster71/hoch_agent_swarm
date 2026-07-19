@@ -1,5 +1,12 @@
 """HELM Executive Brief — the single integration surface over ALL HELM projections.
 
+CANONICAL executive-brief aggregator. Distinct from the VOICE-scoped briefing in
+`backend.voice.briefing.build_executive_brief` (aliased `build_voice_brief`). Two functions
+once shared this name across surfaces; this module is the authoritative one behind
+/api/v1/helm/executive-brief and the council. Also exported as `build_unified_executive_brief`
+for call sites that want the name to be unmistakable.
+
+
 Composes every existing runtime-truth projection (mission, runtime engines, HMAI,
 external milestones, workers/AI, cybersecurity/ConMon, factories) into one honest
 Executive Brief payload. This is INTEGRATION of the Executive Projections layer that
@@ -168,3 +175,7 @@ def build_executive_brief() -> Dict[str, Any]:
     # top-line honesty banner
     out["headline"] = "HELM Core 1.0.0-alpha — Constitutional Baseline Ratified. Independent implementation verification pending."
     return out
+
+
+# Unambiguous canonical alias (see module docstring). Back-compat name retained.
+build_unified_executive_brief = build_executive_brief

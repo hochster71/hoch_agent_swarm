@@ -56,7 +56,7 @@ MONTHLY_GUARDRAIL_USD = 200.00       # cost_governor.monthly_incremental_budget_
 DEFAULT_PER_TASK_CAP_USD = 0.50      # a single council task may not exceed this
 
 # Adapters that draw on ALREADY-PAID subscriptions/credits (standing authorization).
-STANDING_AUTHORIZED = {"grok", "gemini", "ollama"}
+STANDING_AUTHORIZED = {"grok", "gemini", "ollama", "claude"}
 # Adapters that bill a metered API key: these stay behind the H1B founder gate.
 FOUNDER_GATED = {"openai", "anthropic", "xai_api"}
 # Adapters that never leave the machine.
@@ -171,6 +171,11 @@ class CostLedger:
 # Grok: measured from the founder's own usage in cost_governor.json --
 # 1406 requests, $13.59, 43,112,382 tokens => $0.315 per 1M tokens.
 GROK_USD_PER_1M_TOKENS = 0.315
+# Claude (Opus 4.8) standard API rates — $5/M input, $25/M output (verified 2026-07).
+# Modeled at API rates as the CONSERVATIVE bound; if the `claude` CLI is on a flat Max
+# subscription the real marginal cost is lower, so the gate over-estimates (fails safe).
+CLAUDE_USD_PER_1M_INPUT = 5.0
+CLAUDE_USD_PER_1M_OUTPUT = 25.0
 # Gemini via the paid Google AI Ultra plan: zero MARGINAL cost per call.
 GEMINI_MARGINAL_USD = 0.0
 # Local: free.
@@ -185,6 +190,14 @@ def estimate_cost_usd(adapter: str, prompt: str, max_output_tokens: int = 4000) 
     if adapter == "grok":
         tokens = max(1, len(prompt) // 4) + max_output_tokens
         return round((tokens / 1_000_000.0) * GROK_USD_PER_1M_TOKENS, 6)
+    if adapter == "claude":
+        # Claude Code on a flat Max/Pro subscription (no ANTHROPIC_API_KEY) has NO per-token
+        # marginal cost — like the Gemini Ultra plan. Only meter when billing via the API key.
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            return 0.0
+        in_tok = max(1, len(prompt) // 4)
+        return round((in_tok * CLAUDE_USD_PER_1M_INPUT
+                      + max_output_tokens * CLAUDE_USD_PER_1M_OUTPUT) / 1_000_000.0, 6)
     return float("inf")          # unknown pricing => infinite => always blocked
 
 

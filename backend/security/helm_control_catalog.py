@@ -35,9 +35,29 @@ IMPLEMENTED = "IMPLEMENTED"
 NOT_IMPLEMENTED = "NOT_IMPLEMENTED"
 UNKNOWN = "UNKNOWN"
 
+# CA-7: the newest ConMon evidence bundle must be at most this old to count as "current".
+# 24h is deliberately generous — it tolerates a scheduled daemon (1800s cadence) or a
+# founder-run once-a-day cycle, but a monitor silent for longer becomes a FINDING.
+CA7_MAX_EVIDENCE_AGE_SEC = 86400
+
 
 def _r(status: str, evidence: str, detail: str = "") -> Dict[str, str]:
     return {"status": status, "evidence": evidence, "detail": detail}
+
+
+def _parse_iso_utc(s: str):
+    """Parse the timestamp shapes this repo emits (…Z / isoformat) to an aware datetime.
+
+    Returns None if unparseable — the caller treats an unreadable stamp as absent evidence,
+    never as fresh.
+    """
+    import re as _re
+    from datetime import datetime as _dt, timezone as _tz
+    m = _re.search(r"(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})", s or "")
+    if not m:
+        return None
+    y, mo, d, h, mi, se = (int(x) for x in m.groups())
+    return _dt(y, mo, d, h, mi, se, tzinfo=_tz)
 
 
 # ---------------------------------------------------------------- ASSESSORS
@@ -243,9 +263,62 @@ def a_ac06_least_privilege_spend() -> Dict[str, str]:
 
 
 def a_ca07_conmon() -> Dict[str, str]:
-    """CA-7 Continuous Monitoring — this assessment itself, run continuously."""
-    return _r(IMPLEMENTED, "helm_conmon.py assesses every control on a schedule",
-              "posture is recomputed from live evidence, never from a stored attestation")
+    """CA-7 Continuous Monitoring — OBSERVED from live artifacts, never self-attested.
+
+    Formerly this returned IMPLEMENTED unconditionally — a self-attestation, the exact
+    fake-green this catalog forbids ("we do not mark a control satisfied because a document
+    says so"). A ConMon control that green-lights itself is the loudest possible lie.
+
+    Now it is RE-DERIVED from what the continuous loop actually left on disk, and all of the
+    following must hold, RIGHT NOW:
+      (a) a Rev.5 evidence bundle pointer exists — docs/evidence/conmon/latest.json — whose
+          three referenced files (posture json/md + control map) are present on disk;
+      (b) that bundle was generated within CA7_MAX_EVIDENCE_AGE_SEC (monitoring is CURRENT,
+          not a fossil) — a stale bundle is a finding, because a monitor that stopped is not
+          monitoring;
+      (c) the hash-chained ConMon ledger holds >1 cycle — a single manual one-shot can never
+          satisfy "continuous".
+
+    Any missing/stale/one-shot condition is NOT_IMPLEMENTED (a real POA&M item). The evidence
+    itself is produced by scripts/conmon_continuous.py + scripts/conmon_verify_continuity.py.
+    """
+    from datetime import datetime, timezone
+    ev_latest = ROOT / "docs" / "evidence" / "conmon" / "latest.json"
+    ledger = ROOT / "coordination" / "security" / "conmon_ledger.jsonl"
+    try:
+        if not ev_latest.exists():
+            return _r(NOT_IMPLEMENTED, "no ConMon evidence bundle on disk",
+                      "docs/evidence/conmon/latest.json absent — the continuous loop has emitted no evidence")
+        latest = json.loads(ev_latest.read_text())
+        if latest.get("schema") != "HELM_CONMON_EVIDENCE_BUNDLE_v1":
+            return _r(NOT_IMPLEMENTED, "evidence bundle pointer malformed",
+                      f"schema={latest.get('schema')}")
+        bundle = latest.get("bundle", {}) or {}
+        missing = [k for k in ("posture_json", "posture_md", "control_map_md")
+                   if not (ROOT / str(bundle.get(k, "\0"))).exists()]
+        if missing:
+            return _r(NOT_IMPLEMENTED, "evidence bundle references missing files",
+                      "missing: " + ", ".join(missing))
+        gen = _parse_iso_utc(latest.get("generated_at", ""))
+        if gen is None:
+            return _r(NOT_IMPLEMENTED, "evidence bundle has no readable timestamp",
+                      str(latest.get("generated_at")))
+        age = (datetime.now(timezone.utc) - gen).total_seconds()
+        if age > CA7_MAX_EVIDENCE_AGE_SEC:
+            return _r(NOT_IMPLEMENTED,
+                      f"ConMon evidence is STALE ({round(age / 3600, 1)}h old)",
+                      f"newest bundle older than {CA7_MAX_EVIDENCE_AGE_SEC // 3600}h — monitoring is not current")
+        n_cycles = 0
+        if ledger.exists():
+            n_cycles = len([l for l in ledger.read_text().splitlines() if l.strip()])
+        if n_cycles < 2:
+            return _r(NOT_IMPLEMENTED, f"only {n_cycles} ConMon ledger cycle(s) recorded",
+                      "continuous monitoring requires >1 cycle; a single one-shot does not qualify")
+        return _r(IMPLEMENTED,
+                  f"fresh Rev.5 bundle ({round(age / 60, 1)}m old) + {n_cycles} hash-chained cycles",
+                  "posture re-derived from live evidence each cycle; continuity proven from disk, not asserted")
+    except Exception as e:
+        return _r(UNKNOWN, "continuous-monitoring evidence unreadable", str(e)[:120])
 
 
 def a_sr03_supply_chain() -> Dict[str, str]:

@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -97,9 +97,14 @@ app.include_router(health_router)
 from backend.helm.nist_matrix import nist_router
 app.include_router(nist_router)
 
+# HAF: HOCH Audit Factory v0.1 API endpoints
+from backend.audit_factory.router import haf_router
+app.include_router(haf_router)
+
 # HELM Voice Executive — orchestration-backed voice agent API (read-only + stage-only)
 from backend.voice.router import router as voice_router
 app.include_router(voice_router)
+
 
 # Runtime Bridge + Dispatch Gateway projections (EDR-0001/0002) — read + OCC PATCH
 try:
@@ -698,8 +703,14 @@ def api_v1_jspace_brain():
               "observers": observers}))
 
 
-@app.get("/brain", response_class=HTMLResponse)
-def serve_brain() -> str:
+@app.get("/brain")
+def serve_brain():
+    """UI pass 2: /brain (cinematic neural view) consolidated into the J-Space console."""
+    return RedirectResponse(url="/jspace", status_code=307)
+
+
+@app.get("/brain-classic", response_class=HTMLResponse)
+def serve_brain_classic() -> str:
     """The J-Space Brain — cinematic animated neural view of the HJOS observers. Same-origin so it
     renders identically on the Mac, the phone, and over Tailscale."""
     f = ROOT / "frontend_live" / "brain.html"
@@ -947,6 +958,14 @@ def serve_council() -> str:
     return f.read_text(encoding="utf-8") if f.exists() else "<h1>council.html missing</h1>"
 
 
+@app.get("/haf", response_class=HTMLResponse)
+def serve_haf() -> str:
+    """HAF Console — HOCH Audit Factory command-center dashboard."""
+    f = ROOT / "frontend_live" / "haf_console.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>haf_console.html missing</h1>"
+
+
+
 @app.get("/api/v1/helm/council/status")
 def api_council_status():
     """Live per-lane readiness — which council members HELM can currently fire (presence only,
@@ -986,6 +1005,24 @@ def api_council_chat(body: dict):
     if not prompt:
         raise HTTPException(status_code=400, detail={"error": "empty_prompt"})
     return council_chat(prompt, mode=mode, history=history)
+
+
+@app.post("/api/v1/helm/council/score")
+def api_council_score(body: dict):
+    """AUTONOMOUS cross-model scoring. Send {"task": "..."} and HELM fans it to every lane
+    (ChatGPT/Orchestrator, Claude/Builder, Grok/Auditor, Local), collects each model's answer,
+    then the Auditor scores them all against HELM doctrine + real runtime state — returning a
+    scorecard, ranking, disagreements, synthesis and a recommended action.
+
+    Optional {"responses": {"CHATGPT_5.6": "...", "CLAUDE_OPUS_4.8": "..."}} scores supplied
+    answers instead of dispatching. No fake green: if scoring is blocked it says so."""
+    from fastapi import HTTPException
+    from backend.dispatch.council_router import score_council
+    task = ((body or {}).get("task") or (body or {}).get("prompt") or "").strip()
+    responses = (body or {}).get("responses") or None
+    if not task:
+        raise HTTPException(status_code=400, detail={"error": "empty_task"})
+    return score_council(task, responses=responses)
 
 
 @app.post("/api/v1/helm/council/verify")
@@ -1101,10 +1138,16 @@ def api_council_dispatch(body: dict):
     except Exception as e:  # provider/network error — surface honestly, no secret
         raise HTTPException(status_code=502, detail={"error": "provider_error", "message": str(e)[:300]})
     try:  # record the dispatch on the nervous system (content length only, never the text/secret)
-        from backend.helm_runtime.event_bus import publish_event
-        publish_event(type="COUNCIL_DISPATCH", producer=(role or capability or "council"),
-                      mission_id="COUNCIL", payload={"provider": r.get("provider"),
-                      "model": r.get("model"), "prompt_chars": len(prompt)})
+        # HELM-GOV | extends: N6 emitter (dispatch endpoint) | edr: EDR-0006-R4 | why: a dispatch is a
+        #          | material decision — carry a Proof Record via the single gate.
+        from backend.helm_runtime.governed_emit import emit_governed
+        emit_governed(type="COUNCIL_DISPATCH", producer=(role or capability or "council"),
+                      mission_id="COUNCIL", authority="helm_live_api:dispatch_gateway",
+                      explanation=f"dispatch to {r.get('provider')}/{r.get('model')}",
+                      inputs={"provider": r.get("provider"), "model": r.get("model"), "prompt_chars": len(prompt)},
+                      proof_command="POST /api/v1/helm/dispatch (guarded gateway)",
+                      environment="helm_live_api",
+                      payload={"provider": r.get("provider"), "model": r.get("model"), "prompt_chars": len(prompt)})
     except Exception:
         pass
     return {"ok": True, **r}
@@ -1773,24 +1816,19 @@ def api_v1_agents():
     ))
 
 
-@app.get("/command", response_class=HTMLResponse)
+@app.get("/command-wall", response_class=HTMLResponse)
 def serve_command() -> str:
-    """HELM Command Center — cinematic wall + flow charts + evidence-chain + controls.
-    Same-origin so it works on the Mac, the phone, and over Tailscale identically."""
+    """HELM Command Wall — cinematic wall + flow charts + evidence-chain + controls. (Was a
+    SECOND /command registration that shadowed command.html; moved to /command-wall in UI pass 2
+    so both Command views are reachable. /command = the 15-panel executive-brief Command Center.)"""
     f = ROOT / "frontend_live" / "command.html"
     return f.read_text() if f.exists() else "<h1>command missing</h1>"
 
 
-@app.get("/console", response_class=HTMLResponse)
-def serve_console() -> str:
-    """Serve the single console FROM the API so it is SAME-ORIGIN.
-
-    It previously hardcoded API = "http://127.0.0.1:8770". On a PHONE, 127.0.0.1 is the PHONE's
-    own localhost — so the page loaded and every fetch failed. Same-origin makes it work
-    identically on the Mac, the phone, and over Tailscale.
-    """
-    f = ROOT / "frontend_live" / "console.html"
-    return f.read_text() if f.exists() else "<h1>console missing</h1>"
+@app.get("/console")
+def serve_console():
+    """UI pass 2: /console consolidated into the Command Center."""
+    return RedirectResponse(url="/command", status_code=307)
 
 
 @app.get("/arch", response_class=HTMLResponse)
@@ -1806,16 +1844,16 @@ def serve_architecture_alias() -> str:
     return f.read_text() if f.exists() else "<h1>architecture missing</h1>"
 
 
-@app.get("/control_plane", response_class=HTMLResponse)
-def serve_control_plane() -> str:
-    f = ROOT / "frontend_live" / "control_plane.html"
-    return f.read_text() if f.exists() else "<h1>control_plane missing</h1>"
+@app.get("/control_plane")
+def serve_control_plane():
+    """UI pass 2: the Council IS the control plane now — /control_plane redirects to /council."""
+    return RedirectResponse(url="/council", status_code=307)
 
 
-@app.get("/helm", response_class=HTMLResponse)
-def serve_helm_alias() -> str:
-    f = ROOT / "frontend_live" / "helm.html"
-    return f.read_text() if f.exists() else "<h1>helm.html missing</h1>"
+@app.get("/helm")
+def serve_helm_alias():
+    """UI pass 2: /helm home alias → the Hub (single front door)."""
+    return RedirectResponse(url="/hub", status_code=307)
 
 
 @app.get("/pert", response_class=HTMLResponse)
@@ -1826,18 +1864,66 @@ def pert_wall() -> str:
     return "<h1>PERT wall missing</h1>"
 
 
+@app.get("/factories", response_class=HTMLResponse)
+def factories_board() -> str:
+    """Live factory board — every factory's runtime_state + blocked missions from
+    coordination/council/factory_registry.json (via /api/v1/helm/factories). Honest labels."""
+    f = ROOT / "frontend_live" / "factories.html"
+    if f.exists():
+        return f.read_text(encoding="utf-8")
+    return "<h1>HELM</h1><p>factories.html missing</p>"
+
+
+@app.get("/matrix", response_class=HTMLResponse)
+@app.get("/logic-matrix", response_class=HTMLResponse)
+def logic_matrix() -> str:
+    """HOCH Ecosystem Logic Matrix — the system poster, integrated with a live runtime-truth
+    status strip (GOAL / factories / cyber / ATO posture) so it stays honest as HELM changes.
+    Displays frontend_live/logic_matrix.png; renders an install hint until the PNG is dropped in."""
+    f = ROOT / "frontend_live" / "logic_matrix.html"
+    if f.exists():
+        return f.read_text(encoding="utf-8")
+    return "<h1>HELM</h1><p>logic_matrix.html missing</p>"
+
+
+@app.get("/logic_matrix.png")
+def logic_matrix_png():
+    """Serves the HOCH Ecosystem Logic Matrix image. Drop the PNG at
+    frontend_live/logic_matrix.png; 404 with a hint until then (no fake asset)."""
+    from fastapi.responses import FileResponse, PlainTextResponse
+    f = ROOT / "frontend_live" / "logic_matrix.png"
+    if f.exists():
+        return FileResponse(f, media_type="image/png")
+    return PlainTextResponse("drop the image at frontend_live/logic_matrix.png", status_code=404)
+
+
+@app.get("/ref_overview.png")
+def ref_overview_png():
+    """Dev-only: reference PNG for the ?referenceOverlay=1 comparison mode.
+    Not linked in nav. Drop the reference image at frontend_live/ref_overview.png."""
+    from fastapi.responses import FileResponse, PlainTextResponse
+    f = ROOT / "frontend_live" / "ref_overview.png"
+    if f.exists():
+        return FileResponse(f, media_type="image/png")
+    return PlainTextResponse("reference image not present — drop it at frontend_live/ref_overview.png", status_code=404)
+
+
 @app.get("/", response_class=HTMLResponse)
 @app.get("/hub", response_class=HTMLResponse)
+@app.get("/overview", response_class=HTMLResponse)
 def ui() -> str:
     """HELM Hub — the single front door. Links the 5 keeper cockpits (Council, Command Center,
     PERT→GOAL, Build Theater, Audit Theater) with live GOAL% + lane status; groups the rest.
     UI-consolidation front door (see docs/helm/UI_CONSOLIDATION.md)."""
+    ov = ROOT / "frontend_live" / "overview.html"
+    if ov.exists():
+        return ov.read_text(encoding="utf-8")
     hub = ROOT / "frontend_live" / "hub.html"
     if hub.exists():
         return hub.read_text(encoding="utf-8")
     if UI.exists():
         return UI.read_text()
-    return "<h1>HELM LIVE</h1><p>hub.html missing at frontend_live/hub.html</p>"
+    return "<h1>HELM LIVE</h1><p>overview.html missing</p>"
 
 
 # ── FOUNDER GATE (iPhone) ────────────────────────────────────────────────────

@@ -17,10 +17,18 @@ from backend.dispatch.live_gateway import live_gateway, dispatch
 
 
 @pytest.fixture(autouse=True)
-def _clean_env(monkeypatch):
+def _clean_env(monkeypatch, tmp_path):
+    # Clear the dispatch env for a hermetic fail-closed baseline...
     for v in ("HELM_DISPATCH_ENABLED", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
               "XAI_API_KEY", "HELM_LOCAL_MODEL_URL"):
         monkeypatch.delenv(v, raising=False)
+    # ...and neutralize autoload_env so it can't re-populate the gate/keys from the
+    # founder's real ~/.helm/helm.env. Without this, the test PASSES on a bare box but
+    # FAILS on a machine where dispatch is legitimately enabled (Grok caught exactly this).
+    import importlib
+    lg = importlib.import_module("backend.dispatch.live_gateway")  # real module, not the
+    # same-named function re-exported by backend.dispatch.__init__ (attribute shadowing)
+    monkeypatch.setattr(lg, "_HELM_ENV", tmp_path / "nonexistent_helm.env")
 
 
 def test_disabled_by_default():

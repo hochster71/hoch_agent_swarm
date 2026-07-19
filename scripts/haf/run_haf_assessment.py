@@ -26,6 +26,7 @@ def main():
         print(f"  Decision:  {summary['decision']}")
         print(f"  Controls:  {summary.get('controls_count', 0)}")
         print(f"    PASS:    {summary.get('pass_count', 0)}")
+        print(f"    PASS_CANDIDATE: {summary.get('pass_candidate_count', 0)}")
         print(f"    HOLD:    {summary.get('hold_count', 0)}")
         print(f"    FAIL:    {summary.get('fail_count', 0)}")
         print(f"  Findings:  {summary['findings_count']} open finding(s)")

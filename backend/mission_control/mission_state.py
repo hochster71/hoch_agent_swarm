@@ -362,6 +362,9 @@ def build_mission_state(mission_id: Optional[str] = None) -> Dict[str, Any]:
             "monetization_is_not_revenue",
             "founder_and_apple_gates_are_external",
             "single_mission_state_for_all_interfaces",
+            # HELM-GOV | extends: mission_state doctrine registry | edr: EDR-0006-R8
+            # | why: governance is part of feature completion (Engineering Doctrine v1.0)
+            "governance_before_capability_helm_engineering_doctrine_v1",
         ],
     }
     return state

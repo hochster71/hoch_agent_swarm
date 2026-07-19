@@ -54,6 +54,111 @@ def _now() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
+# HELM-GOV | extends: N8 ConMon (this module) | doctrine: Governance-before-Capability
+#          | edr: EDR-0006-R7 | why: governance is MONITORED, not asserted — coverage is re-derived
+#          | from the live event bus every cycle and a POA&M is raised below target (maps to CA-7).
+EVENTS_LEDGER = ROOT / "coordination" / "events" / "helm_events.jsonl"
+ADOPTION_RECORD = ROOT / "coordination" / "governance" / "engineering_doctrine_adoption.json"
+GOVERNANCE_COVERAGE_TARGET = 1.0  # AC-1: 100% of NEW material decisions carry a valid Proof Record
+# Coverage is measured by EVENT SEMANTICS, not a producer allowlist (Auditor finding F-B2: a producer
+# allowlist can hide ungoverned material work). ANY event whose type is a governance decision / material
+# state advancement MUST carry a gate-valid Proof Record. New types are caught by the prefix rule.
+_GOVERNANCE_EVENT_TYPES = frozenset({
+    "COUNCIL_DISPATCH", "COUNCIL_VERDICT", "COUNCIL_VERIFY_DONE", "COUNCIL_VERIFY_BLOCKED",
+    "AUDIT_RESULT", "COUNCIL_BUILD", "MISSION_TRANSACTION_COMMITTED", "KNOWLEDGE_INGESTED",
+})
+_GOVERNANCE_EVENT_PREFIXES = ("COUNCIL_", "GOAL_NODE_")  # decisions + material state advancement
+
+
+def _is_governance_event(ev_type: str) -> bool:
+    return ev_type in _GOVERNANCE_EVENT_TYPES or any(ev_type.startswith(p) for p in _GOVERNANCE_EVENT_PREFIXES)
+
+
+GOVERNED_RUNTIME_LIVE = ROOT / "coordination" / "governance" / "governed_runtime_live.json"
+
+
+def _adoption_cutoff() -> str:
+    """The instant from which the LIVE runtime is expected to be governed. This is the LATER of:
+      - doctrine adoption (`engineering_doctrine_adoption.json`), and
+      - governed-runtime-live (`governed_runtime_live.json`) — the controlled daemon restart after
+        which the running code emits Proof Records.
+    Council decisions emitted BEFORE this by stale (ungoverned) code are legacy (Phase-2
+    classification), not fresh governance failures. Fail-open to '' (count everything) if absent."""
+    cutoffs = []
+    for f, key in ((ADOPTION_RECORD, "adopted_at"), (GOVERNED_RUNTIME_LIVE, "governed_runtime_live_at")):
+        try:
+            cutoffs.append(json.loads(f.read_text(encoding="utf-8")).get(key, ""))
+        except Exception:
+            pass
+    return max([c for c in cutoffs if c], default="")
+
+
+def governance_coverage(sample: int = 1000) -> Dict[str, Any]:
+    """Re-derive governance coverage from the last `sample` events. Honest + fail-open:
+
+      carry_rate  = of NEW material decisions (>= adoption) from governed producers, fraction
+                    carrying a Proof Record
+      governed_rate = of those carrying one, fraction classified GOVERNED
+    A carry_rate below target is a FINDING (POA&M) — not a rounding error. No events ⇒ UNKNOWN.
+    Legacy (pre-adoption) events are excluded — they are Phase-2 classification work, not failures.
+    """
+    if not EVENTS_LEDGER.exists():
+        return {"state": UNKNOWN, "reason": "no event ledger yet", "material": 0}
+    # RE-VALIDATE through the single gate — never trust the event's self-asserted governance_state
+    # (Auditor finding B1). "carrying" = carries a SCHEMA-VALID Proof Record; "governed" = the GATE
+    # (govern_decision) independently classifies it GOVERNED from its fields, not from a written string.
+    from backend.helm_runtime.extensions.constitutional_gate import govern_decision
+    from backend.helm_runtime.governance_manifest import validate as _validate
+
+    cutoff = _adoption_cutoff()
+    lines = [l for l in EVENTS_LEDGER.read_text(encoding="utf-8").splitlines() if l.strip()]
+    material = carrying = governed = legacy_excluded = 0
+    for ln in lines[-sample:]:
+        try:
+            ev = json.loads(ln)
+        except json.JSONDecodeError:
+            continue
+        if not _is_governance_event(str(ev.get("type", ""))):
+            continue  # only governance-decision / state-advancement events count (by semantics, not producer)
+        if cutoff and str(ev.get("timestamp", "")) < cutoff:
+            legacy_excluded += 1
+            continue  # pre-adoption legacy decision — Phase-2 classification, not a Phase-1 failure
+        material += 1
+        # Dual-encoding read (A7 remediation): historical top-level (drifted-core era) OR
+        # payload["proof_record"] (composed extension). CONFLICTING encodings fail closed —
+        # the event counts as NOT carrying a record (an ambiguous proof proves nothing) and
+        # is therefore an explicit coverage finding, never an optimistic merge.
+        _pr_top = ev.get("proof_record")
+        _pr_pl = (ev.get("payload") or {}).get("proof_record")
+        if _pr_top is not None and _pr_pl is not None and _pr_top != _pr_pl:
+            pr = None  # INTEGRITY: conflicting proof encodings
+        else:
+            pr = _pr_top if _pr_top is not None else _pr_pl
+        if isinstance(pr, dict) and _validate(pr)[0]:      # schema-valid record, not just any dict
+            carrying += 1
+            if govern_decision(pr).governance_state == "GOVERNED":  # GATE re-validates; ignores self-asserted field
+                governed += 1
+    if material == 0:
+        return {"state": UNKNOWN, "reason": "no NEW (post-adoption) governed-producer decisions yet",
+                "material": 0, "legacy_excluded": legacy_excluded, "cutoff": cutoff}
+    carry_rate = round(carrying / material, 4)
+    governed_rate = round(governed / carrying, 4) if carrying else 0.0
+    below = carry_rate < GOVERNANCE_COVERAGE_TARGET
+    return {
+        "state": NOT_IMPLEMENTED if below else IMPLEMENTED,
+        "material_decisions": material,
+        "carrying_proof_record": carrying,
+        "governed": governed,
+        "carry_rate": carry_rate,
+        "governed_rate": governed_rate,
+        "target": GOVERNANCE_COVERAGE_TARGET,
+        "legacy_excluded": legacy_excluded,
+        "cutoff": cutoff,
+        "sample_window": min(sample, len(lines)),
+        "doctrine": "EDR-0006-R7: every NEW material decision must carry a valid Proof Record",
+    }
+
+
 def assess() -> Dict[str, Any]:
     from backend.security.helm_control_catalog import CONTROLS
 
@@ -89,6 +194,20 @@ def assess() -> Dict[str, Any]:
     total = len(results)
     # Sample posture only — never claim full 800-53 catalog coverage (audit R-03).
     sample_pct = round(100.0 * len(impl) / total, 1) if total else 0.0
+
+    # EDR-0006-R7: continuous governance proof, re-derived from the live event bus this cycle.
+    gov = governance_coverage()
+    if gov.get("state") == NOT_IMPLEMENTED:
+        poam.append({
+            "poam_id": "POAM-GOV-COVERAGE",
+            "control_id": "CA-7", "title": "Governance coverage below target",
+            "severity": "HIGH",
+            "weakness": (f"carry_rate {gov.get('carry_rate')} < target {gov.get('target')}: "
+                         f"{gov.get('material_decisions')} governed-producer decisions, "
+                         f"{gov.get('carrying_proof_record')} carry a Proof Record"),
+            "remediation": "ensure every material decision emits a Proof Record via govern_decision",
+        })
+
     posture = {
         "schema": "HELM_CONTROL_POSTURE_v1",
         "framework": "NIST SP 800-53 Rev. 5",
@@ -111,6 +230,7 @@ def assess() -> Dict[str, Any]:
         "high_findings": len([p for p in poam if p["severity"] == "HIGH"]),
         "controls": results,
         "poam": poam,
+        "governance_coverage": gov,  # EDR-0006-R7 continuous proof
         "doctrine": ("posture is RE-DERIVED from live evidence every cycle; a control that "
                      "cannot be proven right now is a FINDING, not a green square; "
                      "sample percent is never full-catalog coverage"),
@@ -132,6 +252,8 @@ def assess() -> Dict[str, Any]:
         "open_findings": posture["open_findings"],
         "high_findings": posture["high_findings"],
         "gaps": [g["control_id"] for g in gaps + unk],
+        "governance_carry_rate": gov.get("carry_rate"),   # EDR-0006-R7/AC-4 trend across cycles
+        "governance_state": gov.get("state"),
         "prev_hash": prev,
     }
     entry["entry_hash"] = hashlib.sha256(

@@ -66,25 +66,21 @@ def load_model_mesh_data():
                 m["status"] = "EXPECTED"
                 m["truth_state"] = "MISSING_FROM_SCAN"
 
-        # Inject performance telemetry
-        if m["reachable"]:
-            m["telemetry"] = {
-                "tokens_per_sec": 38.5 if "gemma" in m["id"] else 48.2,
-                "latency_ms": 120.4 if "gemma" in m["id"] else 65.1,
-                "vram_gb": 8.4 if "gemma" in m["id"] else 4.2,
-                "ram_gb": 12.1 if "gemma" in m["id"] else 8.0,
-                "queue_depth": 0,
-                "error_count": 0
-            }
-        else:
-            m["telemetry"] = {
-                "tokens_per_sec": 0.0,
-                "latency_ms": 0.0,
-                "vram_gb": 0.0,
-                "ram_gb": 0.0,
-                "queue_depth": 0,
-                "error_count": 1 if m["status"] == "EXPECTED" else 0
-            }
+        # Performance telemetry. NO FAKE GREEN: reachability above is real (port scan),
+        # but there is no live perf probe wired, so throughput/latency/memory are NOT
+        # measured. Emit them as UNMEASURED with null values rather than fabricated
+        # numbers — a surface must render UNVERIFIED, never a made-up latency.
+        m["telemetry"] = {
+            "provenance": "UNMEASURED",
+            "reachable": bool(m["reachable"]),
+            "tokens_per_sec": None,
+            "latency_ms": None,
+            "vram_gb": None,
+            "ram_gb": None,
+            "queue_depth": None,
+            "error_count": None,
+            "note": "No live performance probe wired; reachability is measured, perf is not.",
+        }
 
     # Evaluate agents and truth state rules
     agents = mesh_data.get("agents", [])

@@ -934,6 +934,12 @@ class HAFService:
 
         # Set up temporary assessment workspace
         temp_workspace_dir = tempfile.mkdtemp(prefix="haf_assessment_")
+        master_snapshot_dir = os.path.join(temp_workspace_dir, "master_snapshot")
+        os.makedirs(master_snapshot_dir, exist_ok=True)
+
+        master_log_path = os.path.join(master_snapshot_dir, "voice_command_audit.jsonl")
+        master_checkpoint_path = os.path.join(master_snapshot_dir, "voice_audit_checkpoint.json")
+
         temp_log_path = os.path.join(temp_workspace_dir, "voice_command_audit.jsonl")
         temp_checkpoint_path = os.path.join(temp_workspace_dir, "voice_audit_checkpoint.json")
 
@@ -945,19 +951,102 @@ class HAFService:
         os.environ["HELM_AUDIT_LOG_PATH"] = temp_log_path
         os.environ["HELM_CHECKPOINT_PATH"] = temp_checkpoint_path
 
+        # 1. Acquire shared lock on production log and take master snapshot
+        live_log = os.path.join(self.workspace_root, "data/runtime/voice_command_audit.jsonl")
+        live_checkpoint = os.path.join(self.workspace_root, "coordination/checkpoints/voice_audit_checkpoint.json")
+        live_lock_file = os.path.join(self.workspace_root, "data/runtime/voice_command_audit.lock")
+
+        import fcntl
+        lock_fd = None
+        source_metadata = {}
+        snapshot_source_state = {}
+        try:
+            lock_fd = os.open(live_lock_file, os.O_CREAT | os.O_WRONLY, 0o600)
+            fcntl.flock(lock_fd, fcntl.LOCK_SH) # Shared read lock
+
+            # Copy to master snapshot
+            if os.path.exists(live_log):
+                shutil.copy2(live_log, master_log_path)
+            if os.path.exists(live_checkpoint):
+                shutil.copy2(live_checkpoint, master_checkpoint_path)
+
+            # Compute hashes and metadata from master snapshot
+            log_sha = ""
+            log_size = 0
+            if os.path.exists(master_log_path):
+                log_size = os.path.getsize(master_log_path)
+                log_sha = hashlib.sha256(open(master_log_path, "rb").read()).hexdigest()
+
+            cp_sha = ""
+            cp_size = 0
+            if os.path.exists(master_checkpoint_path):
+                cp_size = os.path.getsize(master_checkpoint_path)
+                cp_sha = hashlib.sha256(open(master_checkpoint_path, "rb").read()).hexdigest()
+
+            source_metadata = {
+                "voice_command_audit": {
+                    "size_bytes": log_size,
+                    "sha256": log_sha
+                },
+                "voice_audit_checkpoint": {
+                    "size_bytes": cp_size,
+                    "sha256": cp_sha
+                }
+            }
+
+            # Parse master log for chain head and event count
+            event_count = 0
+            chain_head = ""
+            alignment_verified = False
+            if os.path.exists(master_log_path) and log_size > 0:
+                try:
+                    with open(master_log_path, "r", encoding="utf-8") as f:
+                        lines = [l.strip() for l in f if l.strip()]
+                    event_count = len(lines)
+                    if lines:
+                        last_event = json.loads(lines[-1])
+                        chain_head = last_event.get("event_hash", "")
+                except Exception:
+                    pass
+
+            # Check alignment with checkpoint
+            if os.path.exists(master_checkpoint_path) and cp_size > 0:
+                try:
+                    with open(master_checkpoint_path, "r", encoding="utf-8") as f:
+                        cp = json.load(f)
+                    if cp.get("event_count") == event_count and cp.get("current_chain_head") == chain_head and cp.get("audit_file_sha256") == log_sha:
+                        alignment_verified = True
+                except Exception:
+                    pass
+
+            snapshot_source_state = {
+                "snapshot_log_sha256": log_sha,
+                "snapshot_checkpoint_sha256": cp_sha,
+                "snapshot_chain_head": chain_head,
+                "snapshot_event_count": event_count,
+                "snapshot_captured_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "snapshot_lock_mode": "SHARED",
+                "snapshot_alignment_verified": alignment_verified
+            }
+
+        finally:
+            if lock_fd is not None:
+                try:
+                    fcntl.flock(lock_fd, fcntl.LOCK_UN)
+                    os.close(lock_fd)
+                except Exception:
+                    pass
+
         try:
             for ctrl in planned_controls:
-                # Reset workspace log and checkpoint copies to original live files before evaluating each control
-                live_log = os.path.join(self.workspace_root, "data/runtime/voice_command_audit.jsonl")
-                live_checkpoint = os.path.join(self.workspace_root, "coordination/checkpoints/voice_audit_checkpoint.json")
-
-                if os.path.exists(live_log):
-                    shutil.copy2(live_log, temp_log_path)
+                # Reset workspace log and checkpoint copies from master snapshot before evaluating each control
+                if os.path.exists(master_log_path):
+                    shutil.copy2(master_log_path, temp_log_path)
                 elif os.path.exists(temp_log_path):
                     os.remove(temp_log_path)
 
-                if os.path.exists(live_checkpoint):
-                    shutil.copy2(live_checkpoint, temp_checkpoint_path)
+                if os.path.exists(master_checkpoint_path):
+                    shutil.copy2(master_checkpoint_path, temp_checkpoint_path)
                 elif os.path.exists(temp_checkpoint_path):
                     os.remove(temp_checkpoint_path)
 
@@ -1066,6 +1155,7 @@ class HAFService:
 
             # Calculate counts
             pass_count = sum(1 for c in planned_controls if c.status == "PASS")
+            pass_candidate_count = sum(1 for c in planned_controls if c.status == "PASS_CANDIDATE")
             hold_count = sum(1 for c in planned_controls if c.status == "HOLD")
             fail_count = sum(1 for c in planned_controls if c.status == "FAIL")
 
@@ -1079,9 +1169,12 @@ class HAFService:
                 "evidence_count": len(collected_evidence),
                 "controls_count": len(planned_controls),
                 "pass_count": pass_count,
+                "pass_candidate_count": pass_candidate_count,
                 "hold_count": hold_count,
                 "fail_count": fail_count,
-                "reasons": [r.model_dump() for r in decision.reasons]
+                "reasons": [r.model_dump() for r in decision.reasons],
+                "source_files_metadata": source_metadata,
+                "snapshot_source_state": snapshot_source_state
             }
 
             # Write run files atomically

@@ -1,10 +1,10 @@
 {
   "schema": "hoch-self-heal-v1",
-  "at": "2026-07-17T16:46:54.061579Z",
+  "at": "2026-07-19T18:23:49.853960Z",
   "verdict": "NEEDS_OPERATOR",
   "immunized": true,
-  "findings": 1,
-  "fixtures": 0,
+  "findings": 2,
+  "fixtures": 1,
   "real_secrets_open": 1,
   "actions": [
     {
@@ -14,6 +14,14 @@
       "action": "QUARANTINE + ESCALATE_ROTATION",
       "healed_by": null,
       "note": "a real secret cannot be un-leaked autonomously \u2014 operator must rotate"
+    },
+    {
+      "file": "tests/voice/test_voice_gateway.py",
+      "class": "FIXTURE",
+      "severity": "HIGH",
+      "action": "REQUIRE_RUNTIME_ASSEMBLY",
+      "healed_by": "recurrence guard test",
+      "note": "seeded-fault fixture must assemble patterns at runtime, not as a literal"
     }
   ],
   "note": "self-heal: fixtures immunized by guard; real secrets quarantined + escalated (rotation is human)."

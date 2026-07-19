@@ -8,6 +8,7 @@ providers:
     base_url: https://api.anthropic.com
     enabled: false
     models:
+    - claude-sonnet-5
     - claude-sonnet
     type: paid
   google_gemini:

@@ -1,6 +1,6 @@
 {
   "schema": "SEEDED_MISSIONS_v1",
-  "seeded_at_utc": "2026-07-13T13:22:41.990949+00:00",
+  "seeded_at_utc": "2026-07-18T21:20:18.819457+00:00",
   "fix": "INSERT with EXPLICIT column list (was: positional VALUES against an assumed schema)",
   "adapter_policy": "LOCAL_ONLY (ollama) -- zero credentials, zero spend",
   "missions": [

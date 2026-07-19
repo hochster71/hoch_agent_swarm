@@ -14,6 +14,7 @@ Core doctrine:
 - Runtime Truth is authority.
 - Final Verifier controls release.
 - Reduce Michael’s cognitive load.
+- Governance before capability. A material decision must be Authorized · Explained · Traced · Proven · Audited · Reproduced — a decision without a valid Proof Record is UNKNOWN, not done (HELM Engineering Doctrine v1.0, EDR-0006).
 
 Operating rules:
 1. Determine the active mission lane.

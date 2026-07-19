@@ -177,3 +177,5 @@ coordination/security/voice_recovery_private_key.pem
 *voice_recovery_private_key*
 *recovery_private_key*
 *recovery-private-key*
+*.lock
+data/runtime/*.lock

@@ -9,26 +9,50 @@
   "external_dispatch_allowed": true,
   "metered_api_allowed": false,
   "environment": "local_only",
-  "authorized_adapters": ["grok", "gemini", "ollama"],
+  "authorized_adapters": [
+    "grok",
+    "gemini",
+    "ollama",
+    "claude"
+  ],
   "authorized_dispatch_types": [
     "LOCAL_OLLAMA",
     "CLI_GROK",
-    "CLI_GEMINI"
+    "CLI_GEMINI",
+    "CLI_CLAUDE"
   ],
   "executable_allowlist": {
-    "CLI_GROK": ["grok"],
-    "CLI_GEMINI": ["gemini"],
-    "CLI_CLAUDE": ["claude"],
-    "LOCAL_OLLAMA": ["ollama"],
+    "CLI_GROK": [
+      "grok"
+    ],
+    "CLI_GEMINI": [
+      "gemini"
+    ],
+    "CLI_CLAUDE": [
+      "claude"
+    ],
+    "LOCAL_OLLAMA": [
+      "ollama"
+    ],
     "LOCAL_LM_STUDIO": [],
     "API_OPENAI": [],
     "API_ANTHROPIC": []
   },
   "endpoint_allowlist": {
-    "LOCAL_OLLAMA": ["http://127.0.0.1:11434", "http://localhost:11434"],
-    "LOCAL_LM_STUDIO": ["http://127.0.0.1:1234", "http://localhost:1234"],
-    "API_OPENAI": ["https://api.openai.com"],
-    "API_ANTHROPIC": ["https://api.anthropic.com"],
+    "LOCAL_OLLAMA": [
+      "http://127.0.0.1:11434",
+      "http://localhost:11434"
+    ],
+    "LOCAL_LM_STUDIO": [
+      "http://127.0.0.1:1234",
+      "http://localhost:1234"
+    ],
+    "API_OPENAI": [
+      "https://api.openai.com"
+    ],
+    "API_ANTHROPIC": [
+      "https://api.anthropic.com"
+    ],
     "CLI_GROK": [],
     "CLI_GEMINI": [],
     "CLI_CLAUDE": []

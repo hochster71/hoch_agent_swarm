@@ -14,7 +14,7 @@ def _compute_hash(data: dict) -> str:
     serialized = json.dumps(temp, sort_keys=True)
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
-def verify_chain() -> int:
+def verify_chain(skip_lock: bool = False) -> int:
     print("=======================================================================")
     print("HELM Voice Gateway Audit Chain Verifier")
     print("=======================================================================")
@@ -24,7 +24,14 @@ def verify_chain() -> int:
         print("Verification: SKIPPED (No events logged yet)")
         return 0
 
+    import fcntl
+    lock_file = AUDIT_LOG_FILE.with_suffix(".lock")
+    lock_fd = None
     try:
+        if not skip_lock:
+            lock_fd = os.open(lock_file, os.O_CREAT | os.O_WRONLY, 0o600)
+            fcntl.flock(lock_fd, fcntl.LOCK_SH)
+
         with open(AUDIT_LOG_FILE, "r", encoding="utf-8") as f:
             lines = f.read().splitlines()
 
@@ -243,6 +250,20 @@ def verify_chain() -> int:
                         if attestation.get("status") != "ACTIVE":
                             print(f"[-] Trust attestation status is not ACTIVE")
                             return 1
+                        
+                        # Contradiction checks
+                        if attestation.get("decision_maker") != attestation.get("actor_id"):
+                            print("[-] Trust attestation contradiction: decision_maker does not match actor_id")
+                            return 1
+                        if attestation.get("fingerprint_displayed_to_decision_maker") != attestation.get("trusted_public_key_der_sha256"):
+                            print("[-] Trust attestation contradiction: fingerprint_displayed_to_decision_maker does not match trusted_public_key_der_sha256")
+                            return 1
+                        if attestation.get("fingerprint_approved") is not True:
+                            print("[-] Trust attestation: fingerprint_approved is not true")
+                            return 1
+                        if attestation.get("decision_capture_method") != "EXPLICIT_FOUNDER_APPROVAL":
+                            print("[-] Trust attestation: decision_capture_method is not EXPLICIT_FOUNDER_APPROVAL")
+                            return 1
                     except Exception as e:
                         print(f"[-] Error validating key trust attestation: {e}")
                         return 1
@@ -300,6 +321,13 @@ def verify_chain() -> int:
     except Exception as e:
         print(f"Error executing chain verification: {e}")
         return 1
+    finally:
+        if lock_fd is not None:
+            try:
+                fcntl.flock(lock_fd, fcntl.LOCK_UN)
+                os.close(lock_fd)
+            except Exception:
+                pass
 
 if __name__ == "__main__":
     sys.exit(verify_chain())

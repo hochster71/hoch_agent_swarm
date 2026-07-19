@@ -7,25 +7,13 @@
   "authorized_purpose": "AUDIT_RECOVERY_AUTHORIZATION",
   "effective_at": "2026-07-19T12:38:00-05:00",
   "status": "ACTIVE",
-  "document_metadata": {
-    "author": "Antigravity AI Agent (Pair Programming Assistant)",
-    "drafted_at": "2026-07-19T13:04:15-05:00",
-    "description": "Founder-governed key trust attestation record registering the validation parameters and provenance of the voice recovery root key."
-  },
-  "decision_provenance": {
-    "decision_maker": "michael-bryan-hoch",
-    "decision_role": "Founder & Principal Authority",
-    "decision_mechanism": "Explicit confirmation of the public key DER fingerprint during live checkpoint and doorstep package assembly",
-    "status": "APPROVED",
-    "explicit_approval_provenance": {
-      "verified_fingerprint": "31b24ddee05364dc9648dd77cad94704c3af0b3c75b38cc40201c69d8aa725a3",
-      "method": "Command-line signature of the recovery authorization binding file coordination/approvals/voice_epoch2_recovery_approval.json",
-      "key_ownership_provenance": "Generated on founder-controlled secure local workstation inside ~/Library/Application Support/HELM/keys/"
-    }
-  },
+  "document_author": "implementation-agent-identity",
+  "decision_maker": "michael-bryan-hoch",
+  "decision_capture_method": "EXPLICIT_FOUNDER_APPROVAL",
+  "fingerprint_displayed_to_decision_maker": "31b24ddee05364dc9648dd77cad94704c3af0b3c75b38cc40201c69d8aa725a3",
+  "fingerprint_approved": true,
   "verification_posture": {
-    "cryptographic_verification": "PASS_CANDIDATE",
-    "founder_identity_binding": "PASS_CANDIDATE",
-    "independent_authorization": "PENDING"
+    "key_cryptographic_binding": "PASS_CANDIDATE",
+    "founder_trust_authorization": "PENDING_EXPLICIT_FOUNDER_ACTION"
   }
 }

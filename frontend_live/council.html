@@ -3,186 +3,305 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HELM · Council Control Plane</title>
+<title>HELM · Council</title>
 <style>
   :root{
     --bg:#0a0e14; --panel:#111721; --panel2:#0d131c; --edge:#1e2836;
     --ink:#e6edf3; --dim:#8b98a9; --faint:#5b6675;
-    --accent:#4da3ff; --good:#3fb950; --warn:#d29922; --bad:#f85149; --gate:#a371f7;
+    --accent:#4da3ff; --good:#3fb950; --warn:#d29922; --bad:#f85149;
+    --orc:#4da3ff; --bld:#a371f7; --aud:#e3b341; --loc:#3fb950; --founder:#e6edf3;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#111b2a 0%,var(--bg) 60%);
-       color:var(--ink);font-family:var(--sans);min-height:100vh}
-  .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 80px}
-  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px}
-  h1{font-size:19px;margin:0;letter-spacing:.3px;font-weight:650}
-  .sub{color:var(--dim);font-size:12.5px}
-  .doctrine{color:var(--faint);font-size:11.5px;margin:6px 0 20px;font-family:var(--mono)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:22px}
-  .member{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--edge);
-          border-radius:12px;padding:14px 15px;position:relative;overflow:hidden}
-  .member::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--faint)}
-  .member.ready::before{background:var(--good)} .member.gated::before{background:var(--warn)}
-  .member.blocked::before{background:var(--faint)}
-  .member.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
-  .m-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .m-name{font-weight:650;font-size:14px}
-  .m-role{color:var(--faint);font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px}
-  .m-mandate{color:var(--dim);font-size:12px;margin-top:7px;line-height:1.45}
-  .pill{font-size:10.5px;font-family:var(--mono);padding:2px 8px;border-radius:999px;border:1px solid var(--edge);white-space:nowrap}
-  .pill.READY{color:var(--good);border-color:#1c3a24;background:#0d1f14}
-  .pill.GATED{color:var(--warn);border-color:#3a3016;background:#1f1a0d}
-  .pill.BLOCKED_EXTERNAL{color:var(--faint)}
-  .composer{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--edge);
-            border-radius:14px;padding:16px}
-  .composer label{display:block;color:var(--dim);font-size:12px;margin-bottom:8px}
-  textarea{width:100%;min-height:96px;resize:vertical;background:#0a0f17;color:var(--ink);
-           border:1px solid var(--edge);border-radius:10px;padding:12px 13px;font-family:var(--sans);
-           font-size:14px;line-height:1.5}
-  textarea:focus{outline:none;border-color:var(--accent)}
-  .row{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
-  .modes{display:flex;gap:2px;background:#0a0f17;border:1px solid var(--edge);border-radius:9px;padding:3px}
-  .modes button{background:transparent;border:0;color:var(--dim);font-size:12.5px;padding:6px 12px;
-                border-radius:6px;cursor:pointer;font-family:var(--sans)}
+  html,body{margin:0;height:100%}
+  body{background:radial-gradient(1200px 600px at 70% -10%,#111b2a 0%,var(--bg) 60%);
+       color:var(--ink);font-family:var(--sans);height:100vh;overflow:hidden}
+  .app{display:grid;grid-template-columns:1fr 300px;grid-template-rows:auto 1fr auto;height:100vh;
+       max-width:1240px;margin:0 auto}
+  header{grid-column:1/3;display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--edge)}
+  h1{font-size:16px;margin:0;font-weight:650;letter-spacing:.3px}
+  .lanes{display:flex;gap:6px;margin-left:6px;flex-wrap:wrap}
+  .lane{font-size:10.5px;font-family:var(--mono);padding:3px 9px;border-radius:999px;border:1px solid var(--edge);
+        display:flex;align-items:center;gap:5px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--faint)}
+  .lane.ready .dot{background:var(--good);box-shadow:0 0 6px var(--good)}
+  .lane.gated .dot{background:var(--warn)} .lane.blocked .dot{background:var(--faint)}
+  .goal{margin-left:auto;font-size:12px;color:var(--dim);font-family:var(--mono)}
+  .goal b{color:var(--accent);font-size:14px}
+
+  /* chat column */
+  .chat{grid-row:2;overflow-y:auto;padding:18px 20px}
+  .msg{margin-bottom:16px;max-width:82%}
+  .msg.founder{margin-left:auto}
+  .who{font-size:11px;font-family:var(--mono);letter-spacing:.4px;margin-bottom:5px;color:var(--dim)}
+  .msg.founder .who{text-align:right}
+  .bubble{padding:11px 14px;border-radius:12px;font-size:14px;line-height:1.6;white-space:pre-wrap;
+          background:var(--panel);border:1px solid var(--edge)}
+  .msg.founder .bubble{background:#12233a;border-color:#1d3b5c}
+  .msg.orchestrator .who{color:var(--orc)} .msg.orchestrator .bubble{border-left:3px solid var(--orc)}
+  .msg.builder .who{color:var(--bld)} .msg.builder .bubble{border-left:3px solid var(--bld)}
+  .msg.auditor .who{color:var(--aud)} .msg.auditor .bubble{border-left:3px solid var(--aud)}
+  .msg.local .who{color:var(--loc)} .msg.local .bubble{border-left:3px solid var(--loc)}
+  .msg.system .bubble{background:#0c1522;border-color:#17324f;color:var(--dim);font-family:var(--mono);font-size:12.5px}
+  .bmeta{font-size:10px;color:var(--faint);font-family:var(--mono);margin-top:6px}
+  .blocked-b{color:var(--warn);font-family:var(--mono);font-size:12.5px}
+
+  /* sidebar */
+  aside{grid-row:2;border-left:1px solid var(--edge);overflow-y:auto;padding:16px 14px}
+  aside h2{font-size:11px;font-family:var(--mono);letter-spacing:.6px;color:var(--faint);
+           text-transform:uppercase;margin:0 0 10px}
+  .action{width:100%;text-align:left;background:var(--panel);border:1px solid var(--edge);color:var(--ink);
+          border-radius:9px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:13px}
+  .action:hover{border-color:var(--accent)} .action:disabled{opacity:.5;cursor:not-allowed}
+  .action small{display:block;color:var(--faint);font-size:11px;margin-top:2px}
+  .feed{margin-top:8px}
+  .fitem{font-size:11px;font-family:var(--mono);color:var(--dim);padding:6px 0;border-bottom:1px solid #141c27;line-height:1.5}
+  .fitem .ft{color:var(--accent)} .fitem .fx{color:var(--faint)}
+
+  /* composer */
+  .composer{grid-column:1/3;border-top:1px solid var(--edge);padding:12px 20px;display:flex;gap:10px;align-items:flex-end}
+  .modes{display:flex;gap:2px;background:#0a0f17;border:1px solid var(--edge);border-radius:8px;padding:3px;height:fit-content}
+  .modes button{background:transparent;border:0;color:var(--dim);font-size:12px;padding:7px 11px;border-radius:6px;cursor:pointer}
   .modes button.on{background:#17324f;color:var(--ink)}
-  .go{margin-left:auto;background:var(--accent);color:#04121f;border:0;font-weight:650;font-size:14px;
-      padding:10px 22px;border-radius:9px;cursor:pointer}
-  .go:disabled{opacity:.5;cursor:not-allowed}
-  .hint{color:var(--faint);font-size:11.5px;font-family:var(--mono);margin-top:10px}
-  .out{margin-top:20px;display:none}
-  .routing{background:#0c1522;border:1px solid #17324f;border-radius:11px;padding:12px 14px;margin-bottom:12px}
-  .routing .lead{color:var(--accent);font-size:12px;font-family:var(--mono);letter-spacing:.4px}
-  .routing .why{color:var(--dim);font-size:12px;margin-top:6px;font-family:var(--mono)}
-  .answer{background:var(--panel);border:1px solid var(--edge);border-radius:11px;padding:2px 16px 4px}
-  .answer .meta{color:var(--faint);font-size:11px;font-family:var(--mono);padding:12px 0 4px;
-                border-bottom:1px solid var(--edge);margin-bottom:10px}
-  .answer .body{white-space:pre-wrap;font-size:13.5px;line-height:1.62;color:var(--ink);padding-bottom:14px}
-  .phase{margin-bottom:12px}
-  .phase h3{font-size:12px;font-family:var(--mono);letter-spacing:.6px;color:var(--accent);margin:0 0 8px;
-            text-transform:uppercase}
-  .status-line{font-size:12px;font-family:var(--mono);padding:10px 14px;border-radius:10px;margin-bottom:12px}
-  .status-line.BLOCKED_EXTERNAL,.status-line.GATED{color:var(--warn);background:#1f1a0d;border:1px solid #3a3016}
-  .status-line.PROVIDER_ERROR,.status-line.UNROUTABLE{color:var(--bad);background:#1f0f0f;border:1px solid #3a1a1a}
-  .spinner{display:inline-block;width:13px;height:13px;border:2px solid #ffffff33;border-top-color:var(--accent);
-           border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px}
+  textarea{flex:1;min-height:46px;max-height:150px;resize:none;background:#0a0f17;color:var(--ink);
+           border:1px solid var(--edge);border-radius:10px;padding:12px 13px;font-family:var(--sans);font-size:14px;line-height:1.5}
+  textarea:focus{outline:none;border-color:var(--accent)}
+  .send{background:var(--accent);color:#04121f;border:0;font-weight:650;font-size:14px;padding:12px 20px;border-radius:9px;cursor:pointer;height:fit-content}
+  .send:disabled{opacity:.5;cursor:not-allowed}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid #ffffff33;border-top-color:var(--accent);
+           border-radius:50%;animation:spin .7s linear infinite;vertical-align:-1px;margin-right:6px}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .foot{margin-top:26px;color:var(--faint);font-size:11px;font-family:var(--mono);line-height:1.7}
   a{color:var(--accent);text-decoration:none}
+  .empty{color:var(--faint);text-align:center;margin-top:60px;font-size:13px;line-height:1.8}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
   <header>
-    <h1>HELM · Council Control Plane</h1>
-    <span class="sub">Hand HELM the mission — it routes to the lane that owns it.</span>
+    <h1>HELM · Council</h1>
+    <div class="lanes" id="lanes"></div>
+    <div class="goal" id="goal">GOAL <b>—</b></div>
   </header>
-  <div class="doctrine">route by capability, not by brand · fail-closed · no fake green · you don't pick the model — the lane's owner does</div>
 
-  <div class="grid" id="members"><div class="member"><div class="m-mandate">Loading council…</div></div></div>
-
-  <div class="composer">
-    <label>Mission — describe what you need. HELM decides who owns it.</label>
-    <textarea id="prompt" placeholder="e.g. Verify the frozen dispatch target is intact and the money-gate can't be bypassed. — or — Plan the next 5 steps to first settled dollar. — or — Write the webhook handler for the Story Studio buy-loop."></textarea>
-    <div class="row">
-      <div class="modes" id="modes">
-        <button data-mode="auto" class="on">Auto-route (one lane)</button>
-        <button data-mode="orchestrate">Full brain (plan → build → verify)</button>
-      </div>
-      <button class="go" id="go">Solve →</button>
+  <div class="chat" id="chat">
+    <div class="empty" id="empty">
+      This is the Council. Talk to the whole team here.<br>
+      <b style="color:var(--orc)">Orchestrator</b> plans · <b style="color:var(--bld)">Builder</b> builds · <b style="color:var(--aud)">Auditor</b> verifies · <b style="color:var(--loc)">Local</b> keeps it private.<br>
+      Ask anything — HELM routes it, or hit <b>Whole council</b> and everyone answers.
     </div>
-    <div class="hint" id="hint">HELM classifies the ask, resolves capability → owning lane → model, and fires it live.</div>
   </div>
 
-  <div class="out" id="out"></div>
+  <aside>
+    <h2>Standing missions</h2>
+    <button class="action" id="btnVerify" onclick="fireVerify()">Fire verification
+      <small>HELM → Auditor (Grok) on the frozen evidence</small></button>
+    <button class="action" id="btnOrch" onclick="orchestrate()">Orchestrate to GOAL
+      <small>Plan → Build → Verify across the council</small></button>
+    <button class="action" id="btnScore" onclick="scoreCouncil()">Score all models
+      <small>Fans the task to every model → Auditor scores, ranks, finds disagreements</small></button>
 
-  <div class="foot">
-    Live dispatch is money-gated: a lane only fires when its provider key is present in <span style="color:var(--dim)">~/.helm/helm.env</span> and <span style="color:var(--dim)">HELM_DISPATCH_ENABLED=1</span>.
-    A lane HELM can't fire is reported honestly (GATED / BLOCKED) — never faked.
-    · <a href="/pert-live">PERT→GOAL</a> · <a href="/command">Command Center</a> · <a href="/ops">Ops</a>
+    <h2 style="margin-top:16px">Build with Claude (guarded)</h2>
+    <textarea id="buildTask" placeholder="Describe a build task — Claude plans first (read-only), you approve before it edits." style="min-height:64px;margin-bottom:8px"></textarea>
+    <button class="action" id="btnPlan" onclick="buildPlan()">Plan build
+      <small>Claude (Opus) · read-only · snapshot + frozen-guard on execute</small></button>
+    <button class="action" id="btnExec" onclick="buildExecute()" style="display:none;border-color:var(--aud)">✓ Approve &amp; Execute
+      <small>Applies edits · irreversible actions stay founder-gated</small></button>
+
+    <h2 style="margin-top:16px">Live activity</h2>
+    <div class="feed" id="feed"><div class="fitem fx">…</div></div>
+  </aside>
+
+  <div class="composer">
+    <div class="modes" id="modes">
+      <button data-mode="auto" class="on">Auto-route</button>
+      <button data-mode="all">Whole council</button>
+    </div>
+    <textarea id="prompt" placeholder="Message the council…  (⌘/Ctrl+Enter to send)"></textarea>
+    <button class="send" id="send" onclick="send()">Send</button>
   </div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
 let MODE="auto";
+const HKEY="helm_council_thread_v1";
+let thread=JSON.parse(localStorage.getItem(HKEY)||"[]");
 
 function esc(s){return (s||"").replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function save(){localStorage.setItem(HKEY,JSON.stringify(thread.slice(-40)));}
 
-async function loadMembers(){
+function bubble(m){
+  const cls=(m.cls||"system");
+  const meta=m.meta?`<div class="bmeta">${esc(m.meta)}</div>`:"";
+  let body;
+  if(m.blocked){ body=`<div class="blocked-b">${esc(m.text)}</div>`; }
+  else { body=esc(m.text); }
+  return `<div class="msg ${cls}"><div class="who">${esc(m.who)}</div>
+    <div class="bubble">${body}${meta}</div></div>`;
+}
+function render(){
+  $('empty').style.display=thread.length?'none':'block';
+  $('chat').insertAdjacentHTML('beforeend', thread.slice($('chat').dataset.n||0).map(bubble).join(''));
+  $('chat').dataset.n=thread.length;
+  $('chat').scrollTop=$('chat').scrollHeight;
+}
+function push(m){ thread.push(m); save(); render(); }
+function pushLive(html){ // transient spinner row (not persisted)
+  const d=document.createElement('div'); d.id='live'; d.innerHTML=html;
+  $('empty').style.display='none'; $('chat').appendChild(d); $('chat').scrollTop=$('chat').scrollHeight;
+}
+function clearLive(){ const l=$('live'); if(l) l.remove(); }
+
+function memberClass(role){return ({orchestrator:'orchestrator',builder:'builder',auditor:'auditor',local:'local'})[role]||'system';}
+
+async function loadLanes(){
   try{
-    const r=await fetch('/api/v1/helm/council/status'); const d=await r.json();
-    $('members').innerHTML=(d.members||[]).map(m=>{
-      const cls=m.status==='READY'?'ready':(m.status==='GATED'?'gated':'blocked');
-      return `<div class="member ${cls}" data-role="${m.role}">
-        <div class="m-top">
-          <div><div class="m-name">${esc(m.display_name)}</div>
-          <div class="m-role">${esc(m.role)} · ${esc(m.provider)}</div></div>
-          <span class="pill ${m.status}">${m.status==='BLOCKED_EXTERNAL'?'BLOCKED':m.status}</span>
-        </div>
-        <div class="m-mandate">${esc(m.mandate||'')}</div>
-      </div>`;
+    const d=await(await fetch('/api/v1/helm/council/status')).json();
+    $('lanes').innerHTML=d.members.map(m=>{
+      const c=m.status==='READY'?'ready':(m.status==='GATED'?'gated':'blocked');
+      return `<span class="lane ${c}"><span class="dot"></span>${esc(m.display_name)}</span>`;
     }).join('');
-  }catch(e){ $('members').innerHTML=`<div class="member"><div class="m-mandate" style="color:var(--bad)">Council status unavailable: ${esc(e.message)}</div></div>`; }
+  }catch(e){}
 }
-
-function highlight(role){
-  document.querySelectorAll('.member').forEach(el=>el.classList.toggle('active',el.dataset.role===role));
-}
-
-function renderAnswer(res){
-  const rt=res.routing||{};
-  const routing=`<div class="routing">
-    <div class="lead">▸ HELM assigned this to → ${esc(rt.lane||rt.role||'—')}</div>
-    <div class="why">capability=${esc(rt.capability||'?')} · ${esc(rt.classification_reason||rt.reason||'')}</div>
-  </div>`;
-  if(res.ok){
-    highlight(rt.role);
-    return routing+`<div class="answer">
-      <div class="meta">${esc(res.provider||'')} / ${esc(res.model||'')} · ${res.status||'SOLVED'}</div>
-      <div class="body">${esc(res.text||'(empty response)')}</div></div>`;
-  }
-  const st=res.status||'ERROR';
-  return routing+`<div class="status-line ${st}">${esc(st)} — ${esc(res.message||res.error||'')}${res.howto?'\n\n→ '+esc(res.howto):''}</div>`;
-}
-
-function renderChain(res){
-  return (res.steps||[]).map(s=>{
-    return `<div class="phase"><h3>${esc(s.phase)} · ${esc(s.lane)}</h3>${renderAnswer(s)}</div>`;
-  }).join('') || `<div class="status-line PROVIDER_ERROR">No phases ran.</div>`;
-}
-
-async function solve(){
-  const prompt=$('prompt').value.trim();
-  if(!prompt){ $('prompt').focus(); return; }
-  $('go').disabled=true; highlight(null);
-  $('out').style.display='block';
-  $('out').innerHTML=`<div class="routing"><div class="lead"><span class="spinner"></span>HELM is routing the mission${MODE==='orchestrate'?' across the full council':''}…</div></div>`;
+async function loadGoal(){
   try{
-    const r=await fetch('/api/v1/helm/council/solve',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt,mode:MODE})});
-    const d=await r.json();
-    if(d.detail){ $('out').innerHTML=`<div class="status-line PROVIDER_ERROR">${esc(d.detail.message||JSON.stringify(d.detail))}</div>`; }
-    else if(d.mode==='orchestrate'){ $('out').innerHTML=renderChain(d); }
-    else{ $('out').innerHTML=renderAnswer(d); }
-  }catch(e){
-    $('out').innerHTML=`<div class="status-line PROVIDER_ERROR">Request failed: ${esc(e.message)}</div>`;
-  }finally{ $('go').disabled=false; loadMembers(); }
+    const d=await(await fetch('/api/v1/helm/goal-pert')).json();
+    const pct=d.percent_to_goal ?? d.pct ?? d.percent ?? (d.goal&&d.goal.percent);
+    if(pct!=null) $('goal').innerHTML=`GOAL <b>${(+pct).toFixed(1)}%</b>`;
+  }catch(e){}
+}
+async function loadFeed(){
+  try{
+    const d=await(await fetch('/api/v1/helm/council/activity?limit=14')).json();
+    $('feed').innerHTML=(d.events||[]).map(e=>{
+      const t=(e.type||'').replace('COUNCIL_','');
+      const p=e.payload||{}; const bits=[p.overall,p.provider,p.model,p.role,p.capability].filter(Boolean).join(' · ');
+      const ts=(e.timestamp||'').replace('T',' ').replace('Z','').slice(5,16);
+      return `<div class="fitem"><span class="ft">${esc(t)}</span> ${esc(bits)}<div class="fx">${esc(ts)}</div></div>`;
+    }).join('')||'<div class="fitem fx">no council activity yet</div>';
+  }catch(e){}
+}
+function refreshAll(){loadLanes();loadGoal();loadFeed();}
+
+async function send(){
+  const p=$('prompt').value.trim(); if(!p) return;
+  $('prompt').value=''; $('send').disabled=true;
+  push({who:'You',cls:'founder',text:p});
+  const hist=thread.filter(m=>m.text).map(m=>({who:m.who,text:m.text}));
+  pushLive(bubble({who:MODE==='all'?'Council':'HELM',cls:'system',text:'…routing'}).replace('…routing',`<span class="spinner"></span>${MODE==='all'?'the whole council is answering…':'HELM is routing…'}`));
+  try{
+    const d=await(await fetch('/api/v1/helm/council/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:p,mode:MODE,history:hist})})).json();
+    clearLive();
+    (d.replies||[]).forEach(r=>{
+      if(r.ok){ push({who:r.member||'HELM',cls:memberClass(r.role),text:r.text||'(empty)',
+                       meta:`${r.provider||''} / ${r.model||''}`}); }
+      else{ push({who:r.member||'HELM',cls:memberClass(r.role),blocked:true,
+                  text:`${r.status||'BLOCKED'} — ${r.message||''}`}); }
+    });
+  }catch(e){ clearLive(); push({who:'HELM',cls:'system',text:'Request failed: '+e.message}); }
+  finally{ $('send').disabled=false; refreshAll(); }
 }
 
-$('modes').addEventListener('click',e=>{
-  const b=e.target.closest('button[data-mode]'); if(!b)return;
-  MODE=b.dataset.mode;
-  document.querySelectorAll('#modes button').forEach(x=>x.classList.toggle('on',x===b));
-  $('hint').textContent = MODE==='orchestrate'
-    ? 'Full brain: Orchestrator plans → Builder engineers → Auditor verifies. Each hop degrades honestly if a lane is not enabled.'
-    : 'HELM classifies the ask, resolves capability → owning lane → model, and fires it live.';
-});
-$('go').addEventListener('click',solve);
-$('prompt').addEventListener('keydown',e=>{ if((e.metaKey||e.ctrlKey)&&e.key==='Enter') solve(); });
+async function orchestrate(){
+  const p=$('prompt').value.trim()||"Advance HELM to GOAL: plan the next step, build it, and verify it.";
+  $('prompt').value=''; push({who:'You',cls:'founder',text:'⟳ Orchestrate to GOAL: '+p});
+  pushLive(`<div class="msg system"><div class="bubble"><span class="spinner"></span>Orchestrator → Builder → Auditor…</div></div>`);
+  try{
+    const d=await(await fetch('/api/v1/helm/council/solve',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:p,mode:'orchestrate'})})).json();
+    clearLive();
+    (d.steps||[]).forEach(s=>{
+      const role=(s.lane||'').toLowerCase();
+      if(s.ok) push({who:`${s.phase} · ${s.lane}`,cls:memberClass(role),text:s.text||'(empty)',meta:`${s.provider||''} / ${s.model||''}`});
+      else push({who:`${s.phase} · ${s.lane}`,cls:memberClass(role),blocked:true,text:`${s.status||'BLOCKED'} — ${s.message||''}`});
+    });
+  }catch(e){ clearLive(); push({who:'HELM',cls:'system',text:'Orchestrate failed: '+e.message}); }
+  finally{ refreshAll(); }
+}
 
-loadMembers(); setInterval(loadMembers,15000);
+async function fireVerify(){
+  $('btnVerify').disabled=true;
+  push({who:'You',cls:'founder',text:'▸ Fire verification (Auditor)'});
+  pushLive(`<div class="msg auditor"><div class="who">Auditor</div><div class="bubble"><span class="spinner"></span>Grok is reviewing the frozen evidence… (up to a few minutes)</div></div>`);
+  try{
+    const d=await(await fetch('/api/v1/helm/council/verify',{method:'POST'})).json();
+    clearLive();
+    if(d.ok){
+      push({who:'Auditor',cls:'auditor',text:(d.text||'').slice(0,4000),
+            meta:`OVERALL: ${d.overall} · ${d.provider}/${d.model} · ${d.verdict_path||''}`});
+    }else{
+      push({who:'Auditor',cls:'auditor',blocked:true,text:`${d.status} — ${d.message||''}`});
+    }
+  }catch(e){ clearLive(); push({who:'Auditor',cls:'auditor',text:'Verify failed: '+e.message}); }
+  finally{ $('btnVerify').disabled=false; refreshAll(); }
+}
+
+// AUTONOMOUS cross-model scoring: HELM fans the task to every lane, collects each
+// model's answer, then the Auditor scores/ranks them and names the disagreements.
+async function scoreCouncil(){
+  const box=$('input')||$('buildTask');
+  const task=(box&&box.value.trim())||'';
+  if(!task){ push({who:'HELM',cls:'founder',text:'Type the task to score in the message box first.'}); return; }
+  $('btnScore').disabled=true;
+  push({who:'You',cls:'founder',text:'▸ Score all models on: '+task});
+  pushLive(`<div class="msg auditor"><div class="who">Council</div><div class="bubble"><span class="spinner"></span>Fanning the task to every model, then the Auditor scores them… (runs all lanes — can take a few minutes)</div></div>`);
+  try{
+    const d=await(await fetch('/api/v1/helm/council/score',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({task})})).json();
+    clearLive();
+    const roster=(d.models||[]).map(m=>`${m.ok?'✓':'✗'} ${m.member}(${m.model||'?'})`).join(' · ');
+    push({who:'Council',cls:'founder',text:`Collected ${d.scored_count||0} responses — ${roster}`});
+    if(d.ok){
+      push({who:'Auditor',cls:'auditor',text:(d.scorecard||'').slice(0,8000),
+            meta:`scored by ${(d.scorer||{}).provider||'?'}/${(d.scorer||{}).model||'?'} · autonomous=${d.autonomous}`});
+    }else{
+      push({who:'Auditor',cls:'auditor',blocked:true,text:`SCORING BLOCKED — ${d.error||''}. ${d.note||''}`});
+    }
+  }catch(e){ clearLive(); push({who:'Auditor',cls:'auditor',text:'Score failed: '+e.message}); }
+  finally{ $('btnScore').disabled=false; refreshAll(); }
+}
+
+async function buildPlan(){
+  const task=$('buildTask').value.trim(); if(!task){$('buildTask').focus();return;}
+  $('btnPlan').disabled=true; $('btnExec').style.display='none';
+  push({who:'You',cls:'founder',text:'🔨 Plan build: '+task});
+  pushLive(`<div class="msg builder"><div class="who">Builder · Claude (plan)</div><div class="bubble"><span class="spinner"></span>Claude (Opus) is planning — read-only, no edits yet…</div></div>`);
+  try{
+    const d=await(await fetch('/api/v1/helm/council/build',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({task,mode:'plan'})})).json();
+    clearLive();
+    if(d.ok||d.text){ push({who:'Builder · Claude (plan)',cls:'builder',text:d.text||'(no plan returned)',meta:`plan · read-only · $${(d.cost||0).toFixed(3)}`});
+      $('btnExec').style.display='block'; }   // reveal Approve & Execute
+    else{ push({who:'Builder · Claude',cls:'builder',blocked:true,text:`${d.status||'BLOCKED'} — ${d.message||''}`}); }
+  }catch(e){ clearLive(); push({who:'Builder · Claude',cls:'builder',text:'Plan failed: '+e.message}); }
+  finally{ $('btnPlan').disabled=false; refreshAll(); }
+}
+async function buildExecute(){
+  const task=$('buildTask').value.trim(); if(!task) return;
+  if(!confirm('Approve Claude to APPLY edits for this task? A snapshot is saved first; frozen audit files are protected; deploy/publish/push/money stay founder-gated.')) return;
+  $('btnExec').disabled=true;
+  push({who:'You',cls:'founder',text:'✓ Approved execute: '+task});
+  pushLive(`<div class="msg builder"><div class="who">Builder · Claude (execute)</div><div class="bubble"><span class="spinner"></span>Claude is building — snapshot saved, applying edits within the repo…</div></div>`);
+  try{
+    const d=await(await fetch('/api/v1/helm/council/build',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({task,mode:'execute'})})).json();
+    clearLive();
+    if(d.ok){ push({who:'Builder · Claude (executed)',cls:'builder',text:d.text||'(done)',
+      meta:`executed · frozen ${d.frozen_intact?'intact ✓':'?'} · snapshot ${d.snapshot||'—'} · $${(d.cost||0).toFixed(3)}`}); }
+    else if(d.status==='ROLLED_BACK'){ push({who:'Builder · Claude',cls:'builder',blocked:true,text:`ROLLED BACK — ${d.message}`}); }
+    else{ push({who:'Builder · Claude',cls:'builder',blocked:true,text:`${d.status||'BLOCKED'} — ${d.message||''}`}); }
+    $('btnExec').style.display='none';
+  }catch(e){ clearLive(); push({who:'Builder · Claude',cls:'builder',text:'Execute failed: '+e.message}); }
+  finally{ $('btnExec').disabled=false; refreshAll(); }
+}
+
+$('modes').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(!b)return;
+  MODE=b.dataset.mode;document.querySelectorAll('#modes button').forEach(x=>x.classList.toggle('on',x===b));});
+$('prompt').addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter')send();});
+
+render(); refreshAll(); setInterval(refreshAll,8000);
 </script>
 </body>
 </html>
