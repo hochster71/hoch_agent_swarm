@@ -6,8 +6,20 @@ REFRESH="${HELM_REFRESH_SECONDS:-2}"
 
 BUS="$ROOT/coordination/coordination_bus.json"
 QUEUE="$ROOT/has_live_project_tracker/data/helm_task_queue.json"
-HAF="$ROOT/coordination/audit_factory/runs/latest/audit_status.json"
 LOCK="$ROOT/data/runtime/voice_command_audit.lock"
+REGISTRY="$ROOT/coordination/council/factory_registry.json"
+
+print_factory() {
+  local id="$1"
+  local name="$2"
+  local health="$3"
+  local readiness="$4"
+  local h_color
+  h_color="$(state_color "$health")"
+  local r_color
+  r_color="$(state_color "$readiness")"
+  printf "  %-4s  %-16s  [${h_color}%s\033[0m] [${r_color}%s\033[0m]  " "$id" "$name" "$health" "$readiness"
+}
 
 cleanup() {
   printf '\033[?25h\033[0m\n'
@@ -79,6 +91,23 @@ while true; do
   haf_hold="$(read_json "$HAF_MANIFEST" '.hold_count' '0')"
   haf_fail="$(read_json "$HAF_MANIFEST" '.fail_count' '0')"
 
+  HASF_status="$(read_json "$REGISTRY" '.factories.HASF.health')"
+  HASF_readiness="$(read_json "$REGISTRY" '.factories.HASF.readiness')"
+  HSF_status="$(read_json "$REGISTRY" '.factories.HSF.health')"
+  HSF_readiness="$(read_json "$REGISTRY" '.factories.HSF.readiness')"
+  HMF_status="$(read_json "$REGISTRY" '.factories.HMF.health')"
+  HMF_readiness="$(read_json "$REGISTRY" '.factories.HMF.readiness')"
+  HRF_status="$(read_json "$REGISTRY" '.factories.HRF.health')"
+  HRF_readiness="$(read_json "$REGISTRY" '.factories.HRF.readiness')"
+  HCF_status="$(read_json "$REGISTRY" '.factories.HCF.health')"
+  HCF_readiness="$(read_json "$REGISTRY" '.factories.HCF.readiness')"
+  HFF_status="$(read_json "$REGISTRY" '.factories.HFF.health')"
+  HFF_readiness="$(read_json "$REGISTRY" '.factories.HFF.readiness')"
+  HHF_status="$(read_json "$REGISTRY" '.factories.HHF.health')"
+  HHF_readiness="$(read_json "$REGISTRY" '.factories.HHF.readiness')"
+  HPF_status="$(read_json "$REGISTRY" '.factories.HPF.health')"
+  HPF_readiness="$(read_json "$REGISTRY" '.factories.HPF.readiness')"
+
   git_sha="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || printf 'UNKNOWN')"
 
   if git -C "$ROOT" diff --quiet --ignore-submodules HEAD -- 2>/dev/null &&
@@ -115,6 +144,21 @@ EOF
   print_state "Factory-Verse Relay" "$relay_state"
   print_state "Production Authority" "HOLD"
   print_state "Truth Doctrine" "NO FAKE GREEN"
+
+
+  printf "\nFACTORIES & SWARM HEALTH\n"
+  print_factory "HASF" "Agent Swarm" "$HASF_status" "$HASF_readiness"
+  print_factory "HSF" "Story Factory" "$HSF_status" "$HSF_readiness"
+  printf "\n"
+  print_factory "HMF" "Music Factory" "$HMF_status" "$HMF_readiness"
+  print_factory "HRF" "Research Factory" "$HRF_status" "$HRF_readiness"
+  printf "\n"
+  print_factory "HCF" "Cybersecurity" "$HCF_status" "$HCF_readiness"
+  print_factory "HFF" "Finance Factory" "$HFF_status" "$HFF_readiness"
+  printf "\n"
+  print_factory "HHF" "Humanity/Home" "$HHF_status" "$HHF_readiness"
+  print_factory "HPF" "Pods Factory" "$HPF_status" "$HPF_readiness"
+  printf "\n"
 
   printf "\nEXECUTION\n"
   printf "  %-24s %-22s\n" "Active Run" "$run_id"
