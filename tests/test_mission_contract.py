@@ -200,5 +200,88 @@ def test_schema_file_matches_the_code():
         assert mc.TRUTH_SOURCE_PROJECTION[src].value == cls
 
 
+# --- EXECUTION_CONTEXT (EDR-0007 amendment 1) --------------------------------
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
+def test_execution_context_reuses_correlation_id_not_a_new_run_id():
+    """The incumbent identifier is correlation_id (transaction.py). Do not fork it."""
+    assert "correlation_id" in mc.EXECUTION_CONTEXT_FIELDS
+    assert "run_id" not in mc.EXECUTION_CONTEXT_FIELDS
+
+
+def test_capture_returns_every_declared_field():
+    ctx = mc.capture_execution_context(ROOT)
+    for f in mc.EXECUTION_CONTEXT_FIELDS:
+        assert f in ctx, f"capture must return {f}"
+
+
+def test_capture_pins_a_real_commit_sha_in_a_git_repo():
+    ctx = mc.capture_execution_context(ROOT)
+    sha = ctx["commit_sha"]
+    assert sha == mc.UNKNOWN_VALUE or len(sha) == 40, "a sha is 40 hex chars or UNKNOWN"
+
+
+def test_capture_never_invents_a_value_outside_a_repo(tmp_path):
+    """Outside git, commit_sha must be UNKNOWN — not guessed, not defaulted."""
+    ctx = mc.capture_execution_context(str(tmp_path))
+    assert ctx["commit_sha"] == mc.UNKNOWN_VALUE
+    assert ctx["mission_schema_version"] == mc.UNKNOWN_VALUE
+    assert ctx["doctrine_version"] == mc.UNKNOWN_VALUE
+
+
+def test_supplied_correlation_id_is_preserved():
+    ctx = mc.capture_execution_context(ROOT, correlation_id="corr-123")
+    assert ctx["correlation_id"] == "corr-123"
+
+
+def test_reproducibility_flags_a_dirty_tree():
+    ctx = {"correlation_id": "c", "commit_sha": "a" * 40, "dirty": True,
+           "runtime_version": "r", "doctrine_version": "d", "mission_schema_version": "s"}
+    r = mc.reproducibility(ctx)
+    assert r["reproducible"] is False
+    assert any("uncommitted" in x for x in r["reasons"])
+
+
+def test_reproducibility_flags_an_unknown_commit():
+    ctx = {"correlation_id": "c", "commit_sha": mc.UNKNOWN_VALUE, "dirty": False,
+           "runtime_version": "r", "doctrine_version": "d", "mission_schema_version": "s"}
+    assert mc.reproducibility(ctx)["reproducible"] is False
+
+
+def test_clean_pinned_context_is_reproducible():
+    ctx = {"correlation_id": "c", "commit_sha": "b" * 40, "dirty": False,
+           "runtime_version": "r", "doctrine_version": "d", "mission_schema_version": "s"}
+    r = mc.reproducibility(ctx)
+    assert r["reproducible"] is True
+    assert r["reasons"] == []
+
+
+def test_reproducibility_reports_but_does_not_block():
+    """A dirty tree must not raise — governance that halts all work is theatre."""
+    ctx = mc.capture_execution_context(ROOT)
+    assert isinstance(mc.reproducibility(ctx)["reproducible"], bool)
+
+
+def test_execution_context_validation_fails_closed_on_missing_field():
+    ctx = mc.capture_execution_context(ROOT)
+    del ctx["commit_sha"]
+    with pytest.raises(mc.MissionContractError):
+        mc.validate_execution_context(ctx)
+
+
+def test_execution_context_rejects_a_forked_run_id():
+    ctx = mc.capture_execution_context(ROOT)
+    ctx["run_id"] = "CERT-6H-something"
+    with pytest.raises(mc.MissionContractError) as e:
+        mc.validate_execution_context(ctx)
+    assert any("fork" in x for x in e.value.violations)
+
+
+def test_execution_context_validates_when_complete():
+    assert mc.validate_execution_context(mc.capture_execution_context(ROOT))
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

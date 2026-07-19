@@ -1,32 +1,82 @@
 {
   "schema": "HELM_MISSION_CONTRACT_v1",
-  "doctrine": "Mission overlays change constantly; role doctrines rarely; provider bindings are replaceable. This is the overlay contract. SCOPE and TOOLS_ALLOWED are allowlists — anything not named is denied.",
+  "doctrine": "Mission overlays change constantly; role doctrines rarely; provider bindings are replaceable. This is the overlay contract. SCOPE and TOOLS_ALLOWED are allowlists \u2014 anything not named is denied.",
   "adopted_by": "docs/helm/edr/EDR-0007-mission-contract-v1.md",
   "enforced_by": "backend/helm_runtime/mission_contract.py",
   "template": "docs/helm/mission/MISSION_TEMPLATE_v1.md",
   "required_fields": [
-    "MISSION_ID", "TITLE", "OWNER", "ROLE", "OBJECTIVE", "SUCCESS_CRITERIA",
-    "EXPECTED_OUTPUTS", "SCOPE", "TOOLS_ALLOWED", "EDR_REQUIRED",
-    "FOUNDER_GATES", "STOP_CONDITIONS", "EVIDENCE_REQUIRED", "TRUTH_SOURCE", "RETURN"
+    "MISSION_ID",
+    "TITLE",
+    "OWNER",
+    "ROLE",
+    "OBJECTIVE",
+    "SUCCESS_CRITERIA",
+    "EXPECTED_OUTPUTS",
+    "SCOPE",
+    "TOOLS_ALLOWED",
+    "EDR_REQUIRED",
+    "FOUNDER_GATES",
+    "STOP_CONDITIONS",
+    "EVIDENCE_REQUIRED",
+    "TRUTH_SOURCE",
+    "RETURN"
   ],
-  "optional_fields": ["INPUTS", "CONSTRAINTS", "PARENT_MISSION_ID", "CORRELATION_ID"],
+  "optional_fields": [
+    "INPUTS",
+    "CONSTRAINTS",
+    "PARENT_MISSION_ID",
+    "EXECUTION_CONTEXT"
+  ],
   "list_fields": [
-    "SUCCESS_CRITERIA", "INPUTS", "EXPECTED_OUTPUTS", "SCOPE", "TOOLS_ALLOWED",
-    "CONSTRAINTS", "FOUNDER_GATES", "STOP_CONDITIONS", "EVIDENCE_REQUIRED"
+    "SUCCESS_CRITERIA",
+    "INPUTS",
+    "EXPECTED_OUTPUTS",
+    "SCOPE",
+    "TOOLS_ALLOWED",
+    "CONSTRAINTS",
+    "FOUNDER_GATES",
+    "STOP_CONDITIONS",
+    "EVIDENCE_REQUIRED"
   ],
   "enums": {
-    "OWNER": ["founder", "orchestrator"],
-    "ROLE": ["orchestrator", "builder", "auditor", "research", "security"],
-    "EDR_REQUIRED": ["YES", "NO"],
+    "OWNER": [
+      "founder",
+      "orchestrator"
+    ],
+    "ROLE": [
+      "orchestrator",
+      "builder",
+      "auditor",
+      "research",
+      "security"
+    ],
+    "EDR_REQUIRED": [
+      "YES",
+      "NO"
+    ],
     "TRUTH_SOURCE": [
-      "LIVE_RUNTIME", "TEST_EXECUTION", "DETERMINISTIC_SCRIPT",
-      "STATIC_ANALYSIS", "HUMAN_INPUT", "UNKNOWN"
+      "LIVE_RUNTIME",
+      "TEST_EXECUTION",
+      "DETERMINISTIC_SCRIPT",
+      "STATIC_ANALYSIS",
+      "HUMAN_INPUT",
+      "UNKNOWN"
     ],
     "FOUNDER_GATES": [
-      "SPEND", "KEYS", "RELEASE", "SUBMISSION", "MONEY",
-      "PRODUCTION_DEPLOY", "CREDENTIAL_CREATION", "EXTERNAL_IRREVERSIBLE"
+      "SPEND",
+      "KEYS",
+      "RELEASE",
+      "SUBMISSION",
+      "MONEY",
+      "PRODUCTION_DEPLOY",
+      "CREDENTIAL_CREATION",
+      "EXTERNAL_IRREVERSIBLE"
     ],
-    "RETURN_VALUES": ["DONE", "PARTIAL", "BLOCKED"]
+    "RETURN_VALUES": [
+      "DONE",
+      "PARTIAL",
+      "BLOCKED"
+    ]
   },
   "truth_source_projection": {
     "note": "TRUTH_SOURCE names the MECHANISM. It projects onto the founder-ratified truth classification in backend/security/proof_contract.py. It is never a second truth vocabulary. Only OBSERVED and DERIVED are in ADVANCING.",
@@ -38,10 +88,24 @@
     "UNKNOWN": "UNKNOWN"
   },
   "invariants": [
-    "Every declared FOUNDER_GATE requires a stop condition mentioning the founder gate — declaring a gate never authorizes it.",
+    "Every declared FOUNDER_GATE requires a stop condition mentioning the founder gate \u2014 declaring a gate never authorizes it.",
     "EDR_REQUIRED=YES obliges an EDR path in EXPECTED_OUTPUTS before the mission may return DONE.",
     "A mission may not return DONE on a non-advancing TRUTH_SOURCE (STATIC_ANALYSIS, HUMAN_INPUT, UNKNOWN).",
     "SCOPE and TOOLS_ALLOWED are allowlists; an empty allowlist denies everything and is a validation error, not a wildcard.",
-    "Validation fails CLOSED: an unparseable or incomplete mission is BLOCKED, never best-effort."
-  ]
+    "Validation fails CLOSED: an unparseable or incomplete mission is BLOCKED, never best-effort.",
+    "EXECUTION_CONTEXT must carry correlation_id, never a forked run_id."
+  ],
+  "execution_context": {
+    "note": "Immutable execution fingerprint captured at mission ISSUE time. Reuses the INCUMBENT correlation_id from backend/helm_runtime/transaction.py \u2014 a separate run_id would fork the identifier vocabulary. transaction_id and mission_version have a different lifecycle (minted at WRITE time) and are not declared here.",
+    "fields": [
+      "correlation_id",
+      "commit_sha",
+      "dirty",
+      "runtime_version",
+      "doctrine_version",
+      "mission_schema_version"
+    ],
+    "honesty_rule": "A field that cannot be determined is recorded as UNKNOWN. It is never guessed, defaulted, or back-filled.",
+    "reproducibility": "An UNKNOWN commit_sha or a dirty working tree means evidence produced under this context cannot be reproduced from the repository alone. This is REPORTED, not blocked \u2014 a blocking rule would halt every mission during active development."
+  }
 }

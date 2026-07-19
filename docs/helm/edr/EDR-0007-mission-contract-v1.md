@@ -88,6 +88,54 @@ does not alter the seeding or soak paths.
    mission raises `MissionContractError` and is BLOCKED. No field defaults, no partial
    acceptance. Violations are collected and reported together.
 
+
+## Amendment 1 — EXECUTION_CONTEXT (2026-07-18, founder-proposed)
+
+Founder proposed an immutable execution fingerprint (`run_id`, `commit_sha`,
+`runtime_version`, `doctrine_version`, `mission_schema_version`). **Adopted with one
+change:** the field is `correlation_id`, not `run_id`.
+
+`backend/helm_runtime/transaction.py` already mints a `correlation_id` (uuid4) per
+mission commit. Introducing `run_id` alongside it would fork the identifier vocabulary
+— the same failure mode this EDR avoided for `TRUTH_SOURCE`. `validate_execution_context()`
+rejects a `run_id` key explicitly, with a test asserting the rejection.
+
+`transaction_id` and `mission_version` are excluded by design: they are minted at
+*write* time, whereas EXECUTION_CONTEXT is captured at *issue* time. Different
+lifecycles, kept apart.
+
+**Honesty rule:** any field that cannot be determined is `UNKNOWN` — never guessed or
+back-filled. Verified by a test that captures outside a git repository and asserts
+`commit_sha == UNKNOWN`.
+
+**Reproducibility reports, it does not block.** An UNKNOWN commit or dirty tree means
+evidence is not reproducible from the repository alone. `reproducibility(ctx)` returns
+that judgement for the Auditor. It is deliberately non-blocking: the working tree is
+routinely dirty during development, and a blocking rule would halt every mission.
+
+### Finding of record — the running certification soak is not reproducible
+
+Captured live against this repository at 2026-07-19T01:07Z:
+
+```json
+{"commit_sha": "77102558…", "dirty": true, "reproducible": false,
+ "reasons": ["working tree has uncommitted changes"]}
+```
+
+The active 6-hour certification run `CERT-6H-20260719T004809Z` (started
+2026-07-19T00:48:09Z) is executing against a working tree with uncommitted
+modifications, and **HEAD moved during the run** — commits `4972dd64` and `77102558`
+both landed after the soak started. Neither modified any code path the soak executes
+(the first is a new product directory; the second adds `mission_contract.py`, which
+nothing imports yet), so the run's *behavior* is unaffected. But its evidence cannot
+be pinned to a single commit, so the certification evidence is **ASSERTED-grade for
+reproducibility purposes** even where the missions themselves are OBSERVED.
+
+Recommendation for the next certification run: capture EXECUTION_CONTEXT at soak start
+and pin it into `run_meta.json`, and freeze commits for the duration. Not retrofitted
+to the running soak — interrupting a certification to improve its metadata would
+destroy the evidence it exists to produce.
+
 ## What this EDR does NOT do
 
 - It does **not** add any permanent role doctrine. `ROLE_SECURITY_RMF.md` remains
@@ -113,8 +161,11 @@ does not alter the seeding or soak paths.
    **[met]**
 5. The JSON schema and the Python enforcement agree on every enum and on the full
    projection table. **[met — asserted by test]**
-6. Independent Auditor verification of 1–5. **[NOT MET — required before completion]**
-7. Founder ratification of §Decision.4. **[NOT MET — required]**
+6. `EXECUTION_CONTEXT` reuses `correlation_id`, rejects a forked `run_id`, records
+   UNKNOWN rather than inventing, and reports (never blocks) reproducibility.
+   **[met — 12 further tests]**
+7. Independent Auditor verification of 1–6. **[NOT MET — required before completion]**
+8. Founder ratification of §Decision.4. **[NOT MET — required]**
 
 ## Migration
 

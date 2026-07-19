@@ -300,8 +300,129 @@ def load_schema(repo_root: str = ".") -> Dict[str, Any]:
         return json.load(fh)
 
 
+# ---------------------------------------------------------------------------
+# EXECUTION_CONTEXT — immutable execution fingerprint (EDR-0007 amendment 1)
+# ---------------------------------------------------------------------------
+# Reuses the INCUMBENT correlation identifier rather than minting a new one.
+# `transaction.py` already generates `correlation_id` (uuid4) for every mission
+# commit; introducing a separate `run_id` would recreate exactly the dual-vocabulary
+# drift that TRUTH_SOURCE was designed to avoid. EXECUTION_CONTEXT therefore carries
+# `correlation_id`, not `run_id`.
+#
+# Lifecycles differ and are deliberately kept apart:
+#   * EXECUTION_CONTEXT  — captured at mission ISSUE time; fingerprints the code and
+#                          doctrine the mission runs against.
+#   * transaction_id / mission_version — minted at WRITE time by MissionTransaction.
+# A mission declares the former; it does not pre-declare the latter.
+#
+# HONESTY RULE: every capture may fail. A field that cannot be determined is
+# recorded as UNKNOWN. It is never guessed, defaulted, or back-filled.
+
+EXECUTION_CONTEXT_FIELDS = (
+    "correlation_id",          # incumbent identifier (transaction.py), NOT a new run_id
+    "commit_sha",              # HEAD at issue time, or UNKNOWN
+    "dirty",                   # uncommitted changes present? bool, or UNKNOWN
+    "runtime_version",         # HELM runtime version
+    "doctrine_version",        # governing constitution/doctrine version
+    "mission_schema_version",  # this contract's version
+)
+
+UNKNOWN_VALUE = "UNKNOWN"
+
+
+def capture_execution_context(
+    repo_root: str = ".",
+    *,
+    correlation_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Capture the execution fingerprint. Unknown fields are UNKNOWN, never invented."""
+    import subprocess
+    import uuid
+
+    def _git(*args: str) -> Optional[str]:
+        try:
+            out = subprocess.run(
+                ["git", *args], cwd=repo_root, capture_output=True, text=True, timeout=10
+            )
+            if out.returncode != 0:
+                return None
+            return out.stdout.strip()
+        except Exception:
+            return None
+
+    sha = _git("rev-parse", "HEAD")
+    status = _git("status", "--porcelain")
+    dirty: Any = UNKNOWN_VALUE if status is None else bool(status.strip())
+
+    schema_version = UNKNOWN_VALUE
+    try:
+        schema_version = load_schema(repo_root).get("schema", UNKNOWN_VALUE)
+    except Exception:
+        pass
+
+    doctrine_version = UNKNOWN_VALUE
+    const = os.path.join(repo_root, "docs", "helm", "HELM_CONSTITUTION_v1.0.md")
+    if os.path.exists(const):
+        doctrine_version = "HELM_CONSTITUTION_v1.0"
+
+    runtime_version = UNKNOWN_VALUE
+    rt = os.path.join(repo_root, "backend", "helm_runtime")
+    if os.path.isdir(rt):
+        runtime_version = "helm_runtime/four-engine"
+
+    return {
+        "correlation_id": correlation_id or str(uuid.uuid4()),
+        "commit_sha": sha or UNKNOWN_VALUE,
+        "dirty": dirty,
+        "runtime_version": runtime_version,
+        "doctrine_version": doctrine_version,
+        "mission_schema_version": schema_version,
+    }
+
+
+def reproducibility(ctx: Dict[str, Any]) -> Dict[str, Any]:
+    """Can evidence produced under this context be reproduced?
+
+    EDR-0006's Proof Record requires *Reproduced*. Evidence gathered against an
+    unknown commit, or against a working tree with uncommitted changes, cannot be
+    reproduced from the repository alone.
+
+    This REPORTS; it does not block. The working tree is routinely dirty during
+    active development, and a blocking rule would halt every mission — which would
+    be governance theatre, not governance. The Auditor decides what a non-
+    reproducible context is worth.
+    """
+    reasons: List[str] = []
+    if ctx.get("commit_sha") in (None, "", UNKNOWN_VALUE):
+        reasons.append("commit_sha is UNKNOWN — the code state cannot be pinned")
+    if ctx.get("dirty") is True:
+        reasons.append("working tree has uncommitted changes — the tree is not recoverable from git alone")
+    if ctx.get("dirty") == UNKNOWN_VALUE:
+        reasons.append("dirty state is UNKNOWN — cleanliness could not be determined")
+    return {"reproducible": not reasons, "reasons": reasons}
+
+
+def validate_execution_context(ctx: Dict[str, Any]) -> Dict[str, Any]:
+    """Validate an EXECUTION_CONTEXT block. Fails closed on missing keys."""
+    if not isinstance(ctx, dict):
+        raise MissionContractError(["EXECUTION_CONTEXT must be a mapping"])
+    missing = [f for f in EXECUTION_CONTEXT_FIELDS if f not in ctx]
+    if missing:
+        raise MissionContractError(
+            [f"EXECUTION_CONTEXT missing field: {f}" for f in missing]
+        )
+    if "run_id" in ctx:
+        raise MissionContractError([
+            "EXECUTION_CONTEXT uses the incumbent 'correlation_id'; 'run_id' would fork "
+            "the identifier vocabulary (see transaction.py)"
+        ])
+    return dict(ctx)
+
+
 __all__ = [
     "SCHEMA_NAME", "Mission", "MissionContractError", "validate", "conformance",
     "projected_truth", "advances_state", "TRUTH_SOURCE_PROJECTION",
     "REQUIRED_FIELDS", "FOUNDER_GATES", "load_schema",
+    "EXECUTION_CONTEXT_FIELDS", "capture_execution_context", "reproducibility",
+    "validate_execution_context", "UNKNOWN_VALUE",
 ]

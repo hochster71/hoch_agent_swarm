@@ -46,6 +46,7 @@ FOUNDER_GATES:         # list of the founder-only actions this mission may appro
 STOP_CONDITIONS:       # list; conditions that end the mission without completion
 EVIDENCE_REQUIRED:     # list; what must be in the evidence pack
 TRUTH_SOURCE:          # see below — the mechanism that will produce the evidence
+EXECUTION_CONTEXT:     # optional; execution fingerprint (see below)
 RETURN:                # DONE | PARTIAL | BLOCKED + evidence paths
 ```
 
@@ -87,6 +88,43 @@ Two consequences worth stating plainly, because they are policy, not plumbing:
 
 A mission whose `TRUTH_SOURCE` is non-advancing may still be perfectly valid — it
 simply cannot close a critical-path node on its own, and the validator says so.
+
+
+## EXECUTION_CONTEXT — the execution fingerprint
+
+Optional but recommended; auto-capturable via
+`mission_contract.capture_execution_context()`.
+
+```yaml
+EXECUTION_CONTEXT:
+  correlation_id:          # the INCUMBENT identifier — never a new run_id
+  commit_sha:              # HEAD at issue time, or UNKNOWN
+  dirty:                   # uncommitted changes present?
+  runtime_version:
+  doctrine_version:
+  mission_schema_version:
+```
+
+**Why `correlation_id` and not `run_id`.** `backend/helm_runtime/transaction.py`
+already mints a `correlation_id` (uuid4) for every mission commit. Adding a parallel
+`run_id` would recreate precisely the dual-vocabulary drift that `TRUTH_SOURCE` was
+designed to avoid. One identifier, one meaning.
+
+`transaction_id` and `mission_version` are deliberately **not** declared here — they
+have a different lifecycle. EXECUTION_CONTEXT is captured when a mission is *issued*
+and fingerprints the code and doctrine it runs against; `transaction_id` and
+`mission_version` are minted at *write* time by `MissionTransaction`.
+
+**Honesty rule.** Any field that cannot be determined is recorded as `UNKNOWN`. It is
+never guessed, defaulted, or back-filled. Outside a git repository, `commit_sha` is
+`UNKNOWN` — the capture does not invent one.
+
+**Reproducibility.** An `UNKNOWN` commit or a dirty working tree means evidence
+produced under this context cannot be reproduced from the repository alone.
+`reproducibility(ctx)` reports this; it does **not** block. A working tree is
+routinely dirty during active development, and a blocking rule would halt every
+mission — governance theatre rather than governance. The Auditor decides what a
+non-reproducible context is worth.
 
 ## Founder gates are declared, not discovered
 
