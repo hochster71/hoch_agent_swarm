@@ -1,0 +1,19 @@
+Delivered-To: alex@corp.example
+Received: from mx.corp.example (mx.corp.example [203.0.113.10])
+	by inbound.corp.example with ESMTPS id 4f2a9c1b
+	for <alex@corp.example>; Tue, 14 Jul 2026 10:05:12 +0000
+Received: from mail.paypa1-billing.example (unknown [198.51.100.77])
+	by mx.corp.example with SMTP id 88bd21
+	for <alex@corp.example>; Tue, 14 Jul 2026 10:05:02 +0000
+Authentication-Results: mx.corp.example;
+	spf=softfail smtp.mailfrom=billing@paypa1-billing.example;
+	dkim=fail header.d=paypa1-billing.example;
+	dmarc=fail header.from=paypa1-billing.example
+From: "PayPal Billing <service@paypal.com>" <billing@paypa1-billing.example>
+Reply-To: recovery-desk@mailbox-secure.example
+To: alex@corp.example
+Subject: Your account statement is ready
+Date: Tue, 14 Jul 2026 10:05:00 +0000
+Message-ID: <20260714100500.9911@relay.mailbox-secure.example>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"

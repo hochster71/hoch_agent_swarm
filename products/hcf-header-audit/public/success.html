@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Email Header Audit</title>
+<style>
+  :root { --ink:#12161c; --muted:#5b6675; --line:#dfe4ea; --bg:#fbfcfd; --accent:#1f5fbf; --warn:#8a5a00; --warnbg:#fff8e6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:820px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { font-size:28px; margin:0 0 8px; letter-spacing:-.02em; }
+  h2 { font-size:19px; margin:30px 0 8px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin:20px 0; }
+  .disclaim { background:var(--warnbg); border:1px solid #f0e0b0; color:var(--warn); border-radius:8px; padding:14px; font-size:14px; }
+  pre { background:#0f1419; color:#e6edf3; padding:16px; border-radius:8px; overflow:auto; font-size:12.5px; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+  button { font:600 15px/1 inherit; padding:11px 16px; border-radius:8px; border:1px solid transparent; cursor:pointer; }
+  .primary { background:var(--accent); color:#fff; }
+  .ghost { background:#fff; border:1px solid var(--line); color:var(--ink); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .note { font-size:14px; color:var(--muted); }
+  .err { color:#a12626; font-size:14px; }
+  textarea { width:100%; min-height:150px; font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; padding:12px; border:1px solid var(--line); border-radius:8px; }
+  .band { display:inline-block; padding:3px 10px; border-radius:999px; font-size:13px; font-weight:700; }
+  .LOW { background:#e8f5ec; color:#1c6b38; } .MODERATE { background:#fff4e0; color:#8a5a00; } .ELEVATED { background:#fdeaea; color:#a12626; }
+  .sig { border-left:3px solid var(--line); padding:6px 0 6px 12px; margin:12px 0; }
+  .sig.high { border-color:#a12626; } .sig.medium { border-color:#c98a1a; } .sig.low { border-color:#9aa6b4; } .sig.info { border-color:#cfd6de; }
+  .sig b { display:block; }
+  .sev { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Your Email Header Audit</h1>
+  <p class="note" id="status">Checking your purchase…</p>
+
+  <div class="disclaim">
+    <strong>Heuristic, not a verdict.</strong> Everything below is a reading of the header text only. Headers can be forged, nothing was re-checked against DNS, and no body, link, or attachment was examined. Confirm anything consequential through a channel you already trust.
+  </div>
+
+  <div class="card" id="inputCard" style="display:none">
+    <h2 style="margin-top:0">Headers to audit</h2>
+    <p class="note">We kept the headers you pasted before checkout. Edit or replace them if you like, then run the audit.</p>
+    <textarea id="headers" spellcheck="false"></textarea>
+    <div class="row">
+      <button class="primary" id="runBtn">Run the full audit</button>
+    </div>
+    <div id="err" class="err"></div>
+  </div>
+
+  <div class="card" id="out" style="display:none">
+    <h2 style="margin-top:0">Result</h2>
+    <div id="head"></div>
+    <div id="signals"></div>
+    <h2>Full report</h2>
+    <pre id="text"></pre>
+    <div class="row">
+      <button class="ghost" id="copyBtn">Copy report</button>
+      <button class="ghost" id="dlBtn">Download .txt</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sessionId = new URLSearchParams(location.search).get('session_id');
+let lastText = '';
+
+(async function init() {
+  const saved = sessionStorage.getItem('hcf_headers');
+  if (saved) $('headers').value = saved;
+
+  if (!sessionId) {
+    $('status').textContent = 'No checkout session was found in the link. If you just paid, use the link from your receipt.';
+    return;
+  }
+  try {
+    const r = await fetch('/api/entitlement?session_id=' + encodeURIComponent(sessionId));
+    const d = await r.json();
+    if (d.entitled) {
+      $('status').innerHTML = 'Purchase confirmed. Your audit is unlocked.';
+    } else {
+      $('status').innerHTML = 'We have not seen the payment confirmation for this session yet. If you just paid, give it a moment and reload — the confirmation arrives by webhook.';
+    }
+  } catch (e) {
+    $('status').textContent = 'Could not check entitlement: ' + e.message;
+  }
+  $('inputCard').style.display = 'block';
+})();
+
+$('runBtn').onclick = async () => {
+  $('err').textContent = '';
+  const headers = $('headers').value;
+  if (!headers.trim()) { $('err').textContent = 'Paste the header block first.'; return; }
+  $('runBtn').disabled = true; $('runBtn').textContent = 'Running…';
+  try {
+    const r = await fetch('/api/generate-report', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ headers, session_id: sessionId })
+    });
+    const d = await r.json();
+    if (!r.ok) { $('err').textContent = d.message || 'Could not generate the audit.'; return; }
+    render(d.report);
+  } catch (e) {
+    $('err').textContent = 'Request failed: ' + e.message;
+  } finally {
+    $('runBtn').disabled = false; $('runBtn').textContent = 'Run the full audit';
+  }
+};
+
+function render(rep) {
+  lastText = rep.text || '';
+  $('head').innerHTML =
+    '<p><span class="band ' + esc(rep.band) + '">' + esc(rep.band) + '</span> — heuristic score ' + esc(rep.score) + '</p>' +
+    '<p class="note">' + esc(rep.meaning) + '</p>';
+  $('signals').innerHTML = (rep.findings || []).map((f) =>
+    '<div class="sig ' + esc(f.severity) + '"><span class="sev">' + esc(f.severity) + '</span><b>' + esc(f.title) + '</b>' + esc(f.detail) + '</div>'
+  ).join('') || '<p class="note">No heuristic signals matched — see the disclaimer above.</p>';
+  $('text').textContent = lastText;
+  $('out').style.display = 'block';
+  $('out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+$('copyBtn').onclick = () => navigator.clipboard.writeText(lastText);
+$('dlBtn').onclick = () => {
+  const blob = new Blob([lastText], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'email-header-audit.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "hcf-header-audit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HCF — Email Header Audit. OFFLINE heuristic audit of raw email headers (authentication results as reported, Received-hop chain, sender/Reply-To/Return-Path alignment, lookalike + punycode sender domains). Heuristic only — never a guarantee. Deterministic engine + landing page + Stripe checkout scaffold.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

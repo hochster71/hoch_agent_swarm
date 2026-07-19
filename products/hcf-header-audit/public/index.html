@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email Header Audit — read what an email's headers actually say</title>
+<meta name="description" content="Paste raw email headers and get an offline, heuristic audit: who really sent it, what authentication a server reported, the delivery path, and every signal worth a second look. Heuristic only — never a guarantee.">
+<style>
+  :root { --ink:#12161c; --muted:#5b6675; --line:#dfe4ea; --bg:#fbfcfd; --accent:#1f5fbf; --warn:#8a5a00; --warnbg:#fff8e6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:780px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { font-size:34px; line-height:1.2; margin:0 0 12px; letter-spacing:-.02em; }
+  h2 { font-size:20px; margin:36px 0 10px; }
+  .sub { font-size:18px; color:var(--muted); margin:0 0 28px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin:20px 0; }
+  textarea { width:100%; min-height:190px; font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; padding:12px; border:1px solid var(--line); border-radius:8px; resize:vertical; }
+  button { font:600 15px/1 inherit; padding:12px 18px; border-radius:8px; border:1px solid transparent; cursor:pointer; }
+  .primary { background:var(--accent); color:#fff; }
+  .primary:disabled { opacity:.5; cursor:not-allowed; }
+  .ghost { background:#fff; border-color:var(--line); color:var(--ink); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px; }
+  .price { font-weight:700; }
+  .note { font-size:14px; color:var(--muted); }
+  .disclaim { background:var(--warnbg); border:1px solid #f0e0b0; color:var(--warn); border-radius:8px; padding:14px; font-size:14px; }
+  pre { background:#0f1419; color:#e6edf3; padding:16px; border-radius:8px; overflow:auto; font-size:12.5px; line-height:1.5; }
+  table { border-collapse:collapse; width:100%; font-size:14px; margin-top:8px; }
+  td,th { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .band { display:inline-block; padding:3px 10px; border-radius:999px; font-size:13px; font-weight:700; }
+  .LOW { background:#e8f5ec; color:#1c6b38; } .MODERATE { background:#fff4e0; color:#8a5a00; } .ELEVATED { background:#fdeaea; color:#a12626; }
+  ul { padding-left:20px; } li { margin:6px 0; }
+  .err { color:#a12626; font-size:14px; }
+  footer { margin-top:48px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Read what an email's headers actually say.</h1>
+  <p class="sub">Paste the raw header block. Get an offline audit of who really sent it, what authentication a server reported, the path it took, and every signal worth a second look — each one with the ordinary, boring explanation alongside it.</p>
+
+  <div class="disclaim">
+    <strong>Heuristic, not a verdict.</strong> This reads only the header text you paste. Headers can be forged, nothing is re-checked against DNS, and no body, link, or attachment is examined. It will never tell you an email is safe or malicious — it shows you what the headers say and what that commonly means, so you can decide.
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">Paste your headers</h2>
+    <p class="note">Gmail: <em>⋮ → Show original</em>. Outlook: <em>File → Properties → Internet headers</em>. Apple Mail: <em>View → Message → Raw Source</em>.</p>
+    <textarea id="headers" spellcheck="false" placeholder="Delivered-To: you@example.com&#10;Received: from ...&#10;Authentication-Results: ...&#10;From: ...&#10;Subject: ..."></textarea>
+    <div class="row">
+      <button class="primary" id="checkBtn">Check free</button>
+      <button class="ghost" id="sampleBtn">Load a sample</button>
+      <span class="note">Free check shows the summary and how many signals matched.</span>
+    </div>
+    <div id="err" class="err"></div>
+  </div>
+
+  <div class="card" id="result" style="display:none">
+    <h2 style="margin-top:0">Free summary</h2>
+    <div id="summary"></div>
+    <div id="buyBox" style="margin-top:20px; border-top:1px solid var(--line); padding-top:18px;">
+      <p><span class="price">$5 one-time</span> — unlock the full audit: every signal that matched, what each one means, the benign explanations, and the full delivery path.</p>
+      <div class="row">
+        <button class="primary" id="buyBtn">Unlock the full audit — $5</button>
+      </div>
+      <p class="note" id="buyNote" style="margin-top:10px"></p>
+    </div>
+  </div>
+
+  <h2>What it looks at</h2>
+  <ul>
+    <li><strong>Who really sent it</strong> — the actual address behind the display name, including the case where the display name itself contains a different, more trustworthy-looking address.</li>
+    <li><strong>Authentication as reported</strong> — the SPF, DKIM and DMARC outcomes a server wrote into the headers, presented as claims rather than facts, with a note when more than one server made claims.</li>
+    <li><strong>Alignment</strong> — whether Reply-To, Return-Path, Message-ID and the DKIM signing domain agree with the From domain.</li>
+    <li><strong>Lookalike sending domains</strong> — punycode and internationalized domains, character substitutions that collapse onto a well-known brand, and brand names sitting in a hostname that belongs to someone else.</li>
+    <li><strong>The delivery path</strong> — each Received hop in order, with timestamps, gaps, out-of-order clocks, and whether TLS was recorded.</li>
+  </ul>
+
+  <h2>What it does not do</h2>
+  <ul>
+    <li>It does not check DNS, resolve SPF records, or verify a DKIM signature. It reads the text.</li>
+    <li>It does not open links, fetch pages, or look at attachments or the message body.</li>
+    <li>It does not tell you whether to trust, reply to, delete, or report anything. That call is yours.</li>
+  </ul>
+
+  <footer>
+    Runs entirely on the header text you paste. Heuristic output only — not a security decision, an incident finding, or professional advice.
+  </footer>
+</div>
+
+<script>
+const SAMPLE = `Delivered-To: alex@corp.example
+Received: from mx.corp.example (mx.corp.example [203.0.113.10])
+\tby inbound.corp.example with ESMTPS id 4f2a9c1b
+\tfor <alex@corp.example>; Tue, 14 Jul 2026 10:05:12 +0000
+Received: from mail.paypa1-billing.example (unknown [198.51.100.77])
+\tby mx.corp.example with SMTP id 88bd21
+\tfor <alex@corp.example>; Tue, 14 Jul 2026 10:05:02 +0000
+Authentication-Results: mx.corp.example;
+\tspf=softfail smtp.mailfrom=billing@paypa1-billing.example;
+\tdkim=fail header.d=paypa1-billing.example;
+\tdmarc=fail header.from=paypa1-billing.example
+From: "PayPal Billing <service@paypal.com>" <billing@paypa1-billing.example>
+Reply-To: recovery-desk@mailbox-secure.example
+To: alex@corp.example
+Subject: Your account statement is ready
+Date: Tue, 14 Jul 2026 10:05:00 +0000
+Message-ID: <20260714100500.9911@relay.mailbox-secure.example>`;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+$('sampleBtn').onclick = () => { $('headers').value = SAMPLE; };
+
+$('checkBtn').onclick = async () => {
+  const headers = $('headers').value;
+  $('err').textContent = '';
+  if (!headers.trim()) { $('err').textContent = 'Paste a header block first.'; return; }
+  $('checkBtn').disabled = true; $('checkBtn').textContent = 'Checking…';
+  try {
+    const r = await fetch('/api/preview', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ headers })
+    });
+    const data = await r.json();
+    if (!r.ok) { $('err').textContent = data.message || 'Could not read those headers.'; return; }
+    render(data.preview);
+  } catch (e) {
+    $('err').textContent = 'Request failed: ' + e.message;
+  } finally {
+    $('checkBtn').disabled = false; $('checkBtn').textContent = 'Check free';
+  }
+};
+
+function render(p) {
+  const c = p.counts || {};
+  $('summary').innerHTML =
+    '<table>' +
+    '<tr><th>From</th><td>' + esc(p.identity.fromAddress || '(none found)') + '</td></tr>' +
+    '<tr><th>Sending domain</th><td>' + esc(p.identity.fromDomain || '(none)') + '</td></tr>' +
+    '<tr><th>Subject</th><td>' + esc(p.identity.subject || '(none)') + '</td></tr>' +
+    '<tr><th>Delivery hops</th><td>' + esc(p.hopCount) + '</td></tr>' +
+    '<tr><th>Auth results present</th><td>' + (p.authPresent ? 'yes' : 'no') + '</td></tr>' +
+    '<tr><th>Attention band</th><td><span class="band ' + esc(p.band) + '">' + esc(p.band) + '</span> (score ' + esc(p.score) + ')</td></tr>' +
+    '<tr><th>Signals matched</th><td>' + (c.high||0) + ' high · ' + (c.medium||0) + ' medium · ' + (c.low||0) + ' low · ' + (c.info||0) + ' info</td></tr>' +
+    '</table>' +
+    '<p class="note" style="margin-top:14px">' + esc(p.meaning) + '</p>' +
+    '<p class="note"><em>' + esc(p.lockedNote) + '</em></p>';
+  $('result').style.display = 'block';
+  $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+$('buyBtn').onclick = async () => {
+  $('buyNote').textContent = '';
+  $('buyBtn').disabled = true; $('buyBtn').textContent = 'Opening checkout…';
+  try {
+    sessionStorage.setItem('hcf_headers', $('headers').value);
+    const r = await fetch('/api/create-checkout-session', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tier: 'audit' })
+    });
+    const data = await r.json();
+    if (r.ok && data.url) { window.location = data.url; return; }
+    $('buyNote').textContent = data.message || 'Checkout is not available yet.';
+  } catch (e) {
+    $('buyNote').textContent = 'Checkout request failed: ' + e.message;
+  } finally {
+    $('buyBtn').disabled = false; $('buyBtn').textContent = 'Unlock the full audit — $5';
+  }
+};
+</script>
+</body>
+</html>

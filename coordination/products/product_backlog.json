@@ -86,6 +86,21 @@
       "slug": "hff-recurring-charges",
       "built_at": "2026-07-18",
       "tests": "28 engine + 17 buyloop, all pass (node v22.22.3)"
+    },
+    {
+      "id": "HCF_HEADER_AUDIT",
+      "factory": "HCF",
+      "name": "Email Header Audit",
+      "what_it_is": "Paste an email's raw header block -> an offline heuristic audit: the real sender behind the display name, authentication outcomes as REPORTED by a server (never re-verified), Reply-To/Return-Path/Message-ID/DKIM alignment, lookalike and punycode sending domains, and the full Received delivery path. Free preview shows signal counts; the $5 unlock shows every signal with its benign explanation.",
+      "buyer": "People who get a suspicious-looking email and want to read what the headers actually say without installing anything or sending the message to a third party.",
+      "price_usd": 5,
+      "billing": "one_time",
+      "guardrail": "heuristic only; never claim certainty; no real-world security decision advice (enforced by a fail-closed report linter)",
+      "generated_by": "autonomous factory loop 2026-07-19 (all prior candidates already BUILT)",
+      "status": "BUILT",
+      "slug": "hcf-header-audit",
+      "built_at": "2026-07-19",
+      "tests": "51 engine + 25 buyloop, all pass (node v22.22.3)"
     }
   ]
 }
