@@ -17,14 +17,6 @@ def main():
 
     print(f"Starting HAF Assessment for profile '{args.profile}', scope '{args.scope}'...")
     os.environ["HAF_RUNNING"] = "1"
-    
-    # Backup voice audit log if it exists
-    audit_log = os.path.join(ROOT, "data/runtime/voice_command_audit.jsonl")
-    audit_log_exists = os.path.exists(audit_log)
-    audit_log_content = b""
-    if audit_log_exists:
-        with open(audit_log, "rb") as f:
-            audit_log_content = f.read()
 
     try:
         service = HAFService(workspace_root=ROOT)
@@ -50,16 +42,6 @@ def main():
         traceback.print_exc()
         print(f"Error executing assessment: {e}", file=sys.stderr)
         sys.exit(1)
-    finally:
-        # Restore voice audit log
-        if audit_log_exists:
-            with open(audit_log, "wb") as f:
-                f.write(audit_log_content)
-        elif os.path.exists(audit_log):
-            try:
-                os.remove(audit_log)
-            except Exception:
-                pass
 
 if __name__ == "__main__":
     main()

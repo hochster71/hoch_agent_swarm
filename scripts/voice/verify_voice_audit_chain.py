@@ -6,7 +6,7 @@ import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-AUDIT_LOG_FILE = ROOT / "data/runtime/voice_command_audit.jsonl"
+AUDIT_LOG_FILE = Path(os.getenv("HELM_AUDIT_LOG_PATH", str(ROOT / "data/runtime/voice_command_audit.jsonl")))
 
 def _compute_hash(data: dict) -> str:
     # Exclude event_hash itself from the hash calculation
@@ -256,9 +256,9 @@ def verify_chain() -> int:
             prev_hash = stored_hash
             print(f"[+] Verified event {event_id} (hash link: {prev_hash[:12]}...)")
 
-        # Verify checkpoint alignment (if the checkpoint file exists and not running in tests/HAF)
-        checkpoint_path = ROOT / "coordination/checkpoints/voice_audit_checkpoint.json"
-        if checkpoint_path.exists() and "pytest" not in sys.modules and os.environ.get("HAF_RUNNING") != "1":
+        # Verify checkpoint alignment (if the checkpoint file exists and not running in tests)
+        checkpoint_path = Path(os.getenv("HELM_CHECKPOINT_PATH", str(ROOT / "coordination/checkpoints/voice_audit_checkpoint.json")))
+        if checkpoint_path.exists() and "pytest" not in sys.modules:
             try:
                 with open(checkpoint_path, "r", encoding="utf-8") as cf:
                     checkpoint = json.load(cf)

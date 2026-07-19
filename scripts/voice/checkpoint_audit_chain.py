@@ -7,8 +7,8 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[2]
-AUDIT_LOG_FILE = ROOT / "data/runtime/voice_command_audit.jsonl"
-CHECKPOINT_FILE = ROOT / "coordination/checkpoints/voice_audit_checkpoint.json"
+AUDIT_LOG_FILE = Path(os.getenv("HELM_AUDIT_LOG_PATH", str(ROOT / "data/runtime/voice_command_audit.jsonl")))
+CHECKPOINT_FILE = Path(os.getenv("HELM_CHECKPOINT_PATH", str(ROOT / "coordination/checkpoints/voice_audit_checkpoint.json")))
 
 def main():
     sys.path.append(str(ROOT))

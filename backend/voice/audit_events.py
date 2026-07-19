@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict
 
 ROOT = Path(__file__).resolve().parents[2]
-AUDIT_LOG_FILE = ROOT / "data/runtime/voice_command_audit.jsonl"
+AUDIT_LOG_FILE = Path(os.getenv("HELM_AUDIT_LOG_PATH", str(ROOT / "data/runtime/voice_command_audit.jsonl")))
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

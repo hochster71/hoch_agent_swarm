@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives import serialization
 
 ROOT = Path(__file__).resolve().parents[2]
 PRIV_KEY_PATH = Path(os.path.expanduser("~/Library/Application Support/HELM/keys/voice_recovery_private_key.pem"))
-AUDIT_LOG_FILE = ROOT / "data/runtime/voice_command_audit.jsonl"
+AUDIT_LOG_FILE = Path(os.getenv("HELM_AUDIT_LOG_PATH", str(ROOT / "data/runtime/voice_command_audit.jsonl")))
 APPROVAL_FILE = ROOT / "coordination/approvals/voice_epoch2_recovery_approval.json"
 
 def main():

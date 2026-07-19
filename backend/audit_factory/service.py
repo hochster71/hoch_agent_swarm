@@ -544,9 +544,13 @@ class HAFService:
                         
                         public_key.verify(bytes.fromhex(sig_hex), canonical_payload)
                         
-                        return "PASS_CANDIDATE", "FULL_PAYLOAD_SIGNATURE_APPROVAL_ARTIFACT_AND_PINNED_KEY_VERIFIED"
+                        return "PASS_CANDIDATE", "FULL_PAYLOAD_SIGNATURE_AND_PINNED_KEY_IMPLEMENTED_FOUNDER_TRUST_PROVENANCE_PENDING"
                     except Exception as e:
                         return "FAIL", f"Recovery genesis signature verification failed: {e}"
+
+                elif cid == "HAF-VAUD-006":
+                    # Check if the checkpoint file is externally anchored (for now local only)
+                    return "HOLD", "CHECKPOINT_ALIGNMENT_BYPASSED_DURING_HAF_OR_NOT_EXTERNALLY_ANCHORED"
 
                 elif cid == "HAF-VAUD-003":
                     redacted = redact_sensitive_data("Bearer sk-1234567890abcdef")
@@ -916,6 +920,9 @@ class HAFService:
         return "PASS", "Verification probe succeeded"
 
     def run_assessment(self, profile_name: str, scope: str = "HELM_COMMON") -> dict:
+        import shutil
+        import tempfile
+        
         run_id = f"HAF-RUN-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
         planned_controls = self.planner.plan_assessment(profile_name)
 
@@ -925,136 +932,182 @@ class HAFService:
         run_dir = os.path.join(self.workspace_root, "coordination/audit_factory/runs", run_id)
         os.makedirs(run_dir, exist_ok=True)
 
-        for ctrl in planned_controls:
-            # 1. Execute probe
-            result_status, detail_msg = self._evaluate_control_status(ctrl)
+        # Set up temporary assessment workspace
+        temp_workspace_dir = tempfile.mkdtemp(prefix="haf_assessment_")
+        temp_log_path = os.path.join(temp_workspace_dir, "voice_command_audit.jsonl")
+        temp_checkpoint_path = os.path.join(temp_workspace_dir, "voice_audit_checkpoint.json")
 
-            # 2. Write structured JSON evidence file
-            evidence_path = os.path.join("coordination/audit_factory/evidence", f"{ctrl.control_id}_evidence.json")
-            abs_evidence_path = os.path.join(self.workspace_root, evidence_path)
+        # Keep original environment variables
+        orig_log_path = os.environ.get("HELM_AUDIT_LOG_PATH")
+        orig_checkpoint_path = os.environ.get("HELM_CHECKPOINT_PATH")
 
-            evidence_data = {
-                "control_id": ctrl.control_id,
-                "title": ctrl.title,
-                "status": result_status,
-                "detail": detail_msg,
-                "assessed_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-            }
+        # Set temporary environment paths
+        os.environ["HELM_AUDIT_LOG_PATH"] = temp_log_path
+        os.environ["HELM_CHECKPOINT_PATH"] = temp_checkpoint_path
 
-            with open(abs_evidence_path, "w") as f:
-                json.dump(evidence_data, f, indent=2)
+        try:
+            for ctrl in planned_controls:
+                # Reset workspace log and checkpoint copies to original live files before evaluating each control
+                live_log = os.path.join(self.workspace_root, "data/runtime/voice_command_audit.jsonl")
+                live_checkpoint = os.path.join(self.workspace_root, "coordination/checkpoints/voice_audit_checkpoint.json")
 
-            # 3. Calculate SHA-256 of evidence file
-            sha256_hash = hashlib.sha256()
-            with open(abs_evidence_path, "rb") as f:
-                for byte_block in iter(lambda: f.read(4096), b""):
-                    sha256_hash.update(byte_block)
-            computed_sha = sha256_hash.hexdigest()
+                if os.path.exists(live_log):
+                    shutil.copy2(live_log, temp_log_path)
+                elif os.path.exists(temp_log_path):
+                    os.remove(temp_log_path)
 
-            evidence_id = f"EVD-HAF-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{os.urandom(2).hex()[:4]}"
-            now_str = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-            fresh_str = (datetime.now(timezone.utc) + timedelta(hours=ctrl.freshness_period_hours)).strftime("%Y-%m-%dT%H:%M:%SZ")
+                if os.path.exists(live_checkpoint):
+                    shutil.copy2(live_checkpoint, temp_checkpoint_path)
+                elif os.path.exists(temp_checkpoint_path):
+                    os.remove(temp_checkpoint_path)
 
-            # Create evidence object
-            ev = Evidence(
-                evidence_id=evidence_id,
-                control_id=ctrl.control_id,
-                assessment_run_id=run_id,
-                source_type="FILE",
-                source_path=evidence_path,
-                source_system="hoch_agent_swarm",
-                generated_at=now_str,
-                collected_at=now_str,
-                sha256=computed_sha,
-                producer="assessment_runner",
-                validator="evidence_validator",
-                fresh_until=fresh_str,
-                status="UNVERIFIED",
-                metadata={"detail": detail_msg}
+                # 1. Execute probe
+                result_status, detail_msg = self._evaluate_control_status(ctrl)
+
+                # 2. Write structured JSON evidence file
+                evidence_path = os.path.join("coordination/audit_factory/evidence", f"{ctrl.control_id}_evidence.json")
+                abs_evidence_path = os.path.join(self.workspace_root, evidence_path)
+
+                evidence_data = {
+                    "control_id": ctrl.control_id,
+                    "title": ctrl.title,
+                    "status": result_status,
+                    "detail": detail_msg,
+                    "assessed_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                }
+
+                with open(abs_evidence_path, "w") as f:
+                    json.dump(evidence_data, f, indent=2)
+
+                # 3. Calculate SHA-256 of evidence file
+                sha256_hash = hashlib.sha256()
+                with open(abs_evidence_path, "rb") as f:
+                    for byte_block in iter(lambda: f.read(4096), b""):
+                        sha256_hash.update(byte_block)
+                computed_sha = sha256_hash.hexdigest()
+
+                evidence_id = f"EVD-HAF-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{os.urandom(2).hex()[:4]}"
+                now_str = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                fresh_str = (datetime.now(timezone.utc) + timedelta(hours=ctrl.freshness_period_hours)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+                # Create evidence object
+                ev = Evidence(
+                    evidence_id=evidence_id,
+                    control_id=ctrl.control_id,
+                    assessment_run_id=run_id,
+                    source_type="FILE",
+                    source_path=evidence_path,
+                    source_system="hoch_agent_swarm",
+                    generated_at=now_str,
+                    collected_at=now_str,
+                    sha256=computed_sha,
+                    producer="assessment_runner",
+                    validator="evidence_validator",
+                    fresh_until=fresh_str,
+                    status="UNVERIFIED",
+                    metadata={"detail": detail_msg}
+                )
+
+                # Validate evidence
+                is_valid = self.evidence_validator.validate_evidence(ev, root_dir=self.workspace_root)
+                self.circular_detector.add_edge(ctrl.control_id, ev.evidence_id)
+
+                if not is_valid or result_status in ("FAIL", "HOLD"):
+                    finding_status = "OPEN"
+                    finding_sev = ctrl.severity
+                    finding_title = f"Control validation failed for {ctrl.control_id}"
+                    if not is_valid:
+                        finding_desc = ev.metadata.get("validation_error", "Unknown validation error")
+                    else:
+                        finding_desc = detail_msg
+
+                    finding = self.findings_engine.create_finding(
+                        control_id=ctrl.control_id,
+                        run_id=run_id,
+                        title=finding_title,
+                        description=finding_desc,
+                        severity=finding_sev
+                    )
+                    open_findings.append(finding)
+
+                ctrl.status = result_status
+                collected_evidence.append(ev)
+                self.registry.index_evidence(ev.model_dump())
+
+            # Check for circularity
+            cycles = self.circular_detector.detect_cycles()
+            if cycles:
+                for cycle in cycles:
+                    finding = self.findings_engine.create_finding(
+                        control_id="HAF-IND-005",
+                        run_id=run_id,
+                        title="Circular evidence chain detected",
+                        description=f"Path: {' -> '.join(cycle)}",
+                        severity="CRITICAL"
+                    )
+                    open_findings.append(finding)
+                    for ctrl in planned_controls:
+                        if ctrl.control_id == "HAF-IND-005":
+                            ctrl.status = "FAIL"
+
+            # Evaluate certification posture
+            level = "L1" if planned_controls else "L0"
+            open_critical_count = sum(1 for f in open_findings if f.severity in ("CRITICAL", "HIGH"))
+
+            decision = self.evaluator.evaluate_certification(
+                scope=scope,
+                level=level,
+                controls=planned_controls,
+                evidences=collected_evidence,
+                open_critical_findings_count=open_critical_count
             )
 
-            # Validate evidence
-            is_valid = self.evidence_validator.validate_evidence(ev, root_dir=self.workspace_root)
-            self.circular_detector.add_edge(ctrl.control_id, ev.evidence_id)
+            self.registry.save_certification_decision(decision.model_dump())
 
-            if not is_valid or result_status in ("FAIL", "HOLD"):
-                finding_status = "OPEN"
-                finding_sev = ctrl.severity
-                finding_title = f"Control validation failed for {ctrl.control_id}"
-                if not is_valid:
-                    finding_desc = ev.metadata.get("validation_error", "Unknown validation error")
-                else:
-                    finding_desc = detail_msg
+            # Calculate counts
+            pass_count = sum(1 for c in planned_controls if c.status == "PASS")
+            hold_count = sum(1 for c in planned_controls if c.status == "HOLD")
+            fail_count = sum(1 for c in planned_controls if c.status == "FAIL")
 
-                finding = self.findings_engine.create_finding(
-                    control_id=ctrl.control_id,
-                    run_id=run_id,
-                    title=finding_title,
-                    description=finding_desc,
-                    severity=finding_sev
-                )
-                open_findings.append(finding)
+            summary = {
+                "run_id": run_id,
+                "profile": profile_name,
+                "scope": scope,
+                "timestamp": now_str,
+                "decision": decision.decision,
+                "findings_count": len(open_findings),
+                "evidence_count": len(collected_evidence),
+                "controls_count": len(planned_controls),
+                "pass_count": pass_count,
+                "hold_count": hold_count,
+                "fail_count": fail_count,
+                "reasons": [r.model_dump() for r in decision.reasons]
+            }
 
-            ctrl.status = result_status
-            collected_evidence.append(ev)
-            self.registry.index_evidence(ev.model_dump())
+            # Write run files atomically
+            self.registry._atomic_write(os.path.join(run_dir, "resolved_controls.json"), {"controls": [c.model_dump() for c in planned_controls]})
+            self.registry._atomic_write(os.path.join(run_dir, "findings.json"), {"findings": [f.model_dump() for f in open_findings]})
+            self.registry._atomic_write(os.path.join(run_dir, "certification_decision.json"), decision.model_dump())
+            self.registry._atomic_write(os.path.join(run_dir, "manifest.json"), summary)
 
-        # Check for circularity
-        cycles = self.circular_detector.detect_cycles()
-        if cycles:
-            for cycle in cycles:
-                finding = self.findings_engine.create_finding(
-                    control_id="HAF-IND-005",
-                    run_id=run_id,
-                    title="Circular evidence chain detected",
-                    description=f"Path: {' -> '.join(cycle)}",
-                    severity="CRITICAL"
-                )
-                open_findings.append(finding)
-                for ctrl in planned_controls:
-                    if ctrl.control_id == "HAF-IND-005":
-                        ctrl.status = "FAIL"
+            self.registry.save_assessment_run(run_id, summary)
 
-        # Evaluate certification posture
-        level = "L1" if planned_controls else "L0"
-        open_critical_count = sum(1 for f in open_findings if f.severity in ("CRITICAL", "HIGH"))
+        finally:
+            # Restore original environment paths
+            if orig_log_path is not None:
+                os.environ["HELM_AUDIT_LOG_PATH"] = orig_log_path
+            else:
+                os.environ.pop("HELM_AUDIT_LOG_PATH", None)
 
-        decision = self.evaluator.evaluate_certification(
-            scope=scope,
-            level=level,
-            controls=planned_controls,
-            evidences=collected_evidence,
-            open_critical_findings_count=open_critical_count
-        )
+            if orig_checkpoint_path is not None:
+                os.environ["HELM_CHECKPOINT_PATH"] = orig_checkpoint_path
+            else:
+                os.environ.pop("HELM_CHECKPOINT_PATH", None)
 
-        self.registry.save_certification_decision(decision.model_dump())
-
-        # Calculate counts
-        pass_count = sum(1 for c in planned_controls if c.status == "PASS")
-        hold_count = sum(1 for c in planned_controls if c.status == "HOLD")
-        fail_count = sum(1 for c in planned_controls if c.status == "FAIL")
-
-        summary = {
-            "run_id": run_id,
-            "profile": profile_name,
-            "scope": scope,
-            "timestamp": now_str,
-            "decision": decision.decision,
-            "findings_count": len(open_findings),
-            "evidence_count": len(collected_evidence),
-            "controls_count": len(planned_controls),
-            "pass_count": pass_count,
-            "hold_count": hold_count,
-            "fail_count": fail_count,
-            "reasons": [r.model_dump() for r in decision.reasons]
-        }
-
-        # Write run files atomically
-        self.registry._atomic_write(os.path.join(run_dir, "resolved_controls.json"), {"controls": [c.model_dump() for c in planned_controls]})
-        self.registry._atomic_write(os.path.join(run_dir, "findings.json"), {"findings": [f.model_dump() for f in open_findings]})
-        self.registry._atomic_write(os.path.join(run_dir, "certification_decision.json"), decision.model_dump())
-        self.registry._atomic_write(os.path.join(run_dir, "manifest.json"), summary)
-
-        self.registry.save_assessment_run(run_id, summary)
+            # Cleanup temporary directory
+            try:
+                shutil.rmtree(temp_workspace_dir)
+            except Exception:
+                pass
 
         return summary

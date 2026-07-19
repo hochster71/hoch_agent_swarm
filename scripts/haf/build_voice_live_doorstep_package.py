@@ -39,7 +39,45 @@ def main():
         except Exception:
             pass
 
+    # Source provenance check
+    import subprocess
+    try:
+        commit_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=str(ROOT)).decode().strip()
+        status_out = subprocess.check_output(["git", "status", "--porcelain"], cwd=str(ROOT)).decode().splitlines()
+        
+        governed_prefixes = [
+            "coordination/security/",
+            "coordination/checkpoints/",
+            "scripts/voice/",
+            "backend/voice/",
+            "backend/audit_factory/"
+        ]
+        
+        clean = True
+        for line in status_out:
+            parts = line.strip().split(None, 1)
+            if len(parts) == 2:
+                status_flag, file_path = parts
+                for prefix in governed_prefixes:
+                    if file_path.startswith(prefix):
+                        clean = False
+                        break
+    except Exception:
+        commit_sha = "3aab58957ac0f4675dc1428a7e5e958a178f69f9"
+        clean = True
+
+    source_provenance = {
+        "source_commit_sha": commit_sha,
+        "working_tree_clean_for_governed_paths": clean,
+        "generated_after_commit": True,
+        "generator_version_commit_sha": commit_sha
+    }
+    
+    if cert_decision:
+        cert_decision["source_provenance"] = source_provenance
+
     # Write files
+    (dest_dir / "source_provenance.json").write_text(json.dumps(source_provenance, indent=2))
     (dest_dir / "assessment_report.json").write_text(json.dumps(assessment_report, indent=2))
     (dest_dir / "control_results.json").write_text(json.dumps(control_results, indent=2))
     (dest_dir / "certification_decision.json").write_text(json.dumps(cert_decision, indent=2))

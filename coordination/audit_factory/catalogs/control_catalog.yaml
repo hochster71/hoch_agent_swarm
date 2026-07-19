@@ -880,6 +880,21 @@ controls:
     failure_effect: FAIL
     status: NOT_ASSESSED
 
+  - control_id: HAF-VAUD-006
+    version: 1.0.0
+    level: L2
+    domain: Voice Security
+    family: Audit Logging
+    title: External ledger checkpoint alignment
+    requirement: The live Epoch 2 audit log aligns with an externally anchored and immutable checkpoint.
+    rationale: "Added in July 2026 to track independent checkpoint anchoring separately from local verifier execution. This prevents denominator drift and validates that the checkpoint is not bypassed or stored only locally."
+    severity: CRITICAL
+    mandatory: true
+    assessment_procedure_ids: [AP-VOICE-015]
+    freshness_period_hours: 24
+    failure_effect: FAIL
+    status: NOT_ASSESSED
+
   - control_id: HAF-VAUD-003
     version: 1.0.0
     level: L2

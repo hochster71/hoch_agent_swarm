@@ -1,0 +1,43 @@
+profile:
+  name: HELM Voice Overlay Profile
+  description: Assurance controls for Siri, Alexa, and Web Voice Gateway interface.
+  inherits: null
+  active_control_ids:
+    - HAF-VIAM-001
+    - HAF-VIAM-002
+    - HAF-VIAM-003
+    - HAF-VAUTH-001
+    - HAF-VAUTH-002
+    - HAF-VAUTH-003
+    - HAF-VAUTH-004
+    - HAF-VINP-001
+    - HAF-VINP-002
+    - HAF-VINP-003
+    - HAF-VPRV-001
+    - HAF-VPRV-002
+    - HAF-VPRV-003
+    - HAF-VAUD-001
+    - HAF-VAUD-002
+    - HAF-VAUD-004
+    - HAF-VAUD-005
+    - HAF-VAUD-006
+    - HAF-VAUD-003
+    - HAF-VAVL-001
+    - HAF-VAVL-002
+    - HAF-VAVL-003
+    - HAF-VAVL-004
+    - HAF-VSIR-001
+    - HAF-VSIR-002
+    - HAF-VSIR-003
+    - HAF-VSIR-004
+    - HAF-VSIR-005
+    - HAF-VALX-001
+    - HAF-VALX-002
+    - HAF-VALX-003
+    - HAF-VALX-004
+    - HAF-VALX-005
+    - HAF-VALX-006
+    - HAF-VETE-001
+    - HAF-VETE-002
+    - HAF-VETE-003
+    - HAF-VETE-004
