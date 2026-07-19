@@ -1,0 +1,12 @@
+{
+  "name": "hff-client-concentration",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HFF — Client Revenue Concentration Report: deterministic invoice CSV -> per-client revenue share, HHI, effective client count, monthly series, and payment timing (XLSX + one-page PDF) + Stripe one-time checkout scaffold. Organizational tooling only, not advice.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

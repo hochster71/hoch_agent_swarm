@@ -1,0 +1,21 @@
+Invoice Date,Client,Amount,Invoice Number,Paid Date,Status
+2025-01-06,Acme Corp,4200.00,INV-1001,2025-01-20,paid
+2025-01-14,Northwind Ltd,1800.00,INV-1002,2025-02-13,paid
+2025-01-28,Bluebird Studio,950.00,INV-1003,2025-02-06,paid
+2025-02-05,ACME CORPORATION,4200.00,INV-1004,2025-02-19,paid
+2025-02-18,Northwind Ltd,1800.00,INV-1005,2025-03-25,paid
+2025-02-24,"Cedar & Sons, LLC",640.00,INV-1006,,open
+2025-03-04,Acme Corp,"$5,100.00",INV-1007,2025-03-18,paid
+2025-03-11,Bluebird Studio,950.00,INV-1008,2025-03-30,paid
+2025-03-20,Northwind Ltd,1800.00,INV-1009,,open
+2025-04-02,Acme Corp,5100.00,INV-1010,2025-04-16,paid
+2025-04-09,Cedar and Sons LLC,640.00,INV-1011,2025-05-20,paid
+2025-04-22,Driftwood Media,(300.00),CR-2001,,credit
+2025-05-06,Acme Corp,5100.00,INV-1012,2025-05-19,paid
+2025-05-13,Bluebird Studio,1100.00,INV-1013,,open
+2025-05-27,Northwind Ltd,1800.00,INV-1014,2025-06-30,paid
+2025-06-03,Acme Corp,5400.00,INV-1015,2025-06-17,paid
+2025-06-17,Evergreen Labs,2750.00,INV-1016,2025-06-28,paid
+notadate,Ghost Client,100.00,INV-9999,,open
+2025-06-25,,500.00,INV-8888,,open
+2025-06-28,Bad Amount Co,abc,INV-7777,,open
