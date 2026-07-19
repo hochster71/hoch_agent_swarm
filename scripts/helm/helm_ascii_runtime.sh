@@ -62,19 +62,22 @@ while true; do
   now="$(date '+%Y-%m-%d %H:%M:%S %Z')"
   uptime="$(uptime | sed 's/.*up //' | sed 's/, [0-9]* user.*//')"
 
-  run_id="$(read_json "$BUS" '.active_run_id // .run_id')"
-  bus_state="$(read_json "$BUS" '.status // .runtime_status')"
-  cycle="$(read_json "$BUS" '.cycle // .current_cycle' '0')"
+  latest_run="$(ls -td "$ROOT/coordination/audit_factory/runs"/HAF-RUN-* 2>/dev/null | head -n1)"
+  HAF_MANIFEST="${latest_run:-none}/manifest.json"
+
+  run_id="$(read_json "$HAF_MANIFEST" '.run_id')"
+  bus_state="$(read_json "$BUS" '.lanes.ag_ide.pipeline.current_stage // .link_status')"
+  cycle="$(wc -l < "$ROOT/coordination/jspace/cycles.jsonl" 2>/dev/null | xargs || printf 0)"
 
   queue_total="$(read_json "$QUEUE" 'if type=="array" then length else (.tasks | length) end' '0')"
   running="$(read_json "$QUEUE" '[.. | objects | select((.status? // "") == "RUNNING")] | length' '0')"
   blocked="$(read_json "$QUEUE" '[.. | objects | select((.status? // "") == "BLOCKED")] | length' '0')"
 
-  haf_decision="$(read_json "$HAF" '.decision // .status')"
-  haf_pass="$(read_json "$HAF" '.summary.pass // .pass_count' '0')"
-  haf_candidate="$(read_json "$HAF" '.summary.pass_candidate // .pass_candidate_count' '0')"
-  haf_hold="$(read_json "$HAF" '.summary.hold // .hold_count' '0')"
-  haf_fail="$(read_json "$HAF" '.summary.fail // .fail_count' '0')"
+  haf_decision="$(read_json "$HAF_MANIFEST" '.decision')"
+  haf_pass="$(read_json "$HAF_MANIFEST" '.pass_count' '0')"
+  haf_candidate="$(read_json "$HAF_MANIFEST" '.pass_candidate_count' '0')"
+  haf_hold="$(read_json "$HAF_MANIFEST" '.hold_count' '0')"
+  haf_fail="$(read_json "$HAF_MANIFEST" '.fail_count' '0')"
 
   git_sha="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || printf 'UNKNOWN')"
 
