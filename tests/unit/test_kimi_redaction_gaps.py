@@ -1,0 +1,122 @@
+"""Adversarial coverage tests for the Kimi safe-handoff redactor.
+
+Context: `scripts/kimi/make_safe_handoff.py` was built and smoke-tested by a separate
+agent session on 2026-07-20. The smoke test passed. This file is the independent
+verification, and it FAILS — the redactor ships five live-format credential classes.
+
+These tests are written to FAIL until the gaps are closed. That is deliberate: a red
+test is the honest representation of a known hole. Do not skip them to get green.
+
+WHY THIS MATTERS MORE THAN A NORMAL COVERAGE GAP
+------------------------------------------------
+This redactor is the ONLY barrier between the monorepo and an external agent's
+workspace (`~/Documents/kimi/workspace/_inbox_from_helm/`). A miss is not a bug that
+degrades output — it is a credential leaving the trust boundary. And the packager
+currently reports `DRY-RUN: OK` on a file containing all five, because:
+
+    RESIDUAL_FORBIDDEN ⊂ SECRET_SPECS families
+
+The post-redaction residual scan reuses a strict subset of the redactor's own pattern
+families. It therefore cannot detect a class the redactor does not know. The system has
+two checks but only one hypothesis about what a secret looks like, so "fail-closed" is
+only as wide as that hypothesis.
+
+All fixtures below are syntactically valid but FAKE. No real credential appears here.
+"""
+from __future__ import annotations
+
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+PACKAGER = ROOT / "scripts" / "kimi" / "make_safe_handoff.py"
+
+pytestmark = pytest.mark.skipif(
+    not PACKAGER.exists(), reason="kimi packager not present in this checkout"
+)
+
+# (id, fixture line, why it matters) — every value is fake.
+LEAKY = [
+    ("openai_project_key",
+     "sk-proj-AbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcd",
+     "openai_key pattern requires 20+ alnum immediately after 'sk-'; the 'proj-' "
+     "segment contains a hyphen, so the match fails and the key ships"),
+    ("google_api_key",
+     "AIzaSyD-1234567890abcdefghijklmnopqrstu",
+     "no AIza pattern exists; Google/Firebase keys are unhandled"),
+    ("sendgrid_key",
+     "SG.AbCdEfGhIjKlMnOpQr.1234567890abcdefghijklmnopqrstuvwxyz12",
+     "no SG. pattern exists"),
+    ("npm_token",
+     "npm_AbCdEfGhIjKlMnOpQrStUvWxYz1234567890",
+     "no npm_ pattern exists"),
+    ("digitalocean_token",
+     "dop_v1_abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678",
+     "no dop_v1_ pattern exists"),
+]
+
+
+def _pack(tmp_path: Path, content: str) -> str:
+    """Run the packager in dry-run against a file and return combined output."""
+    probe = ROOT / "_pytest_redaction_probe.txt"
+    probe.write_text(content, encoding="utf-8")
+    try:
+        r = subprocess.run(
+            [sys.executable, str(PACKAGER), probe.name, "--dry-run"],
+            cwd=ROOT, capture_output=True, text=True, timeout=60,
+        )
+        return (r.stdout or "") + (r.stderr or "")
+    finally:
+        probe.unlink(missing_ok=True)
+
+
+@pytest.mark.parametrize("name,fixture,why", LEAKY, ids=[x[0] for x in LEAKY])
+def test_credential_class_is_redacted(tmp_path, name, fixture, why):
+    """Each known credential format must be redacted or refuse the pack."""
+    out = _pack(tmp_path, f"CONFIG = '{fixture}'\n")
+    redacted = "REDACTED" in out
+    refused = "DRY-RUN: OK" not in out
+    assert redacted or refused, (
+        f"{name} passed through un-redacted and the pack was approved.\n"
+        f"reason: {why}"
+    )
+
+
+def test_residual_scan_is_independent_of_redactor():
+    """The post-redaction check must not reuse only the redactor's own hypotheses.
+
+    A second check drawn from the same pattern families provides no additional
+    assurance: anything the redactor cannot see, the residual scan cannot see either.
+    """
+    src = PACKAGER.read_text(encoding="utf-8")
+    residual_block = src.split("RESIDUAL_FORBIDDEN")[1].split("]")[0]
+    # A genuinely independent check would look for high-entropy strings, or for any
+    # token matching a broad credential shape, rather than the same five families.
+    has_entropy_check = any(
+        k in src for k in ("entropy", "shannon", "base64_blob", "HIGH_ENTROPY")
+    )
+    families = ("sk_live_", "sk-ant-", "ghp_", "PRIVATE KEY", "AKIA")
+    only_known_families = all(f in residual_block for f in families)
+    assert has_entropy_check, (
+        "RESIDUAL_FORBIDDEN reuses a subset of SECRET_SPECS families "
+        f"(only_known_families={only_known_families}) and there is no entropy-based "
+        "backstop. Add a generic high-entropy / unknown-token check so the second "
+        "gate can catch classes the first gate does not model."
+    )
+
+
+def test_concatenated_secret_is_known_limitation():
+    """Documented, not fixed: a split literal defeats regex redaction.
+
+    Kept as a live test so the limitation stays visible rather than becoming folklore.
+    Static regex cannot see through string concatenation; the mitigation is the
+    deny-list (never pack files that build credentials), not a better pattern.
+    """
+    out = _pack(Path("."), 'S = "".join(["sk_l","ive_","AbCdEfGhIjKlMnOpQrStUv"])\n')
+    assert "DRY-RUN: OK" in out, (
+        "behaviour changed — concatenated-secret handling now differs; "
+        "re-evaluate whether the deny-list mitigation is still the right answer"
+    )

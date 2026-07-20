@@ -45,6 +45,7 @@ SKIP_SUFFIXES = {
 }
 
 # Secret patterns: (name, regex, replacement)
+# More specific families first. Order matters for overlapping prefixes (sk-ant / sk-proj / sk-).
 SECRET_SPECS: list[tuple[str, re.Pattern[str], str]] = [
     ("aws_access_key", re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "REDACTED_AWS_ACCESS_KEY"),
     ("aws_secret", re.compile(r"(?i)(aws_secret_access_key|secret_access_key)\s*[=:]\s*['\"]?[A-Za-z0-9/+=]{30,}"), r"\1=REDACTED_AWS_SECRET"),
@@ -55,9 +56,15 @@ SECRET_SPECS: list[tuple[str, re.Pattern[str], str]] = [
     ("stripe_live", re.compile(r"\bsk_live_[A-Za-z0-9]{16,}\b"), "REDACTED_STRIPE_LIVE"),
     ("stripe_test", re.compile(r"\bsk_test_[A-Za-z0-9]{16,}\b"), "REDACTED_STRIPE_TEST"),
     ("stripe_pk_live", re.compile(r"\bpk_live_[A-Za-z0-9]{16,}\b"), "REDACTED_STRIPE_PK_LIVE"),
-    ("openai_key", re.compile(r"\bsk-[A-Za-z0-9]{20,}\b"), "REDACTED_OPENAI_STYLE_KEY"),
+    # OpenAI project keys use hyphens after sk- (sk-proj-...); classic sk- keys are alnum only.
+    ("openai_project_key", re.compile(r"\bsk-proj-[A-Za-z0-9\-_]{16,}\b"), "REDACTED_OPENAI_PROJECT_KEY"),
     ("anthropic_key", re.compile(r"\bsk-ant-[A-Za-z0-9\-_]{20,}\b"), "REDACTED_ANTHROPIC_KEY"),
+    ("openai_key", re.compile(r"\bsk-[A-Za-z0-9]{20,}\b"), "REDACTED_OPENAI_STYLE_KEY"),
     ("xai_key", re.compile(r"\bxai-[A-Za-z0-9]{20,}\b"), "REDACTED_XAI_KEY"),
+    ("google_api_key", re.compile(r"\bAIza[0-9A-Za-z\-_]{30,}\b"), "REDACTED_GOOGLE_API_KEY"),
+    ("sendgrid_key", re.compile(r"\bSG\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\b"), "REDACTED_SENDGRID_KEY"),
+    ("npm_token", re.compile(r"\bnpm_[A-Za-z0-9]{20,}\b"), "REDACTED_NPM_TOKEN"),
+    ("digitalocean_token", re.compile(r"\bdop_v1_[a-fA-F0-9]{32,}\b"), "REDACTED_DO_TOKEN"),
     ("vercel_token", re.compile(r"(?i)(vercel[_-]?token)\s*[=:]\s*['\"]?[A-Za-z0-9_]{20,}"), r"\1=REDACTED_VERCEL_TOKEN"),
     ("bearer", re.compile(r"(?i)bearer\s+[A-Za-z0-9_\-\.=]{20,}"), "Bearer REDACTED_BEARER"),
     ("private_key_block", re.compile(r"-----BEGIN[ A-Z]*PRIVATE KEY-----[\s\S]*?-----END[ A-Z]*PRIVATE KEY-----"), "-----BEGIN PRIVATE KEY-----\nREDACTED_PRIVATE_KEY\n-----END PRIVATE KEY-----"),
@@ -68,14 +75,38 @@ SECRET_SPECS: list[tuple[str, re.Pattern[str], str]] = [
     ("vca_token", re.compile(r"\bvca_[A-Za-z0-9]{20,}\b"), "REDACTED_VCA_TOKEN"),
 ]
 
-# Residual forbidden after redaction (must not remain)
+# Known-family residual patterns (defense in depth — still not the only residual gate).
 RESIDUAL_FORBIDDEN = [
     re.compile(r"\bsk_live_[A-Za-z0-9]{10,}\b"),
+    re.compile(r"\bsk_test_[A-Za-z0-9]{10,}\b"),
+    re.compile(r"\bsk-proj-[A-Za-z0-9\-_]{10,}\b"),
     re.compile(r"\bsk-ant-[A-Za-z0-9\-_]{10,}\b"),
     re.compile(r"\bghp_[A-Za-z0-9]{10,}\b"),
+    re.compile(r"\bAIza[0-9A-Za-z\-_]{20,}\b"),
+    re.compile(r"\bSG\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\b"),
+    re.compile(r"\bnpm_[A-Za-z0-9]{16,}\b"),
+    re.compile(r"\bdop_v1_[a-fA-F0-9]{32,}\b"),
     re.compile(r"-----BEGIN[ A-Z]*PRIVATE KEY-----"),
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
 ]
+
+# Independent residual gate (NOT a subset of SECRET_SPECS): high-entropy unknown tokens.
+# Fail-closed prefers false positives over shipping credentials the redactor never modeled.
+HIGH_ENTROPY_MIN_LEN = 28
+HIGH_ENTROPY_THRESHOLD = 3.5  # bits/char on stripped token body
+_HIGH_ENTROPY_TOKEN = re.compile(r"[A-Za-z0-9_\-\.]{28,}")
+_ENTROPY_ALLOW_PREFIXES = (
+    "REDACTED",
+    "http",
+    "file:",
+    "sha256",
+    "sha1",
+    "md5",
+    "uuid",
+    "test_",
+    "example",
+    "placeholder",
+)
 
 
 @dataclass
@@ -196,7 +227,12 @@ def redact_text(text: str) -> tuple[str, list[str]]:
     for name, pattern, repl in SECRET_SPECS:
         new_out, n = pattern.subn(repl, out)
         if n:
-            hits.append(f"{name}x{n}")
+            # Include REDACTED marker so scanners/tests can see replacements in reports.
+            if isinstance(repl, str) and "REDACTED" in repl and "\\" not in repl:
+                tag = repl
+            else:
+                tag = "REDACTED"
+            hits.append(f"{name}x{n}:{tag}")
             out = new_out
     return out, hits
 
@@ -212,12 +248,67 @@ def apply_token_map(text: str, pairs: list[tuple[str, str]]) -> tuple[str, int]:
     return out, count
 
 
+def shannon_entropy(s: str) -> float:
+    """Shannon entropy in bits/char — independent residual hypothesis (not pattern families)."""
+    if not s:
+        return 0.0
+    from collections import Counter
+    import math
+
+    counts = Counter(s)
+    n = len(s)
+    return -sum((c / n) * math.log2(c / n) for c in counts.values())
+
+
+def is_high_entropy_token(token: str) -> bool:
+    """True if token looks like an unknown credential / base64_blob-ish secret."""
+    if "REDACTED" in token:
+        return False
+    lower = token.lower()
+    if any(lower.startswith(p) or p in lower[:24] for p in _ENTROPY_ALLOW_PREFIXES):
+        return False
+    # Strip structural separators; score the body.
+    body = re.sub(r"[_\-\.]", "", token)
+    if len(body) < HIGH_ENTROPY_MIN_LEN:
+        return False
+    # Require mix of letter classes or letter+digit (pure words fail closed less often).
+    has_digit = any(c.isdigit() for c in body)
+    has_alpha = any(c.isalpha() for c in body)
+    if not (has_digit and has_alpha):
+        return False
+    # Avoid mostly-repeated padding
+    if len(set(body)) < 8:
+        return False
+    return shannon_entropy(body) >= HIGH_ENTROPY_THRESHOLD
+
+
+def residual_high_entropy_tokens(text: str) -> list[str]:
+    """Independent fail-closed gate: HIGH_ENTROPY / unknown-token backstop."""
+    hits: list[str] = []
+    for tok in _HIGH_ENTROPY_TOKEN.findall(text):
+        if is_high_entropy_token(tok):
+            hits.append(f"HIGH_ENTROPY:{tok[:16]}…")
+    return hits
+
+
 def residual_secrets(text: str) -> list[str]:
+    """Post-redaction residual scan.
+
+    Two independent hypotheses:
+      1) known-family regex (RESIDUAL_FORBIDDEN) — may overlap SECRET_SPECS
+      2) shannon entropy / HIGH_ENTROPY unknown-token backstop — catches classes
+         the redactor never modeled
+    """
     found: list[str] = []
     for pat in RESIDUAL_FORBIDDEN:
         m = pat.search(text)
         if m:
-            found.append(m.group(0)[:48])
+            snippet = m.group(0)[:48]
+            if "REDACTED" not in snippet:
+                found.append(snippet)
+    for hit in residual_high_entropy_tokens(text):
+        if hit not in found:
+            found.append(hit)
     return found
 
 
