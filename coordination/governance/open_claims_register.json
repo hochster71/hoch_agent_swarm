@@ -450,19 +450,20 @@
     {
       "claim_id": "GOV-002",
       "title": "EDR-0001 identifier collision",
-      "status": "OPEN",
+      "status": "CLOSED",
       "priority": "P2",
       "scope": [
-        "docs/helm/edr/EDR-0001-executive-runtime-four-engines.md",
+        "docs/helm/edr/EDR-0000-executive-runtime-four-engines.md",
         "docs/helm/edr/EDR-0001-runtime-bridge.md"
       ],
       "evidence": {
+        "commit_sha": "ae77066ea4144e59002237ebfe6fbe147b1981cd",
         "found_by": "tests/unit/test_governance_preclaim.py::test_edr_ids_are_unique (failing)",
-        "detail": "Two decisions share the identifier EDR-0001, so citing 'EDR-0001' resolves to nothing.",
+        "detail": "Renamed EDR-0001-executive-runtime-four-engines.md to EDR-0000-executive-runtime-four-engines.md per EDR-0003 §13-15, resolving the collision.",
         "recurrence": "The same defect class recurred in this register's own revision 1 (TEL-004 with three meanings) within hours."
       },
-      "blocking": "Traceability only.",
-      "next_action": "Renumber through normal governance; preserve citation history rather than rewriting",
+      "blocking": null,
+      "next_action": "None — resolved by renumbering to EDR-0000 in commit ae77066ea4144e59002237ebfe6fbe147b1981cd.",
       "owner": "Unassigned"
     },
     {
@@ -661,7 +662,7 @@
         "path": "coordination/goal/goal_state.json",
         "base_commit": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
         "committed_blob_sha256": "4e4d347fb27eef9ba1d083eaf8cd319008079d8b43f6f2d6bc525c3d3280b680",
-        "working_tree_sha256": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "working_tree_sha256": "440162396d78d8b00d02f1b7f8f46f4af4f5ba9de3289cb69fe103836d0736f2",
         "tracked": true,
         "dirty": true,
         "note": "LIVE FILE — a running process rewrites it. working_tree_sha256 may already be stale. Any verification citing this record must re-hash and compare. Under SNAPSHOT_COPY the live source is NOT the promotion oracle; the pinned snapshot is.",
@@ -672,7 +673,7 @@
         "path": "coordination/goal/build_to_goal_status.json",
         "base_commit": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
         "committed_blob_sha256": "a71f89df6e8c4ac40845dfa826a6e35023c073fea78bd74c7770920243374bbc",
-        "working_tree_sha256": "09a3d1e14cddd790c6044395178df683933ebef76e6e9910f7c5696dc5d0a3b9",
+        "working_tree_sha256": "0161af5589b86366f4d7cbd2ff38e32a0a9e12194fcb793b16103a2b0421d14b",
         "tracked": true,
         "dirty": true,
         "note": "LIVE FILE. Committed version says GOAL_REACHED/100%; working tree says RUNNING/90% with N3_VERIFY on HOLD. The divergence is the finding. Under SNAPSHOT_COPY the live source is NOT the promotion oracle; the pinned snapshot is.",
@@ -719,27 +720,27 @@
       {
         "source_path": "coordination/goal/goal_state.json",
         "source_live": true,
-        "capture_started_at": "2026-07-20T17:50:52Z",
-        "source_sha256_at_capture": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "capture_started_at": "2026-07-20T18:03:59Z",
+        "source_sha256_at_capture": "440162396d78d8b00d02f1b7f8f46f4af4f5ba9de3289cb69fe103836d0736f2",
         "snapshot_path": "coordination/governance/oracle_snapshots/goal_state.json",
-        "snapshot_sha256": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "snapshot_sha256": "440162396d78d8b00d02f1b7f8f46f4af4f5ba9de3289cb69fe103836d0736f2",
         "capture_method": "read_hash_read",
         "attempts": 1,
         "post_capture_source_drift_allowed": true,
-        "post_capture_source_sha256": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "post_capture_source_sha256": "440162396d78d8b00d02f1b7f8f46f4af4f5ba9de3289cb69fe103836d0736f2",
         "post_capture_drift_observed": false
       },
       {
         "source_path": "coordination/goal/build_to_goal_status.json",
         "source_live": true,
-        "capture_started_at": "2026-07-20T17:50:52Z",
-        "source_sha256_at_capture": "11aafaa833d7800e7a7b2c2f0a28082e83add14c5ba54cc8140fe18890e7894f",
+        "capture_started_at": "2026-07-20T18:03:59Z",
+        "source_sha256_at_capture": "0161af5589b86366f4d7cbd2ff38e32a0a9e12194fcb793b16103a2b0421d14b",
         "snapshot_path": "coordination/governance/oracle_snapshots/build_to_goal_status.json",
-        "snapshot_sha256": "11aafaa833d7800e7a7b2c2f0a28082e83add14c5ba54cc8140fe18890e7894f",
+        "snapshot_sha256": "0161af5589b86366f4d7cbd2ff38e32a0a9e12194fcb793b16103a2b0421d14b",
         "capture_method": "read_hash_read",
         "attempts": 1,
         "post_capture_source_drift_allowed": true,
-        "post_capture_source_sha256": "11aafaa833d7800e7a7b2c2f0a28082e83add14c5ba54cc8140fe18890e7894f",
+        "post_capture_source_sha256": "0161af5589b86366f4d7cbd2ff38e32a0a9e12194fcb793b16103a2b0421d14b",
         "post_capture_drift_observed": false
       }
     ]

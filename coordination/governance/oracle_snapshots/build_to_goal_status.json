@@ -1,8 +1,8 @@
 {
   "schema": "HELM_BUILD_TO_GOAL_STATUS_v1",
-  "updated_at": "2026-07-20T17:50:26Z",
-  "state": "NEEDS_FOUNDER",
-  "detail": "Autonomous swarm stalled at 90.0% after 3 cycles \u2014 remaining work needs a founder decision (never a code fix).\nAdvanced to 90.0%. Still open: ['N3_VERIFY'].",
+  "updated_at": "2026-07-20T18:03:52Z",
+  "state": "RUNNING",
+  "detail": "working N3_VERIFY",
   "percent_to_goal": 90.0,
   "nodes": {
     "N0_CONSTITUTION": "DONE",
