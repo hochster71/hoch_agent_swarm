@@ -110,20 +110,63 @@ def main():
         "commit_gpgsign": gpg_sign_out if gpg_sign_code == 0 else "UNSET",
     }
 
-    # 6. Analyze Impersonation Vulnerability
-    vulns = []
-    if sign_key_code != 0 or sign_key_out == "":
-        vulns.append("COMMITS_UNSIGNED: No commit signing configured. Any agent/process in the shared account can commit as 'Michael Hoch'.")
+    # 6. Non-destructive Custody Probes
+    keychain_prompt_required = "UNKNOWN"
+    remote_cred_reuse = "UNKNOWN — NOT TESTED"
     
-    if len(ssh_keys) > 0:
-        insecure_ssh = [k["name"] for k in ssh_keys if not k["secure_permissions"]]
-        if insecure_ssh:
-            vulns.append(f"INSECURE_SSH_PERMISSIONS: Private keys have overly broad permissions: {insecure_ssh}")
-            
-    if agent_keys_present:
-        vulns.append("SSH_AGENT_SOCKET_EXPOSED: Active keys are held in ssh-agent. Any process with access to SSH_AUTH_SOCK environment variable can sign git/network operations using the human's identity.")
+    # Probe Git Keychain credentials (requires no password display)
+    try:
+        p = subprocess.Popen(["git", "credential", "fill"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stdout_data, _ = p.communicate(input="protocol=https\nhost=github.com\n\n", timeout=3)
+        if p.returncode == 0:
+            has_password = any(line.startswith("password=") for line in stdout_data.splitlines())
+            if has_password:
+                keychain_prompt_required = "NO_PROMPT_REQUIRED"
+                remote_cred_reuse = "OBSERVED POSSIBLE"
+            else:
+                keychain_prompt_required = "PROMPT_REQUIRED_OR_EMPTY"
+                remote_cred_reuse = "OBSERVED BLOCKED"
+        else:
+            keychain_prompt_required = "PROMPT_FAILED_OR_CANCELLED"
+            remote_cred_reuse = "UNKNOWN"
+    except subprocess.TimeoutExpired:
+        p.kill()
+        keychain_prompt_required = "TIMEOUT_EXPIRED"
+        remote_cred_reuse = "UNKNOWN"
+    except Exception:
+        keychain_prompt_required = "PROBE_ERROR"
+        remote_cred_reuse = "UNKNOWN"
 
-    env_keys = []
+    # Probe SSH authentication to GitHub (non-destructive)
+    ssh_code, ssh_out, ssh_err = _run("ssh", "-T", "-o", "ConnectTimeout=3", "-o", "StrictHostKeyChecking=no", "git@github.com")
+    ssh_usability = "UNKNOWN"
+    if "Permission denied" in ssh_err or "Permission denied" in ssh_out:
+        ssh_usability = "UNUSABLE_FOR_GITHUB (publickey denied)"
+    elif "successfully authenticated" in ssh_err or "successfully authenticated" in ssh_out:
+        ssh_usability = "OBSERVED POSSIBLE"
+    else:
+        ssh_usability = f"UNKNOWN (code={ssh_code})"
+
+    # Probe if SSH key is Secure Enclave backed
+    se_protection = "UNKNOWN"
+    if ssh_dir.exists():
+        key_files = list(ssh_dir.glob("id_*"))
+        if any(not k.name.endswith(".pub") for k in key_files):
+            se_protection = "ABSENT (standard files on disk)"
+        else:
+            se_protection = "NO_PRIVATE_KEYS_FOUND"
+
+    findings = {
+        "LOCAL_AUTHOR_IMPERSONATION": "OBSERVED POSSIBLE" if (sign_key_code != 0 or sign_key_out == "") else "OBSERVED PROTECTED",
+        "REMOTE_CREDENTIAL_REUSE": remote_cred_reuse,
+        "KEYCHAIN_ACCESS_BOUNDARY": keychain_prompt_required,
+        "SSH_PRIVATE_KEY_USABILITY": ssh_usability,
+        "SECURE_ENCLAVE_PROTECTION": se_protection,
+    }
+    report["evidence_scoped_findings"] = findings
+
+    # Check for plaintext keys in .env (by count, not names)
+    env_keys_count = 0
     env_file = ROOT / ".env"
     if env_file.exists():
         for line in env_file.read_text().splitlines():
@@ -131,18 +174,20 @@ def main():
             if line and "=" in line and not line.startswith("#"):
                 k, _ = line.split("=", 1)
                 if any(x in k for x in ["KEY", "SECRET", "PASSWORD", "TOKEN"]):
-                    env_keys.append(k)
+                    env_keys_count += 1
     
-    if env_keys:
-        vulns.append(f"PLAINTEXT_KEYS_IN_ENV: Plaintext secrets stored in .env: {env_keys}. Any process in the shared account can read these.")
-
-    report["impersonation_vulnerabilities"] = vulns
+    report["key_custody_inventory"]["plaintext_secrets_in_env"] = {
+        "exists": env_keys_count > 0,
+        "count": env_keys_count
+    }
 
     # 7. Write the custody report
     OUT.write_text(json.dumps(report, indent=2) + "\n")
     print(f"ACTOR-F3 custody report written to {OUT.relative_to(ROOT)}")
-    for v in vulns:
-        print(f"  ⚠ IMPERSONATION RISK: {v}")
+    print("Evidence-Scoped Findings:")
+    for k, v in findings.items():
+        print(f"  {k:28s} {v}")
+    print(f"  PLAINTEXT_KEYS_IN_ENV        COUNT: {env_keys_count}")
 
 if __name__ == "__main__":
     main()
