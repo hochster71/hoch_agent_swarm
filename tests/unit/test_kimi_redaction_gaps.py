@@ -197,6 +197,82 @@ def test_credential_named_variable_defeats_benign_allowlist(tmp_path, name, fixt
     )
 
 
+# --- context rule is Python-syntax-only -------------------------------------
+#
+# Verified 2026-07-20 after commit 9324f95e. The context-beats-shape fix is correct and
+# closes the Python case: `WEBHOOK_SECRET = "<64hex>"` is now redacted.
+#
+# It does not reach non-Python assignment syntax. `cred_name_assign` matches
+# `NAME = "value"`; it does not match YAML `key: value`, JSON `"key": "value"`, or
+# TOML/env `key = value`. Those are where deployment secrets actually live.
+#
+# Calibration, verified rather than assumed: a real `.env` IS blocked by deny_paths.txt
+# on filename (`**/.env`, `**/*secret*`, `**/*credential*`). Defense in depth works for
+# canonically-named files. The residual risk is ordinary config files — `config.yaml`,
+# `settings.json`, `app.toml` — which match no deny pattern and are exactly the kind of
+# file handed to another agent for context.
+#
+# Fix shape: make the credential-name rule format-agnostic — a credential-ish key
+# followed by `[:=]` and a value, independent of quoting and language.
+
+CONFIG_FORMAT_LEAK = [
+    # yaml and toml VERIFIED HANDLED (cred_name_assign fires) — kept as regression guards.
+    ("yaml", "config.yaml", "webhook_secret: {hex}",
+     "YAML `key: value` — currently redacted; guard against regression"),
+    ("toml", "app.toml", 'signing_secret = "{hex}"',
+     "TOML `key = value` — currently redacted; guard against regression"),
+    # json VERIFIED LEAKING: confirmed end-to-end on 2026-07-20 by packing for real and
+    # reading the delivered file out of _inbox_from_helm — the 64-hex value was present
+    # verbatim. This is not a dry-run inference; the secret crossed the trust boundary.
+    ("json", "settings.json", '{{"webhookSecret": "{hex}", "signing_secret": "{hex}"}}',
+     "JSON quoted-key syntax `\"key\": \"value\"` is not matched by cred_name_assign"),
+]
+
+_HEX64 = "a3f5c8e1b9d24760af31c5e8d92b4a6f7c0e83d15b92746af38c1e5d0b7a942e"
+
+
+@pytest.mark.parametrize("name,filename,tmpl,why", CONFIG_FORMAT_LEAK,
+                         ids=[x[0] for x in CONFIG_FORMAT_LEAK])
+def test_credential_key_redacted_in_config_formats(tmp_path, name, filename, tmpl, why):
+    """A credential-named key must be honoured in config syntax, not just Python."""
+    probe = ROOT / filename
+    probe.write_text(tmpl.format(hex=_HEX64) + "\n", encoding="utf-8")
+    try:
+        r = subprocess.run(
+            [sys.executable, str(PACKAGER), filename, "--dry-run"],
+            cwd=ROOT, capture_output=True, text=True, timeout=60,
+        )
+        out = (r.stdout or "") + (r.stderr or "")
+    finally:
+        probe.unlink(missing_ok=True)
+
+    redacted = "REDACTED" in out
+    refused = "DRY-RUN: OK" not in out
+    assert redacted or refused, (
+        f"{name}: credential-named key packed clean in {filename}.\n"
+        f"why: {why}\n"
+        "Generalise the credential-name context rule to `<name>[:=]<value>` across "
+        "yaml / json / toml / ini / env syntax."
+    )
+
+
+def test_dotenv_is_denied_by_filename():
+    """Regression guard: the deny-list must keep catching canonically-named secrets."""
+    d = ROOT / "_pytest_env_probe"
+    d.mkdir(exist_ok=True)
+    (d / ".env").write_text(f"WEBHOOK_SECRET={_HEX64}\n", encoding="utf-8")
+    try:
+        r = subprocess.run(
+            [sys.executable, str(PACKAGER), "_pytest_env_probe/.env", "--dry-run"],
+            cwd=ROOT, capture_output=True, text=True, timeout=60,
+        )
+        out = (r.stdout or "") + (r.stderr or "")
+    finally:
+        (d / ".env").unlink(missing_ok=True)
+        d.rmdir()
+    assert "DRY-RUN: OK" not in out, "deny-list stopped blocking .env — regression"
+
+
 def test_uuid_is_already_tolerated():
     """Regression guard: UUIDs were correctly NOT flagged. Keep it that way."""
     out = _pack(Path("."), 'ID = "550e8400-e29b-41d4-a716-446655440000"\n')

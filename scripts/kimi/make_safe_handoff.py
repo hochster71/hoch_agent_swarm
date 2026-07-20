@@ -83,15 +83,25 @@ _CREDENTIAL_NAME_PARTS = frozenset({
     "secret", "token", "password", "credential", "auth", "key",
     "passwd", "pwd", "apikey", "bearer",
 })
+# Format-agnostic credential assignment: Python / YAML / TOML / JSON / env.
+# Optional quotes on the key cover JSON `"signing_secret": "…"`.
 _CRED_ASSIGN_RE = re.compile(
+    r"(?P<pre>['\"]?)"
     r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)"
+    r"(?P<post>['\"]?)"
     r"(?P<eq>\s*[=:]\s*)"
     r"(?P<q>['\"]?)"
-    r"(?P<val>[^\s'\"#]{8,})"
+    r"(?P<val>[^\s,'\"#\}}]{8,})"
     r"(?P<q2>['\"]?)"
 )
 _LINE_ASSIGN_NAME_RE = re.compile(
     r"^\s*(?:export\s+)?(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*[=:]"
+)
+_QUOTED_KEY_RE = re.compile(
+    r"['\"](?P<name>[A-Za-z_][A-Za-z0-9_]*)['\"]\s*:"
+)
+_ANY_ASSIGN_NAME_RE = re.compile(
+    r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*[=:]"
 )
 
 # Known-family residual patterns (defense in depth — still not the only residual gate).
@@ -274,12 +284,25 @@ def is_credential_name(name: str) -> bool:
 
 
 def line_has_credential_assignment(line: str) -> bool:
+    """True if any assignment / key on the line is credential-named (any config syntax)."""
     m = _LINE_ASSIGN_NAME_RE.match(line)
-    return bool(m and is_credential_name(m.group("name")))
+    if m and is_credential_name(m.group("name")):
+        return True
+    for m in _QUOTED_KEY_RE.finditer(line):
+        if is_credential_name(m.group("name")):
+            return True
+    for m in _ANY_ASSIGN_NAME_RE.finditer(line):
+        if is_credential_name(m.group("name")):
+            return True
+    return False
 
 
 def redact_credential_named_assigns(text: str) -> tuple[str, int]:
-    """Redact values assigned to credential-named variables (context beats shape)."""
+    """Redact values assigned to credential-named keys (context beats shape).
+
+    Covers Python/YAML/TOML/JSON/env: optional quotes on key, `=` or `:`, optional
+    quotes on value. `\"webhookSecret\": \"…\"` and `WEBHOOK_SECRET = \"…\"` both hit.
+    """
     count = 0
 
     def _repl(m: re.Match[str]) -> str:
@@ -288,12 +311,13 @@ def redact_credential_named_assigns(text: str) -> tuple[str, int]:
         if not is_credential_name(name):
             return m.group(0)
         count += 1
+        pre = m.group("pre") or ""
+        post = m.group("post") or ""
         q = m.group("q") or ""
-        # Prefer matching closing quote when present
-        q2 = m.group("q2") if m.group("q") else (m.group("q2") or "")
-        if m.group("q") and not m.group("q2"):
-            q2 = m.group("q")
-        return f"{name}{m.group('eq')}{q}REDACTED_SECRET{q2}"
+        q2 = m.group("q2") or ""
+        if q and not q2:
+            q2 = q
+        return f"{pre}{name}{post}{m.group('eq')}{q}REDACTED_SECRET{q2}"
 
     return _CRED_ASSIGN_RE.sub(_repl, text), count
 
