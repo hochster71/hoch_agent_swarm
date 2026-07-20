@@ -1,0 +1,59 @@
+{
+  "schema": "HELM_REGRESSION_BURNDOWN_v1",
+  "recorded_at": "2026-07-20T02:10:00Z",
+  "scope": "the 6 committed-tree defects + G3 flake from t1_f1_classification.json \u2014 executed natively on the founder Mac",
+  "fixes": [
+    {
+      "defect": "voice executive surface deleted (voice x3 tests)",
+      "root_cause": "commit a965b0e2 (2026-07-19 13:06, parallel gateway lane) replaced backend/voice/router.py wholesale, deleting 20 executive routes whose committed tests remained",
+      "fix": "restored from 6830e877 as ADDITIVE backend/voice/executive_router.py (colliding /health dropped; its contract keys merged additively into gateway health); registered on helm_live_api + main",
+      "proof": "tests/unit/test_helm_voice_executive.py 26/26"
+    },
+    {
+      "defect": "mission route served raw OCC doc (missing truth_class)",
+      "root_cause": "FROZEN bridge_api claims GET /api/v1/helm/mission; its include preceded the truth-wrapped mission-state route \u2014 first-match shadowing (invisible under fastapi 0.138 _IncludedRouter)",
+      "fix": "bridge+knowledge includes moved to end-of-module in NON-frozen helm_live_api.py \u2014 direct routes win collisions; bridge PATCH + non-colliding GETs preserved; zero frozen bytes changed",
+      "proof": "tests/unit/test_mission_state.py 4/4"
+    },
+    {
+      "defect": "secret-literal in voice test fixture",
+      "root_cause": "forged-key negative fixture as source literal",
+      "fix": "runtime-assembled per the scanner's own doctrine",
+      "proof": "test_no_literal_secrets + full voice gateway 31/31"
+    },
+    {
+      "defect": "fa1 publish never wrote pointer under pytest",
+      "root_cause": "ephemeral-evidence guard keyed on PYTEST_CURRENT_TEST blocked even hermetic monkeypatched pointers",
+      "fix": "v1 (guard scoped via _is_ephemeral_evidence(POINTER.parent)) was DEFECTIVE - reintroduced the 2026-07-18 pointer leak under pytest (BD-F3). v2: module-identity guard via import-time _REAL_ROOT/_CANONICAL_POINTER; sandboxed only when the harness redirects ROOT and POINTER together",
+      "proof": "tests/test_helm_truth_fa1_fa2_fa6.py 11/11 AND tests/test_runtime_source_no_test_leak.py 4/4 AND tests/test_authority_binding_chain.py 13/13 (pointer sha unchanged)"
+    },
+    {
+      "defect": "G3 order-dependent flake + test pollution of production event ledger",
+      "root_cause": "frozen test asserts last-5 of SHARED ledger; live runtime + other tests append concurrently; tail_events default bound at definition time",
+      "fix": "tests/helm_runtime/conftest.py autouse hermetic ledger (sanctioned composition point named in frozen transaction.py); publish attr + tail_events wrapper",
+      "proof": "10x consecutive 104/104"
+    }
+  ],
+  "frozen_core": "untouched \u2014 all fixes additive/non-frozen; snapshots in recovered_sources/audit_20260719/pre_a7/",
+  "expected_full_suite_residue": "0 failures - the uncommitted ca07/conmon WIP pair (T10 curation) has been fully remediated and verified; plus visible skips (6 pre-existing + 5 lane-segmented legacy crewai modules)",
+  "proof_run": {
+    "attempt_1": {
+      "log": "originals/burndown_proof_INTERRUPTED_20260719T1916.log",
+      "log_sha256": "710efa46f22cb00f53d69c8fd538010a3556646476bf4a65c2dd78962d83949c",
+      "result": "INTERRUPTED_AT_COLLECTION - 5 legacy crewai module import errors, 0 tests executed. Burn-down was NOT proven by this run.",
+      "finding": "coordination/goal/findings/LEGACY-TEST-LANE-COLLECTION-INTERRUPT.json (BD-F2)"
+    },
+    "attempt_2": {
+      "log_preserved": "originals/proof_run_2_*.log (see proof_run_2_artifact.json for exact name+hash)",
+      "artifact": "proof_run_2_artifact.json",
+      "acceptance": "proof_run_2_artifact_acceptance.json -> REJECTED (mechanical set-equality)",
+      "result": "11 failed / 1886 passed / 11 skipped in 1457.60s - collection accepted, skip count matched, but 2 UNEXPECTED failures (tests/test_runtime_source_no_test_leak.py x2) outside the expected 9; 0 missing expected",
+      "finding": "coordination/goal/findings/FA1-GUARD-REGRESSION-POINTER-LEAK.json (BD-F3, SESSION_CAUSED: fa1fix_v1 disabled the pointer guard under pytest; live canonical pointer contaminated during the run, preserved + restored from the daemon's committed declaration)"
+    },
+    "attempt_3": {
+      "log": "/tmp/burndown_proof3.log -> mechanical harvest on completion",
+      "launched_after": "fa1 fix v2 (module-identity guard) + pointer restoration; isolated proofs 4/4 + 11/11 + 13/13 with pointer byte-identical",
+      "status": "PENDING_LAUNCH"
+    }
+  }
+}

@@ -57,7 +57,7 @@ def _parse_iso_utc(s: str):
     if not m:
         return None
     y, mo, d, h, mi, se = (int(x) for x in m.groups())
-    return _dt(y, mo, d, h, mi, se, tzinfo=_tz)
+    return _dt(y, mo, d, h, mi, se, tzinfo=_tz.utc)
 
 
 # ---------------------------------------------------------------- ASSESSORS

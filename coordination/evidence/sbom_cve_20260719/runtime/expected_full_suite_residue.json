@@ -1,0 +1,31 @@
+{
+  "schema": "HELM_EXPECTED_SUITE_RESIDUE_v1",
+  "recorded_at": "2026-07-20T01:00:00Z",
+  "provenance": "t1_f1_classification.json records classified PRE_EXISTING_UNCOMMITTED_WIP (uncommitted ca07/conmon test-feature pairs, T10 curation lane); the other 5 UNRESOLVED records were reclassified PRE_EXISTING_COMMITTED and fixed in the burn-down (burndown_record.json)",
+  "expected_wip_failed_ids": [],
+  "expected_skips": {
+    "pre_existing_count": 6,
+    "legacy_lane_modules": [
+      "tests/test_crew_smoke.py",
+      "tests/test_entry_points.py",
+      "tests/test_model_router.py",
+      "tests/test_run_report.py",
+      "tests/test_swarm_pipeline.py"
+    ],
+    "expected_total_skipped": 11,
+    "limitation": "runs launched with -q --tb=no do not list skip identities; skip verification is count-based for run 2. The clean-candidate qualification run MUST add -rs so skip identities are verifiable by ID."
+  },
+  "expected_collection_errors": 0,
+  "source_state_binding": {
+    "note": "expected failures are bound to these exact WIP file bytes at expectation-pin time; if the files change (parallel remediation), the expectation is STALE and must be re-pinned, not force-matched",
+    "wip_file_sha256": {
+      "tests/test_ca07_evidence_derived.py": "260bcf46b15798fb8473d31d29d0bc203ba2c4f8467a574f5918100fceb11570",
+      "tests/test_conmon_continuous.py": "242dcaabdb61af4a353b7be0d00070cb066bc9271d34a456b6c68afdefea243b"
+    }
+  },
+  "canonical_pointer": {
+    "path": "coordination/council/active_runtime_source.json",
+    "expected_sha256_at_run_start": "c9dd6ebaf1f52ea32ec94399950553cfe6b34cdff964fe500e63782ea1b843ac",
+    "rule": "post-run pointer hash must equal this AND content must contain no pytest- reference - proves no test-to-live-state leakage during the run"
+  }
+}
