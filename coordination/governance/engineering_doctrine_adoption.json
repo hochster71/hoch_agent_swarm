@@ -1,0 +1,44 @@
+{
+  "_helm_gov": {
+    "extends": "coordination/governance adoption ledger",
+    "doctrine": "Governance-before-Capability",
+    "edr": "EDR-0006-R10 (Directive #10 evidence-backed adoption record)",
+    "why": "the doctrine is its own first GOVERNED decision \u2014 dogfooded, not self-certified"
+  },
+  "schema": "HELM_DOCTRINE_ADOPTION_v1",
+  "doctrine": "HELM Engineering Doctrine v1.0",
+  "edr": "EDR-0006",
+  "status": "ADOPTED",
+  "adopted_at": "2026-07-18T16:20:59Z",
+  "adopted_by": "Founder Michael Bryan Hoch",
+  "auditor_verification": "PENDING \u2014 acceptance criteria (EDR-0006 \u00a7Acceptance) require independent Auditor confirmation",
+  "proof_record": {
+    "authorized": {
+      "authority": "Founder ratification 2026-07-18 \u2014 EDR-0006 ACCEPTED",
+      "decision_id": "ADOPT-ENGINEERING-DOCTRINE-V1",
+      "gate": "govern_decision"
+    },
+    "explanation": "Adopt HELM Engineering Doctrine v1.0 as enforced runtime policy (governance is part of feature completion)",
+    "trace": {
+      "correlation_id": "ed9e6c3e-4450-42c6-9467-4fc4f89c9dd7",
+      "input_digests": [
+        "sha256:1c67be9f0077edcf0eb1898968d81cec9387dac0d7e952a65828ae9558c40535"
+      ]
+    },
+    "proven": {
+      "proof_command": "python3 -m pytest tests/test_engineering_doctrine.py -q",
+      "exit_code": 0,
+      "evidence_hash": "sha256:f7e0dbf9d275fc85dfc293b76fc60a2ecea5afcca32643366f6b5731a16be101"
+    },
+    "reproducibility": {
+      "tested_commit": "12b21e60549ab8d1de4a885015b12d4608dac6f8",
+      "environment": "helm_runtime"
+    },
+    "evidence_class": "OBSERVED",
+    "audit": {
+      "record_hash": "sha256:b19d410bcc77ef60a9a2d047c9f4b16aa48f2a3a91c6070aa43d1a556ec99d59",
+      "prev_hash": null
+    },
+    "governance_state": "GOVERNED"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "_helm_gov": {
+    "extends": "coordination/governance",
+    "edr": "EDR-0006-R6",
+    "why": "coordinated emitter rollout cutoff"
+  },
+  "schema": "HELM_GOVERNED_RUNTIME_LIVE_v1",
+  "governed_runtime_live_at": "2026-07-18T17:52:10Z",
+  "daemon": "helm_live_api@8770 + autoloop",
+  "new_pid": 11948,
+  "emitters_governed": [
+    "council_router",
+    "dispatch",
+    "goal_runner",
+    "guarded_build",
+    "audit_runner",
+    "transaction",
+    "knowledge_engine",
+    "fire_verification",
+    "fire_doctrine_auditor"
+  ],
+  "proof_record": {
+    "authorized": {
+      "authority": "Founder step-2 (coordinated emitter rollout)",
+      "decision_id": "GOVERNED-RUNTIME-LIVE-2",
+      "gate": "govern_decision"
+    },
+    "explanation": "coordinated restart: all governance emitters (council_router, dispatch, goal_runner, guarded_build, audit_runner, transaction, knowledge) governed",
+    "trace": {
+      "correlation_id": "731bb3a8-1b23-4038-99cf-3087458776f3",
+      "input_digests": [
+        "sha256:7ad38517bbe008c66b398fc0409172e780f3fe78f3f643eb123ed6a4e45dffd5"
+      ]
+    },
+    "proven": {
+      "proof_command": "coordinated restart via autoloop; 8770 new PID=11948; curl /council/status HTTP 200",
+      "exit_code": 0,
+      "evidence_hash": "sha256:79160ce57e841dadc2494a54b78051ae62124262872f458106cc49a00527f2c4"
+    },
+    "reproducibility": {
+      "tested_commit": "12b21e60549ab8d1de4a885015b12d4608dac6f8",
+      "environment": "helm_live_api@8770 + autoloop emitters"
+    },
+    "evidence_class": "OBSERVED",
+    "audit": {
+      "record_hash": "sha256:a5a8367ef0f900287182a38107922c8ecfa1af6d60255af2215e6a112e3f4801",
+      "prev_hash": null
+    },
+    "governance_state": "GOVERNED"
+  }
+}

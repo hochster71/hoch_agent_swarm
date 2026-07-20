@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HELM · Factories</title>
+<style>
+:root{--bg:#060b14;--panel:#0c1422;--edge:#182740;--ink:#e8f0f8;--dim:#8fa2b8;--faint:#5a6d84;--cy:#38bdf8;--gr:#34d399;--am:#fbbf24;--rd:#f87171;--gray:#64748b}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(1100px 600px at 80% -10%,rgba(56,189,248,.08),transparent 60%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:1200px;margin:0 auto;padding:22px 20px 60px}
+.head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:20px;margin:0;font-weight:750;letter-spacing:.3px}
+.head a{margin-left:auto;color:var(--cy);text-decoration:none;font-size:12px}
+.meta{color:var(--faint);font-size:11.5px;font-family:ui-monospace,Menlo,monospace;margin-top:6px}
+.summary{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 6px}
+.pill{font-size:11px;font-family:ui-monospace,Menlo,monospace;padding:5px 11px;border-radius:999px;border:1px solid var(--edge);background:#0b1524}
+.pill b{color:var(--ink)} .pill.gr b{color:var(--gr)} .pill.am b{color:var(--am)} .pill.rd b{color:var(--rd)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:14px}
+.card{background:linear-gradient(180deg,var(--panel),#0a1120);border:1px solid var(--edge);border-radius:13px;padding:15px 16px}
+.card .id{font-size:15px;font-weight:750;letter-spacing:.4px}
+.card .nm{color:var(--dim);font-size:12px;margin-top:2px}
+.card .row{display:flex;align-items:center;gap:8px;margin-top:11px;font-size:12px}
+.tag{font-size:10px;font-family:ui-monospace,Menlo,monospace;padding:3px 9px;border-radius:6px;letter-spacing:.4px}
+.tag.gr{background:rgba(16,185,129,.14);color:var(--gr)} .tag.am{background:rgba(251,191,36,.14);color:var(--am)}
+.tag.rd{background:rgba(248,113,113,.14);color:var(--rd)} .tag.gray{background:rgba(100,116,139,.16);color:var(--gray)}
+.k{color:var(--faint);font-size:10.5px;text-transform:uppercase;letter-spacing:.6px}
+.blocked{margin-top:10px;font-size:11.5px;color:var(--am)} .blocked .b{color:var(--rd)}
+.err{color:var(--gray);font-style:italic;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div><h1>HELM Factories</h1><div class="meta" id="meta">loading…</div></div>
+    <a href="/matrix">← Logic Matrix</a>
+  </div>
+  <div class="summary" id="summary"></div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id); const esc=s=>(s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function cls(s){s=(s||'').toString().toUpperCase();
+  if(/(READY|ACTIVE|LIVE|SELLABLE|OPERATIONAL|GREEN|DONE)/.test(s))return'gr';
+  if(/(DEGRADED|PARTIAL|PENDING|BUILT|NOT_READY|PLANNING|PROGRESS)/.test(s))return'am';
+  if(/(BLOCK|FAIL|CRITICAL|DOWN)/.test(s))return'rd';return'gray';}
+async function load(){
+  let d; try{d=await(await fetch('/api/v1/helm/factories')).json();}catch(e){$('grid').innerHTML='<div class="err">factory truth NOT REACHABLE: '+esc(e.message)+'</div>';return;}
+  const F=d.factories||{}; const rows=Object.entries(F).map(([id,v])=>({id,...(v||{})}));
+  $('meta').textContent=`source: ${esc(d.source||'—')} · observed ${esc((d.observed_at||'').replace('T',' ').replace('Z',' UTC'))} · fresh ${Math.round(d.freshness_seconds||0)}s`;
+  const st=r=>r.runtime_state||r.status||r.readiness||'UNKNOWN';
+  const active=rows.filter(r=>cls(st(r))==='gr').length;
+  const blocked=rows.filter(r=>(r.blocked_missions||[]).length).length;
+  $('summary').innerHTML=[
+    `<span class="pill gr"><b>${active}</b> / ${rows.length} active</span>`,
+    `<span class="pill ${blocked?'rd':'gr'}"><b>${blocked}</b> with blocked missions</span>`,
+    `<span class="pill"><b>${rows.length}</b> identities</span>`,
+  ].join('');
+  $('grid').innerHTML=rows.map(r=>{const s=st(r);const c=cls(s);const bm=r.blocked_missions||[];
+    return `<div class="card">
+      <div class="id">${esc(r.id)}</div>
+      <div class="nm">${esc(r.identity||r.name||'')}</div>
+      <div class="row"><span class="k">Runtime</span><span class="tag ${c}" style="margin-left:auto">${esc(s)}</span></div>
+      ${r.readiness?`<div class="row"><span class="k">Readiness</span><span class="tag ${cls(r.readiness)}" style="margin-left:auto">${esc(r.readiness)}</span></div>`:''}
+      ${r.monetization_rung?`<div class="row"><span class="k">Rung</span><span class="tag ${cls(r.monetization_rung)}" style="margin-left:auto">${esc(r.monetization_rung)}</span></div>`:''}
+      ${bm.length?`<div class="blocked"><span class="b">⚠ ${bm.length} blocked:</span> ${bm.map(esc).join(', ')}</div>`:'<div class="blocked" style="color:var(--gr)">✓ no blocked missions</div>'}
+    </div>`;}).join('');
+}
+load(); setInterval(load,15000);
+</script>
+</body>
+</html>

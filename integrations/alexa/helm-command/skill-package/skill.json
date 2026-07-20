@@ -1,0 +1,35 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "HELM Command",
+          "summary": "HELM Custom Skill voice control companion.",
+          "description": "Enables operators and founders to check HELM deployment status and place locks via voice commands.",
+          "examplePhrases": [
+            "Alexa, open HELM Command",
+            "Alexa, ask HELM Command for status",
+            "Alexa, ask HELM Command to run continuous monitoring"
+          ]
+        }
+      },
+      "category": "UTILITIES",
+      "testingInstructions": "Requires OAuth 2.0 Account Linking with HELM Gateway identity."
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "https://voice.helm-gateway.local/api/v1/helm/voice/alexa/webhook"
+        },
+        "interfaces": []
+      }
+    },
+    "manifestVersion": "1.0",
+    "privacyAndCompliance": {
+      "allowsShopping": false,
+      "isExportCompliant": true,
+      "isChildDirected": false,
+      "usesPersonalInfo": false
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "HELM_MODEL_ROUTING_REGISTRY_v1",
+  "doctrine": "Model bindings are MUTABLE OPERATIONAL CONFIGURATION — they evolve with frontier fit and never require editing a frozen constitutional artifact. The frozen coordination/governance/role_bindings.json is the constitutional fallback; this registry overrides per-role when an entry is ACTIVE and fully attributed (effective_at, authorized_by, change_record). Under-attributed entries are ignored fail-closed. Resolver: backend/helm_runtime/extensions/model_routing.py.",
+  "created_at": "2026-07-19T15:20:00Z",
+  "provenance": "A7 remediation — extracted from the drifted frozen role_bindings.json (builder rebound to claude-sonnet-5 on 2026-07-18 in-place; preserved in coordination/evidence/a7_drift_20260719/frozen_target_drift.patch)",
+  "bindings": [
+    {
+      "role": "builder",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5",
+      "display_name": "Claude Sonnet 5",
+      "mode": "ide_agent",
+      "effective_at": "2026-07-18T19:00:00Z",
+      "authorized_by": "Michael Bryan Hoch (founder; original in-place edit 2026-07-18, re-homed to this registry by accepted A7 disposition 2026-07-19)",
+      "change_record": "coordination/evidence/a7_drift_20260719/drift_disposition.json",
+      "fallback": "claude (frozen constitutional binding)",
+      "status": "ACTIVE",
+      "notes": "Engineering + EDRs — bound to Sonnet 5"
+    }
+  ]
+}

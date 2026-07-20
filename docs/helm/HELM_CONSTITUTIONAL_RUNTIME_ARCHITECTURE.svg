@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="1320" viewBox="0 0 920 1320" font-family="'Segoe UI',Helvetica,Arial,sans-serif" role="img" aria-label="HELM Constitutional Runtime architecture — authority chain mapped to real repository modules">
+  <!-- HELM-GOV | extends: docs/helm/HELM_RUNTIME_ARCHITECTURE_v1.md | doctrine: Governance-before-Capability | edr: EDR-0006-R9 | why: permanent authoritative architecture diagram (Directive #5), real modules only -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5b6472"/>
+    </marker>
+    <style>
+      .card{rx:12;ry:12;stroke-width:1.5;}
+      .name{font-size:19px;font-weight:700;}
+      .mod{font-size:13px;font-family:'SF Mono',Consolas,monospace;}
+      .tier{font-size:13px;font-weight:700;letter-spacing:.14em;fill:#7a828f;}
+      .sub{font-size:13px;fill:#5b6472;}
+    </style>
+  </defs>
+
+  <!-- theme-neutral canvas: own light background so text stays legible in any viewer theme -->
+  <rect x="0" y="0" width="920" height="1320" fill="#f7f8fa"/>
+  <text x="460" y="46" text-anchor="middle" font-size="26" font-weight="800" fill="#1b2430">HELM Constitutional Runtime</text>
+  <text x="460" y="72" text-anchor="middle" font-size="15" fill="#5b6472">Governance integration layer over the existing runtime — not a new runtime. Real modules only.</text>
+
+  <!-- vertical spine -->
+  <line x1="460" y1="96" x2="460" y2="1150" stroke="#c3c9d2" stroke-width="2"/>
+
+  <!-- ============ AUTHORITY TIER ============ -->
+  <text x="70" y="128" class="tier">AUTHORITY</text>
+  <!-- Founder -->
+  <g>
+    <rect class="card" x="300" y="104" width="320" height="60" fill="#eef4ff" stroke="#7aa7ff"/>
+    <text x="460" y="132" text-anchor="middle" class="name" fill="#1b2430">Founder</text>
+    <text x="460" y="152" text-anchor="middle" class="sub">Michael Hoch · money · publish · ratification gates</text>
+  </g>
+  <line x1="460" y1="164" x2="460" y2="184" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Constitution -->
+  <g>
+    <rect class="card" x="300" y="184" width="320" height="60" fill="#eef4ff" stroke="#7aa7ff"/>
+    <text x="460" y="210" text-anchor="middle" class="name" fill="#1b2430">Constitution v1.0 <tspan font-size="12" font-weight="500" fill="#7a828f">(frozen)</tspan></text>
+    <text x="460" y="230" text-anchor="middle" class="mod" fill="#5b6472">docs/helm/HELM_CONSTITUTION_v1.0.md</text>
+  </g>
+  <line x1="460" y1="244" x2="460" y2="264" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Engineering Doctrine -->
+  <g>
+    <rect class="card" x="300" y="264" width="320" height="60" fill="#eef4ff" stroke="#7aa7ff"/>
+    <text x="460" y="290" text-anchor="middle" class="name" fill="#1b2430">Engineering Doctrine v1.0</text>
+    <text x="460" y="310" text-anchor="middle" class="mod" fill="#5b6472">HELM_ENGINEERING_DOCTRINE_v1.md · EDR-0006</text>
+  </g>
+  <line x1="460" y1="324" x2="460" y2="344" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ THE GATE ============ -->
+  <text x="70" y="386" class="tier">THE GATE</text>
+  <g>
+    <rect class="card" x="270" y="344" width="380" height="72" fill="#fff2df" stroke="#f0a53d" stroke-width="2.5"/>
+    <text x="460" y="374" text-anchor="middle" class="name" fill="#1b2430">Runtime Governance — single path</text>
+    <text x="460" y="396" text-anchor="middle" class="mod" fill="#5b6472">governance_engine.govern_decision()</text>
+    <text x="460" y="410" text-anchor="middle" class="sub">every material decision resolves here · no parallel gate</text>
+  </g>
+  <line x1="460" y1="416" x2="460" y2="440" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ COMPOSED ENGINES ============ -->
+  <text x="70" y="470" class="tier">COMPOSED ENGINES</text>
+  <text x="70" y="488" class="sub">(existing runtime, governed)</text>
+  <!-- five engines row, connected to the gate -->
+  <g>
+    <rect class="card" x="300" y="440" width="320" height="56" fill="#eafaf1" stroke="#4bb87a"/>
+    <text x="460" y="464" text-anchor="middle" class="name" fill="#1b2430">Knowledge Engine <tspan font-size="12" font-weight="500" fill="#7a828f">(N5)</tspan></text>
+    <text x="460" y="483" text-anchor="middle" class="mod" fill="#5b6472">backend/helm_runtime/knowledge_engine.py</text>
+  </g>
+  <line x1="460" y1="496" x2="460" y2="512" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect class="card" x="300" y="512" width="320" height="56" fill="#eafaf1" stroke="#4bb87a"/>
+    <text x="460" y="536" text-anchor="middle" class="name" fill="#1b2430">Governance Engine <tspan font-size="12" font-weight="500" fill="#7a828f">(N1)</tspan></text>
+    <text x="460" y="555" text-anchor="middle" class="mod" fill="#5b6472">backend/helm_runtime/governance_engine.py</text>
+  </g>
+  <line x1="460" y1="568" x2="460" y2="584" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect class="card" x="300" y="584" width="320" height="56" fill="#eafaf1" stroke="#4bb87a"/>
+    <text x="460" y="608" text-anchor="middle" class="name" fill="#1b2430">Proof Contract <tspan font-size="12" font-weight="500" fill="#7a828f">(Evidence Resolver)</tspan></text>
+    <text x="460" y="627" text-anchor="middle" class="mod" fill="#5b6472">backend/security/proof_contract.py</text>
+  </g>
+  <line x1="460" y1="640" x2="460" y2="656" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect class="card" x="300" y="656" width="320" height="56" fill="#eafaf1" stroke="#4bb87a"/>
+    <text x="460" y="680" text-anchor="middle" class="name" fill="#1b2430">Truth Engine</text>
+    <text x="460" y="699" text-anchor="middle" class="mod" fill="#5b6472">backend/helm_runtime/truth_engine.py</text>
+  </g>
+  <line x1="460" y1="712" x2="460" y2="728" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect class="card" x="300" y="728" width="320" height="56" fill="#eafaf1" stroke="#4bb87a"/>
+    <text x="460" y="752" text-anchor="middle" class="name" fill="#1b2430">Event Bus</text>
+    <text x="460" y="771" text-anchor="middle" class="mod" fill="#5b6472">backend/helm_runtime/event_bus.py · evidence[]</text>
+  </g>
+  <line x1="460" y1="784" x2="460" y2="808" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ APPLIED ============ -->
+  <text x="70" y="840" class="tier">APPLIED</text>
+  <g>
+    <rect class="card" x="300" y="808" width="320" height="56" fill="#f3eefe" stroke="#9b6be6"/>
+    <text x="460" y="832" text-anchor="middle" class="name" fill="#1b2430">Factories</text>
+    <text x="460" y="851" text-anchor="middle" class="mod" fill="#5b6472">backend/factory/registry.py · factory_registry.json</text>
+  </g>
+  <line x1="460" y1="864" x2="460" y2="880" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect class="card" x="300" y="880" width="320" height="56" fill="#f3eefe" stroke="#9b6be6"/>
+    <text x="460" y="904" text-anchor="middle" class="name" fill="#1b2430">Mission Control</text>
+    <text x="460" y="923" text-anchor="middle" class="mod" fill="#5b6472">backend/mission_control/ · mission_runtime.py</text>
+  </g>
+  <line x1="460" y1="936" x2="460" y2="952" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect class="card" x="300" y="952" width="320" height="56" fill="#f3eefe" stroke="#9b6be6"/>
+    <text x="460" y="976" text-anchor="middle" class="name" fill="#1b2430">Governance Replay</text>
+    <text x="460" y="995" text-anchor="middle" class="mod" fill="#5b6472">event_bus replay + truth/evidence_chain.py</text>
+  </g>
+
+  <!-- ============ CONTINUOUS PROOF side annotation ============ -->
+  <g>
+    <rect x="660" y="440" width="210" height="568" rx="12" fill="#fdf1f1" stroke="#e08a8a" stroke-dasharray="5 4"/>
+    <text x="765" y="470" text-anchor="middle" class="tier" fill="#c0605f">CONTINUOUS PROOF</text>
+    <text x="765" y="500" text-anchor="middle" class="name" font-size="16" fill="#1b2430">N8 ConMon</text>
+    <text x="765" y="522" text-anchor="middle" class="mod" fill="#5b6472">backend/security/</text>
+    <text x="765" y="538" text-anchor="middle" class="mod" fill="#5b6472">helm_conmon.py</text>
+    <text x="765" y="576" text-anchor="middle" class="sub">re-derives</text>
+    <text x="765" y="594" text-anchor="middle" class="sub">governance_coverage</text>
+    <text x="765" y="612" text-anchor="middle" class="sub">each run · POA&amp;M</text>
+    <text x="765" y="630" text-anchor="middle" class="sub">below target</text>
+    <line x1="660" y1="760" x2="622" y2="756" stroke="#e08a8a" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+    <text x="765" y="690" text-anchor="middle" class="sub" font-style="italic">governance is</text>
+    <text x="765" y="708" text-anchor="middle" class="sub" font-style="italic">monitored,</text>
+    <text x="765" y="726" text-anchor="middle" class="sub" font-style="italic">not asserted</text>
+  </g>
+
+  <!-- footer -->
+  <text x="460" y="1050" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2430">Integrate · Simplify · Govern · Continuously Prove — not replace</text>
+  <text x="460" y="1074" text-anchor="middle" class="sub">Governance before capability · Evidence before status · Unknown over unsupported certainty · No Fake Green</text>
+  <text x="460" y="1108" text-anchor="middle" font-size="12" fill="#98a0ac">EDR-0006 · HELM_ENGINEERING_DOCTRINE_v1 · HELM_RUNTIME_ARCHITECTURE_v1 · 2026-07-18</text>
+
+  <!-- legend -->
+  <g transform="translate(70,1150)">
+    <text x="0" y="0" class="tier">LEGEND</text>
+    <rect x="0" y="14" width="22" height="14" rx="3" fill="#eef4ff" stroke="#7aa7ff"/><text x="30" y="26" class="sub">Authority (human + doctrine)</text>
+    <rect x="0" y="38" width="22" height="14" rx="3" fill="#fff2df" stroke="#f0a53d"/><text x="30" y="50" class="sub">Single authoritative gate</text>
+    <rect x="0" y="62" width="22" height="14" rx="3" fill="#eafaf1" stroke="#4bb87a"/><text x="30" y="74" class="sub">Existing runtime engines (governed)</text>
+    <rect x="330" y="14" width="22" height="14" rx="3" fill="#f3eefe" stroke="#9b6be6"/><text x="360" y="26" class="sub">Applied surfaces</text>
+    <rect x="330" y="38" width="22" height="14" rx="3" fill="#fdf1f1" stroke="#e08a8a"/><text x="360" y="50" class="sub">Continuous proof (N8 ConMon)</text>
+  </g>
+</svg>

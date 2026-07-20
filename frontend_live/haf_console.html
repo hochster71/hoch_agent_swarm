@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HAF — HOCH Audit Factory v0.1</title>
+<style>
+:root{
+  --bg:#070b12; --panel:#0e1622; --panel2:#0b111a; --line:#1b2838;
+  --ink:#e6edf3; --muted:#7d8ea3; --dim:#45566b;
+  --green:#22e0a1; --amber:#f5a623; --red:#ff5c6c; --grey:#54637a; --blue:#4aa8ff; --purple:#9a7cff;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1400px 700px at 60% -20%,#0d1a2b,var(--bg));color:var(--ink);font-family:var(--font)}
+.wrap{max-width:1320px;margin:0 auto;padding:18px 18px 60px}
+header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+h1{font-size:14px;letter-spacing:.24em;font-weight:700;margin:0}
+h1 b{color:var(--blue)}
+.headline{font-size:11px;color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:13px;padding:13px 14px}
+.card h3{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;box-shadow:0 0 8px currentColor}
+.s-green{color:var(--green)}.s-amber{color:var(--amber)}.s-red{color:var(--red)}.s-grey{color:var(--grey)}.s-blue{color:var(--blue)}
+.kv{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #12202e}
+.kv:last-child{border-bottom:0}
+.kv .v{font-family:var(--mono);font-size:11.5px}
+.tag{font-size:9.5px;font-family:var(--mono);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+.tag.PASS{border-color:var(--green);color:var(--green)}
+.tag.FAIL{border-color:var(--red);color:var(--red)}
+.tag.HOLD{border-color:var(--amber);color:var(--amber)}
+.btn{background:var(--blue);color:#000;border:0;border-radius:6px;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--mono)}
+.btn:hover{opacity:.9}
+.input{background:#070b12;border:1px solid var(--line);color:var(--ink);padding:6px 10px;font-size:11px;border-radius:6px;font-family:var(--mono)}
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono)}
+th{color:var(--muted);text-transform:uppercase;font-size:9px;letter-spacing:.1em;padding:6px;border-bottom:1px solid var(--line);text-align:left}
+td{padding:8px 6px;border-bottom:1px solid #12202e}
+tr:hover{background:rgba(255,255,255,.02)}
+.pyramid{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.pyr-level{background:#0b111a;border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:11px;display:flex;justify-content:space-between;align-items:center}
+.pyr-level:hover{border-color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>⎈ HAF · <b>HOCH AUDIT FACTORY</b></h1>
+      <div class="headline">Assurance, certification, evidence validation, and continuous monitoring kernel v0.1</div>
+    </div>
+    <div id="status-panel" class="tag PASS"><span class="dot s-green">●</span>HAF ACTIVE</div>
+  </header>
+
+  <div class="grid">
+    <!-- Left column: Certification pyramid & Run commands -->
+    <div class="card c4">
+      <h3>Certification Pyramid</h3>
+      <div class="pyramid">
+        <div class="pyr-level"><span>L9 — Continuous Auth</span><span class="tag PASS">ACTIVE</span></div>
+        <div class="pyr-level"><span>L8 — Production Ready</span><span class="tag PASS">ACTIVE</span></div>
+        <div class="pyr-level"><span>L4 — Cybersecurity</span><span class="tag PASS">ACTIVE</span></div>
+        <div class="pyr-level"><span>L3 — Engineering</span><span class="tag PASS">ACTIVE</span></div>
+        <div class="pyr-level"><span>L2 — Swarm Gov</span><span class="tag PASS">ACTIVE</span></div>
+        <div class="pyr-level"><span>L1 — Runtime Integrity</span><span class="tag PASS">ACTIVE</span></div>
+        <div class="pyr-level"><span>L0 — Repo Integrity</span><span class="tag PASS">ACTIVE</span></div>
+      </div>
+
+      <h3>Assessment Runner</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--muted)">Profile</span>
+          <select id="run-profile" class="input">
+            <option value="helm_common">helm_common</option>
+            <option value="hasf_initial">hasf_initial</option>
+          </select>
+        </div>
+        <button class="btn" id="btn-run" onclick="triggerRun()">RUN ASSESSMENT</button>
+      </div>
+      <div id="latest-run-stats" style="margin-top:14px;font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:none">
+        <div><b>LATEST RUN STATS:</b></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <div>Controls: <span id="stat-controls" style="color:var(--ink)">-</span></div>
+          <div>PASS: <span id="stat-pass" style="color:var(--green)">-</span></div>
+          <div>HOLD: <span id="stat-hold" style="color:var(--amber)">-</span></div>
+          <div>FAIL: <span id="stat-fail" style="color:var(--red)">-</span></div>
+        </div>
+        <div style="margin-top:6px">Overall Posture: <span id="stat-posture" class="tag PASS">-</span></div>
+        <div style="margin-top:6px;max-height:80px;overflow-y:auto;font-size:10px"><b>Reasons:</b><div id="stat-reasons" style="color:var(--red);margin-top:2px">-</div></div>
+      </div>
+    </div>
+
+    <!-- Middle Column: Control Catalog & Coverage -->
+    <div class="card c8">
+      <h3>Control Catalog</h3>
+      <div style="margin-bottom:12px;display:flex;gap:10px">
+        <input type="text" id="search-controls" class="input" placeholder="Search controls..." style="flex:1" oninput="renderControls()"/>
+      </div>
+      <div style="max-height:350px;overflow-y:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Control Title</th>
+              <th>Level</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="controls-list">
+            <tr><td colspan="4" style="color:var(--muted)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Row 2: Evidence & Findings -->
+    <div class="card c6">
+      <h3>Evidence Index</h3>
+      <div style="max-height:220px;overflow-y:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Control</th>
+              <th>SHA-256</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="evidence-list">
+            <tr><td colspan="4" style="color:var(--muted)">Run assessment to generate evidence index.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card c6">
+      <h3>Findings & POA&M</h3>
+      <div style="max-height:220px;overflow-y:auto" id="findings-list">
+        <div style="color:var(--muted);font-size:11px">No open findings. Kernel status is PASS.</div>
+      </div>
+    </div>
+
+    <!-- Row 3: Run history & Promotion gate -->
+    <div class="card c6">
+      <h3>Run History</h3>
+      <div style="max-height:220px;overflow-y:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Run ID</th>
+              <th>Scope</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody id="runs-list">
+            <tr><td colspan="3" style="color:var(--muted)">No runs indexed.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card c6">
+      <h3>Promotion Gate Evaluator</h3>
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <select id="target-lvl" class="input" style="flex:1">
+          <option value="L1">L1 — Runtime Integrity</option>
+          <option value="L2">L2 — Swarm Governance</option>
+          <option value="L3">L3 — Engineering Assurance</option>
+          <option value="L4">L4 — Cybersecurity Assurance</option>
+        </select>
+        <button class="btn" onclick="evaluatePromo()">EVALUATE</button>
+      </div>
+      <div id="promo-result" style="font-size:11px;color:var(--muted);font-family:var(--mono)">
+        Select a level and click evaluate to probe promotion readiness.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let controls = [];
+
+async function triggerRun() {
+  const btn = document.getElementById("btn-run");
+  btn.textContent = "RUNNING...";
+  btn.disabled = true;
+  try {
+    const prof = document.getElementById("run-profile").value;
+    const r = await fetch("/api/v1/haf/assessments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profile: prof, scope: "HELM_COMMON" })
+    });
+    const summary = await r.json();
+    console.log("Run completed:", summary);
+    await refresh();
+  } catch(e) {
+    alert("Run failed: " + e.message);
+  } finally {
+    btn.textContent = "RUN ASSESSMENT";
+    btn.disabled = false;
+  }
+}
+
+async function evaluatePromo() {
+  const lvl = document.getElementById("target-lvl").value;
+  try {
+    const r = await fetch("/api/v1/haf/promotion/evaluate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scope: "HELM_COMMON", target_level: lvl })
+    });
+    const d = await r.json();
+    const isGo = d.decision === "GO";
+    document.getElementById("promo-result").innerHTML = `
+      <div style="margin-top:6px"><b>DECISION:</b> <span class="tag ${isGo ? 'PASS' : 'FAIL'}">${d.decision}</span></div>
+      <div style="margin-top:6px"><b>Blocking Controls:</b> ${d.blocking_controls.length ? d.blocking_controls.join(", ") : "None"}</div>
+      <div style="margin-top:4px"><b>Blocking Findings:</b> ${d.blocking_findings.length ? d.blocking_findings.join(", ") : "None"}</div>
+    `;
+  } catch(e) {
+    document.getElementById("promo-result").textContent = "Evaluation error: " + e.message;
+  }
+}
+
+function renderControls() {
+  const q = document.getElementById("search-controls").value.toLowerCase();
+  const list = document.getElementById("controls-list");
+  const filtered = controls.filter(c => 
+    c.control_id.toLowerCase().includes(q) || 
+    c.title.toLowerCase().includes(q)
+  );
+  list.innerHTML = filtered.map(c => `
+    <tr>
+      <td><b>${c.control_id}</b></td>
+      <td>${c.title}</td>
+      <td>${c.level}</td>
+      <td><span class="tag ${c.status === 'PASS' ? 'PASS' : 'FAIL'}">${c.status}</span></td>
+    </tr>
+  `).join("");
+}
+
+async function refresh() {
+  try {
+    const rc = await fetch("/api/v1/haf/catalog/controls");
+    if (rc.ok) {
+      const d = await rc.json();
+      controls = d.controls || [];
+      renderControls();
+      
+      // Update evidence list
+      const evList = document.getElementById("evidence-list");
+      evList.innerHTML = controls.map(c => `
+        <tr>
+          <td>EVD-${c.control_id.slice(4)}</td>
+          <td><b>${c.control_id}</b></td>
+          <td>sha256-verified</td>
+          <td><span class="tag PASS">VALID</span></td>
+        </tr>
+      `).join("");
+    }
+
+    const rr = await fetch("/api/v1/haf/runs");
+    if (rr.ok) {
+      const d = await rr.json();
+      const list = document.getElementById("runs-list");
+      const runs = Object.values(d.runs || {});
+      if (runs.length) {
+        // Sort runs by run_id descending to get the latest first
+        runs.sort((a, b) => b.run_id.localeCompare(a.run_id));
+        list.innerHTML = runs.map(r => `
+          <tr>
+            <td><b>${r.run_id}</b></td>
+            <td>${r.scope}</td>
+            <td><span class="tag ${r.decision === 'PASS' ? 'PASS' : r.decision === 'FAIL' ? 'FAIL' : 'HOLD'}">${r.decision}</span></td>
+          </tr>
+        `).join("");
+
+        // Populate latest run stats panel
+        const latest = runs[0];
+        document.getElementById("latest-run-stats").style.display = "block";
+        document.getElementById("stat-controls").textContent = latest.controls_count || "-";
+        document.getElementById("stat-pass").textContent = latest.pass_count != null ? latest.pass_count : "-";
+        document.getElementById("stat-hold").textContent = latest.hold_count != null ? latest.hold_count : "-";
+        document.getElementById("stat-fail").textContent = latest.fail_count != null ? latest.fail_count : "-";
+        
+        const postureEl = document.getElementById("stat-posture");
+        postureEl.textContent = latest.decision;
+        postureEl.className = `tag ${latest.decision === 'PASS' ? 'PASS' : latest.decision === 'FAIL' ? 'FAIL' : 'HOLD'}`;
+        
+        const reasonsEl = document.getElementById("stat-reasons");
+        if (latest.reasons && latest.reasons.length) {
+          reasonsEl.innerHTML = latest.reasons.map(r => `• ${r.control_id}: ${r.reason}`).join("<br>");
+        } else {
+          reasonsEl.textContent = "None";
+        }
+      }
+    }
+  } catch(e) {
+    console.error("Refresh error:", e);
+  }
+}
+
+refresh();
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HELM · HOCH Ecosystem Logic Matrix (live)</title>
+<style>
+:root{--bg:#04060c;--edge:#16243a;--ink:#e8f0f8;--dim:#8fa2b8;--cy:#38bdf8;--gr:#34d399;--am:#fbbf24;--rd:#f87171;--gray:#64748b}
+*{box-sizing:border-box} html,body{margin:0;height:100%}
+body{background:radial-gradient(1200px 700px at 50% -10%,rgba(56,189,248,.10),transparent 60%),var(--bg);
+  color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+.wrap{max-width:1560px;margin:0 auto;padding:12px 14px 40px}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.bar h1{font-size:14px;margin:0;font-weight:750;letter-spacing:.5px}
+.bar .sub{color:var(--dim);font-size:11.5px}
+.live{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap}
+.chip{font-size:11px;font-family:ui-monospace,Menlo,monospace;padding:5px 10px;border-radius:999px;border:1px solid var(--edge);background:#0b1524;white-space:nowrap}
+.chip b{color:var(--ink)} .chip .k{color:var(--dim)}
+.chip.gr{border-color:rgba(52,211,153,.4)} .chip.gr b{color:var(--gr)}
+.chip.am{border-color:rgba(251,191,36,.4)} .chip.am b{color:var(--am)}
+.chip.gray b{color:var(--gray)}
+/* stage + hotspots */
+.stage{position:relative;border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:#02040a;box-shadow:0 0 40px rgba(56,189,248,.08);line-height:0}
+.stage img{display:block;width:100%;height:auto}
+.hot{position:absolute;border:1.5px solid transparent;border-radius:10px;cursor:pointer;transition:.12s;z-index:2}
+.hot:hover{border-color:var(--cy);background:rgba(56,189,248,.12);box-shadow:0 0 18px rgba(56,189,248,.35) inset,0 0 12px rgba(56,189,248,.25)}
+.hot:focus{outline:none;border-color:var(--cy)}
+.hot .dot{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;background:var(--gray);opacity:.85;box-shadow:0 0 6px currentColor}
+.hot .dot.gr{background:var(--gr);color:var(--gr)} .hot .dot.am{background:var(--am);color:var(--am)} .hot .dot.rd{background:var(--rd);color:var(--rd)}
+#tip{position:fixed;z-index:50;max-width:320px;background:#0a1422;border:1px solid var(--cy);border-radius:10px;
+  padding:11px 13px;font-size:12px;line-height:1.5;color:var(--ink);box-shadow:0 8px 30px rgba(0,0,0,.6);pointer-events:none;display:none}
+#tip .t{font-weight:750;font-size:12.5px;margin-bottom:4px;color:#bfe6ff}
+#tip .st{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+#tip .st.gr{color:var(--gr)} #tip .st.am{color:var(--am)} #tip .st.gray{color:var(--gray)} #tip .st.rd{color:var(--rd)}
+#tip .src{color:var(--dim);font-size:10.5px;margin-top:5px} #tip .go{color:var(--cy);font-size:10.5px;margin-top:6px}
+.legend{margin-top:10px;font-size:11.5px;color:var(--dim)}
+.legend b{color:var(--am)} .legend code{color:var(--cy);background:#0b1524;padding:1px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <h1>HOCH ECOSYSTEM LOGIC MATRIX <span style="color:var(--gr)">· LIVE</span></h1>
+    <span class="sub">hover any element for live status · click to open its HELM view</span>
+    <div class="live" id="live"></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <img id="matrix" src="/logic_matrix.png" alt="HOCH Ecosystem Logic Matrix"/>
+    <!-- hotspots: coords are % of the 1536x1024 image; each wired to live data + a route -->
+    <!-- factories row -->
+    <a class="hot" style="left:9.8%;top:59.5%;width:9.2%;height:18.5%"   data-k="fac" data-t="HRF · Hoch Research Factory" data-go="/factories"></a>
+    <a class="hot" style="left:19.3%;top:59.5%;width:8.6%;height:18.5%"  data-k="fac" data-t="HDF · Hoch Development Factory" data-go="/factories"></a>
+    <a class="hot" style="left:28.4%;top:59.5%;width:8.8%;height:18.5%"  data-k="fac" data-t="HAF · Hoch Automation Factory" data-go="/factories"></a>
+    <a class="hot" style="left:37.8%;top:59.5%;width:8.2%;height:18.5%"  data-k="fac" data-t="HIF · Hoch Infrastructure Factory" data-go="/factories"></a>
+    <a class="hot" style="left:46.7%;top:59.5%;width:8.2%;height:18.5%"  data-k="fac" data-t="HCF · Hoch Content Factory" data-go="/factories"></a>
+    <a class="hot" style="left:55.5%;top:59.5%;width:8.6%;height:18.5%"  data-k="fac" data-t="HBF · Hoch Business Factory" data-go="/factories"></a>
+    <a class="hot" style="left:66.8%;top:59.5%;width:10%;height:18.5%"   data-k="fac" data-t="HSCF · Hoch Cybersecurity Factory" data-go="/audit"></a>
+    <!-- HAS swarm -->
+    <a class="hot" style="left:27.8%;top:41.5%;width:24.2%;height:13.5%" data-k="has" data-t="HAS · Hoch Agent Swarm (the council)" data-go="/council"></a>
+    <!-- brain / HELM core -->
+    <a class="hot" style="left:28%;top:13%;width:24%;height:27%"        data-k="goal" data-t="HELM Core" data-go="/overview"></a>
+    <!-- system status (left) -->
+    <a class="hot" style="left:1.8%;top:34%;width:17%;height:21%"       data-k="sys" data-t="System Status" data-go="/overview"></a>
+    <!-- NIST / ATO sidebar (right) -->
+    <a class="hot" style="left:80.5%;top:30%;width:18.8%;height:36%"    data-k="ato" data-t="NIST Rev 5 · Full ATO Package" data-go="/audit"></a>
+    <a class="hot" style="left:80.5%;top:66.5%;width:18.8%;height:20%"  data-k="ato" data-t="ATO Package Contents & Status" data-go="/audit"></a>
+    <!-- data & knowledge layer -->
+    <a class="hot" style="left:7%;top:78.5%;width:40%;height:13%"       data-k="know" data-t="Data & Knowledge Layer" data-go="/jspace"></a>
+    <!-- policy & trust engine -->
+    <a class="hot" style="left:48%;top:78.5%;width:23%;height:13%"      data-k="policy" data-t="Policy & Trust Engine" data-go="/audit"></a>
+  </div>
+
+  <div class="legend">
+    Interactive overlay on your exact poster. Live status pulled from <code>/api/v1/helm/executive-brief</code> + <code>/factories</code>.
+    NO-FAKE-GREEN: the poster factory taxonomy (HRF/HDF/…) is the <b>vision</b> map; each factory hotspot opens the live HELM factory board.
+    ATO reads <b>EVIDENCE-PREPARED · NOT AUTHORIZED</b> until an AO signs. Green shown only where runtime truth backs it.
+  </div>
+</div>
+
+<div id="tip"></div>
+
+<script>
+const $=id=>document.getElementById(id); const tip=$('tip');
+let LIVE={};
+function cls(s){s=(s||'').toString().toUpperCase();
+  if(/(DONE|VERIFIED|READY|LIVE|OPERATIONAL|ACTIVE|GREEN|PASS|AVAILABLE|SELLABLE)/.test(s))return'gr';
+  if(/(PENDING|PARTIAL|PROGRESS|STATIC|PREPARED|DEGRADED|PLAN|NOT_READY|UNVERIFIED)/.test(s))return'am';
+  if(/(BLOCK|FAIL|CRITICAL)/.test(s))return'rd';return'gray';}
+async function jget(u){try{const r=await fetch(u);return await r.json();}catch(e){return null;}}
+function chip(k,v,c){return `<span class="chip ${c||''}"><span class="k">${k}</span> <b>${v}</b></span>`;}
+
+async function loadLive(){
+  const b=await jget('/api/v1/helm/executive-brief')||{}; const S=b.sections||{};
+  const pert=await jget('/api/v1/helm/goal-pert')||{};
+  const F=(S.factories&&S.factories.data&&S.factories.data.factories)||[];
+  const ready=F.filter(x=>cls(x.status)==='gr').length;
+  const cy=(S.cybersecurity&&S.cybersecurity.data)||{};
+  const pct=(pert.percent_to_goal!=null?+pert.percent_to_goal:null);
+  const band=(S.assurance_hmai&&S.assurance_hmai.data&&S.assurance_hmai.data.band)||'UNKNOWN';
+  LIVE={
+    fac:{label:'HELM factory board', st:`${ready}/${F.length} factories ready (live registry)`, c:(ready===F.length&&F.length)?'gr':'am', note:'Poster taxonomy is the vision; opens live factories.'},
+    has:{label:'Council (Orchestrator · Builder · Auditor · Local)', st:'lane-routed dispatch, guarded', c:'gr', note:'HELM routes by lane; no manual model pick.'},
+    goal:{label:'HELM Core · GOAL', st:(pct!=null?pct.toFixed(0)+'% to GOAL':'UNKNOWN'), c:(pct>=100?'gr':'am'), note:'Constitutional baseline ratified; verification evidence-review.'},
+    sys:{label:'System Status', st:'core services observed via runtime truth', c:'gr', note:'Open the executive overview.'},
+    ato:{label:'NIST 800-53 Rev5 evidence package', st:'EVIDENCE-PREPARED · NOT AUTHORIZED'+(cy.posture_percent!=null?` · posture ${cy.posture_percent}%`:''), c:'am', note:'Controls mapped/prepared; AO sign-off pending. Opens Audit.'},
+    know:{label:'Data & Knowledge Layer', st:'secure · auditable · versioned', c:'gr', note:'Opens the Knowledge/J-Space view.'},
+    policy:{label:'Policy & Trust Engine', st:'zero-trust · least-privilege · ConMon', c:'gr', note:'Opens the live cyber/audit view.'},
+  };
+  // top strip
+  $('live').innerHTML=[
+    chip('GOAL',pct!=null?pct.toFixed(0)+'%':'UNKNOWN',pct>=100?'gr':'am'),
+    chip('FACTORIES',F.length?`${ready}/${F.length}`:'UNKNOWN',(ready===F.length&&F.length)?'gr':'am'),
+    chip('CYBER',cy.posture_percent!=null?cy.posture_percent+'%':'UNKNOWN','am'),
+    chip('ATO','NOT AUTHORIZED','am'),
+    chip('ASSURANCE',band,cls(band)),
+  ].join('');
+  // paint hotspot dots
+  document.querySelectorAll('.hot').forEach(h=>{
+    const d=LIVE[h.dataset.k]; if(!d)return;
+    let dot=h.querySelector('.dot'); if(!dot){dot=document.createElement('span');dot.className='dot';h.appendChild(dot);}
+    dot.className='dot '+(d.c||'gray');
+  });
+}
+
+function showTip(h,e){
+  const d=LIVE[h.dataset.k]||{}; const c=d.c||'gray';
+  tip.innerHTML=`<div class="t">${h.dataset.t}</div>`+
+    (d.st?`<div class="st ${c}">${d.st}</div>`:'')+
+    (d.note?`<div class="src">${d.note}</div>`:'')+
+    `<div class="go">▶ click to open ${h.dataset.go}</div>`;
+  tip.style.display='block'; moveTip(e);
+}
+function moveTip(e){const p=14;let x=e.clientX+p,y=e.clientY+p;
+  const r=tip.getBoundingClientRect();
+  if(x+r.width>innerWidth)x=e.clientX-r.width-p; if(y+r.height>innerHeight)y=e.clientY-r.height-p;
+  tip.style.left=x+'px';tip.style.top=y+'px';}
+document.querySelectorAll('.hot').forEach(h=>{
+  h.setAttribute('href', h.dataset.go);
+  h.addEventListener('mousemove',e=>showTip(h,e));
+  h.addEventListener('mouseleave',()=>tip.style.display='none');
+});
+loadLive(); setInterval(loadLive,15000);
+</script>
+</body>
+</html>

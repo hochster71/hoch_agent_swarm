@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HELM · Build Theater</title>
+<style>
+  :root{
+    --bg:#080b11; --panel:#111721; --panel2:#0d131c; --edge:#1e2836;
+    --ink:#e6edf3; --dim:#8b98a9; --faint:#5b6675;
+    --accent:#4da3ff; --good:#3fb950; --warn:#d29922; --bad:#f85149;
+    --orc:#4da3ff; --bld:#a371f7; --aud:#e3b341; --loc:#3fb950; --node:#4da3ff;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 700px at 60% -15%,#0f1b2c 0%,var(--bg) 62%);
+       color:var(--ink);font-family:var(--sans);min-height:100vh}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  h1{font-size:18px;margin:0;font-weight:650;letter-spacing:.3px}
+  .sub{color:var(--dim);font-size:12.5px}
+  .now{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+  .now b{color:var(--accent)}
+
+  .goalrow{display:flex;align-items:center;gap:20px;margin:18px 0 8px}
+  .ring{--pct:60;width:96px;height:96px;border-radius:50%;flex:none;
+        background:conic-gradient(var(--accent) calc(var(--pct)*1%), #1a2330 0);
+        display:flex;align-items:center;justify-content:center;position:relative}
+  .ring::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--bg)}
+  .ring span{position:relative;font-family:var(--mono);font-size:20px;font-weight:650}
+  .goalmeta{flex:1}
+  .state{font-family:var(--mono);font-size:13px;padding:4px 10px;border-radius:999px;
+         display:inline-block;border:1px solid var(--edge)}
+  .state.RUNNING{color:var(--accent);border-color:#17324f;background:#0c1522}
+  .state.GOAL_REACHED{color:var(--good);border-color:#1c3a24;background:#0d1f14}
+  .state.PARTIAL,.state.NEEDS_FOUNDER{color:var(--warn);border-color:#3a3016;background:#1f1a0d}
+  .detail{color:var(--dim);font-size:13px;margin-top:8px;line-height:1.5;white-space:pre-wrap}
+
+  .rail{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 6px}
+  .node{font-size:11px;font-family:var(--mono);padding:6px 10px;border-radius:8px;border:1px solid var(--edge);
+        background:var(--panel2);color:var(--faint);position:relative}
+  .node .lab{display:block;color:var(--faint);font-size:9.5px;margin-top:2px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .node.DONE{color:var(--good);border-color:#1c3a24;background:#0d1f14}
+  .node.PARTIAL,.node.IN_PROGRESS{color:var(--warn);border-color:#3a3016}
+  .node.PENDING,.node.PLANNED{color:var(--faint)}
+  .node.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;color:var(--ink);
+               animation:pulse 1.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 1px var(--accent) inset}50%{box-shadow:0 0 14px 1px var(--accent)}}
+
+  h2{font-size:11px;font-family:var(--mono);letter-spacing:.6px;color:var(--faint);text-transform:uppercase;margin:22px 0 10px}
+  .stream{display:flex;flex-direction:column;gap:8px}
+  .ev{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--edge);
+      border-radius:10px;padding:10px 13px;border-left:3px solid var(--faint);animation:fade .5s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1}}
+  .ev.builder{border-left-color:var(--bld)} .ev.auditor{border-left-color:var(--aud)}
+  .ev.orchestrator{border-left-color:var(--orc)} .ev.local{border-left-color:var(--loc)}
+  .ev.node{border-left-color:var(--good)} .ev.blocked{border-left-color:var(--bad)}
+  .ev .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+  .ev .who{font-size:12.5px;font-weight:600}
+  .ev.builder .who{color:var(--bld)} .ev.auditor .who{color:var(--aud)}
+  .ev.orchestrator .who{color:var(--orc)} .ev.local .who{color:var(--loc)} .ev.node .who{color:var(--good)}
+  .ev .t{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .ev .msg{color:var(--dim);font-size:12.5px;margin-top:3px;font-family:var(--mono)}
+  .empty{color:var(--faint);font-size:13px;text-align:center;margin-top:30px}
+  a{color:var(--accent);text-decoration:none}
+  .foot{margin-top:24px;color:var(--faint);font-size:11px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>HELM · Build Theater</h1>
+    <span class="sub">Watch the swarm reason and build toward GOAL — live.</span>
+    <span class="now" id="now">—</span>
+  </header>
+
+  <div class="goalrow">
+    <div class="ring" id="ring"><span id="pct">—</span></div>
+    <div class="goalmeta">
+      <span class="state" id="state">…</span>
+      <div class="detail" id="detail">Loading…</div>
+    </div>
+  </div>
+
+  <div class="rail" id="rail"></div>
+
+  <h2>Reasoning stream — the brain working</h2>
+  <div class="stream" id="stream"><div class="empty">Waiting for the swarm…</div></div>
+
+  <div class="foot">Auto-refreshing every 3s · <a href="/pert-live">PERT board</a> · <a href="/council">Council</a></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function esc(s){return (s||"").replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function laneOf(p){p=(p||"").toLowerCase();
+  if(p.includes("build"))return"builder"; if(p.includes("audit"))return"auditor";
+  if(p.includes("orch"))return"orchestrator"; if(p.includes("local"))return"local";
+  if(p.includes("goal_runner")||p.includes("runner"))return"node"; return"";}
+
+function evText(e){
+  const p=e.payload||{}; const t=e.type||"";
+  if(t==="GOAL_NODE_UPDATE") return {who:`${p.node} → ${p.status}`, cls:"node", msg:p.status==="DONE"?"node closed ✓":"status update"};
+  if(t==="COUNCIL_VERDICT") return {who:"Auditor · verdict", cls:"auditor", msg:`OVERALL: ${p.overall||"?"} · ${p.provider||""}/${p.model||""}`};
+  if(t==="COUNCIL_BUILD") return {who:"Builder · build", cls:"builder", msg:`${p.mode||""} → ${p.status||""}${p.frozen_violation?" · FROZEN VIOLATION (rolled back)":""} · $${(p.cost||0).toFixed?p.cost.toFixed(3):p.cost}`};
+  if(t==="COUNCIL_SOLVED") return {who:`${(p.role||"lane")} · answered`, cls:laneOf(p.role), msg:`${p.provider||""}/${p.model||""}`};
+  if(t.includes("BLOCKED")||t.includes("ERROR")) return {who:t.replace("COUNCIL_","")+" ", cls:"blocked", msg:JSON.stringify(p).slice(0,90)};
+  return {who:t.replace("COUNCIL_",""), cls:laneOf(e.producer), msg:JSON.stringify(p).slice(0,90)};
+}
+
+async function refresh(){
+  try{
+    const s=await(await fetch('/api/v1/helm/build-status')).json();
+    const pct=+(s.percent_to_goal ?? 60);
+    $('ring').style.setProperty('--pct',pct); $('pct').textContent=pct.toFixed(0)+'%';
+    $('state').textContent=s.state||'—'; $('state').className='state '+(s.state||'');
+    $('detail').textContent=s.detail||'';
+    // node rail
+    const order=s.node_order||Object.keys(s.nodes||{});
+    const active=(s.detail||'').match(/working\s+([A-Z0-9_]+)/);
+    const activeId=active?active[1]:null;
+    $('rail').innerHTML=order.map(id=>{
+      const st=(s.nodes||{})[id]||'PENDING';
+      const lab=(s.node_labels||{})[id]||'';
+      const a=(id===activeId && s.state==='RUNNING')?' active':'';
+      return `<div class="node ${st}${a}">${esc(id)}<span class="lab">${esc(lab)}</span></div>`;
+    }).join('');
+  }catch(e){}
+  try{
+    const a=await(await fetch('/api/v1/helm/council/activity?limit=40')).json();
+    const evs=(a.events||[]);
+    $('stream').innerHTML = evs.length? evs.map(e=>{
+      const r=evText(e); const ts=(e.timestamp||'').replace('T',' ').replace('Z','').slice(5,19);
+      return `<div class="ev ${r.cls}"><div class="top"><span class="who">${esc(r.who)}</span><span class="t">${esc(ts)}</span></div><div class="msg">${esc(r.msg)}</div></div>`;
+    }).join('') : '<div class="empty">Waiting for the swarm…</div>';
+  }catch(e){}
+  $('now').innerHTML='live · '+new Date().toLocaleTimeString();
+}
+refresh(); setInterval(refresh, 3000);
+</script>
+</body>
+</html>

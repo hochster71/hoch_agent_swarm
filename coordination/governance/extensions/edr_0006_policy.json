@@ -1,0 +1,14 @@
+{
+  "schema": "HELM_GOVERNANCE_EXTENSION_POLICY_v1",
+  "extension": "EDR-0006 Proof Record obligations",
+  "created_at": "2026-07-19T15:20:00Z",
+  "provenance": "A7 remediation — this policy strengthening was previously written IN-PLACE into the frozen coordination/governance/field_ownership.json (drift preserved in coordination/evidence/a7_drift_20260719/frozen_target_drift.patch). Re-homed here as a composed extension; the frozen file is byte-restored to the d8d5139a baseline.",
+  "doctrine": "Governance-before-Capability. This extension ADDS obligations on top of the frozen field-ownership constitution; it can never relax it, and it cannot change its own authorization status.",
+  "additional_must_produce": {
+    "builder": [
+      "Governance Proof Record for material decisions/completions — HELM Engineering Doctrine v1.0 (EDR-0006); a decision without a valid Proof Record is UNKNOWN, not complete"
+    ]
+  },
+  "enforcement": "backend/helm_runtime/extensions/constitutional_gate.py (govern_decision) + backend/security/helm_conmon.py governance_coverage; a material event lacking a GOVERNED Proof Record is a FINDING, never silently green",
+  "edr": "EDR-0006-R9"
+}

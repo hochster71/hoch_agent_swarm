@@ -1,0 +1,94 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "helm command",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "GetMissionStatusIntent",
+          "slots": [],
+          "samples": [
+            "status",
+            "get status",
+            "for status",
+            "what is the status",
+            "give me status summary"
+          ]
+        },
+        {
+          "name": "GetAuditPostureIntent",
+          "slots": [],
+          "samples": [
+            "audit posture",
+            "for audit posture",
+            "what is the audit posture",
+            "certification status"
+          ]
+        },
+        {
+          "name": "ListBlockersIntent",
+          "slots": [],
+          "samples": [
+            "blockers",
+            "for blockers",
+            "what are the blockers",
+            "list blockers"
+          ]
+        },
+        {
+          "name": "ListOnlineAgentsIntent",
+          "slots": [],
+          "samples": [
+            "which agents are online",
+            "for online agents",
+            "online agents list",
+            "what agents are online"
+          ]
+        },
+        {
+          "name": "RunConMonIntent",
+          "slots": [],
+          "samples": [
+            "run continuous monitoring",
+            "trigger conmon",
+            "start assessment"
+          ]
+        },
+        {
+          "name": "EnableOperatorHoldIntent",
+          "slots": [],
+          "samples": [
+            "place operator hold",
+            "enable operator hold",
+            "lock the system"
+          ]
+        },
+        {
+          "name": "DisableOperatorHoldIntent",
+          "slots": [],
+          "samples": [
+            "release operator hold",
+            "disable operator hold",
+            "unlock the system"
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+}

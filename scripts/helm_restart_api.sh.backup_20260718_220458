@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# HELM API restart — reload the live server so new routes (/council chat, verify, activity)
+# are served. Robust: stops the stale uvicorn, waits for port 8770 to actually free, restarts
+# with the dev TLS cert, verifies /council, and tails the log if anything fails.
+set -uo pipefail
+REPO="/Users/michaelhoch/hoch_agent_swarm"
+PY="$REPO/.venv/bin/python3"; [ -x "$PY" ] || PY="$(command -v python3)"
+HELM_CERT="$HOME/.helm/dev_certs/helm_dev_cert.pem"
+HELM_KEY="$HOME/.helm/dev_certs/helm_dev_key.pem"
+LOG="/tmp/helm_api.log"
+cd "$REPO" || exit 1
+
+echo "▸ Stopping any running HELM API (uvicorn :8770)…"
+pkill -f "uvicorn backend.helm_live_api:app" 2>/dev/null && sleep 1 || true
+# Also free the port if something else is holding it (stuck bind / TIME_WAIT owner).
+for i in 1 2 3 4 5 6 7 8; do
+  holder="$(lsof -ti tcp:8770 2>/dev/null || true)"
+  [ -z "$holder" ] && break
+  echo "  · port 8770 still held (pid $holder) — clearing (attempt $i)"
+  kill "$holder" 2>/dev/null || true
+  sleep 1
+done
+
+echo "▸ Sanity-checking the app imports before launch…"
+if ! "$PY" -c "import backend.helm_live_api" 2>/tmp/helm_import_err.txt; then
+  echo "  ✗ app failed to import — NOT starting. Error:"; sed 's/^/    /' /tmp/helm_import_err.txt | tail -20; exit 1
+fi
+echo "  ✓ imports clean"
+
+echo "▸ Loading gitignored env (voice/secrets + council keys)…"
+set -a
+[ -f "$REPO/.env" ] && . "$REPO/.env"
+[ -f "$REPO/.env.elevenlabs" ] && . "$REPO/.env.elevenlabs"
+[ -f "$HOME/.helm/helm.env" ] && . "$HOME/.helm/helm.env"
+set +a
+
+echo "▸ Starting HELM API (HTTPS :8770)…"
+nohup "$PY" -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770 \
+  --ssl-certfile "$HELM_CERT" --ssl-keyfile "$HELM_KEY" >> "$LOG" 2>&1 &
+NEWPID=$!
+
+echo "▸ Waiting for it to answer…"
+ok=""
+for i in $(seq 1 15); do
+  if curl -fsSk -o /dev/null --max-time 3 https://127.0.0.1:8770/council 2>/dev/null; then ok=1; break; fi
+  sleep 1
+done
+
+if [ -n "$ok" ]; then
+  cc=$(curl -fsSk -o /dev/null -w "%{http_code}" https://127.0.0.1:8770/council 2>/dev/null)
+  cs=$(curl -fsSk -o /dev/null -w "%{http_code}" https://127.0.0.1:8770/api/v1/helm/council/status 2>/dev/null)
+  echo "   /council                     -> $cc"
+  echo "   /api/v1/helm/council/status  -> $cs"
+  echo
+  echo "✓ Council live (pid $NEWPID).  Open:  https://127.0.0.1:8770/council"
+  curl -fsSk --max-time 5 https://127.0.0.1:8770/api/v1/helm/council/status 2>/dev/null \
+    | python3 -c 'import sys,json;d=json.load(sys.stdin);[print(f"    {m[\"status\"]:16s} {m[\"display_name\"]} ({m[\"provider\"]})") for m in d["members"]];print(f"    -> {d[\"ready_count\"]}/{d[\"total\"]} READY")' 2>/dev/null || true
+else
+  echo "  ✗ API did not answer on :8770. Last 25 log lines:"
+  tail -25 "$LOG" 2>/dev/null | sed 's/^/    /'
+  echo
+  echo "  (If you see a cert error, check: ls -l $HELM_CERT $HELM_KEY)"
+  exit 1
+fi

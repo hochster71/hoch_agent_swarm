@@ -1,0 +1,16 @@
+{
+  "ask-resources-version": "2.0",
+  "profiles": {
+    "default": {
+      "skillId": "amzn1.ask.skill.placeholder",
+      "skillMetadata": {
+        "src": "./skill-package"
+      },
+      "code": {
+        "default": {
+          "src": "./lambda"
+        }
+      }
+    }
+  }
+}

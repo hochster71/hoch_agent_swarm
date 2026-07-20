@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "session": {
+    "new": true,
+    "sessionId": "SessionId.stub-session-id",
+    "application": {
+      "applicationId": "amzn1.ask.skill.placeholder"
+    },
+    "user": {
+      "userId": "amzn1.ask.account.stub-user-id"
+    }
+  },
+  "context": {
+    "System": {
+      "application": {
+        "applicationId": "amzn1.ask.skill.placeholder"
+      },
+      "user": {
+        "userId": "amzn1.ask.account.stub-user-id"
+      },
+      "device": {
+        "deviceId": "deviceId.stub"
+      },
+      "apiEndpoint": "https://api.amazonalexa.com",
+      "apiAccessToken": "token"
+    }
+  },
+  "request": {
+    "type": "LaunchRequest",
+    "requestId": "EdwRequestId.stub-request-id",
+    "timestamp": "2026-07-19T13:00:00Z"
+  }
+}

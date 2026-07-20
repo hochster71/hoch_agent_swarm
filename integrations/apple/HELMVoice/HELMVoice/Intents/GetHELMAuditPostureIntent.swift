@@ -1,0 +1,22 @@
+import Foundation
+import AppIntents
+
+struct GetHELMAuditPostureIntent: AppIntent {
+    static var title: LocalizedStringResource = "Get HELM Audit Posture"
+    static var description = IntentDescription("Retrieves the HAF certification and audit status.")
+    
+    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+        let client = HELMVoiceClient()
+        let resultString = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in
+            client.sendVoiceRequest(intent: "helm.audit.posture", utterance: "audit posture") { result in
+                switch result {
+                case .success(let response):
+                    continuation.resume(returning: response.speechResponse)
+                case .failure(let err):
+                    continuation.resume(throwing: err)
+                }
+            }
+        }
+        return .result(value: resultString)
+    }
+}
