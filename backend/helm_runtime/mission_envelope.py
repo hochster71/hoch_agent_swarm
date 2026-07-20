@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import platform
 import uuid
 from dataclasses import asdict, dataclass, field
@@ -368,6 +369,93 @@ class MissionEnvelope:
                 "founder_action": self.founder_action,
             },
         )
+
+
+# --- integration state: local disk is not the repository of record -----------
+#
+# Founder rule, 2026-07-20. Tests passing against a local commit is evidence of
+# correctness and no evidence of delivery. On 2026-07-20 three commits were cited as
+# done: one was unreachable from any ref, one was local-only, one was on the remote
+# branch. Only the third was integrated. The distinction is mechanical, so it is
+# checked mechanically rather than asserted in prose.
+
+INTEGRATION_UNKNOWN = "UNKNOWN"              # SHA not found at all
+INTEGRATION_LOCAL = "LOCAL_VERIFIED"         # exists locally, on NO remote
+INTEGRATION_ELSEWHERE = "INTEGRATED_ELSEWHERE"  # on a remote, but not the target branch
+INTEGRATION_INTEGRATED = "INTEGRATED"        # reachable from the target remote branch
+INTEGRATION_AMBIGUOUS = "AMBIGUOUS_SHA"      # abbreviated SHA — cannot be trusted
+
+# Two defects found in the first version of this function on 2026-07-20, both of the
+# class it exists to catch. Recorded so the fixes are not silently re-broken:
+#
+# 1. ABBREVIATED SHA -> FALSE INTEGRATED. `git` resolves any unique prefix, so a
+#    mistyped SHA sharing a prefix with a real commit reports INTEGRATED. This was not
+#    hypothetical: the two Phase D SHAs cited on 2026-07-20 both began `5877ffa1`, one
+#    real and one nonexistent. Querying the 8-char prefix returned INTEGRATED — a false
+#    green produced by the verification tool itself. Full 40-char SHAs are now required.
+#
+# 2. BRANCH SCOPE CONFLATED WITH ABSENCE. Scoping to a target branch and finding nothing
+#    was reported as LOCAL_VERIFIED, which reads as "never pushed." But it also matches
+#    "pushed, to a different branch" — a materially different fact. Two redactor commits
+#    were reported LOCAL_VERIFIED when they were on `helm-runtime-bridge-v1` the whole
+#    time. `INTEGRATED_ELSEWHERE` now separates the two.
+
+_FULL_SHA = re.compile(r"^[0-9a-fA-F]{40}$")
+
+
+def integration_state(sha: str, remote_branch: Optional[str] = None,
+                      root: Optional[Path] = None,
+                      allow_abbreviated: bool = False) -> Dict[str, Any]:
+    """Classify a commit against the repository of record. Fails toward doubt.
+
+    `remote_branch` is matched as a substring of `git branch -r` output, so
+    "helm/execution-schedule-wave-1" matches "github/helm/execution-schedule-wave-1".
+    Omit it to accept any remote.
+
+    Abbreviated SHAs are rejected by default: a prefix can resolve to a different commit
+    than the one intended, which turns this check into a source of false green.
+    """
+    import subprocess
+    root = root or ROOT
+    out: Dict[str, Any] = {"sha": sha, "remote_branch": remote_branch}
+
+    if not _FULL_SHA.match(str(sha).strip()) and not allow_abbreviated:
+        out["state"] = INTEGRATION_AMBIGUOUS
+        out["detail"] = (f"'{sha}' is not a full 40-character SHA; a prefix may resolve "
+                         "to a different commit. Supply the full SHA.")
+        return out
+
+    def git(*args: str) -> Optional[str]:
+        try:
+            r = subprocess.run(["git", *args], cwd=root, capture_output=True,
+                               text=True, timeout=20)
+            return r.stdout if r.returncode == 0 else None
+        except Exception:
+            return None
+
+    if git("cat-file", "-e", f"{sha}^{{commit}}") is None:
+        out["state"] = INTEGRATION_UNKNOWN
+        out["detail"] = "commit not found in this checkout — cannot verify"
+        return out
+
+    remotes = git("branch", "-r", "--contains", sha) or ""
+    all_hits = [l.strip() for l in remotes.splitlines() if l.strip()]
+    out["remotes"] = all_hits
+
+    if not all_hits:
+        out["state"] = INTEGRATION_LOCAL
+        out["detail"] = "exists locally, reachable from NO remote — not delivered"
+        return out
+
+    targeted = [h for h in all_hits if remote_branch in h] if remote_branch else all_hits
+    if targeted:
+        out["state"] = INTEGRATION_INTEGRATED
+        out["detail"] = f"reachable from {', '.join(targeted[:3])}"
+    else:
+        out["state"] = INTEGRATION_ELSEWHERE
+        out["detail"] = (f"delivered, but not on '{remote_branch}' — found on "
+                         f"{', '.join(all_hits[:3])}")
+    return out
 
 
 def load_envelopes(directory: Optional[Path] = None) -> List[Dict[str, Any]]:
