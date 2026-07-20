@@ -70,3 +70,17 @@ ls -la ~/Library/Application\ Support/kimi-desktop/kimi-agent/created-workspaces
 # restore a backup only if intentional
 # cp <backup> ~/Library/Application\ Support/kimi-desktop/kimi-agent/created-workspaces.json
 ```
+
+## Agent approval policy (2026-07-20)
+
+Authoring or changing `scripts/kimi/**` (the packager that decides what may leave the monorepo) requires **per-action founder approval**:
+
+| Layer | Setting |
+|-------|---------|
+| Grok global | `~/.grok/config.toml` → `permission_mode = "default"` (not `always-approve`) |
+| First prompt | `default_selected_permission = "allow_once"` |
+| Project | `.grok/config.toml` → `ask` on `Edit(scripts/kimi/**)` and related shell |
+
+Rationale: always-approve while building the trust-boundary redactor is how gaps ship as asserted green. Permission rules load at **session start** — restart Grok for this to take effect.
+
+Note: under always-approve, non-shell `ask` rules do not prompt. Keep always-approve off while working the packager.

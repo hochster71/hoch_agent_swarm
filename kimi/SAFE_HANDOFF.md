@@ -52,6 +52,18 @@ Kimi writes outbox  →  you review  →  promote into monorepo if good
 - Pack secrets, mission runtime, settlement, customer data  
 - Reconstruct `REDACTED_*` values  
 
+## Approval policy (founder rule)
+
+The packager is a **trust-boundary tool**. Edits under `scripts/kimi/**` (and the adversarial redaction tests) require **per-action founder approval** — not always-approve.
+
+| Layer | Setting |
+|-------|---------|
+| Grok global | `~/.grok/config.toml` → `[ui] permission_mode = "default"` |
+| Project | `.grok/config.toml` → `ask` on `Edit(scripts/kimi/**)` and related shell |
+| Restart | New Grok session required for permission rules to load |
+
+Do not re-enable always-approve while authoring or changing the handoff redactor.
+
 ## Related
 
 - Isolation: `~/Documents/kimi/policy/ISOLATION.md`

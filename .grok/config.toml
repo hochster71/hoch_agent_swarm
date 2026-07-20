@@ -1,0 +1,32 @@
+# Project Grok permission policy — HELM
+# Read on session start. deny > ask > allow.
+#
+# Trust boundary: scripts/kimi/** decides what may leave the monorepo for an
+# external agent (Kimi Desktop). Edits and shell that touch that tree must
+# prompt even when the operator is in a hurry.
+#
+# Note: under always-approve (bypassPermissions), non-shell `ask` rules do NOT
+# prompt. Keep global permission_mode = "default" (see ~/.grok/config.toml).
+# Shell `ask` rules still apply under always-approve.
+
+[permission]
+ask = [
+  # Packager / isolation / redactor — founder click required
+  "Edit(scripts/kimi/**)",
+  "Edit(**/scripts/kimi/**)",
+  "Edit(tests/unit/test_kimi_redaction_gaps.py)",
+  "Edit(**/test_kimi_redaction_gaps.py)",
+  "Edit(kimi/**)",
+  "Edit(docs/helm/agent_isolation/**)",
+
+  # Shell paths that can mutate the same boundary
+  "Bash(*scripts/kimi*)",
+  "Bash(*test_kimi_redaction*)",
+  "Bash(*make_safe_handoff*)",
+]
+
+deny = [
+  # Never auto-run destructive ops against the trust boundary
+  "Bash(rm -rf *scripts/kimi*)",
+  "Bash(rm -rf */scripts/kimi*)",
+]
