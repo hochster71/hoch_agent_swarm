@@ -1,0 +1,34 @@
+# Optional soft renames applied after secret redaction (case-sensitive first, then whole-word-ish).
+# Format: FROM=>TO   (one per line). Used to reduce brand/IP leakage in handoff packs.
+# This is obfuscation, not encryption. Do not treat renames as a security boundary.
+
+hoch_agent_swarm=>project_alpha
+HOCH_AGENT_SWARM=>PROJECT_ALPHA
+HELM_CONSTITUTION=>SYSTEM_CONSTITUTION
+HELM_ENGINEERING_DOCTRINE=>SYSTEM_ENGINEERING_DOCTRINE
+Mission Runtime=>Control Object
+mission runtime=>control object
+DOORSTEP=>FOUNDER_GATE
+Doorstep=>FounderGate
+doorstep=>founder_gate
+NO_FAKE_GREEN=>NO_FALSE_GREEN
+No-Fake-Green=>No-False-Green
+Factory Verse=>Assembly Grid
+FactoryVerse=>AssemblyGrid
+factoryverse=>assembly_grid
+Proof Record=>Evidence Record
+proof record=>evidence record
+Relay-200=>Lane-200
+RELAY_200=>LANE_200
+Epic Fury=>Wave Gate
+EPIC_FURY=>WAVE_GATE
+J-Space=>Link-Space
+JSPACE=>LINKSPACE
+jspace=>linkspace
+Moonshot=>VendorA
+moonshot=>vendora
+Stripe=>PayVendor
+stripe=>payvendor
+RevenueCat=>SubVendor
+App Store Connect=>StoreConsole
+Vercel=>HostVendor

@@ -1,0 +1,52 @@
+# Paths that must NEVER enter a Kimi handoff pack (fnmatch, repo-relative or absolute).
+# Lines starting with # are comments. Empty lines ignored.
+
+# Secrets & credentials
+.env
+.env.*
+**/.env
+**/.env.*
+**/*secret*
+**/*credential*
+**/*api_key*
+**/*apikey*
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/id_rsa*
+**/id_ed25519*
+**/*token*.json
+**/auth.json
+**/.npmrc
+**/.netrc
+
+# VCS / deps / env (noise + leak surface)
+.git/**
+**/.git/**
+**/.venv/**
+**/node_modules/**
+**/__pycache__/**
+**/*.pyc
+**/uv.lock
+**/package-lock.json
+
+# HELM control plane & mission truth (crown jewels)
+coordination/**
+backend/helm_runtime/**
+docs/helm/edr/**
+docs/helm/HELM_CONSTITUTION*
+docs/helm/HELM_ENGINEERING_DOCTRINE*
+docs/helm/HELM_MISSION_RUNTIME*
+
+# Live ledgers / money / ops state
+**/*ledger*.jsonl
+**/*stripe*
+**/*revenue*
+has_live_project_tracker/data/**
+data/backups/**
+
+# Local-only agent homes
+.claude/**
+.cursor/**
+.agents/**
