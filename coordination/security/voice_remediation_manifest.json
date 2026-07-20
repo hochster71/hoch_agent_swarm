@@ -10,7 +10,7 @@
     "backend/audit_factory/"
   ],
   "expected_files": {
-    ".gitignore": "054aa1e276276db20515afab9db927ed749042d678bf345852f93e73ca21a06d",
+    ".gitignore": "dce70b6b4a133fe332eaa3a1c19eaa65438c1f57e3c49b7d165b2e2224246e68",
     "backend/audit_factory/__init__.py": "bda4db8f817919cdd443ee42fc6be18824fdd53e60d6076f483d0b8424bda194",
     "backend/audit_factory/assessment_planner.py": "980b2d5a992fa82748d14b1b26baf67da5751ea14d1ad5efc67e0ea2a6181eec",
     "backend/audit_factory/certification_evaluator.py": "2c37deaf35a484275e8cd68eab388c8366ab666911a64de363a41759cc513c7d",
