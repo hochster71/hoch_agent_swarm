@@ -131,6 +131,21 @@
       "slug": "hff-hourly-rate",
       "built_at": "2026-07-20",
       "tests": "50 engine + 32 buyloop, all pass (node v22.22.3)"
+    },
+    {
+      "id": "HCF_SECRET_SCAN",
+      "factory": "HCF",
+      "name": "Secret & Key Exposure Scan",
+      "what_it_is": "Paste a config/.env/log/code snippet -> an OFFLINE heuristic report of credential-shaped patterns: vendor key formats (AWS, GitHub, Stripe, Slack, Google, SendGrid, Twilio), JWTs (reported only when the header segment really base64url-decodes to JSON with an alg), PEM private-key block markers, connection-string passwords, and high-entropy values on secret-like names. Placeholders and low-entropy values are set aside and disclosed. Every match is MASKED - originals never echoed back. Free preview shows severity counts + concern band; $5 unlocks every match with line number, redacted value, and its ordinary benign explanation.",
+      "buyer": "Solo devs and small teams who want a quick second pair of eyes on a config or log before sharing it, without installing a scanner or sending the text to a third party.",
+      "price_usd": 5,
+      "billing": "one_time",
+      "guardrail": "heuristic only; never claim certainty; no real-world security decision advice (enforced by a fail-closed report linter); matched values always masked",
+      "generated_by": "autonomous factory loop 2026-07-20 (all prior candidates already BUILT)",
+      "status": "BUILT",
+      "slug": "hcf-secret-scan",
+      "built_at": "2026-07-20",
+      "tests": "59 engine + 26 buyloop, all pass (node v22.22.3)"
     }
   ]
 }

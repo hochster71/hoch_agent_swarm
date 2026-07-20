@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secret & Key Exposure Scan — $5 offline heuristic check</title>
+<style>
+  :root { --ink:#14202b; --dim:#5b6b7b; --accent:#0b6e4f; --warn:#a33; --bg:#f6f8f7; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:860px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:1.9rem; margin:0 0 6px; }
+  .sub { color:var(--dim); margin:0 0 24px; }
+  .card { background:#fff; border:1px solid #dde5e1; border-radius:10px; padding:20px; margin-bottom:18px; }
+  textarea { width:100%; min-height:220px; font-family:ui-monospace,Menlo,monospace; font-size:.85rem; border:1px solid #ccd; border-radius:8px; padding:12px; }
+  button { border:0; border-radius:8px; padding:12px 20px; font-size:1rem; cursor:pointer; }
+  .btn-free { background:#e8efec; color:var(--ink); margin-right:10px; }
+  .btn-buy { background:var(--accent); color:#fff; font-weight:600; }
+  .counts { display:flex; gap:14px; margin:14px 0 6px; }
+  .pill { border-radius:999px; padding:6px 14px; font-weight:600; background:#eef2f0; }
+  .pill.h { background:#fbe9e9; color:var(--warn); }
+  .pill.m { background:#fdf3e2; color:#8a6410; }
+  .band { font-size:1.1rem; font-weight:700; }
+  .disclaimer { font-size:.8rem; color:var(--dim); border-top:1px dashed #ccd; padding-top:12px; margin-top:14px; }
+  .err { color:var(--warn); }
+  ul { color:var(--dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Secret &amp; Key Exposure Scan</h1>
+  <p class="sub">Paste a config, .env, log, or code snippet. An <strong>offline</strong> heuristic scan flags credential-shaped patterns — vendor key formats, decoded JWT structures, private-key blocks, connection-string passwords, high-entropy secret-named values. Matched values are always <strong>masked</strong>. Nothing you paste is stored.</p>
+
+  <div class="card">
+    <textarea id="input" placeholder="# paste your text here — e.g. an .env file, a CI log, a config snippet"></textarea>
+    <p>
+      <button class="btn-free" id="btn-preview">Free preview (signal counts)</button>
+      <button class="btn-buy" id="btn-buy">Unlock the full report — $5</button>
+    </p>
+    <div id="out"></div>
+    <p class="disclaimer">HEURISTIC PATTERN SCAN — NOT A GUARANTEE. This is string-pattern matching over the exact text you paste, done server-side and discarded. It cannot tell whether a match is real, active, or sensitive, and a clean result does not mean the text contains no secrets. Nothing here is a security decision or advice.</p>
+  </div>
+
+  <div class="card">
+    <strong>What the paid report adds</strong>
+    <ul>
+      <li>Every matched pattern with its line number and masked value (originals are never echoed back).</li>
+      <li>What the pattern's documented format is — and the ordinary, benign explanation for each match.</li>
+      <li>Placeholder/low-entropy matches that were set aside, and why.</li>
+    </ul>
+    <strong>What it deliberately is not</strong>
+    <ul>
+      <li>No network calls, no vendor validation, no storage of your text.</li>
+      <li>No certainty claims, no "you are safe / you are breached", no advice.</li>
+    </ul>
+  </div>
+</div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  $('btn-preview').onclick = async () => {
+    const text = $('input').value;
+    if (!text.trim()) { $('out').innerHTML = '<p class="err">Paste some text first.</p>'; return; }
+    $('out').textContent = 'Scanning…';
+    try {
+      const r = await fetch('/api/preview', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text }) });
+      const j = await r.json();
+      if (!r.ok) { $('out').innerHTML = '<p class="err">' + esc(j.message || j.error) + '</p>'; return; }
+      const p = j.preview;
+      $('out').innerHTML =
+        '<div class="counts">' +
+        '<span class="pill h">' + p.counts.high + ' high</span>' +
+        '<span class="pill m">' + p.counts.medium + ' medium</span>' +
+        '<span class="pill">' + p.counts.low + ' low</span>' +
+        '<span class="pill">' + p.suppressed_count + ' set aside</span>' +
+        '</div>' +
+        '<p class="band">Concern band: ' + esc(p.band) + '</p>' +
+        '<p>' + esc(p.note) + '</p>';
+    } catch (e) { $('out').innerHTML = '<p class="err">Could not reach the scanner.</p>'; }
+  };
+
+  $('btn-buy').onclick = async () => {
+    const text = $('input').value;
+    if (text.trim()) { try { sessionStorage.setItem('scan_text', text); } catch (e) {} }
+    $('out').textContent = 'Opening checkout…';
+    try {
+      const r = await fetch('/api/create-checkout-session', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tier:'scan' }) });
+      const j = await r.json();
+      if (!r.ok) { $('out').innerHTML = '<p class="err">' + esc(j.message || j.error) + '</p>'; return; }
+      window.location.href = j.url;
+    } catch (e) { $('out').innerHTML = '<p class="err">Could not start checkout.</p>'; }
+  };
+</script>
+</body>
+</html>

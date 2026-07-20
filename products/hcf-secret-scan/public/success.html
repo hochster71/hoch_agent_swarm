@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your scan is unlocked — Secret & Key Exposure Scan</title>
+<style>
+  :root { --ink:#14202b; --dim:#5b6b7b; --accent:#0b6e4f; --warn:#a33; --bg:#f6f8f7; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:860px; margin:0 auto; padding:32px 20px 64px; }
+  .card { background:#fff; border:1px solid #dde5e1; border-radius:10px; padding:20px; margin-bottom:18px; }
+  textarea { width:100%; min-height:180px; font-family:ui-monospace,Menlo,monospace; font-size:.85rem; border:1px solid #ccd; border-radius:8px; padding:12px; }
+  button { border:0; border-radius:8px; padding:12px 20px; font-size:1rem; cursor:pointer; background:var(--accent); color:#fff; font-weight:600; }
+  pre { background:#0e1a14; color:#dfe9e4; padding:16px; border-radius:8px; overflow:auto; font-size:.8rem; white-space:pre-wrap; }
+  .err { color:var(--warn); }
+  .dim { color:var(--dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Payment received — run your scan</h1>
+  <p class="dim">Your purchase unlocks one full scan for this checkout session. Your text was never sent anywhere during checkout; paste (or confirm) it below and run the scan now.</p>
+  <div class="card">
+    <textarea id="input"></textarea>
+    <p><button id="btn-run">Run the full scan</button> <span id="status" class="dim"></span></p>
+    <div id="out"></div>
+  </div>
+</div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  try { const saved = sessionStorage.getItem('scan_text'); if (saved) $('input').value = saved; } catch (e) {}
+  if (!sessionId) $('status').textContent = 'Missing session_id — open this page from the checkout redirect.';
+
+  $('btn-run').onclick = async () => {
+    const text = $('input').value;
+    if (!text.trim()) { $('out').innerHTML = '<p class="err">Paste the text to scan.</p>'; return; }
+    $('status').textContent = 'Scanning…';
+    try {
+      const r = await fetch('/api/scan', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text, session_id: sessionId }) });
+      const j = await r.json();
+      $('status').textContent = '';
+      if (!r.ok) { $('out').innerHTML = '<p class="err">' + (j.message || j.error || 'Scan failed.') + '</p>'; return; }
+      const pre = document.createElement('pre');
+      pre.textContent = j.report.text;
+      $('out').innerHTML = '';
+      $('out').appendChild(pre);
+    } catch (e) { $('status').textContent = ''; $('out').innerHTML = '<p class="err">Could not reach the scanner.</p>'; }
+  };
+</script>
+</body>
+</html>

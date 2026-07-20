@@ -1,0 +1,12 @@
+# sample_input.txt — SYNTHETIC demo config. Every value below is fabricated for tests/demo; none is a real credential. Secrets carry a '%%' split sentinel so no complete provider literal exists in committed source; loadSample strips it at runtime.
+AWS_ACCESS_KEY_ID=AKIA%%Q2RTX7YB4KDM9WPU
+AWS_SECRET_ACCESS_KEY=wJqlrXUtnFEMIK7MDENGbPxRfiCYzK9v3s1TplQd
+GITHUB_TOKEN=ghp_%%Ab3dEfG7hIjK9LmNoPqRsTuVwXyZ012345ab
+SLACK_BOT_TOKEN=xoxb-%%83214567-QWErtyUIopASdfGHjkl
+GOOGLE_API_KEY=AIza%%SyD4kQ9mB2xW7vN1pLr8tYcE3hUj5oZa6fq
+DATABASE_URL=postgres://svc_app:vN8kQz42hTr9wLmX@db.internal.host:5432/app
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEA0synthetictestfixturekeymaterialnotreal0000000000
+-----END RSA PRIVATE KEY-----
+SESSION_SIGNING_SECRET=9fQz72LkTvB4nXr8sWd31HgYcPm5
+API_KEY_EXAMPLE=sk_live_%%REPLACE_ME

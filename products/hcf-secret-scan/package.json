@@ -1,0 +1,12 @@
+{
+  "name": "hcf-secret-scan",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HCF — Secret & Key Exposure Scan. OFFLINE heuristic scan of pasted config/env/log/code text for exposed credential patterns (vendor key formats, JWTs with real header decoding, private-key blocks, connection-string passwords, high-entropy named assignments). Every match is MASKED. Heuristic only — never a guarantee. Deterministic engine + landing page + Stripe checkout scaffold.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

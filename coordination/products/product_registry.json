@@ -315,6 +315,30 @@
       "guardrail": "organizational tooling only; no financial/tax/legal advice; never tells the user what to charge, never judges a rate (undercharging / too low / below market all banned), never tells the user which clients to keep or drop (enforced by a fail-closed advice linter that runs before any artifact bytes are rendered)",
       "webhook_config_note": "api/webhook.js assigns module.exports.config AFTER module.exports = handler (the sibling ordering bug is NOT present here) and carries the regression test.",
       "rung_note": "NO FAKE GREEN: code-complete at the doorstep only. Engine, guardrail linter, free preview and the full checkout->webhook->entitlement->gated-delivery loop are built and tested; Stripe is MOCKED in tests and there are no live keys, no price, and no deployment. $0 earned. ONLY A FOUNDER DEPLOY REMAINS (create $9 one-time price, set env vars incl. Vercel KV before real money, add the webhook endpoint, deploy via scripts/factory_deploy.sh)."
+    },
+    {
+      "product_id": "HCF_SECRET_SCAN",
+      "factory": "HCF",
+      "name": "Secret & Key Exposure Scan",
+      "slug": "hcf-secret-scan",
+      "what_it_is": "Paste a config/.env/log/code snippet -> an OFFLINE heuristic report of credential-shaped patterns: 9 vendor key formats (AWS AKIA/ASIA, GitHub gh?_, Stripe live/test/webhook secrets, Slack xox?, Google AIza, SendGrid, Twilio), JWTs reported ONLY when the header segment really base64url-decodes to JSON with an alg field, PEM private-key block markers, connection-string embedded passwords, and Shannon-entropy-gated values assigned to secret-like names. Likely placeholders (REPLACE_ME, ${VAR}, $ENV_REF, changeme, low entropy) are set aside and the counts disclosed, never silently dropped. Every matched value is MASKED (first 4 + last 2 chars at most; PEM contents never reproduced) - the original is never echoed back, proven end-to-end through the paid delivery path. Free ungated preview returns severity counts + concern band only; the $5 unlock lists every match with line number, redacted value, documented format, and its ordinary benign explanation.",
+      "buyer": "Solo devs and small teams who want a quick second pair of eyes on a config or log before sharing it, without installing a scanner or sending the text to a third party.",
+      "price_usd": 5,
+      "billing": "one_time",
+      "merchant_of_record": "stripe_managed_payments",
+      "checkout_url": null,
+      "checkout_blocked_by": "FOUNDER GATE: no Stripe price, no env vars, not deployed. Every payment path returns 501 not_configured.",
+      "entitlement_source": "signed Stripe webhook (checkout.session.completed) -> sess:<id> via lib/store.js (Vercel KV when configured, in-memory otherwise)",
+      "revenue_gross_usd": 0,
+      "revenue_settled_usd": 0,
+      "revenue_state": "NOT_STARTED",
+      "monetization_rung": "3_PRODUCTIZED_CODE_COMPLETE",
+      "built_at": "2026-07-20",
+      "tests": "engine.test.js 59/59 pass; buyloop.test.js 26/26 pass (node v22.22.3, no install, no network, no keys)",
+      "real_vs_stub": "REAL: deterministic offline engine (vendor-format regexes with placeholder suppression, JWT header decoding that ignores eyJ-lookalikes whose header is not valid JSON, PEM begin-marker detection, connection-string password extraction with URL-part masking, Shannon-entropy gate at 3.5 bits/char with hand-verified entropy math, span-claiming so a vendor match is never double-reported by the generic detector, CRLF-correct line numbers, byte-deterministic reports), masking guardrail proven through the paid delivery path (raw value never appears in any response JSON), fail-closed report linter (withholds the whole report on any certainty over-claim, compromise assertion, security directive, or safety assurance - paid or free), full checkout->webhook->entitlement->gated-delivery loop, free ungated preview that leaks no finding details, landing + success UI. STUB/by-design: no live Stripe account/price/keys and nothing deployed (all payment paths 501 until env is set); Stripe is MOCKED in tests and the store runs in-memory (NOT a live or Stripe-test-mode run); OFFLINE by design - no vendor validation, no breach-database lookup, no network calls, so a match is a format claim (never proof a credential is real or active) and a clean result is not proof of absence; fixed 9-format vendor list; generic detection is name+entropy heuristics, not semantic; in-memory store not durable across serverless cold starts (KV required before real money); sample file is entirely synthetic.",
+      "webhook_config_note": "api/webhook.js assigns module.exports.config AFTER module.exports = handler (the sibling ordering bug is NOT present here) and carries the regression test.",
+      "guardrail": "heuristic only; never claim certainty; no real-world security decision advice; matched values always masked (all enforced by the fail-closed report linter + masking layer; a hostile variable name that trips the linter yields 422 with no report - fail-closed by design)",
+      "rung_note": "NO FAKE GREEN: code-complete at the doorstep only. Engine, guardrail linter, free preview and the full checkout->webhook->entitlement->gated-delivery loop are built and tested; Stripe is MOCKED in tests and there are no live keys, no price, and no deployment. $0 earned. ONLY A FOUNDER DEPLOY REMAINS (create $5 one-time price, set STRIPE_SECRET_KEY / STRIPE_PRICE_SCAN / STRIPE_WEBHOOK_SECRET / BASE_URL + Vercel KV, add the webhook endpoint, deploy via scripts/factory_deploy.sh)."
     }
   ],
   "non_monetized_factories": {
