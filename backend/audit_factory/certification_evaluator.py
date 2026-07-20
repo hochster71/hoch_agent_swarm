@@ -46,7 +46,7 @@ class CertificationEvaluator:
                 reasons.append(Reason(control_id=c.control_id, reason="Mandatory control failed"))
         elif open_critical_findings_count > 0:
             result = "HOLD"
-            reasons.append(Reason(control_id="HAF-PROM-001", reason=f"Found {open_critical_findings_count} open critical finding(s)"))
+            reasons.append(Reason(control_id="HAF-PROM-001", reason=f"Found {open_critical_findings_count} open critical/high finding(s)"))
         elif unassessed_mandatory:
             result = "HOLD"
             for c in unassessed_mandatory:
