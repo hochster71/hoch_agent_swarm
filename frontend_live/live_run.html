@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HELM · FOUNDER LIVE</title>
+<style>
+:root{
+  --bg:#070b12; --panel:#0e1622; --panel2:#0b111a; --line:#1b2838;
+  --ink:#e6edf3; --muted:#7d8ea3; --dim:#45566b;
+  --cyan:#22d3ee; --green:#22e0a1; --amber:#f5a623; --red:#ff5c6c; --grey:#54637a; --purple:#c084fc;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1400px 700px at 60% -20%,#0d1a2b,var(--bg));color:var(--ink);font-family:var(--font)}
+.wrap{max-width:1320px;margin:0 auto;padding:18px 18px 60px}
+header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+h1{font-size:14px;letter-spacing:.24em;font-weight:700;margin:0}
+h1 b{color:var(--cyan)}
+.headline{font-size:11px;color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:13px;padding:13px 14px}
+.card h3{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;box-shadow:0 0 8px currentColor}
+.s-cyan{color:var(--cyan)}.s-green{color:var(--green)}.s-amber{color:var(--amber)}.s-red{color:var(--red)}.s-grey{color:var(--grey)}.s-purple{color:var(--purple)}
+.kv{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #12202e;align-items:center}
+.kv:last-child{border-bottom:0}
+.kv .v{font-family:var(--mono);font-size:11.5px}
+.tag{font-size:9.5px;font-family:var(--mono);border:1px solid var(--line);border-radius:6px;padding:3px 6px;display:inline-block}
+.tag.cyan{border-color:var(--cyan);color:var(--cyan)}
+.tag.green{border-color:var(--green);color:var(--green)}
+.tag.amber{border-color:var(--amber);color:var(--amber)}
+.tag.red{border-color:var(--red);color:var(--red)}
+.tag.grey{border-color:var(--grey);color:var(--grey)}
+.tag.purple{border-color:var(--purple);color:var(--purple)}
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono)}
+th{color:var(--muted);text-transform:uppercase;font-size:9px;letter-spacing:.1em;padding:6px;border-bottom:1px solid var(--line);text-align:left}
+td{padding:8px 6px;border-bottom:1px solid #12202e;vertical-align:top}
+tr:hover{background:rgba(255,255,255,.02)}
+.link-btn{color:var(--cyan);text-decoration:none;border-bottom:1px dashed var(--cyan)}
+.link-btn:hover{color:var(--green);border-color:var(--green)}
+.lifecycle{display:flex;justify-content:space-between;margin:12px 0;background:#0b111a;padding:8px;border-radius:6px;border:1px solid var(--line)}
+.lifecycle-step{font-size:10px;font-family:var(--mono);font-weight:bold;color:var(--grey);display:flex;align-items:center}
+.lifecycle-step.active{color:var(--cyan)}
+.lifecycle-step.verified{color:var(--green)}
+.lifecycle-step.gate{color:var(--amber)}
+.lifecycle-step.purple-gate{color:var(--purple)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>⎈ HELM · <b>FOUNDER LIVE CONSOLE</b></h1>
+      <div class="headline">Authoritative, real-time Founder cockpit backed by non-macked live telemetry kernel v0.1</div>
+    </div>
+    <div id="status-panel" class="tag grey"><span class="dot s-grey">●</span>TRUTH STATUS: LOADING</div>
+  </header>
+
+  <div class="grid">
+    <!-- Left Column: Operating Mode, Mission, Candidate Identity -->
+    <div class="card c4">
+      <h3>HELM Mode & Mission</h3>
+      <div class="kv"><span>HELM Mode</span><span class="tag cyan" id="helm-mode">ENGINEERING_COMPLETE</span></div>
+      <div class="kv"><span>Active Mission ID</span><span class="v" id="mission-id">-</span></div>
+      <div class="kv"><span>Mission Name</span><span class="v" id="mission-name">-</span></div>
+      
+      <h3 style="margin-top:20px">Candidate Identity</h3>
+      <div class="kv"><span>Branch</span><span class="v" id="cand-branch">-</span></div>
+      <div class="kv"><span>Commit SHA</span><span class="v" id="cand-commit" style="font-size:10px">-</span></div>
+      <div class="kv"><span>Tree Hash</span><span class="v" id="cand-tree" style="font-size:10px">-</span></div>
+      <div class="kv"><span>Worktree Status</span><span class="v" id="cand-worktree">-</span></div>
+
+      <h3 style="margin-top:20px">Active Task Cards</h3>
+      <div id="tasks-box">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Middle Column: HFF_HOURLY_RATE Factory Activity -->
+    <div class="card c8">
+      <h3>Factory Activity: HFF_HOURLY_RATE</h3>
+      <div class="lifecycle">
+        <div class="lifecycle-step verified">GENERATED</div>
+        <div class="lifecycle-step verified">BUILT</div>
+        <div class="lifecycle-step verified">TESTED</div>
+        <div class="lifecycle-step verified">COMMITTED</div>
+        <div class="lifecycle-step purple-gate">AWAITING FOUNDER</div>
+        <div class="lifecycle-step gate">NOT DEPLOYED</div>
+      </div>
+
+      <div class="grid" style="gap:10px">
+        <div class="c6">
+          <div class="kv"><span>Product</span><span class="v" style="font-weight:bold">Effective Hourly Rate Report</span></div>
+          <div class="kv"><span>Product State</span><span class="v" id="hff-state">-</span></div>
+          <div class="kv"><span>Deployment State</span><span class="v" id="hff-deploy" style="color:var(--grey)">-</span></div>
+          <div class="kv"><span>Commercial State</span><span class="v" id="hff-commercial" style="color:var(--amber)">-</span></div>
+          <div class="kv"><span>Revenue Earned</span><span class="v" id="hff-revenue" style="color:var(--grey)">-</span></div>
+          <div class="kv"><span>Stripe price config</span><span class="v" id="hff-price" style="color:var(--amber)">-</span></div>
+        </div>
+        <div class="c6">
+          <div class="kv"><span>Commits in HFF</span><span class="v" id="hff-commits" style="font-size:10px">-</span></div>
+          <div class="kv"><span>Local Commits Exist</span><span class="v" id="hff-local-exists">-</span></div>
+          <div class="kv"><span>Commits Pushed</span><span class="v" id="hff-pushed">-</span></div>
+          <div class="kv"><span>Tested Engine</span><span class="v" id="hff-tests-engine">-</span></div>
+          <div class="kv"><span>Tested Buy Loop</span><span class="v" id="hff-tests-buy">-</span></div>
+          <div class="kv"><span>Node.js / Environment</span><span class="v" id="hff-node">-</span></div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:20px">Evidence Provenance (Checks Checklist)</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px" id="checklist-box">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Right Column: Process Health & Services -->
+    <div class="card c4">
+      <h3>Active Processes</h3>
+      <div id="processes-box">
+        <!-- populated dynamically -->
+      </div>
+
+      <h3 style="margin-top:20px">Active/Stopped Services</h3>
+      <div id="services-box">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Bottom Left: Blockers & Next Actions -->
+    <div class="card c4">
+      <h3>Blockers & Next Events</h3>
+      <div class="kv"><span>Current Blocker</span><span class="v" id="state-blocker" style="color:var(--red); font-weight:bold">-</span></div>
+      <div class="kv"><span>Next Governed Action</span><span class="v" id="state-next-event" style="color:var(--cyan); font-weight:bold">-</span></div>
+      <div class="kv"><span>Raw Log</span><span class="v" id="log-loc">-</span></div>
+      <div class="kv"><span>Result Artifact</span><span class="v" id="artifact-loc">-</span></div>
+    </div>
+
+    <!-- Bottom Right: Evidence Grades -->
+    <div class="card c8">
+      <h3>Telemetry Evidence Grades</h3>
+      <table style="margin-bottom:10px">
+        <thead>
+          <tr>
+            <th>Telemetry Claim</th>
+            <th>Evidence Grade</th>
+            <th>authoritative Source</th>
+            <th>Observed At</th>
+            <th>Freshness</th>
+          </tr>
+        </thead>
+        <tbody id="grades-body">
+          <!-- populated dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Column: Recent Events Log -->
+    <div class="card c12">
+      <h3>Latest 20 Execution Events (Audit Trail)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:150px">Timestamp</th>
+            <th style="width:120px">Type</th>
+            <th style="width:100px">Producer</th>
+            <th style="width:150px">Mission ID</th>
+            <th>Explanation</th>
+          </tr>
+        </thead>
+        <tbody id="events-body">
+          <tr><td colspan="5" style="text-align:center; color:var(--muted)">No events loaded</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <footer style="margin-top:30px; text-align:center; font-size:10px; color:var(--dim); font-family:var(--mono)">
+    Generated At: <span id="meta-gen-at">-</span> | Freshness: <span id="meta-fresh">-</span> | Collector: <span id="meta-collector">-</span> | STRICT ZERO-MOCK TRUTH postured
+  </footer>
+</div>
+
+<script>
+// Connect to WebSocket for real-time telemetry streaming
+const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+const wsUrl = `${protocol}//${window.location.host}/api/v1/helm/live/ws`;
+let socket = new WebSocket(wsUrl);
+
+socket.onmessage = function(event) {
+  const data = JSON.parse(event.data);
+  renderData(data);
+};
+
+socket.onclose = function() {
+  console.warn("WebSocket closed. Falling back to HTTP polling every 3s.");
+  setInterval(pollHttp, 3000);
+};
+
+async function pollHttp() {
+  try {
+    const res = await fetch("/api/v1/helm/live");
+    if (!res.ok) throw new Error("HTTP error " + res.status);
+    const data = await res.json();
+    renderData(data);
+  } catch (err) {
+    console.error("HTTP fallback poll failed:", err);
+  }
+}
+
+function renderData(data) {
+  // Update Header Status
+  const statusPanel = document.getElementById("status-panel");
+  statusPanel.className = "tag " + (data.truth_status === "COMPLETED" ? "green" : (data.truth_status === "RUNNING" || data.truth_status === "VALIDATING" ? "cyan" : "amber"));
+  let dotColor = "s-amber";
+  if (data.truth_status === "COMPLETED") dotColor = "s-green";
+  else if (data.truth_status === "RUNNING" || data.truth_status === "VALIDATING") dotColor = "s-cyan";
+  statusPanel.innerHTML = `<span class="dot ${dotColor}">●</span>TRUTH STATUS: ${data.truth_status}`;
+
+  // Mode & Mission
+  document.getElementById("helm-mode").textContent = data.mode;
+  document.getElementById("mission-id").textContent = data.active_mission.id;
+  document.getElementById("mission-name").textContent = data.active_mission.name;
+
+  // Candidate
+  document.getElementById("cand-branch").textContent = data.candidate.branch;
+  document.getElementById("cand-commit").textContent = data.candidate.commit_sha;
+  document.getElementById("cand-tree").textContent = data.candidate.tree_hash;
+  
+  const worktreeSpan = document.getElementById("cand-worktree");
+  if (data.candidate.worktree_clean) {
+    worktreeSpan.textContent = "CLEAN";
+    worktreeSpan.style.color = "var(--green)";
+  } else {
+    worktreeSpan.textContent = "DIRTY";
+    worktreeSpan.style.color = "var(--red)";
+  }
+
+  // Active Tasks
+  const tasksBox = document.getElementById("tasks-box");
+  tasksBox.innerHTML = "";
+  data.active_tasks.forEach(t => {
+    tasksBox.innerHTML += `
+      <div style="background:#12202e; padding:10px; border-radius:6px; margin-bottom:8px; border:1px solid var(--line)">
+        <div style="font-weight:bold; font-size:11px; color:var(--cyan)">${t.task_id}</div>
+        <div style="font-size:10px; color:var(--muted); margin:4px 0">${t.name}</div>
+        <div style="display:flex; justify-content:space-between; font-size:9px">
+          <span>Status: <span style="color:var(--amber)">${t.status}</span></span>
+          <span>Model: <span style="color:var(--purple)">${t.model}</span></span>
+        </div>
+      </div>
+    `;
+  });
+
+  // HFF Hourly Rate Factory Activity
+  const hff = data.hff_hourly_rate;
+  document.getElementById("hff-state").textContent = hff.product_state;
+  document.getElementById("hff-deploy").textContent = hff.deployment_state;
+  document.getElementById("hff-commercial").textContent = hff.commercial_state;
+  document.getElementById("hff-revenue").textContent = "$" + hff.revenue;
+  document.getElementById("hff-price").textContent = hff.founder_gate;
+  document.getElementById("hff-commits").textContent = hff.commits.join(", ");
+  
+  const localExist = Object.values(data.repository_state.commits_exist_locally).every(v => v);
+  const localExistSpan = document.getElementById("hff-local-exists");
+  localExistSpan.textContent = localExist ? "YES" : "NO";
+  localExistSpan.style.color = localExist ? "var(--green)" : "var(--red)";
+
+  const pushed = Object.values(data.repository_state.commits_pushed).every(v => v);
+  const pushedSpan = document.getElementById("hff-pushed");
+  pushedSpan.textContent = pushed ? "YES" : "NO";
+  pushedSpan.style.color = pushed ? "var(--green)" : "var(--red)";
+
+  document.getElementById("hff-tests-engine").textContent = hff.test_results.engine;
+  document.getElementById("hff-tests-buy").textContent = hff.test_results.buy_loop;
+  document.getElementById("hff-node").textContent = hff.node_version + " on " + hff.host;
+
+  // HFF Checklist
+  const checklistBox = document.getElementById("checklist-box");
+  checklistBox.innerHTML = "";
+  for (const [chk, val] of Object.entries(hff.evidence_checklist)) {
+    const label = chk.replace("check_", "").replace(/_/g, " ");
+    const color = val ? "var(--green)" : "var(--red)";
+    const symbol = val ? "✓" : "✗";
+    checklistBox.innerHTML += `
+      <div style="font-size:10px; display:flex; justify-content:space-between; background:#0b111a; padding:6px; border-radius:4px; border:1px solid var(--line)">
+        <span style="text-transform:capitalize">${label}</span>
+        <span style="color:${color}; font-weight:bold">${symbol}</span>
+      </div>
+    `;
+  }
+
+  // Active Processes
+  const procBox = document.getElementById("processes-box");
+  procBox.innerHTML = "";
+  if (data.active_processes.length === 0) {
+    procBox.innerHTML = `<div style="color:var(--grey); font-family:var(--mono); font-size:11px">No qualification processes running</div>`;
+  } else {
+    data.active_processes.forEach(p => {
+      procBox.innerHTML += `
+        <div style="background:#0b111a; padding:8px; border-radius:6px; border:1px solid var(--line); margin-bottom:8px">
+          <div class="kv"><span>PID</span><span class="v">${p.pid}</span></div>
+          <div class="kv"><span>Name</span><span class="v">${p.name}</span></div>
+          <div class="kv"><span>Started</span><span class="v">${p.started_at}</span></div>
+          <div class="kv"><span>CPU Time</span><span class="v">${p.cpu_time_seconds}s</span></div>
+          <div class="kv"><span>Elapsed</span><span class="v">${p.elapsed_seconds}s</span></div>
+        </div>
+      `;
+    });
+  }
+
+  // Services
+  const servicesBox = document.getElementById("services-box");
+  servicesBox.innerHTML = "";
+  for (const [svc, status] of Object.entries(data.services)) {
+    const isRunning = status.includes("RUNNING");
+    const color = isRunning ? "var(--green)" : "var(--red)";
+    servicesBox.innerHTML += `
+      <div class="kv">
+        <span>${svc}</span>
+        <span class="v" style="color:${color}">${status}</span>
+      </div>
+    `;
+  }
+
+  // Blockers / Next Events
+  document.getElementById("state-blocker").textContent = data.blockers.join(", ") || "NONE";
+  document.getElementById("state-next-event").textContent = data.next_expected_events.join(", ") || "NONE";
+  
+  document.getElementById("log-loc").innerHTML = `<a href="file:///${data.evidence.raw_log_path}" class="link-btn">${data.evidence.raw_log_path.split('/').pop()}</a>`;
+  document.getElementById("artifact-loc").innerHTML = `<a href="file:///${data.evidence.result_artifact_path}" class="link-btn">${data.evidence.result_artifact_path.split('/').pop()}</a>`;
+
+  // Evidence Grades
+  const gradesBody = document.getElementById("grades-body");
+  gradesBody.innerHTML = "";
+  for (const [claim, info] of Object.entries(data.evidence_grades)) {
+    let gColor = "var(--grey)";
+    if (info.grade === "VERIFIED") gColor = "var(--green)";
+    else if (info.grade === "OBSERVED") gColor = "var(--cyan)";
+    else if (info.grade === "DECLARED") gColor = "var(--amber)";
+    else if (info.grade === "NOT_READY") gColor = "var(--purple)";
+    else if (info.grade === "FAIL") gColor = "var(--red)";
+    gradesBody.innerHTML += `
+      <tr>
+        <td style="font-weight:bold">${claim}</td>
+        <td><span class="tag" style="border-color:${gColor}; color:${gColor}">${info.grade}</span></td>
+        <td>${info.source}</td>
+        <td>${info.observed_timestamp}</td>
+        <td>${info.freshness}s</td>
+      </tr>
+    `;
+  }
+
+  // Events
+  const eventsBody = document.getElementById("events-body");
+  eventsBody.innerHTML = "";
+  data.recent_events.forEach(ev => {
+    eventsBody.innerHTML += `
+      <tr>
+        <td>${ev.timestamp}</td>
+        <td><span class="tag cyan">${ev.type}</span></td>
+        <td>${ev.producer}</td>
+        <td>${ev.mission_id}</td>
+        <td style="font-size:10px; color:var(--muted); word-break:break-all">${ev.explanation}</td>
+      </tr>
+    `;
+  });
+
+  // Footer
+  document.getElementById("meta-gen-at").textContent = data.generated_at;
+  document.getElementById("meta-fresh").textContent = data.freshness_seconds + "s ago";
+  document.getElementById("meta-collector").textContent = data.provenance.collector;
+}
+</script>
+</body>
+</html>

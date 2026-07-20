@@ -1,0 +1,582 @@
+{
+  "generated_at": "2026-07-20T14:58:14.793178+00:00",
+  "freshness_seconds": 0.0,
+  "truth_status": "BLOCKED",
+  "mode": "ENGINEERING_COMPLETE",
+  "active_mission": {
+    "id": "HELM-MISSION-20260720-001",
+    "name": "HEOS-001 (Operational Validation)"
+  },
+  "candidate": {
+    "commit_sha": "982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b",
+    "tree_hash": "d506826205a1998e64244d8d3f1635736cb66534",
+    "branch": "helm-runtime-bridge-v1",
+    "worktree_clean": false
+  },
+  "repository_state": {
+    "head": "982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b",
+    "tree_hash": "d506826205a1998e64244d8d3f1635736cb66534",
+    "worktree_clean": false,
+    "dirty_files": [
+      "M backend/helm_live_api.py",
+      " M coordination/council/active_runtime_source.json",
+      " M coordination/council/factory_registry.json",
+      " M coordination/council/relay/gateway_dispatch_ledger.jsonl",
+      " M coordination/events/helm_events.jsonl",
+      " M coordination/goal/build_to_goal_status.json",
+      " M coordination/goal/champion_gates.json",
+      " M coordination/goal/goal_state.json",
+      " M coordination/goal/helm_pert.json",
+      " M coordination/goal/mission_state.json",
+      " M coordination/goal/shipped_report.json",
+      " M has_live_project_tracker/data/cost_governor.json",
+      " M has_live_project_tracker/data/goal_blocker_register.json",
+      " M hoch_pods/compute/cost_ledger.jsonl",
+      "?? backend/helm_runtime/collectors.py",
+      "?? backend/helm_runtime/mission_envelope.py",
+      "?? coordination/evidence/live_change_demonstration.md",
+      "?? coordination/missions/",
+      "?? docs/helm/edr/EDR-0008-operational-mission-telemetry.md",
+      "?? docs/helm/edr/EDR-0009-live-state-collectors.md",
+      "?? frontend_live/live_run.html",
+      "?? has_live_project_tracker/data/helm_live_run_state.json",
+      "?? scratch/verify_live_run.py",
+      "?? scripts/emit_tech_scout_envelope.py",
+      "?? scripts/founder_live.py",
+      "?? scripts/helm_founder_live.py",
+      "?? scripts/helm_live_run_collector.py",
+      "?? scripts/verify_live_change_demo.py",
+      "?? tests/unit/test_collectors.py",
+      "?? tests/unit/test_mission_envelope.py"
+    ],
+    "commits_exist_locally": {
+      "d335260b": true,
+      "d530af67": true
+    },
+    "commits_pushed": {
+      "d335260b": false,
+      "d530af67": false
+    }
+  },
+  "hff_hourly_rate": {
+    "factory": "HFF",
+    "candidate": "HFF_HOURLY_RATE",
+    "product": "Effective Hourly Rate Report",
+    "product_state": "CODE_COMPLETE",
+    "deployment_state": "NOT_DEPLOYED",
+    "commercial_state": "NOT_LIVE",
+    "revenue": 0,
+    "founder_gate": "STRIPE_AND_DEPLOYMENT_REQUIRED",
+    "commits": [
+      "d335260b",
+      "d530af67"
+    ],
+    "test_results": {
+      "engine": "50/50 PASS",
+      "buy_loop": "32/32 PASS"
+    },
+    "test_artifact_paths": [
+      "products/hff-hourly-rate/test/engine.test.js",
+      "products/hff-hourly-rate/test/buyloop.test.js"
+    ],
+    "test_artifact_hashes": {
+      "engine_test_sha256": "04911903466a8e2392b83e8efc7c736d026791729ebfd57d795743efba03caf1",
+      "buyloop_test_sha256": "de98fae6bb940ed8c5ea6f13c6a6a6b40064fbf7198bd46a69260c60aae63d97"
+    },
+    "test_execution_timestamps": {
+      "run_id": "run_hff_hourly_rate_20260720_062533",
+      "start": "2026-07-20T11:23:45Z",
+      "end": "2026-07-20T11:24:37Z"
+    },
+    "node_version": "v22.22.3",
+    "host": "Darwin arm64 (macOS 15.3)",
+    "agent_model": {
+      "agent": "Lead Builder",
+      "model": "Claude-3-5-Sonnet"
+    },
+    "evidence_checklist": {
+      "check_1_test_files_exist": true,
+      "check_2_artifacts_correspond_to_commands": true,
+      "check_3_timestamps_valid": true,
+      "check_4_hashes_recorded": true,
+      "check_5_source_corresponds_to_commits": true,
+      "check_6_tree_contains_all_files": true,
+      "check_7_env_example_placeholders_only": true,
+      "check_8_no_secret_committed": true,
+      "check_9_checkout_fail_closed": true,
+      "check_10_not_deployed_nor_revenue_producing": true
+    },
+    "evidence_grade": "VERIFIED"
+  },
+  "active_tasks": [
+    {
+      "task_id": "HFF_HOURLY_RATE",
+      "name": "Effective Hourly Rate Report Ingestion & Verification",
+      "status": "AWAITING_FOUNDER_GATE",
+      "agent": "Lead Builder",
+      "model": "Claude-3-5-Sonnet"
+    }
+  ],
+  "active_agents": [
+    {
+      "name": "Lead Builder",
+      "role": "Software Engineer",
+      "status": "AWAITING_DOORSTEP"
+    },
+    {
+      "name": "Independent Auditor",
+      "role": "Security Compliance",
+      "status": "GO"
+    }
+  ],
+  "active_processes": [],
+  "recent_events": [
+    {
+      "timestamp": "2026-07-20T14:57:39Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:57:26Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:59d768ab42c7bde0328d3806f93050a43d524b31f92bebb2d07817401877ac2e'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '4bdc4ee3-167b-4dc9-af9b-cfebbdc15310', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:17011bdf6c12ef35c50c1e9d3b8cb7330fd80e2e32870fc9af6c94270f518399', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '4bdc4ee3-167b-4dc9-af9b-cfebbdc15310', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:57:26Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:cc4d0721015a557bf07daf50de07fb4a45ae02e6f6ec68d34041b69ea3959464'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'aea99d40-a68e-4bb7-8d6b-dd9220610376', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:8e1b7396d336ad98ec88bcbaf862e17a4d1b7bbccc98a571f0d75dc401058555', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'aea99d40-a68e-4bb7-8d6b-dd9220610376', 'input_digests': ['sha256:d63c45cb8cc5c94d826d8da52f1ab61186de6d85d29727ee7db47c764f129cd6']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:56:42Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:56:29Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:ec0acae99eaac5f53c7e4955f99fce2e686b0edf32f1f3ccff3d06c7d30cc6d2'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '3aed51dc-5ae9-43d8-9920-9dacb666e17f', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:63be74f7c7ba66891261a4b85360347ba489374fcb9d3ca21cab1fea1f8b7387', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '3aed51dc-5ae9-43d8-9920-9dacb666e17f', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:56:29Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:7e832fdb384f806bb9ed8e91849a65cb04596abb5a4a6059229580bb8193c815'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': '331ac990-71c3-4952-b8a5-86f6ab5c8ff9', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:e8fd8dc6c2c6e00af12038886796752975f964a36d0af04a7f29ee8bace22c52', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '331ac990-71c3-4952-b8a5-86f6ab5c8ff9', 'input_digests': ['sha256:2bb23cb587bf5e674d9ae7f0e85473a6d93eb92809baabcdf807e85e83cd77c8']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:55:51Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:55:35Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:08d06ca66781e1f7c9ba86c15e9130da155231c32ef49c25133bb7c4e9d7abdf'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '6838ff22-e20a-4da0-a786-abac2cabdb02', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:42dd63df722ee335c438f79c2afc30f4b2cf42e7163f27b9dd142db02aae930d', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '6838ff22-e20a-4da0-a786-abac2cabdb02', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:55:35Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:5c8a51c6c6ab1d68bfb3f6a3146abfd05b2269caa150735a3d453207d98b9d47'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': '22f22d45-e567-454c-a9e7-99e3e424f8a5', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:91075114450334c7b185a14e010412596aab21761fad7b9df643326833f45302', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '22f22d45-e567-454c-a9e7-99e3e424f8a5', 'input_digests': ['sha256:cc08251d02c4476078b9f5a814cf8ae1878413148ad7f268a018562b9c752b57']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:54:51Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:54:37Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:13343935412d72e3c588430917078e86f27fb0b596d5cc2f1e6ffa746ff9cd6b'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '9b2e43e5-d462-4f78-a1ab-7d9fa6c59b69', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:a2c032dd335e71e5b44df592adfbf0ae19a9f3d48722e735718662de704844a7', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '9b2e43e5-d462-4f78-a1ab-7d9fa6c59b69', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:54:37Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:c48ca4fd3dc02ba08bfc5a3fe150bdf4350c2c444c66d269177f5e69f93256c2'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': '377ab378-9a06-4f41-a0a8-7fb7a6ecc143', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:a1f91339bedee2df6dc71876e085671fe32b11c87e2ed43d3b433f8b0005de6a', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '377ab378-9a06-4f41-a0a8-7fb7a6ecc143', 'input_digests': ['sha256:a8d333d482359a29a7fa21a93efff308d605dd2a1dbcc5b64ef14b7efe13f8df']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:53:49Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:53:35Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:3b253a55f4787563787642ddf700278fabbf1d7a7267e06afdcb1c3c147ef730'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '5896feea-5ce8-438e-b194-f17ea5e77309', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:95cf783e41de685311fce10f508c34ddba668e9ecb158d5d58322394b79986d9', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '5896feea-5ce8-438e-b194-f17ea5e77309', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:53:35Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:be2b6f5716ce31085f0aed835e21424eeabcc023bf7fc1a35d8dac0bda484d8a'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'f99ba036-5fd3-484a-8924-e98cc8260059', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:3e38e104ef46279350f1c4d5620446d578bec8bb19b6d857ece065e906d46baa', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'f99ba036-5fd3-484a-8924-e98cc8260059', 'input_digests': ['sha256:7b28bf946e6d3792ab0d4000083a1472c6247702b77e4ef0d5b4a9bf4bbb54c4']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:52:50Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:52:08Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:edb108ac8ce38939377660a39a9d48f1bc9f64751885a395dc90aa5d05e28060'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '215159b8-d79d-452b-b6e8-3952e7b00a72', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:fd3ac9221e767de449ca06bac4922f8488136805aa4d507d532d7ec49e0c6b7e', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '215159b8-d79d-452b-b6e8-3952e7b00a72', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:52:08Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:d545dee4376fe770ac371e22fc847fe2df84598e86602137e4d3f05f02dcb879'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': '0e5ad52f-1cdf-46d9-80c2-01595cc345aa', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:38afe30002400646e802309e8a198829f0e6dd1d106ba7e2af8113c74e5255c1', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '0e5ad52f-1cdf-46d9-80c2-01595cc345aa', 'input_digests': ['sha256:4abadbf41663e71f23596091c6ed6e45209f045ddd4c55a7c8c38931e7e5e4c5']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:51:04Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:50:50Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:72983e93d642b04f8caa1fd5156e49d53b6bf477f274aedd087af18efb0a5f8c'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '3f0b03af-b123-4d1c-b3f2-a9d50a78a896', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:a808a6e5d213c933cc0da9496ca37f6167df5fb923849865b02edb800773ba3d', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '3f0b03af-b123-4d1c-b3f2-a9d50a78a896', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:50:50Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:252ef3d04447583d9c4d4106819e3f6c9cf2030e0ca609d3e4c5a1d06c22bc87'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'ee963c4e-2284-4997-86ea-1ede03904712', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:7690fd3dee6d40bd188eb1c73ca04f13902f1ffd05919afe62c8ddc8281b6ace', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'ee963c4e-2284-4997-86ea-1ede03904712', 'input_digests': ['sha256:5bbbc0ec8411f49aa557c1d7f54cc9217b065530a571ac231f0069e85789179e']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:49:55Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:49:38Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:f6d77f86866b10731b0a4f582e2ccf870e0efe0e6efb9a8b1bcbbf679aed64d0'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': 'e0411ed2-8ab1-47d8-9b82-75e3d5e574d9', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:cbe1ecf165a3319142aa1dea7dfd3a33b6e2a47968c1fc50d1a36159a4ffd38b', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'e0411ed2-8ab1-47d8-9b82-75e3d5e574d9', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:49:38Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:12eb9930d02fed5fdbbad0c63fbbc146eb827577b9d0c0aa293f67ccb1acd8e9'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'a7a3b1c8-4e5f-41e1-9203-0fa4a48544ec', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:1dc7f59f256099957627944b8d83bf723a3d4b9a7ab4e9edfbee4049cbd86bd6', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'a7a3b1c8-4e5f-41e1-9203-0fa4a48544ec', 'input_digests': ['sha256:d882f57bd9a9a7e8e91b7b47171d641ef2f5a87ecc1d52b7bc9f1d70e8eb8ee3']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:48:45Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:47:58Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:47:44Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:765a7ce45a801f1dbf8173359f7dae8aeedaa3790b26e2b2e31caa34d23b3ecb'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '4fde612f-fd6b-40f5-934b-2915164ef24b', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:20f09318bddf4ad926cae747cd4b535ef4de2cc62b3f9d0ebb694d6066a2a92b', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '4fde612f-fd6b-40f5-934b-2915164ef24b', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:47:44Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:cf49195f9ffed137d63f0776b7a0aec22c22cfa07b3fc6036c61752ca07c7c67'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'a1c05a57-7f19-43b5-a7c8-c98cb932d384', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:6f57b889c82529ba8881967950c431bca196b68bad88392bfe9624bdffa282b6', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'a1c05a57-7f19-43b5-a7c8-c98cb932d384', 'input_digests': ['sha256:30b4efcc9989eec376afe698075ba61adbfaee60e5706ca6dd6ec9230a355862']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:46:57Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:46:32Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:f06e26ef5d0b2a1c1f2768b49826e5df0ca3b583ee44ab715406109014d18dc9'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': 'aa3c2aa6-9a90-490e-b991-b1b00863c4ca', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:790bbed984204b08e09f478d228cd696f5fc07815bf6d6b83e2d5a8142afb2d1', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'aa3c2aa6-9a90-490e-b991-b1b00863c4ca', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:46:32Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:736f40cf182e60dcfb642cc1fe94617e5829cb3aa0618cdd986418f5d865ff9a'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': '48a9cef6-4e26-4786-a8f7-847b4503f971', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:7108239f8c47ba28bc14b68838ffe5364ca85eb0e240ec6bdadb84889426d2e2', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '48a9cef6-4e26-4786-a8f7-847b4503f971', 'input_digests': ['sha256:3ebd154305baa3da5eb4cf866989c64fab33893628be9ec40a9768159093e562']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:45:53Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:45:39Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:c111409eba3f1cffca305ac2c5f10234f039aa76519a82d52f23fa61cada8bd4'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': 'fc68d06e-74ec-4ce9-b9c3-27a91b721787', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:e52a493e516dd9c9bf6ca598b5c1744a07de33c0085669bea8799373b7546c3e', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'fc68d06e-74ec-4ce9-b9c3-27a91b721787', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:45:39Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:9707252c9ebf4860dedfc260b201c72caee6dacb972ff59998e29f24bea8f214'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': '660418e5-1c01-4012-9761-e3f5eb3448ec', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:6034b86497e0a8c11f29655ac2e31e465aeff46797c57de391f069c677ca80d2', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '660418e5-1c01-4012-9761-e3f5eb3448ec', 'input_digests': ['sha256:959b94c1554bc5d67937a76cf35f4e058cf614af2d4a3fa3fbce05843668961c']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:44:54Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:44:33Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:f446457f42c0550dc74b1f796a817c77ef52418087847063c519dd259479a4cb'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': 'ee763aed-f675-4e61-a2a0-da96f29c763b', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:1c1613bbcf24addab1724a5cb0f7a0599a42b368b7380bfb5959edd803e5b524', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'ee763aed-f675-4e61-a2a0-da96f29c763b', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:44:33Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:9acbb2c89b1d43ad9b3b16d8d264f1ff6bafa81dbff138bf14ee2191722e2332'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'e2a1b86c-20d2-40fc-b1bd-d19925efa04b', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:3307c5f4d1c6f44999f764180c34462f4d4f6da1df627fe6f8d5112b7e48f2f1', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'e2a1b86c-20d2-40fc-b1bd-d19925efa04b', 'input_digests': ['sha256:cea32bceff3e27bb6f084488d101caa8f97082375c8f3999b4dc8d7df9b9793a']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:43:48Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:43:21Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:5687e0e38df22be31e2715bbfc4daa6dceefed5217297533ec32fb96e42dfb16'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '39b946b8-d98e-4dae-83c5-324643932ae9', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:2e9b1be114226add1bab43c94619cfcf7ec07fe3d1ff6f777472ad134625b145', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '39b946b8-d98e-4dae-83c5-324643932ae9', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:43:21Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:800a9b1bf7df0ab72b96d622f540138ff9db80a547c1d3524cbd371747a72f4d'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'd7c0a419-a06d-4ef6-bccd-d7ff849c81bb', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:92edee44a67a5e2e6e0ebd234b9cdf40b3dbcbc743aba53dc346e849fb4ccdc5', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'd7c0a419-a06d-4ef6-bccd-d7ff849c81bb', 'input_digests': ['sha256:2a712deed2ecb2a65d0fc879fba9f325a8be9dc624333b1540d8d379eacbb6fc']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:42:44Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:42:31Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:369fd8b705068a8d984a2b5c5e97a67f4c0e8c95eb0b6f8cb89549c7b44fb4aa'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '33ddf187-6701-40c3-a969-59bfd2b43dba', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:5aa1a7b726a1b7dee3ba6e59aec5509c386c716966e3b5eb1a685fc3bbe67bff', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '33ddf187-6701-40c3-a969-59bfd2b43dba', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:42:31Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:32670039da25ea8a58541c0aeaf01992aab0ee969fbd4fa81589cc68827895a5'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'ba2c75c2-88f1-4992-b732-bf8e6e46f7b5', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:28c361d2b5010a293eecb2b3a71a42d6619541180ef3aec015e29edb38cbb4a2', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'ba2c75c2-88f1-4992-b732-bf8e6e46f7b5', 'input_digests': ['sha256:24ed055d8436422b95535b0948d8dee40e05fa32856cfd9eb026d440b4258a35']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:41:43Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:41:25Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:7e1cba8dc28fde6277991df98979532a326b3a651bba9ea7a40e4989c47f3617'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '61f86982-ffea-4a74-8c0a-ca508e29ef31', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:e2613ac61443768324d9b6eba516635adfbc42fa3084c6d41a00022b7288e2a8', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '61f86982-ffea-4a74-8c0a-ca508e29ef31', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:41:25Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:5d65db4edfccff2e584e5fc1b829649ddc0ab77f13c3f5776045298f737f0603'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': '4d06ba3e-2dc3-4000-981f-cc7b16c28017', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:f82b3f2295637684f6285b4025b95217fdb655dc3554364da883f2fd6b21283c', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '4d06ba3e-2dc3-4000-981f-cc7b16c28017', 'input_digests': ['sha256:8bed4208de2d766734c475ebf3f29020d586f5f4bc2d9cc60cd1ceafc18df10e']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:40:42Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    },
+    {
+      "timestamp": "2026-07-20T14:40:20Z",
+      "type": "GOAL_NODE_UPDATE",
+      "producer": "goal_runner",
+      "mission_id": "GOAL_HELM",
+      "explanation": "{'governance_state': 'GOVERNED', 'node': 'N3_VERIFY', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:933f348e5654f0bf1bdb15fd17def5cfac86346fbeffdddea96cfd83d98d1fdb'}, 'authorized': {'authority': 'goal_runner:PERT_engine', 'decision_id': '29d3e4f8-935d-43ef-89b6-18735f1677d8', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'PERT node N3_VERIFY -> DONE', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:c331387e94c909b90bba70b7d91d1d9f9c55c9d23264867d68fe6ed8ec9dc76f', 'exit_code': 0, 'proof_command': 'scripts/helm_goal_runner.py (deterministic PERT recompute)'}, 'reproducibility': {'environment': 'goal_runner', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': '29d3e4f8-935d-43ef-89b6-18735f1677d8', 'input_digests': ['sha256:2ac1ad831f16dcd19195f329d520d5c29194bbc8dd331aca9f93fe743761bc7d']}}, 'status': 'DONE'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:40:20Z",
+      "type": "COUNCIL_VERDICT",
+      "producer": "auditor",
+      "mission_id": "COUNCIL",
+      "explanation": "{'governance_state': 'GOVERNED', 'model': 'grok (xai)', 'overall': 'VERIFIED', 'proof_record': {'audit': {'prev_hash': None, 'record_hash': 'sha256:211ea61548fd2b73f8b055081d087e93ccce54faeebe72753f0558dd659f92c8'}, 'authorized': {'authority': 'auditor:independent_verification', 'decision_id': 'f3bc3e45-3261-4632-bfa5-f820e790d8d3', 'gate': 'govern_decision'}, 'evidence_class': 'DERIVED', 'explanation': 'auditor verdict VERIFIED', 'governance_state': 'GOVERNED', 'proven': {'evidence_hash': 'sha256:011564dc088fe269efb4f44eff36cc34df49a654469fc93498f4bce419ea9913', 'exit_code': 0, 'proof_command': 'scripts/helm_fire_verification.py'}, 'reproducibility': {'environment': 'fire_verification', 'tested_commit': '982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b'}, 'trace': {'correlation_id': 'f3bc3e45-3261-4632-bfa5-f820e790d8d3', 'input_digests': ['sha256:67b4878c691914f633f5ea7aae9ae00e10f40050c9405cc556e695853ecd3229']}}, 'provider': 'grok\u00b7guarded'}"
+    },
+    {
+      "timestamp": "2026-07-20T14:39:23Z",
+      "type": "MISSION_TRANSACTION_COMMITTED",
+      "producer": "Grok",
+      "mission_id": "EPIC-FURY-2026",
+      "explanation": "allowed"
+    }
+  ],
+  "services": {
+    "com.hoch.helm.runtime": "STOPPED",
+    "com.hoch.agent.swarm.runtime": "RUNNING (PID 81595)",
+    "com.hoch.helm-autoloop": "RUNNING (PID 59478)",
+    "com.hoch.runtime.refresher": "RUNNING (PID 81587)",
+    "com.hoch.api.server": "STOPPED"
+  },
+  "blockers": [
+    "STRIPE_AND_DEPLOYMENT_REQUIRED"
+  ],
+  "next_expected_events": [
+    "Founder Stripe $9 price configuration",
+    "Deployment via scripts/factory_deploy.sh"
+  ],
+  "evidence": {
+    "raw_log_path": "coordination/evidence/sbom_cve_20260719/runtime/confirmation.log",
+    "result_artifact_path": "coordination/evidence/sbom_cve_20260719/runtime/confirmation_result.json"
+  },
+  "evidence_grades": {
+    "truth_status": {
+      "grade": "OBSERVED",
+      "source": "psutil process list + launchctl list",
+      "observed_timestamp": "2026-07-20T14:58:14.793178+00:00",
+      "freshness": 0.0,
+      "task_association": "HEOS-001"
+    },
+    "Commit d335260b exists": {
+      "grade": "VERIFIED",
+      "source": "git cat-file -t d335260b",
+      "observed_timestamp": "2026-07-20T14:58:14.793178+00:00",
+      "freshness": 0.0,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "Commit d530af67 exists": {
+      "grade": "VERIFIED",
+      "source": "git cat-file -t d530af67",
+      "observed_timestamp": "2026-07-20T14:58:14.793178+00:00",
+      "freshness": 0.0,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "Engine tests 50/50": {
+      "grade": "VERIFIED",
+      "source": "test/engine.test.js (SHA256: 04911903...)",
+      "observed_timestamp": "2026-07-20T11:24:37Z",
+      "freshness": 12817.95,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "Buy-loop tests 32/32": {
+      "grade": "VERIFIED",
+      "source": "test/buyloop.test.js (SHA256: de98fae6...)",
+      "observed_timestamp": "2026-07-20T11:24:37Z",
+      "freshness": 12817.95,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "Not deployed": {
+      "grade": "VERIFIED",
+      "source": "product_registry.json checkout_url check",
+      "observed_timestamp": "2026-07-20T14:58:14.793178+00:00",
+      "freshness": 0.0,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "Revenue $0": {
+      "grade": "VERIFIED",
+      "source": "product_registry.json revenue_gross_usd == 0",
+      "observed_timestamp": "2026-07-20T14:58:14.793178+00:00",
+      "freshness": 0.0,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "Stripe path mocked in tests": {
+      "grade": "OBSERVED",
+      "source": "verify buyloop.test.js mocks stripe calls",
+      "observed_timestamp": "2026-07-20T11:24:37Z",
+      "freshness": 12817.95,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "Production readiness": {
+      "grade": "NOT_READY",
+      "source": "founder gate blocks live promotion",
+      "observed_timestamp": "2026-07-20T14:58:14.793178+00:00",
+      "freshness": 0.0,
+      "task_association": "HFF_HOURLY_RATE"
+    },
+    "git_identity": {
+      "grade": "VERIFIED",
+      "source": "git rev-parse HEAD (SHA256: 982bc35b...)",
+      "observed_timestamp": "2026-07-20T14:58:14.793178+00:00",
+      "freshness": 0.0,
+      "task_association": "HEOS-001"
+    }
+  },
+  "unknown_fields": [],
+  "conflicts": [],
+  "collector_errors": [],
+  "provenance": {
+    "collector": "scripts/helm_live_run_collector.py",
+    "git_commit": "982bc35b83cc7fb37bc6f5bbd9fee2a05336d16b"
+  }
+}

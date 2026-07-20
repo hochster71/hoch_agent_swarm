@@ -953,6 +953,113 @@ def serve_haf() -> str:
     return f.read_text(encoding="utf-8") if f.exists() else "<h1>haf_console.html missing</h1>"
 
 
+@app.get("/live-run", response_class=HTMLResponse)
+def serve_live_run() -> str:
+    """HELM Live Run Console — read-only real-time qualification and mission execution state."""
+    f = ROOT / "frontend_live" / "live_run.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>live_run.html missing</h1>"
+
+
+@app.get("/founder-live", response_class=HTMLResponse)
+def serve_founder_live() -> str:
+    """HELM Founder Live Console UI alias."""
+    f = ROOT / "frontend_live" / "live_run.html"
+    return f.read_text(encoding="utf-8") if f.exists() else "<h1>live_run.html missing</h1>"
+
+
+@app.get("/api/v1/helm/live-run")
+@app.get("/api/v1/helm/live")
+def get_live_run() -> JSONResponse:
+    """HELM Live Run API — returns normalized execution state and process measurements."""
+    try:
+        from scripts.helm_live_run_collector import collect
+        state = collect()
+        gen_time = datetime.datetime.fromisoformat(state["generated_at"])
+        now_time = datetime.datetime.now(datetime.timezone.utc)
+        state["freshness_seconds"] = max(0.0, round((now_time - gen_time).total_seconds(), 2))
+        return JSONResponse(state)
+    except Exception as e:
+        return JSONResponse({
+            "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "freshness_seconds": 0.0,
+            "truth_status": "UNKNOWN",
+            "errors": [str(e)]
+        }, status_code=500)
+
+
+@app.get("/api/v1/helm/live/events")
+def get_live_events() -> JSONResponse:
+    """HELM Live Events API."""
+    try:
+        from scripts.helm_live_run_collector import collect
+        state = collect()
+        return JSONResponse({
+            "generated_at": state["generated_at"],
+            "events": state["recent_events"]
+        })
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.get("/api/v1/helm/live/tasks")
+def get_live_tasks() -> JSONResponse:
+    """HELM Live Tasks API."""
+    try:
+        from scripts.helm_live_run_collector import collect
+        state = collect()
+        return JSONResponse({
+            "generated_at": state["generated_at"],
+            "tasks": state["active_tasks"]
+        })
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.get("/api/v1/helm/live/processes")
+def get_live_processes() -> JSONResponse:
+    """HELM Live Processes API."""
+    try:
+        from scripts.helm_live_run_collector import collect
+        state = collect()
+        return JSONResponse({
+            "generated_at": state["generated_at"],
+            "processes": state["active_processes"]
+        })
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.get("/api/v1/helm/live/repository")
+def get_live_repository() -> JSONResponse:
+    """HELM Live Repository API."""
+    try:
+        from scripts.helm_live_run_collector import collect
+        state = collect()
+        return JSONResponse({
+            "generated_at": state["generated_at"],
+            "repository": state["repository_state"]
+        })
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+from fastapi import WebSocket as _WebSocket, WebSocketDisconnect as _WebSocketDisconnect
+@app.websocket("/api/v1/helm/live/ws")
+async def live_ws_endpoint(websocket: _WebSocket):
+    """WebSocket endpoint to stream live normalized state."""
+    import asyncio
+    await websocket.accept()
+    try:
+        from scripts.helm_live_run_collector import collect
+        while True:
+            state = await asyncio.to_thread(collect)
+            await websocket.send_json(state)
+            await asyncio.sleep(2)
+    except _WebSocketDisconnect:
+        pass
+    except Exception:
+        pass
+
 
 @app.get("/api/v1/helm/council/status")
 def api_council_status():

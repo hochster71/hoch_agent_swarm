@@ -1,0 +1,126 @@
+{
+  "actions": [
+    {
+      "at": "2026-07-20T14:35:49Z",
+      "detail": "8 queries across changelogs, GitHub, dev blogs",
+      "name": "WebSearch sweep"
+    }
+  ],
+  "agent": "claude:builder",
+  "completed_at": "2026-07-20T14:35:49Z",
+  "correlation_id": "a61215f8-8390-40dd-bbf9-93675dfcb385",
+  "domain": "research",
+  "errors": [
+    {
+      "detail": "HN and Reddit unreachable; coverage PARTIAL",
+      "severity": "AMBER",
+      "subject": "research_connectors"
+    }
+  ],
+  "evidence": [
+    "docs/scout/tech-scout-2026-07-20.md",
+    "docs/scout/tech-scout-2026-07-20.md",
+    "has_live_project_tracker/data/doorstep_digest.json",
+    "has_live_project_tracker/data/doorstep_digest.json"
+  ],
+  "founder_action": {
+    "reason": "modifies agent scaffolding; requires a defensible score model before adoption",
+    "title": "Review Harness Evolver / Harness Forge"
+  },
+  "host": "claude",
+  "lifecycle": [
+    "STARTED",
+    "PRIMARY_SOURCES_QUERIED",
+    "COMMUNITY_SOURCES_FAILED",
+    "PARTIAL_SOURCE_FAILURE",
+    "PARTIAL_SOURCE_FAILURE",
+    "PARTIAL_SOURCE_FAILURE",
+    "DIGEST_GENERATED",
+    "TRACKER_UPDATED",
+    "FOUNDER_REVIEW_CREATED",
+    "COMPLETED_DEGRADED"
+  ],
+  "mission_id": "TECH-SCOUT-20260720",
+  "mutations": [
+    {
+      "at": "2026-07-20T14:35:49Z",
+      "detail": "8080 bytes",
+      "kind": "created",
+      "target": "docs/scout/tech-scout-2026-07-20.md",
+      "undo": "git"
+    },
+    {
+      "at": "2026-07-20T14:35:49Z",
+      "detail": "added tech_scout key",
+      "kind": "updated",
+      "target": "has_live_project_tracker/data/doorstep_digest.json",
+      "undo": "git"
+    }
+  ],
+  "schema": "HELM_MISSION_ENVELOPE_v1",
+  "sources": [
+    {
+      "detail": "web search result; no cached artifact",
+      "evidence": null,
+      "name": "anthropic_changelog",
+      "truth": "ASSERTED"
+    },
+    {
+      "detail": "web search result; no cached artifact",
+      "evidence": null,
+      "name": "github_trending",
+      "truth": "ASSERTED"
+    },
+    {
+      "detail": "web search result; no cached artifact",
+      "evidence": null,
+      "name": "stripe_sessions_2026",
+      "truth": "ASSERTED"
+    },
+    {
+      "detail": "web search result; no cached artifact",
+      "evidence": null,
+      "name": "harness_engineering_repos",
+      "truth": "ASSERTED"
+    },
+    {
+      "detail": "web search result; no cached artifact",
+      "evidence": null,
+      "name": "appstore_mcp_repos",
+      "truth": "ASSERTED"
+    },
+    {
+      "detail": "re-read from disk",
+      "evidence": "docs/scout/tech-scout-2026-07-20.md",
+      "name": "digest_file",
+      "truth": "OBSERVED"
+    },
+    {
+      "detail": "tech_scout key present; 10 keys intact",
+      "evidence": "has_live_project_tracker/data/doorstep_digest.json",
+      "name": "tracker_file",
+      "truth": "OBSERVED"
+    }
+  ],
+  "started_at": "2026-07-20T14:35:49Z",
+  "status": "COMPLETED_DEGRADED",
+  "status_derived": true,
+  "title": "Weekly HAS tech scout",
+  "unknowns": [
+    {
+      "attempted": 1,
+      "reason": "WebSearch returned 'unavailable'",
+      "subject": "hacker_news"
+    },
+    {
+      "attempted": 1,
+      "reason": "WebSearch returned 'unavailable'",
+      "subject": "reddit_r_ClaudeAI"
+    },
+    {
+      "attempted": 1,
+      "reason": "not attempted after two connector failures",
+      "subject": "x_twitter_dev_chatter"
+    }
+  ]
+}
