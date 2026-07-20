@@ -158,10 +158,10 @@ def main():
 
     findings = {
         "LOCAL_AUTHOR_IMPERSONATION": "OBSERVED POSSIBLE" if (sign_key_code != 0 or sign_key_out == "") else "OBSERVED PROTECTED",
-        "REMOTE_CREDENTIAL_REUSE": remote_cred_reuse,
-        "KEYCHAIN_ACCESS_BOUNDARY": keychain_prompt_required,
+        "GEMINI_CONTEXT_CREDENTIAL_RETRIEVAL": "SUCCEEDED WITHOUT OBSERVED PROMPT" if keychain_prompt_required == "NO_PROMPT_REQUIRED" else "FAILED / PROMPT REQUIRED",
+        "REMOTE_CREDENTIAL_REUSE": "OBSERVED POSSIBLE" if remote_cred_reuse == "OBSERVED POSSIBLE" else "UNKNOWN",
         "SSH_PRIVATE_KEY_USABILITY": ssh_usability,
-        "SECURE_ENCLAVE_PROTECTION": se_protection,
+        "SECURE_ENCLAVE_PROTECTION": "ABSENT (for discovered standard SSH key file; Keychain-stored token characteristics partially characterized)" if se_protection == "ABSENT (standard files on disk)" else se_protection,
     }
     report["evidence_scoped_findings"] = findings
 
