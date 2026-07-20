@@ -1,0 +1,23 @@
+{
+  "source_head_sha": "99a760841a4d93bd56c43f65bd8cea703c3f8941",
+  "source_commit_remote_visible": false,
+  "governed_paths_clean_at_generation": true,
+  "assessment_run_id": "HAF-RUN-20260720-001105",
+  "assessment_summary_reconciled": true,
+  "parent_chain_verified": true,
+  "source_commits": [
+    "3aab58957ac0f4675dc1428a7e5e958a178f69f9",
+    "26497491bf7e98cf410a44f5dd1207887d1fcee7",
+    "a965b0e23cd9dcc02d8864114a4dc3fcdacedb1e",
+    "18bfdff8a7eb206e2d29d9594f5d761b39d5f2b9",
+    "f904bbf8ed80f4be4a9db2f955eaf78b4f3f7046",
+    "b9798a458493597190690d5b458a3b8875886ab0",
+    "4dacd36cf9f882a24e91a0ddbca346a9f454e82e",
+    "dcad0e27e27e0130f046cea4fa99bd2df7848947",
+    "6a5e457f6b36744ceebc27895d976efe54877007",
+    "d0d1058020ada0eae503a81fb055a829f4c5df01",
+    "440f3919c0edc101798a2125377a6dee951735c2",
+    "1bb87dfd119e883043af1364fb86f12a95f2a0e6",
+    "99a760841a4d93bd56c43f65bd8cea703c3f8941"
+  ]
+}
