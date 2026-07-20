@@ -106,6 +106,11 @@ def voice_gateway_health():
             pass
 
     return JSONResponse({
+            # merged executive-contract keys (additive; tests/unit/test_helm_voice_executive.py)
+            "status": "LIVE",
+            "subsystem": "voice_executive",
+            "truth_class": "HELM_VOICE_HEALTH",
+
         "ALEXA": "TEST",
         "SIRI": "TEST",
         "WEB_VOICE": "LIVE",

@@ -42,6 +42,7 @@
     "backend/voice/models.py": "36a8ba2ced7fa7c81612c599d5cba2baaab87a7f6c21d6a455189f2c735210bc",
     "backend/voice/rate_limiter.py": "d17762ace08d10aa0526611c950b4956e072fd970de41a122ebb50b87626eedb",
     "backend/voice/redaction.py": "7bee5b0b70944b19385a76bec50c404f19f36f54d6c042cceeb4d85dfe220b2d",
+    "backend/voice/executive_router.py": "54351aa47555c872ca5009e7a08d0187ee4672a4a2011d366f67b4cee88c5a94",
     "backend/voice/response_renderer.py": "b53e2b0f4b880d8588bd5f159c2841163e98c9376c99178a2bfe04705bd49606",
     "backend/voice/router.py": "335ebdb19c0116e99bbb7b283cd37b28e58699f46e9634fc9b734b3353842b00",
     "backend/voice/service.py": "47f39dc3c06825bfd705d2c636c36a18e6da71802bdc7e12a8cb6aaaa4c071c7",
