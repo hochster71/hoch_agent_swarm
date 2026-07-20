@@ -1,0 +1,38 @@
+=== BEFORE: git worktree list --porcelain ===
+worktree /sessions/stoic-loving-babbage/mnt/hoch_agent_swarm
+HEAD 6065882786ee9274e3f71fa535f46cc624ccdcf9
+branch refs/heads/helm-runtime-bridge-v1
+
+worktree /sessions/stoic-loving-babbage/wt-proc-001
+HEAD 6065882786ee9274e3f71fa535f46cc624ccdcf9
+detached
+
+worktree /Users/michaelhoch/.gemini/antigravity/worktrees/hoch_agent_swarm/hoch-agent-swarm-research
+HEAD f64606b7c665480d6db39c7663a7f8e52555a247
+branch refs/heads/hoch-agent-swarm-research
+prunable gitdir file points to non-existent location
+
+
+=== AFTER: git worktree list --porcelain ===
+worktree /sessions/stoic-loving-babbage/mnt/hoch_agent_swarm
+HEAD 6065882786ee9274e3f71fa535f46cc624ccdcf9
+branch refs/heads/helm-runtime-bridge-v1
+
+worktree /Users/michaelhoch/.gemini/antigravity/worktrees/hoch_agent_swarm/hoch-agent-swarm-research
+HEAD f64606b7c665480d6db39c7663a7f8e52555a247
+branch refs/heads/hoch-agent-swarm-research
+prunable gitdir file points to non-existent location
+
+worktree /sessions/stoic-loving-babbage/mnt/hoch_agent_swarm
+HEAD 6065882786ee9274e3f71fa535f46cc624ccdcf9
+branch refs/heads/helm-runtime-bridge-v1
+
+worktree /sessions/stoic-loving-babbage/mnt/hoch_agent_swarm/.helm_worktrees/proc-001
+HEAD 6065882786ee9274e3f71fa535f46cc624ccdcf9
+detached
+
+worktree /Users/michaelhoch/.gemini/antigravity/worktrees/hoch_agent_swarm/hoch-agent-swarm-research
+HEAD f64606b7c665480d6db39c7663a7f8e52555a247
+branch refs/heads/hoch-agent-swarm-research
+prunable gitdir file points to non-existent location
+

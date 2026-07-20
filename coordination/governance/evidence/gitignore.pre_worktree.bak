@@ -1,0 +1,214 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.venv*
+*.egg-info/
+build/
+dist/
+
+# Env & secrets
+.env
+frontend/.env
+.secrets/
+vercel_login.log
+vercel_project.json
+.vercel
+auth.json
+*.log
+
+# DB and storage
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Visual garbage prevention - do not commit image clutter or superseded authority
+hoch-approved-visual-authority*.zip
+hoch-approved-visual-authority*/
+*contact-sheet*.png
+*contact-sheet*.jpg
+*contact-sheet*.jpeg
+.DS_Store
+hoch_agent_swarm_archive/
+
+# Explicitly keep canonical authority and evidence
+!docs/design/approved-visual-authority/hoch-pods-has-hasf-approved-authority.jpeg
+!docs/design/approved-visual-authority/visual-authority-manifest.json
+!docs/design/approved-visual-authority/README_DOCTRINE.md
+!docs/evidence/ui/screenshots/**
+!docs/evidence/runtime/**
+
+backend/swarm_ledger.db
+
+# Artifacts & node modules
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.DS_Store
+
+# Playwright & test reports
+test-results/
+playwright-report/
+uvicorn.log
+audit/
+
+# Release candidate & runs
+artifacts/
+!artifacts/pentest/
+artifacts/crew_runs/
+artifacts/release_candidates/
+artifacts/validation_samples/
+dist/releases/
+dist/releases/*/north_star_report.md
+dist/releases/v0.1.1-HOCHSTER-CLUSTER-HARDENING/
+
+# Local-only runtime artifacts
+a_wide_high_detail_ui_dashboard_screenshot_conc.png
+backend/db/
+data/backups/
+data/qa_loop.log
+frontend/data/agent_registry.json
+server/
+backend/task_history.json
+data/demo_config.json
+data/production_tracker.json
+data/prompt_registry/
+data/tv_epg.xml
+data/tv_playlist.m3u
+docs/evidence/screenshots/
+frontend/data/runtime_reliability.json
+docs/evidence/brain/
+docs/evidence/monetization/*inventory-audit.md
+docs/evidence/meta-orchestrator/*-daily-autonomy-brief.md
+docs/evidence/meta-orchestrator/*-domain-coverage-matrix.md
+docs/evidence/meta-orchestrator/*-gap-scan.md
+
+# Runtime logs & ephemeral event streams (never commit)
+has_live_project_tracker/tracker.log
+has_live_project_tracker/data/events.ndjson
+has_live_project_tracker/data/scheduler_metrics.json
+has_live_project_tracker/data/pert_command_metrics.json
+has_live_project_tracker/data/usage_metrics.json
+has_live_project_tracker/data/guardrail_metrics.json
+has_live_project_tracker/data/job_queue.json
+has_live_project_tracker/data/compute_gap_metrics.json
+has_live_project_tracker/data/relay_probe_evidence.json
+has_live_project_tracker/data/playwright_runs.json
+has_live_project_tracker/data/worker_heartbeats.json
+has_live_project_tracker/data/epic_fury_audit_results.json
+has_live_project_tracker/data/project_revenue_readiness_results.json
+has_live_project_tracker/data/revenue_action_queue.json
+has_live_project_tracker/data/control_plane_status.json
+
+
+
+
+
+# Tracker local backups & archived dead code
+has_live_project_tracker/backups/
+has_live_project_tracker/archive/
+
+# Database backups
+*.db.bak
+backend/*.db.bak
+
+# SQLite snapshot files
+*.sqlite
+*.sqlite3
+
+# Xcode per-user IDE state (binary, machine-local)
+*.xcuserstate
+
+# VS Code local workspace settings
+.vscode/
+logs/
+
+# --- secrets: never track (added by security remediation 2026-07-02) ---
+.env
+.env.*
+!.env.example
+.secrets/
+*.pem
+*_signing_key
+*_signing_key.pub
+
+# --- H3: runtime state & build outputs (never track) ---
+dist/releases/*.tar.gz
+dist/releases/**/*.zip
+artifacts/releases/**/*.tar.gz
+artifacts/crew_runs/
+artifacts/release_candidates/
+logs/goal_runner/
+*.tar.gz
+*.db-shm
+*.db-wal
+
+.fuse_hidden*
+
+# --- Live BRAIN daemon churn (never track; regenerated every ~2 min) ---
+# Per-generation M0 evidence snapshots — hundreds/day, not authoritative
+docs/evidence/moonshot/M0_GEN_*.md
+# Pre-edit HTML backups (local safety copies, not history)
+frontend/has_brain_moonshot.backup_*.html
+# Fleet reconciler runtime output (untracked mirrors)
+data/prompt_brain/fleet_*.json
+frontend/data/fleet_reconcile.json
+# Session e2e machine result (regenerated on every run)
+has_live_project_tracker/data/session_e2e_result.json
+# AI-Michael safe-executor + Phase 11 runtime outputs (never track)
+has_live_project_tracker/data/agent_action_queue.json
+data/prompt_brain/discovered_tasks.json
+has_live_project_tracker/data/goal_runtime_loop_status.json
+frontend/data/goal_runtime_loop_status.json
+data/billing/
+.env*
+scripts/.relay_write_token
+
+# H1B-R2 closure harness outputs under candidate packages dir (archived under docs/evidence/council/)
+coordination/council/live_proof_packages/H1B-R2-CLOSURE-*/
+coordination/council/live_proof_packages/H1C-CONTROLLED-ACTIVATION-*/
+coordination/council/live_proof_packages/H1C-DOORSTEP-COMMITBOUND-*/
+recovered_sources/story-studio-live/
+
+# HELM Voice Gateway recovery private key and naming variants globally
+coordination/security/voice_recovery_private_key.pem
+*voice_recovery_private_key*
+*recovery_private_key*
+*recovery-private-key*
+*.lock
+data/runtime/*.lock
+
+# HEOS Operational, Council, and Staged Evidence files
+/helm_council/
+_audit_stage2.tgz
+_quarantine/
+all_model_files.txt
+audits/
+coordination/evidence/a7_drift_20260719/
+coordination/evidence/voice_audit_chain_recovery_20260719/
+coordination/evidence/voice_remediation_manifest_verification/
+docs/evidence/conmon/
+docs/evidence/doctrine/
+nohup.out
+ollama_health_*.csv
+recovered_sources/
+verify_ollama_models.zsh
+tmp_voice_reg.log
+coordination/evidence/sbom_cve_20260719/
+coordination/audit_factory/
+coordination/soak/
+coordination/approvals/
+coordination/council/loop_boot_counter.json
+coordination/council/loop_metrics.json
+coordination/council/gateway_policy.json.bak.20260717T193639Z
+coordination/council/daemon/dispatch_ledger.jsonl.chainlock
+coordination/council/daemon/task_lease_ledger.jsonl.chainlock
+coordination/goal/
+coordination/founder/qa_sentinel_heartbeat.jsonl
+coordination/evidence/external/stripe_settlement.json
+helm-runtime-bridge-v1
+deploy/com.hoch.helm-conmon-continuous.plist
+scripts/goal/run_dependency_runtime_confirmation.sh
+data/runtime/voice_command_audit_reconstructed_20260719.jsonl

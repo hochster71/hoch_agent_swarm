@@ -1,0 +1,791 @@
+{
+  "schema": "HELM_OPEN_CLAIMS_REGISTER_v1",
+  "revision": 8,
+  "created_at": "2026-07-20T17:05:00Z",
+  "revised_at": "2026-07-20T18:00:55Z",
+  "created_by": "claude:builder",
+  "binding": "Founder decisions 2026-07-20: (1) oracle mode = DUAL-HASHED; (2) Wave 1 target branch = helm/execution-schedule-wave-1; (3) TEL-001 demoted INTEGRATED -> REMOTE_DELIVERED pending target-branch reachability; (4) five-state delivery vocabulary adopted. Revision 2 was incomplete (REQ-GOV-003, REQ-ES-002 absent) and used a vocabulary that could not express 'delivered but not to the declared target'.",
+  "purpose": "Persist open claims as governed state rather than conversational memory.",
+  "rules": {
+    "status_vocabulary": [
+      "OPEN",
+      "IN_PROGRESS",
+      "AUDITED",
+      "LOCAL_VERIFIED",
+      "REMOTE_DELIVERED",
+      "TARGET_INTEGRATED",
+      "CI_VERIFIED",
+      "ROADMAP_COMPLETE",
+      "CLOSED"
+    ],
+    "evidence_required": "Every status above OPEN must cite a full 40-char SHA, a test result, or an artifact path.",
+    "id_uniqueness": "Every claim_id resolves to exactly one title. Enforced by tests/unit/test_open_claims_register.py.",
+    "id_namespaces": {
+      "TEL-*": "telemetry / provenance defects and slices",
+      "PKG-W1-*": "Wave 1 schedule packages, ID mirrors HELM-W1-*",
+      "REQ-*": "requirement IDs as named in goal_state.json",
+      "N3_VERIFY": "build_to_goal node ID, verbatim",
+      "SEC-*": "security",
+      "PROC-*": "process/tooling",
+      "GOV-*": "governance"
+    },
+    "delivery_state_definitions": {
+      "AUDITED": "artifact bytes independently reviewed; no commit implied",
+      "LOCAL_VERIFIED": "exact audited commit exists locally",
+      "REMOTE_DELIVERED": "exact commit reachable from SOME remote branch",
+      "TARGET_INTEGRATED": "exact commit reachable from the DECLARED target branch",
+      "CI_VERIFIED": "CI evaluated that exact commit and passed",
+      "ROADMAP_COMPLETE": "roadmap package exit criteria met and separately evidenced",
+      "no_state_implies_the_next": "Six distinct evidence states. Each requires its own evidence. AUDITED does not imply committed; REMOTE_DELIVERED does not imply target; CI_VERIFIED does not imply complete.",
+      "history": "Rev2 vocabulary had a bare INTEGRATED that conflated REMOTE_DELIVERED with TARGET_INTEGRATED. Rev3 split them. Rev4 adds AUDITED and ROADMAP_COMPLETE."
+    }
+  },
+  "revision_1_defect_record": {
+    "what_happened": "Revision 1 stated the rule 'claim IDs must resolve to exactly one claim' and violated it three lines later. TEL-004 was used for (a) authoritative domain aggregation in its own body, (b) 'Founder Live hardening' in GOV-001's consequence text, and (c) implicitly the voice slice via a false collision warning. Six items were absent entirely: HELM-W1-001, -003, -004, -005, REQ-GOV-002, N3_VERIFY.",
+    "why_it_matters": "The register's stated purpose was to stop transcript memory being lossy. It was lossier than the transcript, because it was written from memory of the conversation rather than from the roadmap and goal-state files.",
+    "found_by": "independent review (Grok 4.5), confirmed by machine check against files",
+    "correction": "This revision. Completeness is now machine-checked against docs/helm/roadmap/HELM_EXECUTION_SCHEDULE_WAVE_1.md, coordination/goal/goal_state.json, and coordination/goal/build_to_goal_status.json.",
+    "false_statement_retracted": "Revision 1's ID_COLLISION_WARNING asserted 'both W1-002d meanings renamed to TEL-004 and TEL-005'. That was false — TEL-005 is W1-002e, and the voice slice received no ID at all."
+  },
+  "w1_002d_disposition": {
+    "problem": "W1-002d was bound twice in the 2026-07-20 transcript: first to the voice/founder-visible slice (P1), later to authoritative domain aggregation (P0).",
+    "resolution_option_A": [
+      {
+        "label": "W1-002d (first binding)",
+        "meaning": "voice / founder-visible surfaces",
+        "now": "TEL-008"
+      },
+      {
+        "label": "W1-002d (second binding)",
+        "meaning": "authoritative domain aggregation",
+        "now": "TEL-004"
+      },
+      {
+        "label": "W1-002e",
+        "meaning": "future producer timestamp rejection",
+        "now": "TEL-005"
+      },
+      {
+        "label": "HELM-W1-003",
+        "meaning": "Founder Live Governance and Truth Hardening",
+        "now": "PKG-W1-003 — a distinct package, never a W1-002 slice"
+      }
+    ],
+    "do_not": "Do not cite W1-002d. Do not collapse PKG-W1-003 into TEL-004."
+  },
+  "claims": [
+    {
+      "claim_id": "TEL-001",
+      "legacy_id": "W1-002a",
+      "title": "Remove mtime-as-produced-time from collectors",
+      "status": "REMOTE_DELIVERED",
+      "priority": "P0",
+      "scope": [
+        "backend/helm_runtime/collectors.py",
+        "tests/unit/test_w1_002a_collector_provenance.py"
+      ],
+      "evidence": {
+        "commit": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
+        "remote_branch": "github/helm-runtime-bridge-v1",
+        "audited_sha256": {
+          "backend/helm_runtime/collectors.py": "b9ac5382b410dcdb774ce449520dcca0a27f83723da3deb4356d1eab7d87fe4d",
+          "tests/unit/test_w1_002a_collector_provenance.py": "c088c1204ca17fbf16bf64b70df46baba9b1186d5b2775fdc2f686daad3de262"
+        },
+        "provenance_chain": "audited == staged == committed == pushed bytes (verified)",
+        "tests": "12/12 provenance, 38/38 evidence-truth regression",
+        "independent_audit": "cold-context auditor, defect-grammar spec; no false negative on the stated rule",
+        "target_branch_reachability": {
+          "declared_target": "helm/execution-schedule-wave-1",
+          "contains_commit": false,
+          "reachable_from": [
+            "github/helm-runtime-bridge-v1"
+          ],
+          "checked": "git branch -r --contains 6065882786ee9274e3f71fa535f46cc624ccdcf9"
+        }
+      },
+      "blocking": "Not reachable from the declared Wave 1 target branch (helm/execution-schedule-wave-1). CI has not evaluated this SHA.",
+      "next_action": "Merge or promote 6065882786ee9274e3f71fa535f46cc624ccdcf9 into helm/execution-schedule-wave-1, then observe CI against that SHA",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "TEL-002",
+      "legacy_id": "W1-002b",
+      "title": "Remove mtime-as-produced-time from live API; serve council state endpoint (REQ-ES-004)",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "backend/helm_live_api.py"
+      ],
+      "evidence": {
+        "offending_sites": 19,
+        "red_tests_defining_work": "tests/unit/test_w1_002b_endpoint_provenance.py — 14 failed, 0 passed",
+        "note": "helm_live_api.py mounts council_router (~line 87). Serving REQ-ES-004 first would emit authoritative-looking age_seconds derived from file touch time."
+      },
+      "blocking": "PROC-001 — needs isolated worktree before a 19-site live-API change.",
+      "next_action": "Fresh session: worktree, pre-claim inventory, classify all 19 sites before editing",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "TEL-003",
+      "legacy_id": "W1-002c",
+      "title": "Stop verifier and burndown laundering mtime into evidence age",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "scripts/verify_runtime_truth_freshness.py",
+        "scripts/goal/goal_engine.py",
+        "scripts/goal/verify_champion_gates.py"
+      ],
+      "evidence": {
+        "offending_sites": 3,
+        "red_tests_defining_work": "tests/unit/test_w1_002c_verifier_burndown_provenance.py — 7 failed, 3 passed, 1 skipped",
+        "root_cause": "runtime_truth_contract.is_fresh(kind, produced_at_epoch) takes a float and raises TypeError on None. Absent provenance is unrepresentable, so callers substitute mtime.",
+        "consequence": "The 90% / 100% burndown figures were computed against ages a git operation can reset."
+      },
+      "blocking": "Contract needs an explicit UNKNOWN path first. Expect the headline percentage to FALL — doctrine working, not regression.",
+      "next_action": "Extend runtime_truth_contract with UNKNOWN, then repair the three consumers",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "TEL-004",
+      "legacy_id": "audit-D1-domain-aggregation (was mislabeled W1-002d)",
+      "title": "Authoritative domain aggregation — a domain cannot be healthier than its required readings",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "backend/helm_runtime/collectors.py:637 domain_verdict",
+        "scripts/founder_live.py:96"
+      ],
+      "evidence": {
+        "found_by": "independent cold-context audit, 2026-07-20 (finding D1)",
+        "detail": "domain_verdict returns OBSERVED if ANY reading advances. GitCollector is in domain 'engineering' and sets observed_at=_now() unconditionally. Supervisor 6d stale, workers stale, models UNKNOWN, telemetry 17d stale — engineering still renders OBSERVED on nothing but a readable repo.",
+        "severity": "High — confirmed fake-green path in shipping code",
+        "test_coverage": "NONE. test_collectors.py tests only homogeneous domains."
+      },
+      "blocking": "Blocks runtime-truth promotion. Does NOT block TEL-001 (no filesystem-time reintroduced).",
+      "next_action": "Define required vs optional readings per domain. Tests: git OBSERVED + all authoritative stale -> not OBSERVED; optional live + required UNKNOWN -> UNKNOWN; all required live -> OBSERVED",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "TEL-005",
+      "legacy_id": "W1-002e",
+      "title": "Reject producer timestamps beyond a permitted clock-skew window",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "backend/helm_runtime/collectors.py:126"
+      ],
+      "evidence": {
+        "found_by": "independent cold-context audit, 2026-07-20 (finding D2)",
+        "detail": "age_seconds = max(0.0, read_at - observed_at). A future-dated timestamp clamps age to 0.0 -> OBSERVED -> LIVE indefinitely for arbitrarily old content. One hour of clock skew suffices.",
+        "severity": "High — confirmed fake-green path in shipping code",
+        "test_coverage": "NONE. No test passes a valid future timestamp."
+      },
+      "blocking": "Blocks runtime-truth promotion.",
+      "next_action": "produced_at > now + permitted_skew -> UNKNOWN, reason=future_producer_timestamp. Tests: +30s accepted; +1h UNKNOWN; +30d UNKNOWN; future ts cannot remain LIVE as clock advances",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "TEL-006",
+      "title": "knowledge_engine mtime -> Freshness verdict (same class, outside P0 scope)",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "backend/helm_runtime/knowledge_engine.py:217-220"
+      ],
+      "evidence": {
+        "found_by": "independent cold-context audit, 2026-07-20",
+        "detail": "age = (_now() - mtime).total_seconds() from abspath.stat().st_mtime, fed straight into Freshness(status, ...). Unmitigated instance of the audited rule.",
+        "note": "Not in the P0 five. The '22 remaining P0 sites' figure is a SCOPE metric, not a completeness metric."
+      },
+      "blocking": "None",
+      "next_action": "Repo-wide inventory pass after TEL-002/003",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "TEL-007",
+      "title": "Frozen-producer detection — sequence captured but never compared",
+      "status": "OPEN",
+      "priority": "P2",
+      "scope": [
+        "backend/helm_runtime/collectors.py"
+      ],
+      "evidence": {
+        "found_by": "independent cold-context audit, 2026-07-20 (finding D3)",
+        "detail": "producer_id and sequence are captured and emitted but never compared to a prior read. A producer looping {timestamp: now(), sequence: 42, status: HEALTHY} renders LIVE forever while doing no work.",
+        "test_defect_fixed": "test_frozen_sequence_is_detectable asserted only that 'sequence' appears in the serialization — passing trivially because to_dict always emits the key."
+      },
+      "blocking": "None",
+      "next_action": "Requires cross-invocation state. Design first — new capability, not a repair.",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "TEL-008",
+      "legacy_id": "W1-002d (first binding — voice slice)",
+      "title": "Voice and founder-visible freshness surfaces — remove mtime-derived labels",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "backend/voice/extended_factories.py",
+        "backend/voice/briefing.py",
+        "other founder-visible consumers"
+      ],
+      "evidence": {
+        "offending_sites": 11,
+        "note": "MISSING ENTIRELY from register revision 1 — the exact loss the register exists to prevent. Recovered by machine check against the pre-claim inventory.",
+        "founder_direction": "serialized behind the TEL-002/003 P0 package; must remain an explicit blocker on any claim that all founder-visible freshness surfaces are truthful"
+      },
+      "blocking": "Serialized behind TEL-002 and TEL-003.",
+      "next_action": "After the P0 package: classify each of the 11 sites by semantic use before editing",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "PKG-W1-001",
+      "roadmap_id": "HELM-W1-001",
+      "title": "Mission Instrumentation Runtime Hardening",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "backend/helm_runtime/mission_envelope.py",
+        "associated schema modules and tests"
+      ],
+      "evidence": {
+        "source": "docs/helm/roadmap/HELM_EXECUTION_SCHEDULE_WAVE_1.md",
+        "execution_mode": "EXTEND_EXISTING / HARDEN_EXISTING",
+        "partial_work_exists": "See PROC-003 — integration_state() is built and locally verified but uncommitted and unaudited.",
+        "remaining_per_roadmap": "extract schema to schemas/mission_envelope.schema.json and validate on write; add model/PID/repository/task capture; before/after hashing"
+      },
+      "blocking": "Prohibited from creating parallel helm/telemetry or helm/mission implementations without a migration ADR.",
+      "next_action": "Pre-claim inventory; decide ADOPT vs MIGRATE for the helm/ namespace",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "PKG-W1-003",
+      "roadmap_id": "HELM-W1-003",
+      "title": "Founder Live Governance and Truth Hardening",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "scripts/helm_founder_live.py",
+        "scripts/helm_live_run_collector.py",
+        "frontend_live/live_run.html",
+        "scripts/founder_live.py"
+      ],
+      "evidence": {
+        "source": "docs/helm/roadmap/HELM_EXECUTION_SCHEDULE_WAVE_1.md",
+        "duplicate_implementation": "Two founder-live implementations exist. Requires a recorded ADOPT / MIGRATE / SPLIT decision before feature work.",
+        "priority_note": "Roadmap says P0; downgraded to P1 here because it depends on EDR-0008/0009, both unratified (GOV-001). A package cannot be approved ahead of its governance."
+      },
+      "blocking": "GOV-001 — governance prerequisite: EDR ratification status must be inventoried and displayed first.",
+      "next_action": "Inventory applicable EDRs and their ratification/audit state; resolve the duplicate implementation",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "PKG-W1-004",
+      "roadmap_id": "HELM-W1-004",
+      "title": "HEOS Qualification Read Adapter",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "helm/adapters/heos_adapter.py",
+        "heos/evidence_readers/",
+        "heos/schemas/"
+      ],
+      "evidence": {
+        "source": "docs/helm/roadmap/HELM_EXECUTION_SCHEDULE_WAVE_1.md",
+        "greenfield_verified": "No heos/ tree exists in the repository (checked 2026-07-20). This is the only genuinely greenfield Wave 1 package."
+      },
+      "blocking": "Depends on the engineering telemetry contract (TEL-002).",
+      "next_action": "Read-only adapter; must not mutate active qualification logic",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "PKG-W1-005",
+      "roadmap_id": "HELM-W1-005",
+      "title": "Knowledge Graph Foundation",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "helm/knowledge_graph/",
+        "schemas/helm_graph_*.json"
+      ],
+      "evidence": {
+        "source": "docs/helm/roadmap/HELM_EXECUTION_SCHEDULE_WAVE_1.md",
+        "existing_implementation": "backend/helm_runtime/knowledge_engine.py and knowledge_api.py exist — assess before building. helm/knowledge_graph/ is absent but the capability may be partly present.",
+        "related": "TEL-006 is a defect in knowledge_engine.py"
+      },
+      "blocking": "Depends on PKG-W1-001 schema.",
+      "next_action": "Pre-claim assessment of the existing knowledge engine before any new module",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "REQ-GOV-002",
+      "title": "Critical-path blocker named by goal_state",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "governance requirement — specific content not yet read into this register"
+      ],
+      "evidence": {
+        "source": "coordination/goal/goal_state.json -> metrics.current_critical_path_blocker",
+        "layer_context": "GOV layer reports 4/6 satisfied, 64% agent-scope completion — the lowest of any layer",
+        "honest_gap": "This register records that REQ-GOV-002 is the named blocker. It does NOT yet record what REQ-GOV-002 requires. That content must be read from the requirements source before work is claimed."
+      },
+      "blocking": "Named critical-path blocker for the whole goal computation.",
+      "next_action": "Read the REQ-GOV-002 definition from the requirements source and populate this claim",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "N3_VERIFY",
+      "title": "Sole non-DONE build-to-goal node (status HOLD)",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "build-to-goal node"
+      ],
+      "evidence": {
+        "source": "coordination/goal/build_to_goal_status.json",
+        "node_status": "HOLD",
+        "context": "9 of 10 nodes DONE; percent_to_goal 90.0; state RUNNING, detail 'working N3_VERIFY'",
+        "honest_gap": "Reason for HOLD is not recorded in this register."
+      },
+      "blocking": "The one node standing between 90% and node-complete.",
+      "next_action": "Determine why N3_VERIFY is on HOLD and what releases it",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "SEC-DEP-001",
+      "title": "Default-branch dependency vulnerability triage",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "rc21-ci-enforced-security (default branch)"
+      ],
+      "evidence": {
+        "source": "GitHub Dependabot, observed in push output 2026-07-20",
+        "counts": {
+          "critical": 1,
+          "high": 5,
+          "moderate": 3,
+          "total": 9
+        },
+        "url": "https://github.com/hochster71/hoch_agent_swarm/security/dependabot",
+        "assessment": "UNASSESSED — counts are Dependabot's; exploitability in this codebase is unknown"
+      },
+      "blocking": "Should be triaged before release promotion. Low investigation cost, high potential release impact.",
+      "next_action": "Determine: which dependency; whether used in production paths; whether a safe version exists; whether the fix is breaking. Then set remediation priority.",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "PROC-001",
+      "title": "Shared Git index permits cross-agent commit-scope contamination",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "repository-wide working tree",
+        "multi-agent process discipline"
+      ],
+      "evidence": {
+        "incident": "2026-07-20: `git add` of 2 files produced a 3-file commit (27243127, abandoned unpushed). Corrected to 6065882786ee...",
+        "cause": "INDETERMINATE — stale staged content and concurrent staging by another agent fit the evidence equally well. A .git/index.lock from a concurrent process was observed minutes later. Do NOT record this as proven stale-index.",
+        "invariant": "A shared Git index is mutable global state. No agent may assume exclusive ownership of staged content.",
+        "mitigation_built": "scripts/scoped_commit_gate.sh — detects contamination AFTER staging. Defense in depth, not the primary control."
+      },
+      "blocking": "Blocks safe start of TEL-002.",
+      "next_action": "Adopt per-agent git worktree, GIT_INDEX_FILE, or a serialized repo lease. Worktrees eliminate the class rather than detecting it.",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "PROC-002",
+      "title": "scoped_commit_gate.sh needs its own claim, tests, and audit",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "scripts/scoped_commit_gate.sh"
+      ],
+      "evidence": {
+        "state": "uncommitted, unaudited, untested",
+        "verified_manually": "violation -> exit 1; && chain refuses; --strict hashes staged blobs from the index (git show :<file>) rather than the worktree"
+      },
+      "blocking": "Must not be folded into TEL-001 — that would retroactively widen an audited boundary.",
+      "next_action": "Own claim. Tests: exit-code propagation, concurrent index mutation, unexpected staged paths, deleted files, renamed files, staged-blob hashing",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "PROC-003",
+      "title": "mission_envelope.py integration_state work is uncommitted and unaudited",
+      "status": "LOCAL_VERIFIED",
+      "priority": "P1",
+      "scope": [
+        "backend/helm_runtime/mission_envelope.py"
+      ],
+      "evidence": {
+        "tests": "tests/unit/test_integration_state.py — 15/15 passing",
+        "capability": "5-state delivery classification: AMBIGUOUS_SHA / UNKNOWN / LOCAL_VERIFIED / INTEGRATED_ELSEWHERE / INTEGRATED",
+        "self_defects_found_and_fixed": "abbreviated SHA produced false INTEGRATED (prefix collision, 5877ffa1); branch-scoped miss reported LOCAL_VERIFIED for work already on another remote"
+      },
+      "blocking": "Never audited under any claim. Nearly rode along in the TEL-001 commit — see PROC-001.",
+      "next_action": "Own claim boundary and independent audit before commit. Relates to PKG-W1-001.",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "GOV-001",
+      "title": "EDR-0008 / 0009 / 0010 are PROPOSED and un-audited",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "docs/helm/edr/EDR-0008-operational-mission-telemetry.md",
+        "docs/helm/edr/EDR-0009-live-state-collectors.md",
+        "docs/helm/edr/EDR-0010-dual-horizon-doctrine.md"
+      ],
+      "evidence": {
+        "founder_ratification": "not performed",
+        "auditor_verification": "not performed",
+        "consequence": "Per EDR-0006, work resting on them is UNKNOWN, not complete. PKG-W1-003 (Founder Live Governance and Truth Hardening) inherits this."
+      },
+      "blocking": "Founder ratification of: read-only no-op cannot be VERIFIED; absence renders as unknown; fake red prohibited as fake green; configuration is not liveness.",
+      "next_action": "Founder ratification pass, then independent auditor verification",
+      "owner": "Founder"
+    },
+    {
+      "claim_id": "GOV-002",
+      "title": "EDR-0001 identifier collision",
+      "status": "OPEN",
+      "priority": "P2",
+      "scope": [
+        "docs/helm/edr/EDR-0001-executive-runtime-four-engines.md",
+        "docs/helm/edr/EDR-0001-runtime-bridge.md"
+      ],
+      "evidence": {
+        "found_by": "tests/unit/test_governance_preclaim.py::test_edr_ids_are_unique (failing)",
+        "detail": "Two decisions share the identifier EDR-0001, so citing 'EDR-0001' resolves to nothing.",
+        "recurrence": "The same defect class recurred in this register's own revision 1 (TEL-004 with three meanings) within hours."
+      },
+      "blocking": "Traceability only.",
+      "next_action": "Renumber through normal governance; preserve citation history rather than rewriting",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "GOV-003",
+      "title": "Pre-claim citation debt in the EDR chain",
+      "status": "OPEN",
+      "priority": "P3",
+      "scope": [
+        "EDR-0001 x2",
+        "EDR-0002"
+      ],
+      "evidence": {
+        "grandfathered_count": 3,
+        "citation_coverage": "10/11 EDRs cite a constitutional artifact",
+        "ratchet": "test_grandfathered_debt_does_not_grow blocks new records claiming the exemption"
+      },
+      "blocking": "None",
+      "next_action": "Repair and remove from GRANDFATHERED, one at a time",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "REQ-TO-002",
+      "title": "Founder-gated requirement pending (TO layer)",
+      "status": "OPEN",
+      "priority": "P1",
+      "scope": [
+        "founder action"
+      ],
+      "evidence": {
+        "source": "coordination/goal/goal_state.json -> metrics.founder_only_actions_pending",
+        "beyond_binding": "NOT in the Option A required-ID set. Surfaced by reading goal_state.json rather than the transcript. Flagged for founder acceptance or rejection from this register.",
+        "honest_gap": "Requirement content not yet read into this register."
+      },
+      "blocking": "Founder-only action.",
+      "next_action": "Founder to confirm whether this belongs in this register",
+      "owner": "Founder"
+    },
+    {
+      "claim_id": "REQ-CP-TESTFLIGHT",
+      "title": "TestFlight submission — founder-gated",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "founder action",
+        "Apple App Store Connect"
+      ],
+      "evidence": {
+        "source": "coordination/goal/goal_state.json -> metrics.founder_only_actions_pending",
+        "beyond_binding": "NOT in the Option A required-ID set. Surfaced by reading goal_state.json.",
+        "doctrine": "Externally-gated per CLAUDE.md: BLOCKED_EXTERNAL until authoritative evidence confirms completion."
+      },
+      "blocking": "Apple identity, 2FA, and legal attestation are irreducible founder gates.",
+      "next_action": "Founder to confirm inclusion; CP layer reports 8/10 satisfied with this pending",
+      "owner": "Founder"
+    },
+    {
+      "claim_id": "REQ-CP-APP_STORE_CONNECT",
+      "title": "App Store Connect submission — founder-gated",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "founder action",
+        "Apple App Store Connect"
+      ],
+      "evidence": {
+        "source": "coordination/goal/goal_state.json -> metrics.founder_only_actions_pending",
+        "beyond_binding": "NOT in the Option A required-ID set. Surfaced by reading goal_state.json.",
+        "doctrine": "Externally-gated. Revenue metrics remain UNKNOWN (not zero) until settlement evidence exists."
+      },
+      "blocking": "Founder gate.",
+      "next_action": "Founder to confirm inclusion",
+      "owner": "Founder"
+    },
+    {
+      "claim_id": "REQ-GOV-003",
+      "title": "REQ-GOV-003 — present in goal_state, state STALE (evidence freshness lapsed), blocking, agent-owned, on critical path",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "governance requirement — content not yet read into this register"
+      ],
+      "evidence": {
+        "source": "coordination/goal/goal_state.json -> requirements[]",
+        "state": "STALE",
+        "owner": "agent",
+        "blocking": true,
+        "on_critical_path": true,
+        "found_by": "cold review + machine check 2026-07-20: present in goal_state.requirements, unclaimed in register rev 2",
+        "honest_gap": "Requirement text not yet read. Do not infer it.",
+        "finding_precision": "IMPORTANT DISTINCTION. REQ-GOV-003 is PRESENT in goal_state.requirements — it is not a missing requirement. Its state is STALE, meaning its evidence freshness lapsed against its SLA. What was ABSENT was this register's CLAIM for it. Do not restate this as 'requirement missing'; the defect was register coverage, not requirement existence."
+      },
+      "blocking": "Blocking and agent-owned; second of the two shortfalls behind the GOV layer 64% figure.",
+      "next_action": "Read the REQ-GOV-003 definition from goal_state.requirements and populate",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "REQ-ES-002",
+      "title": "REQ-ES-002 — present in goal_state, state STALE (evidence freshness lapsed), blocking, agent-owned, on critical path",
+      "status": "OPEN",
+      "priority": "P0",
+      "scope": [
+        "evidence-serving requirement — content not yet read into this register"
+      ],
+      "evidence": {
+        "source": "coordination/goal/goal_state.json -> requirements[]",
+        "state": "STALE",
+        "owner": "agent",
+        "blocking": true,
+        "on_critical_path": true,
+        "found_by": "cold review + machine check 2026-07-20: present in goal_state.requirements, unclaimed in register rev 2",
+        "honest_gap": "Requirement text not yet read.",
+        "finding_precision": "IMPORTANT DISTINCTION. REQ-ES-002 is PRESENT in goal_state.requirements — it is not a missing requirement. Its state is STALE, meaning its evidence freshness lapsed against its SLA. What was ABSENT was this register's CLAIM for it. Do not restate this as 'requirement missing'; the defect was register coverage, not requirement existence."
+      },
+      "blocking": "Blocking and agent-owned.",
+      "next_action": "Read the REQ-ES-002 definition from goal_state.requirements and populate",
+      "owner": "Unassigned"
+    },
+    {
+      "claim_id": "GOV-004",
+      "title": "Roadmap oracle lacks durable version control — sole completeness authority is untracked",
+      "status": "REMOTE_DELIVERED",
+      "priority": "P0",
+      "scope": [
+        "docs/helm/roadmap/HELM_EXECUTION_SCHEDULE_WAVE_1.md"
+      ],
+      "evidence": {
+        "tracked": true,
+        "commit_sha": "8d86f9b5e212ec3b56f166e0ae7cb7bf679ab5cb",
+        "committed_blob_sha256": "39edf04a7180d83ca3cd52329accdb307788f89f736cc29dc7eacfe0c524eec2",
+        "working_tree_sha256": "39edf04a7180d83ca3cd52329accdb307788f89f736cc29dc7eacfe0c524eec2",
+        "problem": "An untracked file was the sole completeness authority. Resolved by committing and tracking the file on the active branch helm-runtime-bridge-v1.",
+        "found_by": "cold review 2026-07-20; confirmed by dual-hash record (committed hash is null)"
+      },
+      "blocking": null,
+      "next_action": "None — resolved by tracking HELM_EXECUTION_SCHEDULE_WAVE_1.md in HEAD commit 8d86f9b5e212ec3b56f166e0ae7cb7bf679ab5cb.",
+      "owner": "Unassigned",
+      "detail": "RESOLVED 2026-07-20. The roadmap oracle is tracked and committed on the active branch, establishing full durable version control.\n  worktree sha256   39edf04a7180d83ca3cd52329accdb307788f89f736cc29dc7eacfe0c524eec2 (295 lines)\n  committed sha256  39edf04a7180d83ca3cd52329accdb307788f89f736cc29dc7eacfe0c524eec2\nReconstructability and durable provenance are now satisfied.",
+      "verification_method": "git show <commit>:<path> piped to sha256sum, plus line-level diff.",
+      "resolution_options": [
+        "A. Commit the 295-line worktree copy on a branch reachable from HEAD. [RESOLVED]"
+      ],
+      "blocked_by": null
+    }
+  ],
+  "metrics_reference": {
+    "governance_health": "python3 scripts/governance_health.py",
+    "completeness_check": "python3 -m pytest tests/unit/test_open_claims_register.py",
+    "note": "promotion_eligibility reports UNKNOWN while any P0 mtime site remains. It counts the five P0 files only — TEL-006 proves the true repo-wide inventory is larger."
+  },
+  "w1_002_decomposition": {
+    "note": "HELM-W1-002 has no single PKG claim because the founder split it into slices on 2026-07-20. The decomposition is recorded here so a cold reader can resolve it without the transcript.",
+    "roadmap_package": "HELM-W1-002 — Engineering Telemetry Coverage Expansion",
+    "slices": {
+      "TEL-001": "W1-002a collectors (INTEGRATED)",
+      "TEL-002": "W1-002b live API + REQ-ES-004",
+      "TEL-003": "W1-002c verifier and burndown",
+      "TEL-004": "audit finding D1, domain aggregation (was mislabeled W1-002d)",
+      "TEL-005": "W1-002e future timestamp rejection",
+      "TEL-008": "W1-002d first binding, voice / founder-visible surfaces"
+    },
+    "critical_path_rule": "TEL-001 + TEL-002 + TEL-003 must all pass before REQ-ES-004 may be marked satisfied. TEL-008 is serialized behind that package."
+  },
+  "branch_bindings": {
+    "wave_1_target": "helm/execution-schedule-wave-1",
+    "delivery_branch": "helm-runtime-bridge-v1",
+    "promotion_branch": "rc21-ci-enforced-security",
+    "bound_by": "founder, 2026-07-20",
+    "rule": "TARGET_INTEGRATED requires reachability from wave_1_target. Reachability from delivery_branch alone is REMOTE_DELIVERED."
+  },
+  "oracle_identity": {
+    "mode": "SNAPSHOT_COPY",
+    "why": "Committed-only ignores live operational state; working-tree-only is not reproducible from git history. Both are recorded so a later rewrite invalidates the evidence automatically. Discovered when a worktree verified against COMMITTED goal oracles while the register was built from WORKING-TREE ones — same green, different data.",
+    "observed_at": "2026-07-20T17:44:35Z",
+    "oracles": [
+      {
+        "path": "coordination/governance/open_claims_register.json",
+        "base_commit": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
+        "committed_blob_sha256": null,
+        "working_tree_sha256": "72be32032fd7e50aa3d434dccd4c40b5667e823b7e89b56a8ccc50446d588540",
+        "tracked": false,
+        "dirty": false,
+        "note": "self; hash is of revision 2 as read. Revision 3 supersedes it.",
+        "live": false
+      },
+      {
+        "path": "docs/helm/roadmap/HELM_EXECUTION_SCHEDULE_WAVE_1.md",
+        "base_commit": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
+        "committed_blob_sha256": null,
+        "working_tree_sha256": "39edf04a7180d83ca3cd52329accdb307788f89f736cc29dc7eacfe0c524eec2",
+        "tracked": false,
+        "dirty": false,
+        "note": "UNTRACKED — no committed baseline exists. The completeness authority for this register has no version history. Flagged as a standing weakness.",
+        "live": false
+      },
+      {
+        "path": "coordination/goal/goal_state.json",
+        "base_commit": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
+        "committed_blob_sha256": "4e4d347fb27eef9ba1d083eaf8cd319008079d8b43f6f2d6bc525c3d3280b680",
+        "working_tree_sha256": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "tracked": true,
+        "dirty": true,
+        "note": "LIVE FILE — a running process rewrites it. working_tree_sha256 may already be stale. Any verification citing this record must re-hash and compare. Under SNAPSHOT_COPY the live source is NOT the promotion oracle; the pinned snapshot is.",
+        "live": true,
+        "promotion_oracle": "snapshot — see oracle_identity.snapshots"
+      },
+      {
+        "path": "coordination/goal/build_to_goal_status.json",
+        "base_commit": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
+        "committed_blob_sha256": "a71f89df6e8c4ac40845dfa826a6e35023c073fea78bd74c7770920243374bbc",
+        "working_tree_sha256": "09a3d1e14cddd790c6044395178df683933ebef76e6e9910f7c5696dc5d0a3b9",
+        "tracked": true,
+        "dirty": true,
+        "note": "LIVE FILE. Committed version says GOAL_REACHED/100%; working tree says RUNNING/90% with N3_VERIFY on HOLD. The divergence is the finding. Under SNAPSHOT_COPY the live source is NOT the promotion oracle; the pinned snapshot is.",
+        "live": true,
+        "promotion_oracle": "snapshot — see oracle_identity.snapshots"
+      }
+    ],
+    "verification_classes": {
+      "PROMOTION_VERIFICATION": {
+        "writer": "quiesced",
+        "oracle": "exact byte hashes pinned",
+        "requires": "same hashes observed independently by builder and reviewer",
+        "gate": "scripts/oracle_stability_gate.sh"
+      },
+      "RUNTIME_HEALTH_VERIFICATION": {
+        "writer": "live",
+        "oracle": "freshness window",
+        "checks": "schema and monotonicity",
+        "must_not": "claim identical oracle bytes"
+      },
+      "rule": "Never mix the classes. A freshness window supports monitoring; it cannot establish that two reviewers evaluated the same oracle content."
+    },
+    "live_file_tension": {
+      "status": "RESOLVED",
+      "decision": "SNAPSHOT_COPY",
+      "decided_by": "founder, 2026-07-20",
+      "supersedes": "QUIESCED_SNAPSHOT (rev 5) — snapshot-copy preserves live operation while still giving promotion verification a stable, reviewable evidence set",
+      "superseded_options": {
+        "A_quiesce": "stop the writer for the verification window; strongest pin, operationally intrusive",
+        "B_freshness_window": "treat live oracles as streaming; assert age < SLA rather than byte identity",
+        "C_snapshot_copy": "copy live oracles to an immutable snapshot at run start; pin the snapshot"
+      },
+      "rationale": "Freshness remains a RUNTIME-HEALTH control, never a content-identity control. Quiescence is valid but operationally heavier.",
+      "atomicity_protocol": "hash source -> copy -> hash snapshot -> hash source again. Accept ONLY when source_sha256_at_capture == snapshot_sha256. The second source hash MAY differ; that drift is recorded, not hidden.",
+      "window_sizing_finding": "A short stability sample produces FALSE CONFIDENCE. build_to_goal_status.json showed three distinct hashes within ~15 minutes on 2026-07-20 (09a3d1e1 -> c21b15ef -> 0727e8d5), so its writer cycles in minutes. A 2-second two-sample check would have passed ~99% of the time while proving nothing. The gate therefore REFUSES to certify unless the window exceeds a DECLARED writer period, or the writer is confirmed stopped.",
+      "builder_boundary": "Snapshot capture IS builder-executable (unlike quiescence, which would require stopping a process on the founder's system).",
+      "implemented_by": "scripts/oracle_snapshot.py",
+      "writer_quiescence_required": false,
+      "post_capture_source_drift_allowed": true,
+      "required_gate": "CAPTURE COHERENCE: source_sha256_at_capture == snapshot_sha256. NOT long-term source stability. A changed post-copy source hash does NOT invalidate the snapshot.",
+      "stability_gate_relationship": "scripts/oracle_stability_gate.sh remains a valid capability but is NOT the promotion gate under SNAPSHOT_COPY. It verifies QUIESCENCE, not snapshot coherence. It becomes mandatory only if the founder changes policy to QUIESCED_SNAPSHOT."
+    },
+    "snapshots": [
+      {
+        "source_path": "coordination/goal/goal_state.json",
+        "source_live": true,
+        "capture_started_at": "2026-07-20T17:50:52Z",
+        "source_sha256_at_capture": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "snapshot_path": "coordination/governance/oracle_snapshots/goal_state.json",
+        "snapshot_sha256": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "capture_method": "read_hash_read",
+        "attempts": 1,
+        "post_capture_source_drift_allowed": true,
+        "post_capture_source_sha256": "e1b724238a38d3a56855ef447a0ad351f3867d00844ec91246a093217b22ea93",
+        "post_capture_drift_observed": false
+      },
+      {
+        "source_path": "coordination/goal/build_to_goal_status.json",
+        "source_live": true,
+        "capture_started_at": "2026-07-20T17:50:52Z",
+        "source_sha256_at_capture": "11aafaa833d7800e7a7b2c2f0a28082e83add14c5ba54cc8140fe18890e7894f",
+        "snapshot_path": "coordination/governance/oracle_snapshots/build_to_goal_status.json",
+        "snapshot_sha256": "11aafaa833d7800e7a7b2c2f0a28082e83add14c5ba54cc8140fe18890e7894f",
+        "capture_method": "read_hash_read",
+        "attempts": 1,
+        "post_capture_source_drift_allowed": true,
+        "post_capture_source_sha256": "11aafaa833d7800e7a7b2c2f0a28082e83add14c5ba54cc8140fe18890e7894f",
+        "post_capture_drift_observed": false
+      }
+    ]
+  },
+  "revision_2_defect_record": {
+    "what_happened": "Revision 2 omitted REQ-GOV-003 and REQ-ES-002 — both blocking, agent-owned, on the goal_state critical path. Its completeness test contained zero references to the requirements array, checking only current_critical_path_blocker (one scalar) and founder_only_actions_pending (one list). 25 requirements and the whole critical_path array were unchecked while the suite was described as file-backed completeness.",
+    "found_by": "cold review, 2026-07-20; confirmed by machine check",
+    "also_found": "TEL-001 recorded as INTEGRATED when reachable only from a non-target remote branch."
+  },
+  "revision_3_note": "Rev 3 recorded REQ-GOV-003/REQ-ES-002 in wording that could be misread as 'requirement missing'. Rev 4 corrects: the requirements are present and STALE; the register's claims were what was absent.",
+  "revision_4_note": "Rev 5 closes the live-oracle question by founder decision (quiesced snapshot), adds the stability gate, and raises GOV-004 for roadmap oracle durability — which the dual-hash record exposed by recording committed_blob_sha256 as null.",
+  "critical_path": [
+    "1. Establish Option B shared mount contract. [FOUNDER]",
+    "2. Resolve GOV-004 — track or replace the roadmap oracle. [OPEN]",
+    "3. Capture coherent snapshots for live oracles. [DONE — scripts/oracle_snapshot.py, rev 6]",
+    "4. Generate the pinned review package. [BLOCKED on 1]",
+    "5. Run self-verification against the snapshots. [BLOCKED on 4]",
+    "6. Run cold review against the same snapshots and HEAD. [BLOCKED on 5]",
+    "7. Permit scoped commit only after both pass. [BLOCKED on 6]"
+  ],
+  "critical_path_note": "Quiescing the writer is NOT on the critical path unless the founder changes oracle policy from SNAPSHOT_COPY to QUIESCED_SNAPSHOT.",
+  "shared_worktree": {
+    "status": "SHARED_PROVEN",
+    "decided_by": "founder, 2026-07-20 (Option B, nested location + governed ignore rule)",
+    "host_path": "/Users/michaelhoch/hoch_agent_swarm/.helm_worktrees/proc-001",
+    "builder_mounted_path": "/sessions/stoic-loving-babbage/mnt/hoch_agent_swarm/.helm_worktrees/proc-001",
+    "reviewer_mounted_path": "/Users/michaelhoch/hoch_agent_swarm/.helm_worktrees/proc-001",
+    "builder_observed_head": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
+    "reviewer_observed_head": "6065882786ee9274e3f71fa535f46cc624ccdcf9",
+    "separate_index_confirmed": true,
+    "separate_index_path": ".git/worktrees/proc-001/index",
+    "inside_mount": true,
+    "ignore_rule": ".helm_worktrees/ at .gitignore:220 — verified via git check-ignore -v; 0 porcelain entries with the worktree fully populated",
+    "why_not_shared_yet": "None — all six facts established bilaterally. The worktree is verified as shared.",
+    "reviewer_must_return": [
+      "the path at which the reviewer sees .helm_worktrees/proc-001",
+      "git -C <that path> rev-parse HEAD  (must equal 6065882786ee9274e3f71fa535f46cc624ccdcf9)",
+      "confirmation the reviewer read it without builder mediation"
+    ]
+  },
+  "worktree_cleanup": {
+    "removed": "wt-proc-001 (erroneous out-of-mount registration, builder-created)",
+    "method": "git worktree remove --force — targeted, no broad prune",
+    "registration_dir_present_after": false,
+    "path_on_disk_after": false,
+    "antigravity_registration_intact": true,
+    "evidence": "coordination/governance/evidence/worktree_cleanup_20260720.txt"
+  }
+}
