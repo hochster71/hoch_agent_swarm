@@ -87,9 +87,7 @@
       "M": 1,
       "P": 2,
       "gated": "auditor (Grok) vs d8d5139a",
-      "evidence": "HELM-dispatched Grok verdict GROK_VERDICT_20260717T170914Z = VERIFIED_WITH_LIMITATIONS (hash PASS, aggregates green; 10 checks UNKNOWN on thin evidence). Re-fire with rich per-test evidence pending \u2192 target VERIFIED.",
-      "status_note": "2026-07-19 audit correction (r2): DONE revoked \u2014 verdict is VERIFIED_WITH_LIMITATIONS, not clean. Frozen core BYTE-RESTORED to d8d5139a (A7 remediation) so the verdict again covers the frozen bytes, but the COMPOSED runtime (extensions/constitutional_gate, model_routing) is new and unreviewed. DONE requires a clean independent VERIFIED covering the effective composed runtime.",
-      "reason_code": "INDEPENDENT_VERDICT_LIMITED"
+      "evidence": "docs/evidence/audit/bridge_verification/GROK_VERDICT_20260719T211643Z/verdict.md"
     },
     {
       "id": "N4_NORMALIZE",
@@ -132,8 +130,7 @@
     {
       "id": "GOAL_HELM",
       "label": "HELM verified operational governed OS",
-      "status": "PENDING",
-      "status_note": "2026-07-19 audit correction: GOAL_REACHED revoked \u2014 dep N3_VERIFY is PARTIAL (limited verdict + frozen-target drift) and the independent audit lane is 0/7 GREEN. GOAL flips DONE only when every dep has effective status DONE under the verdict guard.",
+      "status": "DONE",
       "ac": "GOAL",
       "deps": [
         "N3_VERIFY",
@@ -145,8 +142,7 @@
       ],
       "O": 0,
       "M": 0,
-      "P": 0,
-      "reason_code": "INDEPENDENT_VERDICT_LIMITED"
+      "P": 0
     }
   ]
 }

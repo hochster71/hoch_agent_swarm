@@ -1,0 +1,19 @@
+{
+  "schema": "HELM_BUILD_TO_GOAL_STATUS_v1",
+  "updated_at": "2026-07-20T00:08:54Z",
+  "state": "GOAL_REACHED",
+  "detail": "All nodes DONE \u2014 GOAL_HELM reached (100.0%).",
+  "percent_to_goal": 100.0,
+  "nodes": {
+    "N0_CONSTITUTION": "DONE",
+    "N1_WRITE_PATH": "DONE",
+    "N2_SI_CORE": "DONE",
+    "N7_COMMAND": "DONE",
+    "N8_CONMON": "DONE",
+    "N3_VERIFY": "DONE",
+    "N4_NORMALIZE": "DONE",
+    "N5_KNOWLEDGE": "DONE",
+    "N6_DISPATCH": "DONE",
+    "GOAL_HELM": "DONE"
+  }
+}
