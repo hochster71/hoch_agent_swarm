@@ -72,6 +72,19 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _file_mtime(p: Path) -> Optional[datetime]:
+    """Filesystem modification time — METADATA ONLY.
+
+    W1-002a: this value may be displayed so an operator can spot a touched file. It must
+    never be assigned to produced-time. A git checkout, pull, stash pop, rsync, or backup
+    restore rewrites mtime without changing content.
+    """
+    try:
+        return datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc)  # mtime-metadata-ok
+    except Exception:
+        return None
+
+
 def _parse_ts(raw: Any) -> Optional[datetime]:
     if not raw:
         return None
@@ -100,6 +113,11 @@ class Reading:
     error: Optional[str] = None
     source_path: Optional[str] = None
     _computed: bool = False                  # DERIVED rather than OBSERVED
+    # W1-002a provenance. file_modified_at is METADATA — it is recorded so an operator
+    # can see a touched file, and is never permitted to become produced-time.
+    file_modified_at: Optional[datetime] = None
+    producer_id: Optional[str] = None
+    sequence: Optional[int] = None
 
     @property
     def age_seconds(self) -> Optional[float]:
@@ -152,7 +170,15 @@ class Reading:
             "age_seconds": self.age_seconds,
             "age_human": self.age_human,
             "sla_seconds": self.sla_seconds,
+            # produced_at is the authoritative data age. observed_at is retained as its
+            # alias for existing consumers; file_modified_at is metadata only.
+            "produced_at": self.observed_at.isoformat() if self.observed_at else None,
             "observed_at": self.observed_at.isoformat() if self.observed_at else None,
+            "collected_at": self.read_at.isoformat(),
+            "file_modified_at": (self.file_modified_at.isoformat()
+                                 if self.file_modified_at else None),
+            "producer_id": self.producer_id,
+            "sequence": self.sequence,
             "read_at": self.read_at.isoformat(),
             "value": self.value,
             "error": self.error,
@@ -350,12 +376,21 @@ class HeartbeatFileCollector(Collector):
         except Exception as exc:
             return [self._fail(self.name, f"unreadable: {exc}", self.rel_path)]
 
-        ts = _parse_ts(raw.get(self.ts_key)) if isinstance(raw, dict) else None
+        # W1-002a: producer timestamp only. The mtime fallback that used to live here
+        # let a `git checkout` / `pull` / rsync reset apparent data age without changing
+        # content. Absent or malformed provenance now propagates as UNKNOWN.
+        raw_ts = raw.get(self.ts_key) if isinstance(raw, dict) else None
+        ts = _parse_ts(raw_ts)
+        file_mtime = _file_mtime(p)   # recorded as metadata; never produced-time
+
         if ts is None:
-            try:
-                ts = datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc)
-            except Exception:
-                ts = None
+            why = ("heartbeat carries no producer timestamp"
+                   if raw_ts in (None, "")
+                   else f"producer timestamp {raw_ts!r} is malformed")
+            r = self._fail(self.name, f"{why}; file mtime is not evidence of data age",
+                           self.rel_path)
+            r.file_modified_at = file_mtime
+            return [r]
 
         value = self.summarize(raw) if self.summarize else (
             raw if isinstance(raw, dict) else {"data": raw}
@@ -364,6 +399,9 @@ class HeartbeatFileCollector(Collector):
             name=self.name, domain=self.domain, scope=self.scope,
             collector=type(self).__name__, sla_seconds=self.sla_seconds,
             observed_at=ts, value=value, source_path=self.rel_path,
+            file_modified_at=file_mtime,
+            producer_id=raw.get("producer_id") if isinstance(raw, dict) else None,
+            sequence=raw.get("sequence") if isinstance(raw, dict) else None,
         )]
 
 
@@ -500,21 +538,26 @@ class ModelBindingCollector(Collector):
             raw = json.loads(p.read_text(encoding="utf-8"))
         except Exception as exc:
             return [self._fail("models", f"unreadable: {exc}", self.REL)]
-        try:
-            ts = datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc)
-        except Exception:
-            ts = None
-        return [Reading(
+        # W1-002a: role_bindings.json carries no producer timestamp. Ageing it by mtime
+        # meant a git checkout reset its apparent freshness. It is configuration, not a
+        # heartbeat — so it reports UNKNOWN provenance rather than inferred freshness.
+        ts = _parse_ts(raw.get("produced_at") if isinstance(raw, dict) else None)
+        r0 = Reading(
             name="models", domain=self.domain, scope=self.scope,
             collector=type(self).__name__, sla_seconds=self.sla_seconds,
             observed_at=ts, source_path=self.REL, _computed=True,
+            file_modified_at=_file_mtime(p),
             value={
                 "bindings": raw if isinstance(raw, dict) else {"data": raw},
                 "invocation_state": "NOT_OBSERVABLE",
                 "note": "role binding is configuration; live invocation state has no "
                         "runtime surface in HELM today",
             },
-        )]
+        )
+        if ts is None:
+            r0.error = ("role bindings carry no producer timestamp; file mtime is not "
+                        "evidence of data age")
+        return [r0]
 
 
 # --- registry ----------------------------------------------------------------
