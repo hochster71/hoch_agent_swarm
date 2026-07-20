@@ -212,3 +212,9 @@ helm-runtime-bridge-v1
 deploy/com.hoch.helm-conmon-continuous.plist
 scripts/goal/run_dependency_runtime_confirmation.sh
 data/runtime/voice_command_audit_reconstructed_20260719.jsonl
+
+# Shared review worktrees (Option B mount contract, founder-approved 2026-07-20).
+# GOVERNANCE CONTROL, not housekeeping: a nested worktree that is NOT ignored becomes
+# untracked stageable content and can silently widen a scoped commit — the exact defect
+# that produced the three-file commit on 2026-07-20.
+.helm_worktrees/
