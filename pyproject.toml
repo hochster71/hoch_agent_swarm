@@ -27,8 +27,17 @@ dependencies = [
     # A3 CVE remediation 2026-07-19 (coordination/evidence/sbom_cve_20260719/): pillow is
     # used first-party (scripts/branding, visual review tools) and 12.2.0 carries 8 PYSECs.
     "pillow>=12.3.0",
-    "cryptography",
-    "jsonschema",
+    # T1-F1 fix (2026-07-19 runtime confirmation finding): PyJWT was satisfied transitively by
+    # the crewai graph and silently dropped by the optionalization — but asc_client.py (the ASC
+    # founder gate) requires it first-party for ES256 JWTs. Declared explicitly.
+    "PyJWT[crypto]>=2.8",
+    # T1-F1 systematic transitive-drop scan (28 first-party external imports vs default lock):
+    # jsonschema (helm_live_api routes — proven by voice/mission route test failures) and
+    # python-docx (first-party doc tooling) also rode the crewai graph. anthropic/openai SDKs
+    # are INTENTIONALLY not declared: guarded lazy paths only; absence is fail-closed per A4
+    # egress policy (CLI/local lanes only).
+    "jsonschema>=4.21",
+    "python-docx>=1.1",
 ]
 
 [project.optional-dependencies]
@@ -88,7 +97,7 @@ dev = [
 # trivy (container/IaC scan) is a standalone binary: `brew install trivy` or apt. Not a pip dep.
 
 [tool.pytest.ini_options]
-addopts = "--import-mode=importlib --ignore=tests/test_crew_smoke.py --ignore=tests/test_entry_points.py --ignore=tests/test_model_router.py --ignore=tests/test_run_report.py --ignore=tests/test_swarm_pipeline.py"
+addopts = "--import-mode=importlib"
 testpaths = ["tests"]
 pythonpath = ["."]
 filterwarnings = [

@@ -223,6 +223,12 @@ def build_prompt() -> str:
 def _overall(text: str) -> str:
     """Extract the OVERALL verdict token from the auditor's response (honest, no guessing)."""
     t = (text or "").upper()
+    import re
+    m = re.search(r"OVERALL:\s*([A-Z_]+)", t)
+    if m:
+        val = m.group(1).strip()
+        if val in ("VERIFIED", "VERIFIED_WITH_LIMITATIONS", "FAILED", "REJECTED"):
+            return val
     for tok in ("VERIFIED_WITH_LIMITATIONS", "VERIFIED", "FAILED"):
         if tok in t:
             return tok

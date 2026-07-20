@@ -21,6 +21,8 @@ import pytest
 # Inject project root into sys.path for test resolution
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+pytest.importorskip("crewai", reason="legacy-crewai-factory lane inactive: crewai is optionalized out of the default runtime (council-authorized, 2026-07-19). Install the 'legacy-crewai-factory' extra to activate this test lane. See docs/helm/LEGACY_CREWAI_FACTORY_RUNBOOK.md")
+
 import run_batch_swarm_analysis
 
 @pytest.fixture

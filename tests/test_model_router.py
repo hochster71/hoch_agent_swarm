@@ -3,6 +3,9 @@ import json
 import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
+
+pytest.importorskip("crewai", reason="legacy-crewai-factory lane inactive: crewai is optionalized out of the default runtime (council-authorized, 2026-07-19). Install the 'legacy-crewai-factory' extra to activate this test lane. See docs/helm/LEGACY_CREWAI_FACTORY_RUNBOOK.md")
+
 from crewai import LLM
 from hoch_agent_swarm.model_router import ModelRouter
 

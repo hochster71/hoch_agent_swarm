@@ -104,27 +104,15 @@ app.include_router(haf_router)
 # HELM Voice Executive — orchestration-backed voice agent API (read-only + stage-only)
 from backend.voice.router import router as voice_router
 app.include_router(voice_router)
+# Executive read-only voice surface (restored 2026-07-20; deleted by a965b0e2 gateway swap)
+from backend.voice.executive_router import router as voice_executive_router
+app.include_router(voice_executive_router)
 
 
-# Runtime Bridge + Dispatch Gateway projections (EDR-0001/0002) — read + OCC PATCH
-try:
-    from backend.helm_runtime.bridge_api import router_or_none as _helm_bridge_router
+# (Runtime Bridge + Knowledge includes MOVED to end-of-module — 2026-07-20 route-order fix:
+#  bridge GET /api/v1/helm/mission was shadowing the truth-wrapped mission-state route.
+#  Direct routes must win on collisions; includes now register LAST.)
 
-    _br = _helm_bridge_router()
-    if _br is not None:
-        app.include_router(_br)
-except Exception:
-    pass  # fail open on import only; routes simply absent if substrate broken
-
-# Knowledge Engine — governed retrieval (EDR-0004) — read-only projections
-try:
-    from backend.helm_runtime.knowledge_api import router_or_none as _helm_knowledge_router
-
-    _kr = _helm_knowledge_router()
-    if _kr is not None:
-        app.include_router(_kr)
-except Exception:
-    pass  # fail open on import only; routes simply absent if substrate broken
 
 
 
@@ -2015,3 +2003,25 @@ def helm_auth_js():
         return FileResponse(f, media_type="application/javascript",
                             headers={"Cache-Control": "no-store"})
     return PlainTextResponse("// helm_auth.js missing", status_code=404)
+
+
+# ── moved includes (route-order fix 2026-07-20): direct routes take precedence ──
+# Runtime Bridge + Dispatch Gateway projections (EDR-0001/0002) — read + OCC PATCH
+try:
+    from backend.helm_runtime.bridge_api import router_or_none as _helm_bridge_router
+
+    _br = _helm_bridge_router()
+    if _br is not None:
+        app.include_router(_br)
+except Exception:
+    pass  # fail open on import only; routes simply absent if substrate broken
+
+# Knowledge Engine — governed retrieval (EDR-0004) — read-only projections
+try:
+    from backend.helm_runtime.knowledge_api import router_or_none as _helm_knowledge_router
+
+    _kr = _helm_knowledge_router()
+    if _kr is not None:
+        app.include_router(_kr)
+except Exception:
+    pass  # fail open on import only; routes simply absent if substrate broken

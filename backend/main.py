@@ -257,6 +257,8 @@ app.include_router(app_store_router)
 # HELM Voice Executive (shared with helm_live_api)
 from backend.voice.router import router as voice_router
 app.include_router(voice_router)
+from backend.voice.executive_router import router as voice_executive_router
+app.include_router(voice_executive_router)
 
 # Mission State Engine — same writer as HELM LIVE :8770 (audit R-06 dual-surface fix)
 from backend.mission_control.mission_api_router import router as mission_state_router

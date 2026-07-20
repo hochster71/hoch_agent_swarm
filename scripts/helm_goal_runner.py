@@ -79,6 +79,54 @@ def _node_status(pert, nid):
 # fake green is structurally impossible now: the evaluator, not the label, enforces it.)
 _NON_CLEAN_VERDICTS = ("VERIFIED_WITH_LIMITATIONS", "REJECTED", "FAILED", "UNKNOWN", "BLOCKED")
 
+# --- N3-VERDICT-BINDING-GAP remediation (2026-07-20, founder-directed) -----------------------
+# A clean "VERIFIED" verdict is NOT sufficient for N3_VERIFY. On 2026-07-20 the runner
+# declared GOAL_REACHED 100% off a REAL Grok verdict that was (a) bound to the frozen-target
+# content hash instead of the evaluated candidate SHA, (b) scoped to bridge+gateway instead
+# of the council-required composed runtime, (c) generated BEFORE the burn-down remediations,
+# and (d) self-disclaiming independent re-execution. Cleanliness is necessary, never
+# sufficient: the verdict must mechanically prove its BINDING, SCOPE, and VINTAGE, or
+# N3_VERIFY = HOLD and the goal cannot be reached. Fail closed on every uncertainty.
+_N3_ROOT = Path(__file__).resolve().parents[1]
+_N3_SCOPE_MARKER = "SCOPE: COMPOSED_RUNTIME"  # T4 dispatch contract: verdict must attest scope
+_N3_DISCLAIMERS = ("not independent re-execution", "not independent re-hashing",
+                   "not a live production audit")
+
+
+def _n3_candidate_ids():
+    """(head_sha, tree_sha) of the evaluated candidate. Overridable by tests."""
+    import subprocess
+    def _g(*a):
+        r = subprocess.run(["git", *a], cwd=_N3_ROOT, capture_output=True, text=True, timeout=30)
+        return r.stdout.strip()
+    return _g("rev-parse", "HEAD"), _g("rev-parse", "HEAD^{tree}")
+
+
+def _n3_binding_ok(n: dict) -> bool:
+    """True ONLY when the verdict artifact mechanically proves all required bindings:
+    terminal clean OVERALL, candidate HEAD sha embedded, candidate tree sha embedded,
+    composed-runtime scope attested, and no method disclaimer. Anything missing, stale,
+    narrower, content-only, or pre-remediation => False (HOLD)."""
+    try:
+        ev = n.get("evidence") or ""
+        path = _N3_ROOT / ev
+        if not path.is_file():
+            return False
+        text = path.read_text(errors="replace")
+        if "OVERALL: VERIFIED" not in text:
+            return False
+        head, tree = _n3_candidate_ids()
+        if not head or not tree or head not in text or tree not in text:
+            return False  # content-hash-only or unbound verdicts fail here (BINDING + VINTAGE)
+        if _N3_SCOPE_MARKER not in text:
+            return False  # narrower / unattested scope (SCOPE)
+        low = text.lower()
+        if any(d in low for d in _N3_DISCLAIMERS):
+            return False  # provenance/limitations disclaim the required verification
+        return True
+    except Exception:
+        return False  # fail closed - a crashing check must never grant DONE
+
 
 def _effective_status(n: dict) -> str:
     st = n.get("status", "PENDING")
@@ -87,6 +135,8 @@ def _effective_status(n: dict) -> str:
         return "PARTIAL"
     if st == "DONE" and any(tok in (n.get("evidence") or "").upper() for tok in _NON_CLEAN_VERDICTS):
         return "PARTIAL"
+    if n.get("id") == "N3_VERIFY" and st == "DONE" and not _n3_binding_ok(n):
+        return "HOLD"
     return st
 
 

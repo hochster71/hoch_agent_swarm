@@ -340,14 +340,25 @@ def compute(execute: bool = True) -> dict:
     }
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    STATE_PATH.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
-    # Mission State Engine — single operational view for voice/UI/CLI
-    try:
-        from backend.mission_control.mission_state import write_mission_state
+    # T1-F2 fix (2026-07-19, executed-evidence defect): a compute(execute=False) run used to
+    # OVERWRITE the authoritative goal_state.json with 25x VALIDATOR_NOT_RUN, clobbering the
+    # last real computation (observed live at 23:15Z: all layers 0%). A projection in which
+    # no validator ran is a PREVIEW, never authoritative truth. Fail-closed both ways:
+    # zeros still contribute zero, but they may not destroy real evidence.
+    if execute:
+        STATE_PATH.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+        # Mission State Engine — single operational view for voice/UI/CLI
+        try:
+            from backend.mission_control.mission_state import write_mission_state
 
-        write_mission_state()
-    except Exception:
-        pass
+            write_mission_state()
+        except Exception:
+            pass
+    else:
+        preview = STATE_PATH.with_name("goal_state.preview_no_exec.json")
+        state["nature"] = ("NO_EXEC_PREVIEW — validators NOT run; contributes nothing; "
+                           "never overwrites goal_state.json")
+        preview.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
     return state
 
 

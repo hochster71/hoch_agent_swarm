@@ -22,6 +22,12 @@ from typing import Any, Optional
 ROOT = Path(__file__).resolve().parents[2]
 LEASE_DIR = ROOT / "coordination" / "leases"
 POINTER = ROOT / "coordination" / "council" / "active_runtime_source.json"
+# Import-time constants for the publish() guard - deliberately NOT the monkeypatchable
+# module attrs above. A hermetic test harness redirects ROOT/POINTER/LEASE_DIR together
+# (tests/test_helm_truth_fa1_fa2_fa6.py::tmp_ptr); these frozen copies let publish() tell
+# a sandboxed module apart from the real one without trusting the pytest environment.
+_REAL_ROOT = Path(__file__).resolve().parents[2]
+_CANONICAL_POINTER = _REAL_ROOT / "coordination" / "council" / "active_runtime_source.json"
 INSTANCE_SIDECAR_NAME = "scheduler_instance.json"
 
 UNKNOWN = "UNKNOWN"
@@ -75,7 +81,17 @@ def publish(evidence_dir: Path, instance_id: str) -> None:
     # GUARD: never let a test/tmp evidence_dir become the canonical production pointer.
     # The local sidecar (inside evidence_dir) is still written so a test scheduler has its
     # own context; only the shared canonical POINTER is protected.
-    if _is_ephemeral_evidence(evidence_dir):
+    # FA1 fix v2 (BD-F3, 2026-07-20): v1 keyed the exemption on
+    # `not _is_ephemeral_evidence(POINTER.parent)` - DEFECTIVE, because the predicate's
+    # PYTEST_CURRENT_TEST clause marks EVERY path ephemeral under pytest, so the guard never
+    # fired during a test run and test_e2e_scheduler_path_with_m0 re-contaminated the live
+    # canonical pointer during the 2026-07-20 full-suite proof (caught by the committed
+    # no-leak tests + set-equality acceptance). v2 keys on module identity instead:
+    # publish is sandboxed ONLY when the harness has redirected the module away from the
+    # real repo (ROOT != _REAL_ROOT) AND the pointer is not the canonical one. Both
+    # committed contracts hold: no-leak test #2 (POINTER-only redirect, ROOT real) is
+    # blocked; the fa1 hermetic harness (ROOT+POINTER both redirected) proceeds.
+    if _is_ephemeral_evidence(evidence_dir) and (Path(ROOT) == _REAL_ROOT or POINTER == _CANONICAL_POINTER):
         return
 
     POINTER.parent.mkdir(parents=True, exist_ok=True)
