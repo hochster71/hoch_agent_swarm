@@ -158,12 +158,20 @@ def main():
 
     findings = {
         "LOCAL_AUTHOR_IMPERSONATION": "OBSERVED POSSIBLE" if (sign_key_code != 0 or sign_key_out == "") else "OBSERVED PROTECTED",
-        "GEMINI_CONTEXT_CREDENTIAL_RETRIEVAL": "SUCCEEDED WITHOUT OBSERVED PROMPT" if keychain_prompt_required == "NO_PROMPT_REQUIRED" else "FAILED / PROMPT REQUIRED",
-        "REMOTE_CREDENTIAL_REUSE": "OBSERVED POSSIBLE" if remote_cred_reuse == "OBSERVED POSSIBLE" else "UNKNOWN",
         "SSH_PRIVATE_KEY_USABILITY": ssh_usability,
         "SECURE_ENCLAVE_PROTECTION": "ABSENT (for discovered standard SSH key file; Keychain-stored token characteristics partially characterized)" if se_protection == "ABSENT (standard files on disk)" else se_protection,
     }
+    
     report["evidence_scoped_findings"] = findings
+    report["prior_observation"] = {
+        "credential_retrieval": "SUCCEEDED_WITHOUT_OBSERVED_PROMPT"
+    }
+    report["current_observation"] = {
+        "credential_retrieval": "FAILED_AFTER_LOCAL_REJECTION" if keychain_prompt_required != "NO_PROMPT_REQUIRED" else "SUCCEEDED"
+    }
+    report["remote_revocation"] = {
+        "status": "UNKNOWN_UNTIL_GITHUB_REVOCATION_CONFIRMED"
+    }
 
     # Check for plaintext keys in .env (by count, not names)
     env_keys_count = 0
@@ -187,6 +195,9 @@ def main():
     print("Evidence-Scoped Findings:")
     for k, v in findings.items():
         print(f"  {k:28s} {v}")
+    print(f"  PRIOR CREDENTIAL RETRIEVAL:  SUCCEEDED_WITHOUT_OBSERVED_PROMPT")
+    print(f"  CURRENT RETRIEVAL:           {report['current_observation']['credential_retrieval']}")
+    print(f"  REMOTE REVOCATION STATUS:    {report['remote_revocation']['status']}")
     print(f"  PLAINTEXT_KEYS_IN_ENV        COUNT: {env_keys_count}")
 
 if __name__ == "__main__":

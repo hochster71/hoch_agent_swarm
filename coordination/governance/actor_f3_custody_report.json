@@ -1,6 +1,6 @@
 {
   "artifact": "ACTOR-F3-CUSTODY",
-  "timestamp": "2026-07-20T19:46:29Z",
+  "timestamp": "2026-07-20T19:50:32Z",
   "context_label": "gemini-antigravity",
   "key_custody_inventory": {
     "ssh": {
@@ -40,9 +40,16 @@
   "mitigation_status": {},
   "evidence_scoped_findings": {
     "LOCAL_AUTHOR_IMPERSONATION": "OBSERVED POSSIBLE",
-    "GEMINI_CONTEXT_CREDENTIAL_RETRIEVAL": "FAILED / PROMPT REQUIRED",
-    "REMOTE_CREDENTIAL_REUSE": "UNKNOWN",
     "SSH_PRIVATE_KEY_USABILITY": "UNUSABLE_FOR_GITHUB (publickey denied)",
     "SECURE_ENCLAVE_PROTECTION": "ABSENT (for discovered standard SSH key file; Keychain-stored token characteristics partially characterized)"
+  },
+  "prior_observation": {
+    "credential_retrieval": "SUCCEEDED_WITHOUT_OBSERVED_PROMPT"
+  },
+  "current_observation": {
+    "credential_retrieval": "FAILED_AFTER_LOCAL_REJECTION"
+  },
+  "remote_revocation": {
+    "status": "UNKNOWN_UNTIL_GITHUB_REVOCATION_CONFIRMED"
   }
 }
