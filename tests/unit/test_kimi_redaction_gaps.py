@@ -148,6 +148,55 @@ def test_benign_high_entropy_does_not_block_the_pack(tmp_path, name, fixture, wh
     )
 
 
+# --- allowlist shape-collision: the hole the FP fix opened ---------------------
+#
+# Verified 2026-07-20, after commit 006c0232. The benign allowlist works as specified
+# and, exactly because it is SHAPE-based, it now trusts real credentials that share a
+# shape with a hash. All four fixtures below pack clean (DRY-RUN: OK).
+#
+# This is the cost of the false-positive fix, not a mistake in implementing it. A
+# 64-hex webhook secret and a SHA-256 digest are indistinguishable by shape. They are
+# trivially distinguishable by CONTEXT: the variable is named SECRET.
+#
+# Required fix: the benign allowlist must not apply when the assignment target or
+# nearby key matches a credential-ish name (secret|token|key|password|credential|auth).
+# Shape may say "could be a hash"; context saying "is a secret" must win.
+#
+# Note the existing `api_key_assign` pattern does not cover these either — it matches
+# api_key / access_token / client_secret / private_key, but not WEBHOOK_SECRET or
+# COINBASE_API_SECRET. The name vocabulary needs widening at the same time.
+
+SHAPE_COLLISION = [
+    ("hex64_named_secret",
+     'WEBHOOK_SECRET = "a3f5c8e1b9d24760af31c5e8d92b4a6f7c0e83d15b92746af38c1e5d0b7a942e"',
+     "64-hex is allowlisted as SHA-256; many webhook signing secrets are exactly this"),
+    ("hex32_named_secret",
+     'COINBASE_API_SECRET = "9f2c4a7e1d8b3506cf9e2a4d7b1c8e35"',
+     "32-hex below entropy threshold and name not in api_key_assign vocabulary"),
+    ("hex40_named_token",
+     'LEGACY_TOKEN = "78fa433da1b2c3d4e5f6789012345678901234ab"',
+     "40-hex is allowlisted as a git SHA regardless of what the variable is called"),
+    ("sri_prefixed_session_key",
+     'SESSION_KEY = "sha256-Zm9vYmFyYmF6cXV4MTIzNDU2Nzg5MGFiY2RlZmdoaWprbG1ub3A="',
+     "an attacker-or-accident 'sha256-' prefix buys blanket SRI trust"),
+]
+
+
+@pytest.mark.parametrize("name,fixture,why", SHAPE_COLLISION,
+                         ids=[x[0] for x in SHAPE_COLLISION])
+def test_credential_named_variable_defeats_benign_allowlist(tmp_path, name, fixture, why):
+    """A credential-ish variable name must override the benign-shape allowlist."""
+    out = _pack(tmp_path, fixture + "\n")
+    redacted = "REDACTED" in out
+    refused = "DRY-RUN: OK" not in out
+    assert redacted or refused, (
+        f"{name} packed clean because its SHAPE matched the benign allowlist.\n"
+        f"why that is wrong: {why}\n"
+        "Gate the allowlist on context: do not apply it when the assignment target "
+        "matches (?i)(secret|token|key|password|credential|auth)."
+    )
+
+
 def test_uuid_is_already_tolerated():
     """Regression guard: UUIDs were correctly NOT flagged. Keep it that way."""
     out = _pack(Path("."), 'ID = "550e8400-e29b-41d4-a716-446655440000"\n')

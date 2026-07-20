@@ -70,10 +70,29 @@ SECRET_SPECS: list[tuple[str, re.Pattern[str], str]] = [
     ("private_key_block", re.compile(r"-----BEGIN[ A-Z]*PRIVATE KEY-----[\s\S]*?-----END[ A-Z]*PRIVATE KEY-----"), "-----BEGIN PRIVATE KEY-----\nREDACTED_PRIVATE_KEY\n-----END PRIVATE KEY-----"),
     ("jwt", re.compile(r"\beyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\b"), "REDACTED_JWT"),
     ("password_assign", re.compile(r"(?i)(password|passwd|pwd)\s*[=:]\s*['\"][^'\"]{8,}['\"]"), r"\1=REDACTED_PASSWORD"),
+    # Narrow legacy patterns kept; credential-named assigns handled in redact_credential_named_assigns().
     ("api_key_assign", re.compile(r"(?i)(api[_-]?key|access[_-]?token|client[_-]?secret|private[_-]?key)\s*[=:]\s*['\"]?[^\s'\"#]{12,}"), r"\1=REDACTED_SECRET"),
     ("connection_string", re.compile(r"(?i)(postgres|mysql|mongodb|redis)://[^\s'\"<>]+"), r"REDACTED_DB_URL"),
     ("vca_token", re.compile(r"\bvca_[A-Za-z0-9]{20,}\b"), "REDACTED_VCA_TOKEN"),
 ]
+
+# Assignment target vocabulary: shape-based benign allowlist must NOT apply when the
+# left-hand name contains one of these as an identifier segment (secret|token|key|…).
+# Segments are snake/camel-split so `keyboard` does not match but `SESSION_KEY` does.
+_CREDENTIAL_NAME_PARTS = frozenset({
+    "secret", "token", "password", "credential", "auth", "key",
+    "passwd", "pwd", "apikey", "bearer",
+})
+_CRED_ASSIGN_RE = re.compile(
+    r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)"
+    r"(?P<eq>\s*[=:]\s*)"
+    r"(?P<q>['\"]?)"
+    r"(?P<val>[^\s'\"#]{8,})"
+    r"(?P<q2>['\"]?)"
+)
+_LINE_ASSIGN_NAME_RE = re.compile(
+    r"^\s*(?:export\s+)?(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*[=:]"
+)
 
 # Known-family residual patterns (defense in depth — still not the only residual gate).
 RESIDUAL_FORBIDDEN = [
@@ -241,6 +260,44 @@ def should_skip_binary(path: Path) -> bool:
     return False
 
 
+def is_credential_name(name: str) -> bool:
+    """True if an identifier is credential-ish (secret|token|key|password|…).
+
+    Splits snake/camel into parts so `keyboard` does not match but `SESSION_KEY` does.
+    """
+    if not name:
+        return False
+    parts = [p.lower() for p in re.findall(r"[A-Z]+(?![a-z])|[A-Z]?[a-z]+|\d+", name)]
+    if not parts:
+        parts = [name.lower()]
+    return any(p in _CREDENTIAL_NAME_PARTS for p in parts)
+
+
+def line_has_credential_assignment(line: str) -> bool:
+    m = _LINE_ASSIGN_NAME_RE.match(line)
+    return bool(m and is_credential_name(m.group("name")))
+
+
+def redact_credential_named_assigns(text: str) -> tuple[str, int]:
+    """Redact values assigned to credential-named variables (context beats shape)."""
+    count = 0
+
+    def _repl(m: re.Match[str]) -> str:
+        nonlocal count
+        name = m.group("name")
+        if not is_credential_name(name):
+            return m.group(0)
+        count += 1
+        q = m.group("q") or ""
+        # Prefer matching closing quote when present
+        q2 = m.group("q2") if m.group("q") else (m.group("q2") or "")
+        if m.group("q") and not m.group("q2"):
+            q2 = m.group("q")
+        return f"{name}{m.group('eq')}{q}REDACTED_SECRET{q2}"
+
+    return _CRED_ASSIGN_RE.sub(_repl, text), count
+
+
 def redact_text(text: str) -> tuple[str, list[str]]:
     hits: list[str] = []
     out = text
@@ -254,6 +311,11 @@ def redact_text(text: str) -> tuple[str, list[str]]:
                 tag = "REDACTED"
             hits.append(f"{name}x{n}:{tag}")
             out = new_out
+    # Context gate: WEBHOOK_SECRET / LEGACY_TOKEN / SESSION_KEY / … beat shape allowlists.
+    out2, n_cred = redact_credential_named_assigns(out)
+    if n_cred:
+        hits.append(f"cred_name_assignx{n_cred}:REDACTED_SECRET")
+        out = out2
     return out, hits
 
 
@@ -280,16 +342,25 @@ def shannon_entropy(s: str) -> float:
     return -sum((c / n) * math.log2(c / n) for c in counts.values())
 
 
+def is_digest_or_sri_shape(token: str) -> bool:
+    """Shape that the benign allowlist would otherwise trust."""
+    t = token.strip()
+    if re.fullmatch(r"[0-9a-fA-F]{32}|[0-9a-fA-F]{40}|[0-9a-fA-F]{64}", t):
+        return True
+    if re.fullmatch(r"sha(?:256|384|512)-[A-Za-z0-9+/=_-]{16,}", t, re.IGNORECASE):
+        return True
+    return False
+
+
 def is_benign_high_entropy_form(token: str) -> bool:
-    """True for well-known non-secret high-entropy forms (checked BEFORE entropy)."""
+    """True for well-known non-secret high-entropy forms (checked BEFORE entropy).
+
+    Must only be used on lines that are NOT credential-named assignments.
+    """
     t = token.strip()
     if not t:
         return True
-    # Fixed-length hex digests (git SHA-1/object id, sha256, md5)
-    if re.fullmatch(r"[0-9a-fA-F]{32}|[0-9a-fA-F]{40}|[0-9a-fA-F]{64}", t):
-        return True
-    # SRI payload if captured whole (rare — usually pre-masked)
-    if re.fullmatch(r"sha(?:256|384|512)-[A-Za-z0-9+/=_-]{16,}", t, re.IGNORECASE):
+    if is_digest_or_sri_shape(t):
         return True
     # Common PNG/GIF base64 magic (inline CSS/email tails if URI mask missed)
     if t.startswith("iVBORw0KGgo") or t.startswith("R0lGODlh") or t.startswith("R0lGODdh"):
@@ -297,14 +368,16 @@ def is_benign_high_entropy_form(token: str) -> bool:
     return False
 
 
-def is_high_entropy_token(token: str) -> bool:
+def is_high_entropy_token(token: str, *, allow_benign_shapes: bool = True) -> bool:
     """True if token looks like an unknown credential / base64_blob-ish secret."""
     if "REDACTED" in token:
         return False
-    if is_benign_high_entropy_form(token):
+    if allow_benign_shapes and is_benign_high_entropy_form(token):
         return False
     lower = token.lower()
-    if any(lower.startswith(p) or p in lower[:24] for p in _ENTROPY_ALLOW_PREFIXES):
+    if allow_benign_shapes and any(
+        lower.startswith(p) or p in lower[:24] for p in _ENTROPY_ALLOW_PREFIXES
+    ):
         return False
     # Strip structural separators; score the body.
     body = re.sub(r"[_\-\.]", "", token)
@@ -326,9 +399,9 @@ def is_high_entropy_token(token: str) -> bool:
     return shannon_entropy(body) >= HIGH_ENTROPY_THRESHOLD
 
 
-def scrub_benign_high_entropy(text: str) -> str:
-    """Mask known-benign high-entropy forms before the independent entropy gate runs."""
-    scrubbed = text
+def scrub_benign_high_entropy_line(line: str) -> str:
+    """Mask known-benign forms on one line (only when not a credential assignment)."""
+    scrubbed = line
     for pat, repl in _BENIGN_HIGH_ENTROPY_MASKS:
         scrubbed = pat.sub(repl, scrubbed)
     return scrubbed
@@ -337,15 +410,46 @@ def scrub_benign_high_entropy(text: str) -> str:
 def residual_high_entropy_tokens(text: str) -> list[str]:
     """Independent fail-closed gate: HIGH_ENTROPY / unknown-token backstop.
 
-    Benign allowlist runs first (mask + per-token checks) so lockfiles, SRI tags,
-    and data-URI images do not train operators to bypass the gate.
+    Benign allowlist (shape) applies only when the line is NOT a credential-named
+    assignment. Context saying secret|token|key|… always wins over shape.
     """
     hits: list[str] = []
-    scrubbed = scrub_benign_high_entropy(text)
-    for tok in _HIGH_ENTROPY_TOKEN.findall(scrubbed):
-        if is_high_entropy_token(tok):
-            hits.append(f"HIGH_ENTROPY:{tok[:16]}…")
-    return hits
+    for line in text.splitlines():
+        if line_has_credential_assignment(line):
+            # Context wins: digest/SRI shapes and high-entropy values are residuals.
+            for tok in _HIGH_ENTROPY_TOKEN.findall(line):
+                if "REDACTED" in tok:
+                    continue
+                if is_digest_or_sri_shape(tok) or is_high_entropy_token(
+                    tok, allow_benign_shapes=False
+                ):
+                    hits.append(f"HIGH_ENTROPY:{tok[:16]}…")
+            # SRI may contain +/ that splits the main token regex — catch explicitly.
+            for m in re.finditer(
+                r"\bsha(?:256|384|512)-[A-Za-z0-9+/=_-]{16,}\b", line, re.IGNORECASE
+            ):
+                tok = m.group(0)
+                if "REDACTED" not in tok:
+                    hits.append(f"HIGH_ENTROPY:{tok[:16]}…")
+            # Fixed hex digests short enough that the 28+ token regex still catches
+            # 32/40/64; keep an explicit pass for clarity.
+            for m in re.finditer(r"\b[0-9a-fA-F]{32}\b|\b[0-9a-fA-F]{40}\b|\b[0-9a-fA-F]{64}\b", line):
+                tok = m.group(0)
+                if "REDACTED" not in tok:
+                    hits.append(f"HIGH_ENTROPY:{tok[:16]}…")
+        else:
+            scrubbed = scrub_benign_high_entropy_line(line)
+            for tok in _HIGH_ENTROPY_TOKEN.findall(scrubbed):
+                if is_high_entropy_token(tok, allow_benign_shapes=True):
+                    hits.append(f"HIGH_ENTROPY:{tok[:16]}…")
+    # Dedupe while preserving order
+    seen: set[str] = set()
+    out: list[str] = []
+    for h in hits:
+        if h not in seen:
+            seen.add(h)
+            out.append(h)
+    return out
 
 
 def residual_secrets(text: str) -> list[str]:
