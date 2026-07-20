@@ -1,0 +1,52 @@
+Date,Client,Project,Hours,Billable,Amount,Notes
+2025-01-06,Acme Corp,Website Redesign,3:30,yes,455.00,Homepage wireframes
+2025-01-07,Acme Corp,Website Redesign,4.0,yes,520.00,Design system
+2025-01-08,Northwind Ltd,Data Pipeline,6:15,yes,750.00,ETL job
+2025-01-09,Acme Corp,Website Redesign,2h 30m,yes,325.00,Client review call
+2025-01-10,Bluebird Studio,Brand Refresh,5.5,yes,495.00,Logo exploration
+2025-01-13,ACME CORPORATION,Website Redesign,3.0,yes,390.00,Nav components
+2025-01-14,Northwind Ltd,Data Pipeline,7:00,yes,840.00,Schema migration
+2025-01-15,Internal,Admin,1.5,no,,Invoicing and email
+2025-01-16,Bluebird Studio,Brand Refresh,4:45,yes,427.50,Palette options
+2025-01-20,Acme Corp,Mobile App,6.0,yes,780.00,Sprint planning and build
+2025-01-22,Northwind Ltd,Data Pipeline,5:30,yes,660.00,Dashboards
+2025-01-27,Internal,Admin,2.0,no,,Bookkeeping
+2025-02-03,Acme Corp,Mobile App,7:15,yes,942.50,Feature build
+2025-02-04,Bluebird Studio,Brand Refresh,3.25,yes,292.50,Guidelines doc
+2025-02-05,Northwind Ltd,Data Pipeline,6.0,yes,720.00,Alerting
+2025-02-10,Acme Corp,Mobile App,5:45,yes,747.50,API integration
+2025-02-11,Internal,Admin,1.0,no,,Expense sorting
+2025-02-12,Bluebird Studio,Brand Refresh,2:30,yes,225.00,Stationery
+2025-02-17,Acme Corp,Mobile App,4.5,yes,585.00,Bug fixes
+2025-02-19,Northwind Ltd,Data Pipeline,3:45,yes,450.00,Handover docs
+2025-02-24,Acme Corp,Mobile App,6:30,yes,845.00,Release candidate
+2025-03-03,Acme Corp,Mobile App,5.0,yes,650.00,Store submission prep
+2025-03-05,Bluebird Studio,Illustration Pack,4:00,yes,360.00,Sketches
+2025-03-10,Northwind Ltd,Data Pipeline,2:15,yes,270.00,Support handoff
+2025-03-12,Internal,Admin,1:30,no,,Quarterly filing prep
+2025-03-17,Acme Corp,Mobile App,3:00,yes,,Hotfix - amount not recorded
+2025-03-19,Bluebird Studio,Illustration Pack,5:15,yes,472.50,Final renders
+2025-03-24,Acme Corp,Mobile App,4:30,yes,585.00,Analytics wiring
+2025-04-02,Meridian & Co,Audit Support,6:00,yes,900.00,Data room prep
+2025-04-07,Meridian and Co,Audit Support,5:30,yes,825.00,Walkthroughs
+2025-04-09,Acme Corp,Mobile App,2:45,yes,357.50,Post-launch fixes
+2025-04-14,Internal,Admin,2.5,no,,Tool cleanup
+2025-04-16,Meridian & Co,Audit Support,4:15,yes,637.50,Evidence binder
+2025-04-21,Bluebird Studio,Illustration Pack,3:30,yes,315.00,Revisions
+2025-04-28,Meridian & Co,Audit Support,6:45,yes,1012.50,Final review
+2025-05-05,Acme Corp,Support Retainer,2:00,yes,260.00,Monthly support
+2025-05-07,Northwind Ltd,Data Pipeline,1:30,yes,180.00,Patch
+2025-05-12,Internal,Conference,8:00,no,,Industry conference day
+2025-05-14,Bluebird Studio,Brand Refresh,2:15,yes,202.50,Touch-ups
+2025-05-19,Acme Corp,Support Retainer,3:30,yes,455.00,Support tickets
+2025-05-27,Meridian & Co,Audit Support,2:30,yes,375.00,Follow-up items
+2025-06-02,Acme Corp,Support Retainer,4:00,yes,520.00,Feature request
+2025-06-04,Northwind Ltd,Data Pipeline,2:00,yes,240.00,Monitoring tweak
+2025-06-09,Bluebird Studio,Illustration Pack,1:45,yes,157.50,Asset export
+2025-06-11,Internal,Admin,1.25,no,,Invoicing
+2025-06-16,Acme Corp,Support Retainer,5:15,yes,682.50,Quarterly upgrades
+2025-06-17,Meridian & Co,Audit Support,3:00,yes,450.00,Close-out call
+not-a-date,Acme Corp,Mobile App,2:00,yes,260.00,Bad date row
+2025-06-18,,Data Pipeline,3:00,yes,360.00,Missing client row
+2025-06-19,Northwind Ltd,Data Pipeline,lots,yes,120.00,Bad duration row
+2025-06-20,Acme Corp,Support Retainer,1:30,yes,(97.50),Credit adjustment - negative amount

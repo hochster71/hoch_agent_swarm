@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Effective Hourly Rate Report — what your tracked hours actually earned</title>
+<meta name="description" content="Upload a time-tracking CSV and see what your hours actually earned: per-client hours, billable share, effective and blended hourly rates, monthly and weekday series. Organizational tooling only." />
+<style>
+  :root {
+    --ink: #14181f; --muted: #5b6472; --line: #e3e7ec; --bg: #fbfcfd;
+    --accent: #1f5f4b; --accent-soft: #eef5f2; --warn: #8a5a00; --warn-soft: #fdf6e7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  h1 { font-size: 34px; line-height: 1.2; margin: 10px 0 12px; letter-spacing: -0.02em; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0; }
+  .price { display: inline-flex; align-items: baseline; gap: 8px; margin-top: 20px; }
+  .price b { font-size: 30px; }
+  .price span { color: var(--muted); font-size: 14px; }
+  h2 { font-size: 20px; margin: 34px 0 12px; letter-spacing: -0.01em; }
+  ul { padding-left: 20px; }
+  li { margin: 7px 0; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px; margin: 22px 0; }
+  textarea {
+    width: 100%; min-height: 170px; padding: 12px; border: 1px solid var(--line);
+    border-radius: 8px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; resize: vertical;
+  }
+  input[type=file] { margin: 10px 0; font-size: 14px; }
+  button {
+    background: var(--accent); color: #fff; border: 0; border-radius: 8px;
+    padding: 12px 20px; font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  button.secondary { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+  .stats { display: flex; gap: 26px; flex-wrap: wrap; margin: 14px 0 4px; }
+  .stat b { display: block; font-size: 24px; letter-spacing: -0.02em; }
+  .stat span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .note { background: var(--accent-soft); border-left: 3px solid var(--accent); padding: 14px 16px; border-radius: 0 8px 8px 0; font-size: 14.5px; }
+  .warn { background: var(--warn-soft); border-left: 3px solid var(--warn); padding: 14px 16px; border-radius: 0 8px 8px 0; font-size: 14px; color: #4a3a10; }
+  code { background: #eef1f4; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  footer { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  .err { color: #9b1c1c; font-size: 14px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Hoch Finance Factory</div>
+  <h1>See what your tracked hours actually earned.</h1>
+  <p class="lede">
+    Upload a time-tracking CSV (Toggl, Harvest, Clockify or similar export). Get back the
+    arithmetic your file already contains: hours per client, billable share, the observed
+    rate per billed hour, the blended rate across every hour you tracked, and how the
+    months and weekdays break down.
+  </p>
+  <div class="price"><b>$9</b><span>one-time · no account · nothing connected</span></div>
+</header>
+
+<div class="note">
+  <b>What this is.</b> Organizational tooling. It reports the figures in the file you upload —
+  nothing more. It is not financial, tax, or legal advice, it does not tell you what to charge,
+  and it does not compare you to any market.
+</div>
+
+<h2>What you get</h2>
+<ul>
+  <li><b>Per-client breakdown</b> — hours, share of tracked time, entries, billable vs non-billable hours, observed revenue, rate per covered hour, blended rate, median and longest session, months active, first and last entry.</li>
+  <li><b>Two honest rates</b> — the rate on the hours that carry billing figures, and the blended rate across <i>every</i> tracked hour. The report tells you exactly what share of your hours had billing data.</li>
+  <li><b>Billable share</b> — how your tracked time splits between billable and non-billable, overall and by month, when your file has a billable column.</li>
+  <li><b>Monthly + weekday series</b> — hours, revenue and active clients per month; total hours by weekday.</li>
+  <li><b>Spelling merge</b> — "Acme Corp" and "ACME CORPORATION" are grouped into one client, and the report tells you which spellings it merged.</li>
+  <li><b>Flagged rows</b> — every row it could not read, with its CSV line number and the reason. Nothing is silently dropped.</li>
+  <li><b>Two files</b> — a 5-sheet XLSX workbook and a one-page PDF summary.</li>
+</ul>
+
+<h2>Your CSV needs three columns</h2>
+<p>
+  A date, a client name, and a duration. Durations can be decimal hours (<code>3.5</code>),
+  clock form (<code>3:30</code> or <code>3:30:00</code>), <code>3h 30m</code>, or a minutes
+  column. Common header names are recognised automatically. <code>Project</code>,
+  <code>Billable</code>, <code>Amount</code>, <code>Rate</code> and <code>Notes</code> are
+  optional and add detail if present — when only a rate column exists, figures are computed
+  as rate × hours from your own file.
+</p>
+
+<div class="card">
+  <h2 style="margin-top:0">Try it free</h2>
+  <p style="color:var(--muted);font-size:14.5px;margin-top:0">
+    The free preview runs the real engine on your file and shows the top-line figures.
+    Your file is processed to produce the report and is not stored.
+  </p>
+  <input type="file" id="file" accept=".csv,text/csv" />
+  <textarea id="csv" placeholder="…or paste CSV here:&#10;Date,Client,Hours,Billable,Amount&#10;2025-01-06,Acme Corp,3:30,yes,455.00"></textarea>
+  <div class="row">
+    <button id="previewBtn">Run free preview</button>
+    <button id="buyBtn" class="secondary">Buy full report — $9</button>
+  </div>
+  <div id="err" class="err"></div>
+  <div id="out"></div>
+</div>
+
+<h2>Honest limits</h2>
+<div class="warn">
+  Every figure is <b>arithmetic over the rows in the file you upload</b> — hours or revenue
+  recorded outside that file are invisible to it, and there is no market-rate database behind
+  any number. Client grouping is <b>string matching only</b>, so two genuinely different clients
+  with near-identical names could merge; every merge it makes is listed so you can check it.
+  Rows it cannot read are flagged, never guessed at. Negative billed amounts are excluded from
+  rate figures and disclosed.
+</div>
+
+<footer>
+  Hoch Finance Factory · Organizational tooling only, not financial, tax, or legal advice.
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var fileEl = document.getElementById('file');
+  var csvEl = document.getElementById('csv');
+  var out = document.getElementById('out');
+  var err = document.getElementById('err');
+
+  fileEl.addEventListener('change', function () {
+    var f = fileEl.files && fileEl.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () { csvEl.value = String(r.result || ''); };
+    r.readAsText(f);
+  });
+
+  function money(n) {
+    var v = Number(n) || 0;
+    return (v < 0 ? '-' : '') + '$' + Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  document.getElementById('previewBtn').addEventListener('click', async function () {
+    err.textContent = '';
+    out.innerHTML = '';
+    var csv = csvEl.value.trim();
+    if (!csv) { err.textContent = 'Choose a CSV file or paste CSV text first.'; return; }
+    this.disabled = true;
+    this.textContent = 'Reading…';
+    try {
+      var res = await fetch('/api/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csv: csv })
+      });
+      var data = await res.json();
+      if (!res.ok) { err.textContent = data.message || 'Could not read that file.'; return; }
+      var rows = (data.topClients || []).map(function (c) {
+        return '<li>' + esc(c.label) + ' — ' + c.hours.toFixed(1) + 'h ('
+          + c.hoursSharePct.toFixed(1) + '% of tracked time), ' + c.entryCount + ' entr' + (c.entryCount === 1 ? 'y' : 'ies') + '</li>';
+      }).join('');
+      out.innerHTML =
+        '<div class="stats">'
+        + '<div class="stat"><b>' + data.hours.total.toFixed(1) + 'h</b><span>tracked hours</span></div>'
+        + '<div class="stat"><b>' + (data.rates.available ? money(data.rates.effectiveRateCovered) : 'n/a') + '</b><span>rate / covered hour</span></div>'
+        + '<div class="stat"><b>' + (data.rates.available ? money(data.rates.blendedRateAllHours) : 'n/a') + '</b><span>blended / all hours</span></div>'
+        + '<div class="stat"><b>' + (data.billableShare.available ? data.billableShare.billableSharePct.toFixed(1) + '%' : 'n/a') + '</b><span>billable share</span></div>'
+        + '</div>'
+        + '<p style="font-size:14px;color:var(--muted)">Window ' + esc(data.window.start) + ' to '
+        + esc(data.window.end) + ' · ' + data.counts.entries + ' entries read · '
+        + data.counts.skippedRows + ' rows flagged</p>'
+        + (rows ? '<p style="font-size:14px;margin-bottom:4px"><b>Most-tracked clients:</b></p><ul style="font-size:14px">' + rows + '</ul>' : '')
+        + '<div class="warn" style="margin-top:14px">' + esc(data.withheld) + '</div>';
+    } catch (e) {
+      err.textContent = 'Network error. Please try again.';
+    } finally {
+      this.disabled = false;
+      this.textContent = 'Run free preview';
+    }
+  });
+
+  document.getElementById('buyBtn').addEventListener('click', async function () {
+    err.textContent = '';
+    this.disabled = true;
+    this.textContent = 'Opening checkout…';
+    try {
+      var res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier: 'report' })
+      });
+      var data = await res.json();
+      if (res.ok && data.url) { window.location = data.url; return; }
+      err.textContent = data.message || 'Checkout is not available yet.';
+    } catch (e) {
+      err.textContent = 'Network error. Please try again.';
+    } finally {
+      this.disabled = false;
+      this.textContent = 'Buy full report — $9';
+    }
+  });
+})();
+</script>
+</body>
+</html>

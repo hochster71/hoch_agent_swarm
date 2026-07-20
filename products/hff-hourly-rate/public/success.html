@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your Effective Hourly Rate Report</title>
+<style>
+  :root { --ink:#14181f; --muted:#5b6472; --line:#e3e7ec; --bg:#fbfcfd; --accent:#1f5f4b; --accent-soft:#eef5f2; --warn:#8a5a00; --warn-soft:#fdf6e7; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width:860px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { font-size:30px; margin:6px 0 10px; letter-spacing:-0.02em; }
+  .eyebrow { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); font-weight:700; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px; margin:22px 0; }
+  textarea { width:100%; min-height:150px; padding:12px; border:1px solid var(--line); border-radius:8px;
+    font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; resize:vertical; }
+  input[type=file] { margin:10px 0; font-size:14px; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:12px 20px;
+    font-size:15px; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .stats { display:flex; gap:26px; flex-wrap:wrap; margin:16px 0 8px; }
+  .stat b { display:block; font-size:24px; letter-spacing:-0.02em; }
+  .stat span { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  table { width:100%; border-collapse:collapse; font-size:14px; margin-top:10px; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  th { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+  td.num, th.num { text-align:right; }
+  .dl { display:inline-block; background:var(--accent); color:#fff; text-decoration:none;
+    padding:11px 18px; border-radius:8px; font-weight:600; font-size:14px; margin-right:10px; }
+  .warn { background:var(--warn-soft); border-left:3px solid var(--warn); padding:14px 16px;
+    border-radius:0 8px 8px 0; font-size:13.5px; color:#4a3a10; margin-top:16px; }
+  .err { color:#9b1c1c; font-size:14px; margin-top:10px; }
+  .muted { color:var(--muted); font-size:14px; }
+  ul.notes { font-size:14px; padding-left:20px; }
+  ul.notes li { margin:6px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Hoch Finance Factory</div>
+  <h1>Payment received — generate your report</h1>
+  <p class="muted" id="sessionLine">Checking your purchase…</p>
+
+  <div class="card">
+    <p style="margin-top:0" class="muted">
+      Upload the same time-tracking CSV to generate your full report. Your unlock is tied to
+      this checkout session.
+    </p>
+    <input type="file" id="file" accept=".csv,text/csv" />
+    <textarea id="csv" placeholder="…or paste CSV here"></textarea>
+    <div class="row"><button id="genBtn">Generate my report</button></div>
+    <div id="err" class="err"></div>
+  </div>
+
+  <div id="out"></div>
+
+  <div class="warn">
+    This report is organizational tooling only. It describes the hours, billing figures and
+    arithmetic rates observed in the file you uploaded, exactly as that file states them. It is
+    not financial, tax, or legal advice, it does not tell you what to charge, and it does not
+    tell you which clients or projects to keep or drop. Verify every line against your own
+    records before acting.
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var sessionId = params.get('session_id');
+  var fileEl = document.getElementById('file');
+  var csvEl = document.getElementById('csv');
+  var out = document.getElementById('out');
+  var err = document.getElementById('err');
+  var line = document.getElementById('sessionLine');
+
+  fileEl.addEventListener('change', function () {
+    var f = fileEl.files && fileEl.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () { csvEl.value = String(r.result || ''); };
+    r.readAsText(f);
+  });
+
+  if (!sessionId) {
+    line.textContent = 'No checkout session in this link. Open the link from your payment confirmation.';
+  } else {
+    line.textContent = 'Session ' + sessionId.slice(0, 14) + '… — checking entitlement.';
+    fetch('/api/entitlement?session_id=' + encodeURIComponent(sessionId))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        line.textContent = d.paid
+          ? 'Purchase confirmed. Upload your CSV below.'
+          : 'Purchase not confirmed yet — Stripe can take a few seconds. You can still try generating; if it fails, refresh in a moment.';
+      })
+      .catch(function () { line.textContent = 'Could not check entitlement. You can still try generating.'; });
+  }
+
+  function money(n) {
+    var v = Number(n) || 0;
+    return (v < 0 ? '-' : '') + '$' + Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function dataUrl(mime, b64) { return 'data:' + mime + ';base64,' + b64; }
+
+  document.getElementById('genBtn').addEventListener('click', async function () {
+    err.textContent = '';
+    out.innerHTML = '';
+    var csv = csvEl.value.trim();
+    if (!csv) { err.textContent = 'Choose a CSV file or paste CSV text first.'; return; }
+    this.disabled = true;
+    this.textContent = 'Generating…';
+    try {
+      var res = await fetch('/api/generate-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csv: csv, session_id: sessionId })
+      });
+      var data = await res.json();
+      if (!res.ok) { err.textContent = data.message || 'Could not generate the report.'; return; }
+
+      var s = data.report.summary;
+      var rows = data.report.clients.map(function (cl) {
+        return '<tr><td>' + cl.rank + '</td><td>' + esc(cl.label) + '</td>'
+          + '<td class="num">' + cl.hours.toFixed(1) + 'h</td>'
+          + '<td class="num">' + cl.hoursSharePct.toFixed(1) + '%</td>'
+          + '<td class="num">' + cl.entryCount + '</td>'
+          + '<td class="num">' + (cl.effectiveRateCovered === null ? '—' : money(cl.effectiveRateCovered)) + '</td>'
+          + '<td class="num">' + (cl.revenue > 0 ? money(cl.revenue) : '—') + '</td>'
+          + '<td>' + esc(cl.firstEntry) + '</td><td>' + esc(cl.lastEntry) + '</td></tr>';
+      }).join('');
+
+      out.innerHTML =
+        '<div class="card">'
+        + '<div class="stats">'
+        + '<div class="stat"><b>' + s.hours.total.toFixed(1) + 'h</b><span>tracked hours</span></div>'
+        + '<div class="stat"><b>' + (s.rates.available ? money(s.rates.effectiveRateCovered) : 'n/a') + '</b><span>rate / covered hour</span></div>'
+        + '<div class="stat"><b>' + (s.rates.available ? money(s.rates.blendedRateAllHours) : 'n/a') + '</b><span>blended / all hours</span></div>'
+        + '<div class="stat"><b>' + (s.billableShare.available ? s.billableShare.billableSharePct.toFixed(1) + '%' : 'n/a') + '</b><span>billable share</span></div>'
+        + '<div class="stat"><b>' + money(s.revenue.total) + '</b><span>revenue observed</span></div>'
+        + '</div>'
+        + '<p><a class="dl" download="' + esc(data.files.xlsx.filename) + '" href="'
+        + dataUrl('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', data.files.xlsx.base64)
+        + '">Download workbook (.xlsx)</a>'
+        + '<a class="dl" download="' + esc(data.files.pdf.filename) + '" href="'
+        + dataUrl('application/pdf', data.files.pdf.base64) + '">Download summary (.pdf)</a></p>'
+        + '<table><thead><tr><th>#</th><th>Client</th><th class="num">Hours</th><th class="num">Share</th>'
+        + '<th class="num">Entries</th><th class="num">Rate</th><th class="num">Revenue</th><th>First</th><th>Last</th>'
+        + '</tr></thead><tbody>' + rows + '</tbody></table>'
+        + '<h3 style="font-size:16px;margin:22px 0 6px">Observations</h3>'
+        + '<ul class="notes">' + s.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>'
+        + '</div>';
+    } catch (e) {
+      err.textContent = 'Network error. Please try again.';
+    } finally {
+      this.disabled = false;
+      this.textContent = 'Generate my report';
+    }
+  });
+})();
+</script>
+</body>
+</html>

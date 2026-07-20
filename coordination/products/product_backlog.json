@@ -116,6 +116,21 @@
       "slug": "hff-client-concentration",
       "built_at": "2026-07-19",
       "tests": "48 engine + 32 buyloop, all pass (node v22.22.3)"
+    },
+    {
+      "id": "HFF_HOURLY_RATE",
+      "factory": "HFF",
+      "name": "Effective Hourly Rate Report",
+      "what_it_is": "Upload a time-tracking CSV (Toggl/Harvest/Clockify-style export) -> what the tracked hours actually earned: per-client hours and share, billable vs non-billable split, observed revenue, effective rate per covered hour AND blended rate across all tracked hours (with the coverage share disclosed), monthly and weekday series, median/longest sessions, disclosed spelling merges. 5-sheet XLSX + one-page PDF. Organizational tooling only.",
+      "buyer": "Freelancers and consultants who track time and want to see what their hours arithmetically earned, without connecting anything.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "guardrail": "organizational tooling only; no financial/tax/legal advice; never tells the user what to charge, never judges a rate, no market comparison",
+      "generated_by": "autonomous factory loop 2026-07-20 (all prior candidates already BUILT)",
+      "status": "BUILT",
+      "slug": "hff-hourly-rate",
+      "built_at": "2026-07-20",
+      "tests": "50 engine + 32 buyloop, all pass (node v22.22.3)"
     }
   ]
 }
