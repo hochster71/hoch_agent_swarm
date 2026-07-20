@@ -1,4 +1,6 @@
-# EDR-0001: Four-engine Executive Runtime + model-agnostic roles
+# EDR-0000: Four-engine Executive Runtime + model-agnostic roles
+
+*Note: Renamed from EDR-0001 to EDR-0000 per EDR-0003 §13-15 to resolve filename collision.*
 
 | Field | Value |
 |---|---|
@@ -7,7 +9,7 @@
 | Author role | builder |
 | Bound actor | Claude |
 | Mission id | EPIC-FURY-2026 |
-| Correlation id | EDR-0001-FOUR-ENGINES |
+| Correlation id | EDR-0000-FOUR-ENGINES |
 | Parent EDR | none |
 
 ## Context

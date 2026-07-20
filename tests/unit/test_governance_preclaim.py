@@ -45,7 +45,7 @@ NON_VERIFICATION_DISCLOSURE = re.compile(
 
 # Pre-existing debt as of EDR-0010. Do not add to this list; repair and remove instead.
 GRANDFATHERED = {
-    "EDR-0001-executive-runtime-four-engines.md",
+    "EDR-0000-executive-runtime-four-engines.md",
     "EDR-0001-runtime-bridge.md",
     "EDR-0002-provider-dispatch-gateway.md",
 }
