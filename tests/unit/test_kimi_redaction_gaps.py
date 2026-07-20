@@ -108,6 +108,52 @@ def test_residual_scan_is_independent_of_redactor():
     )
 
 
+# --- false positives: the gate's durability risk ------------------------------
+#
+# Verified 2026-07-20: the entropy backstop closed every credential class tested,
+# including six never named in this file (Shopify, Grafana, Square, Facebook,
+# HuggingFace, Stripe restricted). The gate is real.
+#
+# The remaining risk is not a miss — it is noise. A security gate that blocks routine
+# packs gets bypassed, and a bypassed gate protects nothing. Each fixture below is a
+# high-entropy string that is unambiguously NOT a secret and is common in any real
+# codebase. All of them currently fail the pack.
+#
+# Fix shape: an allowlist of well-known benign high-entropy forms, applied BEFORE the
+# entropy check, so the gate keeps its teeth on unknown credential shapes.
+
+BENIGN_HIGH_ENTROPY = [
+    ("git_sha_40", 'COMMIT = "78fa433da1b2c3d4e5f6789012345678901234ab"',
+     "git object IDs appear in lockfiles, submodules, changelogs, pinned deps"),
+    ("sha256_hex", 'H = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"',
+     "content hashes appear in every lockfile and integrity manifest"),
+    ("sri_integrity", 'T = "sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"',
+     "Subresource Integrity attributes appear in every CDN script tag"),
+    ("base64_png_data_uri",
+     'CSS = "background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ)"',
+     "inline images are routine in CSS and email templates"),
+]
+
+
+@pytest.mark.parametrize("name,fixture,why", BENIGN_HIGH_ENTROPY,
+                         ids=[x[0] for x in BENIGN_HIGH_ENTROPY])
+def test_benign_high_entropy_does_not_block_the_pack(tmp_path, name, fixture, why):
+    """Well-known non-secret high-entropy forms must not fail an otherwise clean pack."""
+    out = _pack(tmp_path, fixture + "\n")
+    assert "DRY-RUN: OK" in out, (
+        f"{name} blocked a clean pack as HIGH_ENTROPY.\n"
+        f"why it is benign: {why}\n"
+        "A gate this noisy will be bypassed in practice, which forfeits the real "
+        "protection it provides against unknown credential shapes."
+    )
+
+
+def test_uuid_is_already_tolerated():
+    """Regression guard: UUIDs were correctly NOT flagged. Keep it that way."""
+    out = _pack(Path("."), 'ID = "550e8400-e29b-41d4-a716-446655440000"\n')
+    assert "DRY-RUN: OK" in out
+
+
 def test_concatenated_secret_is_known_limitation():
     """Documented, not fixed: a split literal defeats regex redaction.
 
