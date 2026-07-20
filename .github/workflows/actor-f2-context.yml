@@ -1,0 +1,79 @@
+name: ACTOR-F2 Execution Context Record
+
+# ACTOR-F2 evidence collection from inside the GitHub Actions runtime.
+#
+# This is the CI counterpart to scripts/actor_f2_collect.sh. It exists because a record
+# is authoritative ONLY for the context that produced it — the local collector cannot
+# observe the runner, and the runner cannot observe the local contexts.
+#
+# workflow_dispatch ONLY. Deliberately not triggered on push: this is an evidence-
+# collection act, not ambient CI, and it should not add noise to existing pipelines.
+#
+# Read-only. Emits an artifact and job-log output. Commits nothing. Records credential
+# and token PRESENCE only — never values.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write   # to observe whether OIDC is actually available, not to use it
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Collect execution context record
+        env:
+          OIDC_URL_PRESENT: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_URL != '' }}
+        run: |
+          set -uo pipefail
+          j() { printf '%s' "$1" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))'; }
+
+          # signing config as the runner resolves it
+          SIGNKEY=$(git config user.signingkey >/dev/null 2>&1 && echo CONFIGURED || echo UNSET)
+
+          cat > actor_f2_github_actions.json <<JSON
+          {"artifact":"ACTOR-F2","context_label":"github-actions-runner",
+           "collected_at":"$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+           "observed":{
+             "runner_os":$(j "${RUNNER_OS:-UNOBSERVED}"),
+             "runner_arch":$(j "${RUNNER_ARCH:-UNOBSERVED}"),
+             "runner_name":$(j "${RUNNER_NAME:-UNOBSERVED}"),
+             "os_user":$(j "$(id -un)"),
+             "uid":$(j "$(id -u)"),
+             "gid":$(j "$(id -g)"),
+             "hostname":$(j "$(hostname)"),
+             "uname":$(j "$(uname -s)"),
+             "pwd":$(j "$(pwd)"),
+             "repository":$(j "${GITHUB_REPOSITORY:-UNOBSERVED}"),
+             "workflow":$(j "${GITHUB_WORKFLOW:-UNOBSERVED}"),
+             "job":$(j "${GITHUB_JOB:-UNOBSERVED}"),
+             "run_id":$(j "${GITHUB_RUN_ID:-UNOBSERVED}"),
+             "actor":$(j "${GITHUB_ACTOR:-UNOBSERVED}"),
+             "triggering_actor":$(j "${GITHUB_TRIGGERING_ACTOR:-UNOBSERVED}"),
+             "ref":$(j "${GITHUB_REF:-UNOBSERVED}"),
+             "commit_sha":$(j "${GITHUB_SHA:-UNOBSERVED}"),
+             "git_user_name":$(j "$(git config user.name 2>/dev/null || echo UNSET)"),
+             "git_user_email":$(j "$(git config user.email 2>/dev/null || echo UNSET)"),
+             "git_signingkey":$(j "$SIGNKEY"),
+             "git_commit_gpgsign":$(j "$(git config commit.gpgsign 2>/dev/null || echo UNSET)"),
+             "oidc_available":$(j "${OIDC_URL_PRESENT:-UNOBSERVED}")
+           },
+           "unknown":[
+             "whether this runner shares any credential store with local host contexts",
+             "key custody outside the ephemeral runner lifetime"
+           ],
+           "inference":"NONE",
+           "collector_scope":"Describes ONLY the GitHub Actions runner that executed it. Not evidence about any local actor.",
+           "note":"GITHUB_ACTOR and GITHUB_TRIGGERING_ACTOR are AUTHENTICATED by GitHub — unlike local git author fields, which are self-declared. This is the only context in the inventory where the actor field is asserted by an authority external to the actor."}
+          JSON
+
+          python3 -m json.tool < actor_f2_github_actions.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: actor-f2-github-actions-record
+          path: actor_f2_github_actions.json

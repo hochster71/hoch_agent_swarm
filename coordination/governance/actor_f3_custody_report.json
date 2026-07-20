@@ -1,0 +1,40 @@
+{
+  "artifact": "ACTOR-F3-CUSTODY",
+  "timestamp": "2026-07-20T19:39:45Z",
+  "context_label": "gemini-antigravity",
+  "key_custody_inventory": {
+    "ssh": {
+      "dot_ssh_exists": true,
+      "private_keys_found": [
+        {
+          "name": "id_ed25519",
+          "permissions": "0o600",
+          "secure_permissions": true
+        }
+      ],
+      "ssh_agent_status": "ACTIVE (no keys loaded)"
+    },
+    "gpg": {
+      "gpg_available": false,
+      "secret_keys_found": false,
+      "keys": []
+    },
+    "macos_keychain": {
+      "is_macos": true,
+      "status": "RESOLVED: \"/Users/michaelhoch/Library/Keychains/login.keychain-db\""
+    },
+    "git_credential_helper": {
+      "configured": true,
+      "helper": "osxkeychain"
+    },
+    "git_signing_config": {
+      "user_signingkey": "UNSET",
+      "commit_gpgsign": "UNSET"
+    }
+  },
+  "impersonation_vulnerabilities": [
+    "COMMITS_UNSIGNED: No commit signing configured. Any agent/process in the shared account can commit as 'Michael Hoch'.",
+    "PLAINTEXT_KEYS_IN_ENV: Plaintext secrets stored in .env: ['ELEVENLABS_API_KEY']. Any process in the shared account can read these."
+  ],
+  "mitigation_status": {}
+}

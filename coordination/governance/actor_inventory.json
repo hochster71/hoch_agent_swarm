@@ -1,0 +1,293 @@
+{
+  "artifact": "ACTOR-001 — Actor Inventory",
+  "status": "PARTIAL — builder-observable half only (remains PARTIAL by design)",
+  "compiled_at": "2026-07-20",
+  "compiled_by": "claude/builder session stoic-loving-babbage",
+  "scope_limit": {
+    "observable_from_builder": [
+      "git author/committer identities actually present in history",
+      "signature status of every commit",
+      "worktree registrations (distinct execution contexts)",
+      "in-repo agent config directories",
+      "in-repo CI automation definitions",
+      "remote branch inventory and repo visibility"
+    ],
+    "NOT_observable_from_builder": [
+      "OS user identity of any local actor",
+      "running processes at time of any write",
+      "signing key material, location, or ACLs",
+      "Keychain / Secure Enclave contents",
+      "which local process created any given commit",
+      "GitHub account-level collaborator list and permissions"
+    ],
+    "why": "The builder sandbox is not the host. /Users/michaelhoch is absent from this filesystem. Host-side rows must be filled by observation ON the Mac, not inferred here — inferring them is the failure mode this inventory exists to prevent."
+  },
+  "observed_git_identities": [
+    {
+      "identity": "Michael Hoch <michael.b.hoch@gmail.com>",
+      "commits": 692,
+      "last": "2026-07-20",
+      "signed": 0,
+      "note": "current config identity; ALL 2026-07-20 governance commits, including the builder's own and the disputed concurrent writes"
+    },
+    {
+      "identity": "Michael Hoch <michaelhoch@Michaels-MacBook-Pro.local>",
+      "commits": 502,
+      "last": "2026-06-30",
+      "signed": 0,
+      "note": "hostname-derived email — different machine or earlier config. Nominally the same human."
+    },
+    {
+      "identity": "HELM Builder (Claude) <builder@helm.local>",
+      "commits": 3,
+      "last": "2026-07-17",
+      "signed": 0,
+      "note": "PER-ACTOR IDENTITY WAS PRACTICED AND LAPSED. Three commits on 2026-07-17 carry a distinct agent identity; by 2026-07-20 all agent commits reverted to the founder identity. The convention existed; it was not sustained."
+    },
+    {
+      "identity": "hochster71 <michael.b.hoch@gmail.com>",
+      "commits": 2,
+      "signed": 0,
+      "note": "GitHub web UI"
+    },
+    {
+      "identity": "dependabot[bot]",
+      "commits": 1,
+      "signed": "E (unverifiable)",
+      "note": "the only signature in 1200 commits, and it cannot be checked"
+    }
+  ],
+  "signature_posture": {
+    "total_commits": 1200,
+    "with_any_signature": 1,
+    "with_verifiable_signature": 0,
+    "local_signing_config": {
+      "commit.gpgsign": "unset",
+      "user.signingkey": "unset",
+      "gpg.format": "unset"
+    },
+    "conclusion": "No commit in this repository has verifiable cryptographic provenance."
+  },
+  "actors": [
+    {
+      "actor": "Michael",
+      "type": "human",
+      "execution_context": "interactive shell / IDE",
+      "os_identity": "UNKNOWN — host observation required",
+      "git_identity": "Michael Hoch <michael.b.hoch@gmail.com>",
+      "signing_key": "NONE",
+      "trust_boundary": "founder",
+      "write_scope": "full",
+      "can": {
+        "working_tree": true,
+        "commit": true,
+        "move_refs": true,
+        "push": true,
+        "approve": true,
+        "sign": false,
+        "access_others_key_material": "N/A — no keys exist",
+        "impersonate": "N/A"
+      }
+    },
+    {
+      "actor": "Claude Code (this session)",
+      "type": "ai_agent",
+      "execution_context": "Cowork sandbox, repo via mount",
+      "os_identity": "sandbox — NOT the host user",
+      "git_identity": "inherits founder config (no distinct identity)",
+      "signing_key": "NONE",
+      "trust_boundary": "development",
+      "write_scope": "working tree + commits when gated",
+      "can": {
+        "working_tree": true,
+        "commit": true,
+        "move_refs": true,
+        "push": true,
+        "approve": false,
+        "sign": false,
+        "access_others_key_material": "no keys exist to access",
+        "impersonate": "YES — writes are indistinguishable from founder's"
+      }
+    },
+    {
+      "actor": "HELM Builder (Claude)",
+      "type": "ai_agent",
+      "execution_context": "UNKNOWN",
+      "os_identity": "UNKNOWN",
+      "git_identity": "HELM Builder (Claude) <builder@helm.local>",
+      "signing_key": "NONE",
+      "trust_boundary": "development",
+      "write_scope": "observed: 3 commits 2026-07-17",
+      "note": "Only actor with a distinct git identity. Practice lapsed after 2026-07-17."
+    },
+    {
+      "actor": "Gemini / Antigravity",
+      "type": "ai_agent",
+      "execution_context": "host worktree",
+      "evidence": "/Users/michaelhoch/.gemini/antigravity/worktrees/hoch_agent_swarm/hoch-agent-swarm-research (registered, prunable)",
+      "os_identity": "UNKNOWN — presumed same macOS user",
+      "git_identity": "UNKNOWN — no attributable commits found",
+      "signing_key": "NONE",
+      "trust_boundary": "development",
+      "write_scope": "own worktree; branch hoch-agent-swarm-research"
+    },
+    {
+      "actor": "Grok CLI",
+      "type": "ai_agent",
+      "execution_context": "CLI on host",
+      "evidence": ".grok/config.toml present in repo",
+      "os_identity": "UNKNOWN",
+      "git_identity": "UNKNOWN — no attributable commits",
+      "signing_key": "NONE",
+      "trust_boundary": "development"
+    },
+    {
+      "actor": "GitHub Actions",
+      "type": "automation",
+      "execution_context": "GitHub-hosted runners",
+      "os_identity": "GitHub",
+      "git_identity": "GitHub <noreply@github.com>",
+      "signing_key": "OIDC/Cosign per rc23 runbook — for RELEASE ARTIFACTS, not commits",
+      "trust_boundary": "CI",
+      "write_scope": "CI/release",
+      "workflows_defined": 14,
+      "note": "The only actor with a genuinely separate trust domain today."
+    },
+    {
+      "actor": "UNIDENTIFIED CONCURRENT WRITER",
+      "type": "UNKNOWN",
+      "execution_context": "UNKNOWN",
+      "evidence": "commits 8d86f9b5..1b77477d on 2026-07-20 13:02-13:32, not made by this session; one opened a lease asserting owner_session='stoic-loving-babbage'",
+      "git_identity": "Michael Hoch <michael.b.hoch@gmail.com> (indistinguishable from founder)",
+      "signing_key": "NONE",
+      "trust_boundary": "UNBOUNDED",
+      "note": "May be Michael, an IDE agent, a scheduled process, another shell, or another CLI agent. NOT RESOLVABLE FROM GIT."
+    }
+  ],
+  "trust_domains_observed": {
+    "domain_1_host_macos_user": {
+      "members": [
+        "Michael",
+        "Gemini/Antigravity",
+        "Grok CLI",
+        "any local agent or shell",
+        "UNIDENTIFIED CONCURRENT WRITER"
+      ],
+      "isolation": "UNOBSERVED — not 'absent'",
+      "consequence": "IF these members share one OS account, THEN a per-actor signing key placed in it MAY be accessible across those contexts — SUBJECT TO the operating system's credential protections. Shared account is NECESSARY but NOT SUFFICIENT for shared custody: Secure Enclave, Keychain access controls, and separate security principals can partition key access within a single account. Both the antecedent (shared account, ACTOR-F2) and the qualifier (effective credential protections, ACTOR-F3) are UNDETERMINED.",
+      "correction": "Previously recorded as 'NONE OBSERVED', which reads as a negative finding. No host-side collector record existed, so isolation was never examined. UNOBSERVED, not FALSE. Same distinction as UNKNOWN vs FAIL — applied here to the builder's own artifact."
+    },
+    "domain_2_builder_sandbox": {
+      "members": [
+        "Claude Code (this session)"
+      ],
+      "isolation": "namespace isolation OBSERVED (uid 1055, own user, bwrap lineage, Linux) — this is NAMESPACE identity, not a distinct macOS account",
+      "consequence": "Distinct execution context, but writes carry the founder git identity, so isolation does not produce attribution."
+    },
+    "domain_3_github": {
+      "members": [
+        "GitHub Actions",
+        "dependabot"
+      ],
+      "isolation": "genuine — separate authenticated authority",
+      "consequence": "The only existing boundary capable of enforcement rather than convention."
+    }
+  },
+  "missing_isolation_boundaries": [
+    "No OS-level separation between local agents and the human operator",
+    "No per-actor git identity in current practice (existed 2026-07-17, lapsed)",
+    "No signing keys of any kind",
+    "No key custody mechanism, therefore no basis for per-actor key protection",
+    "No process-level attribution captured at write time",
+    "No branch protection on any ref (rc23 design present, not applied)"
+  ],
+  "findings": {
+    "ACTOR-F1": "Reinstate distinct git author identities. CORRECTED ASSESSMENT: this improves OBSERVABILITY for COOPERATIVE actors only. It is telemetry, not attribution. It would NOT have proven the 2026-07-20 concurrent writes were 'not mine' — only that they were not so labelled. Any process sharing the account can set any user.name/user.email. Prior builder claim that it would make foreign writes visible as not-mine was an overstatement.",
+    "ACTOR-F2": "Zero verifiable signatures across 1200 commits. The single signed commit is dependabot's and its signature cannot be checked.",
+    "ACTOR-F3": "Two founder identities (gmail, hostname-derived) indicate at least two host configurations have written here. Reconcile before treating git identity as a key-to-actor mapping input.",
+    "ACTOR-F4": "The dominant trust domain contains every local actor and has no internal isolation. Per-actor keys are not meaningfully protectable in it as currently configured."
+  },
+  "next_actions_requiring_host_observation": [
+    "Fill os_identity for every local actor (run `id -un` in each agent's context)",
+    "Determine whether any agent runs as a non-primary macOS user",
+    "Capture process attribution during a live write (who holds the repo open when a commit lands)",
+    "Enumerate GitHub collaborators and their permission levels",
+    "Decide whether Secure Enclave / Keychain ACLs or separate OS users will provide custody separation"
+  ],
+  "identity_classes": {
+    "note": "Distinct GIT identities. NOT distinct AUTHENTICATED actors. Any process in the shared account can set any user.name/user.email.",
+    "michael_current": "michael.b.hoch@gmail.com",
+    "michael_prior_local": "michaelhoch@Michaels-MacBook-Pro.local",
+    "helm_builder_historical": "HELM Builder (Claude) <builder@helm.local>"
+  },
+  "sequencing": [
+    {
+      "id": "ACTOR-F1",
+      "action": "Reinstate distinct git identities",
+      "purpose": "observability",
+      "assurance": "weak / cooperative"
+    },
+    {
+      "id": "ACTOR-F2",
+      "action": "Run host-context identity checks",
+      "purpose": "determine actual OS boundary"
+    },
+    {
+      "id": "ACTOR-F3",
+      "action": "Inventory credential and key custody",
+      "purpose": "determine impersonation capability"
+    },
+    {
+      "id": "ACTOR-F4",
+      "action": "Choose isolation mechanism",
+      "options": [
+        "distinct OS users",
+        "Secure Enclave",
+        "restrictive Keychain ACLs"
+      ],
+      "gates": "ACTOR-F5 — without custody isolation the impersonation test fails by construction"
+    },
+    {
+      "id": "ACTOR-F5",
+      "action": "Configure actor-specific signing"
+    },
+    {
+      "id": "ACTOR-F6",
+      "action": "Apply enforcement and execute negative tests"
+    }
+  ],
+  "GOV-007_closure_criterion": "GOV-007 closes only when the system PROVES that one actor cannot successfully create an accepted contribution using another actor's identity or signing authority. Configuration alone does not close it; the impersonation attempt must be attempted and must fail.",
+  "comparison_rule": {
+    "shared_identity_requires": [
+      "same host authority",
+      "same host-level OS account",
+      "same effective credential boundary"
+    ],
+    "invalid_inference": "different UID != separate actor identity. Containers, user namespaces, bwrap, remapping, and remote execution all produce differing UIDs without producing separate host accounts or independent key custody. The builder's own record (uid 1055) demonstrates this: it establishes identity INSIDE that namespace and nothing about the host.",
+    "resolvable_when": ">=2 independently produced host-context records exist for comparison"
+  },
+  "trust_domain_assurance": [
+    {
+      "domain": "local interactive / agent contexts",
+      "identity_source": "self-declared git config",
+      "assurance": "LOW"
+    },
+    {
+      "domain": "sandboxed local or remote execution",
+      "identity_source": "namespace-observed OS identity + self-declared git identity",
+      "assurance": "context isolation observed; attribution WEAK"
+    },
+    {
+      "domain": "GitHub Actions",
+      "identity_source": "platform-asserted actor metadata + runner context",
+      "assurance": "EXTERNAL identity assertion; suitable enforcement boundary",
+      "caveat": "not infallible — but the assertion comes from an authority other than the actor"
+    }
+  ],
+  "epistemic_states": {
+    "OBSERVED_PRESENT": "evidence demonstrates the property exists",
+    "OBSERVED_ABSENT": "evidence demonstrates the property does not exist",
+    "UNOBSERVED": "no evidence collected; neither presence nor absence established",
+    "rule": "'Not observed' != 'observed not to exist'. Use UNOBSERVED unless an examination actually occurred and returned a negative result."
+  }
+}
