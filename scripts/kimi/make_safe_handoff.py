@@ -91,7 +91,9 @@ RESIDUAL_FORBIDDEN = [
 ]
 
 # Independent residual gate (NOT a subset of SECRET_SPECS): high-entropy unknown tokens.
-# Fail-closed prefers false positives over shipping credentials the redactor never modeled.
+# Fail-closed prefers false positives over shipping credentials the redactor never modeled —
+# but well-known *benign* high-entropy forms are allowlisted BEFORE the entropy check so the
+# gate stays durable (a gate that cries wolf gets switched off).
 HIGH_ENTROPY_MIN_LEN = 28
 HIGH_ENTROPY_THRESHOLD = 3.5  # bits/char on stripped token body
 _HIGH_ENTROPY_TOKEN = re.compile(r"[A-Za-z0-9_\-\.]{28,}")
@@ -100,13 +102,31 @@ _ENTROPY_ALLOW_PREFIXES = (
     "http",
     "file:",
     "sha256",
+    "sha384",
+    "sha512",
     "sha1",
     "md5",
     "uuid",
     "test_",
     "example",
     "placeholder",
+    "hexdigest",
+    "datauri",
+    "srihash",
 )
+
+# Applied to text BEFORE tokenizing for entropy (order matters for overlapping forms).
+# These are unambiguous non-secrets common in real codebases (lockfiles, SRI, CSS).
+_BENIGN_HIGH_ENTROPY_MASKS: list[tuple[re.Pattern[str], str]] = [
+    # data:image/...;base64,... and other data URIs (must run before bare base64 tails)
+    (re.compile(r"data:[a-zA-Z0-9.+/-]+;base64,[A-Za-z0-9+/=]+", re.IGNORECASE), " DATAURI "),
+    # Subresource Integrity: sha256|384|512-<base64url> (includes + / =)
+    (re.compile(r"\bsha(?:256|384|512)-[A-Za-z0-9+/=_-]{16,}\b", re.IGNORECASE), " SRIHASH "),
+    # Content digests / git object IDs (hex only, fixed lengths)
+    (re.compile(r"\b[0-9a-fA-F]{64}\b"), " HEXDIGEST64 "),  # sha256
+    (re.compile(r"\b[0-9a-fA-F]{40}\b"), " HEXDIGEST40 "),  # git sha / sha1
+    (re.compile(r"\b[0-9a-fA-F]{32}\b"), " HEXDIGEST32 "),  # md5
+]
 
 
 @dataclass
@@ -260,9 +280,28 @@ def shannon_entropy(s: str) -> float:
     return -sum((c / n) * math.log2(c / n) for c in counts.values())
 
 
+def is_benign_high_entropy_form(token: str) -> bool:
+    """True for well-known non-secret high-entropy forms (checked BEFORE entropy)."""
+    t = token.strip()
+    if not t:
+        return True
+    # Fixed-length hex digests (git SHA-1/object id, sha256, md5)
+    if re.fullmatch(r"[0-9a-fA-F]{32}|[0-9a-fA-F]{40}|[0-9a-fA-F]{64}", t):
+        return True
+    # SRI payload if captured whole (rare — usually pre-masked)
+    if re.fullmatch(r"sha(?:256|384|512)-[A-Za-z0-9+/=_-]{16,}", t, re.IGNORECASE):
+        return True
+    # Common PNG/GIF base64 magic (inline CSS/email tails if URI mask missed)
+    if t.startswith("iVBORw0KGgo") or t.startswith("R0lGODlh") or t.startswith("R0lGODdh"):
+        return True
+    return False
+
+
 def is_high_entropy_token(token: str) -> bool:
     """True if token looks like an unknown credential / base64_blob-ish secret."""
     if "REDACTED" in token:
+        return False
+    if is_benign_high_entropy_form(token):
         return False
     lower = token.lower()
     if any(lower.startswith(p) or p in lower[:24] for p in _ENTROPY_ALLOW_PREFIXES):
@@ -271,10 +310,15 @@ def is_high_entropy_token(token: str) -> bool:
     body = re.sub(r"[_\-\.]", "", token)
     if len(body) < HIGH_ENTROPY_MIN_LEN:
         return False
-    # Require mix of letter classes or letter+digit (pure words fail closed less often).
+    # Require letter+digit OR mixed-case letters (covers hf_/shpat_-style tokens
+    # without digits). Pure lowercase words stay out.
     has_digit = any(c.isdigit() for c in body)
     has_alpha = any(c.isalpha() for c in body)
-    if not (has_digit and has_alpha):
+    has_lower = any(c.islower() for c in body)
+    has_upper = any(c.isupper() for c in body)
+    if not has_alpha:
+        return False
+    if not (has_digit or (has_lower and has_upper)):
         return False
     # Avoid mostly-repeated padding
     if len(set(body)) < 8:
@@ -282,10 +326,23 @@ def is_high_entropy_token(token: str) -> bool:
     return shannon_entropy(body) >= HIGH_ENTROPY_THRESHOLD
 
 
+def scrub_benign_high_entropy(text: str) -> str:
+    """Mask known-benign high-entropy forms before the independent entropy gate runs."""
+    scrubbed = text
+    for pat, repl in _BENIGN_HIGH_ENTROPY_MASKS:
+        scrubbed = pat.sub(repl, scrubbed)
+    return scrubbed
+
+
 def residual_high_entropy_tokens(text: str) -> list[str]:
-    """Independent fail-closed gate: HIGH_ENTROPY / unknown-token backstop."""
+    """Independent fail-closed gate: HIGH_ENTROPY / unknown-token backstop.
+
+    Benign allowlist runs first (mask + per-token checks) so lockfiles, SRI tags,
+    and data-URI images do not train operators to bypass the gate.
+    """
     hits: list[str] = []
-    for tok in _HIGH_ENTROPY_TOKEN.findall(text):
+    scrubbed = scrub_benign_high_entropy(text)
+    for tok in _HIGH_ENTROPY_TOKEN.findall(scrubbed):
         if is_high_entropy_token(tok):
             hits.append(f"HIGH_ENTROPY:{tok[:16]}…")
     return hits

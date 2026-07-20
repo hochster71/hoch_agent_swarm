@@ -64,6 +64,11 @@ The packager is a **trust-boundary tool**. Edits under `scripts/kimi/**` (and th
 
 Do not re-enable always-approve while authoring or changing the handoff redactor.
 
+**Hard lock (operator machine):** `~/.grok/requirements.toml` has
+`disable_bypass_permissions_mode = true` so `/always-approve` cannot silently
+disable non-shell `ask` rules (including `Edit(scripts/kimi/**)`).
+Restart Grok after changing requirements.toml.
+
 ## Related
 
 - Isolation: `~/Documents/kimi/policy/ISOLATION.md`
