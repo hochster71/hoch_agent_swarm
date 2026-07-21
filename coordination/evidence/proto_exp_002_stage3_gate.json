@@ -1,0 +1,25 @@
+{
+  "experiment": "PROTO-EXP-002",
+  "checked_at": "2026-07-21T11:45:59Z",
+  "protocol_stage": 3,
+  "next_stage": 4,
+  "verdict": "BLOCKED_AWAITING_AUTHORITY",
+  "reason": "authority action not yet detected",
+  "detected_not_assumed": true,
+  "observations": [
+    {
+      "control": "RC23-BRANCH-PROTECTION",
+      "state": "OBSERVED_ABSENT",
+      "detail": "GitHub reports branch not protected",
+      "observed_at": "2026-07-21T11:45:59Z"
+    },
+    {
+      "control": "COMMIT-SIGNING",
+      "state": "OBSERVED_ABSENT",
+      "verifiable_signatures": 0,
+      "commits_examined": 20,
+      "observed_at": "2026-07-21T11:45:59Z"
+    }
+  ],
+  "note": "stages unchanged; this supplies the missing TRANSITION between stage 3 and stage 4, not an eighth stage"
+}

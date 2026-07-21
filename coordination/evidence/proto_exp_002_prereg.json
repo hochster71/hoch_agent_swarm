@@ -1,0 +1,65 @@
+{
+  "id": "PROTO-EXP-002",
+  "pre_registered_at": "2026-07-21T11:41:06Z",
+  "registered_BEFORE_any_observation": true,
+  "subject": "the seven-stage engineering protocol itself",
+  "not_subject": "whether branch protection works \u2014 GitHub already documents that",
+  "hypothesis_Hp": "the seven-stage protocol remains sufficient when a mandatory authority boundary interrupts execution, WITHOUT requiring modification to the protocol itself",
+  "success_criterion": "an EXISTING stage terminates in a state such as BLOCKED_AWAITING_AUTHORITY, expressing work-completed + authority-required + observation-paused, with NO eighth stage added",
+  "falsification": "if a new lifecycle stage is genuinely required, the protocol was incomplete. That outcome is equally informative and must be recorded as such.",
+  "why_stronger_than_concurrency": "concurrency tests a different technical SUBJECT; a founder-gated control tests a different governance TOPOLOGY",
+  "independence_note": "pre-registered before observation, unlike T3b whose predictions were authored after the unit tests encoded the same expectations",
+  "result": "PENDING \u2014 decisive observation (clean traversal of stages 4-7 after founder action) has not occurred",
+  "stage_log": [
+    {
+      "stage": 1,
+      "name": "Observation",
+      "status": "COMPLETE",
+      "result": "branch protection OBSERVED_ABSENT (GitHub 404); commit signing OBSERVED_ABSENT (0/20 verifiable)"
+    },
+    {
+      "stage": 2,
+      "name": "Persist",
+      "status": "COMPLETE",
+      "artifacts": [
+        "proto_exp_002_stage3_gate.json"
+      ]
+    },
+    {
+      "stage": 3,
+      "name": "Bounded repair",
+      "status": "BLOCKED_AWAITING_AUTHORITY",
+      "reason": "repair is gh api PUT .../protection + signing key creation \u2014 repo admin and credential creation, both founder-gated",
+      "agent_work_completed": "transition predicate built and tested (scripts/authority_gate.py, 17 tests)"
+    },
+    {
+      "stage": 4,
+      "name": "Unit verification",
+      "status": "INELIGIBLE"
+    },
+    {
+      "stage": 5,
+      "name": "Live confirmation",
+      "status": "INELIGIBLE"
+    },
+    {
+      "stage": 6,
+      "name": "Evidence regeneration",
+      "status": "INELIGIBLE"
+    },
+    {
+      "stage": 7,
+      "name": "Canonicalization",
+      "status": "INELIGIBLE"
+    }
+  ],
+  "secondary_finding": {
+    "id": "PROTO-OBS-001",
+    "status": "ESTABLISHED \u2014 holds regardless of how Hp resolves",
+    "observed": "the protocol had no explicit representation of a resume trigger after an authority-gated pause",
+    "classification": "MISSING TRANSITION, not a missing stage",
+    "distinction": "stages describe what work EXISTS; transitions describe when work becomes ELIGIBLE",
+    "remedy": "scripts/authority_gate.py \u2014 a transition predicate between stage 3 and stage 4",
+    "stages_added": 0
+  }
+}
