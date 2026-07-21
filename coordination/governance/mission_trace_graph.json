@@ -1,0 +1,1132 @@
+{
+  "schema": "HELM_MISSION_TRACE_GRAPH_v1",
+  "schema_version": "1.0",
+  "graph_hash_algorithm": "sha256",
+  "compatibility": "backward-compatible",
+  "extension_version": "1.0.0",
+  "edr": "EDR-0011",
+  "class": "PROJECTION",
+  "phase": 1,
+  "consumption": "OBSERVE_ONLY",
+  "graph_hash": "3648caa4ef2583d06f0a11acad8352143f65641ff605f269bdb6954eea8c9734",
+  "mission_hash": "UNKNOWN",
+  "computed_at": "2026-07-21T14:33:07Z",
+  "nodes": [
+    {
+      "id": "CLAIM-REQ-CP-APP_STORE_CONNECT",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: APP_STORE_CONNECT.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-APP_STORE_CONNECT"
+    },
+    {
+      "id": "CLAIM-REQ-CP-BUILD",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: BUILD.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-BUILD"
+    },
+    {
+      "id": "CLAIM-REQ-CP-MONETIZATION",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: MONETIZATION.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-MONETIZATION"
+    },
+    {
+      "id": "CLAIM-REQ-CP-PRIVACY",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: PRIVACY.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-PRIVACY"
+    },
+    {
+      "id": "CLAIM-REQ-CP-SECURITY",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: SECURITY.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-SECURITY"
+    },
+    {
+      "id": "CLAIM-REQ-CP-SIGNING_READINESS",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: SIGNING_READINESS.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-SIGNING_READINESS"
+    },
+    {
+      "id": "CLAIM-REQ-CP-STORE_METADATA",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: STORE_METADATA.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-STORE_METADATA"
+    },
+    {
+      "id": "CLAIM-REQ-CP-SUBMISSION_PACKAGE",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: SUBMISSION_PACKAGE.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-SUBMISSION_PACKAGE"
+    },
+    {
+      "id": "CLAIM-REQ-CP-TEST",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: TEST.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-TEST"
+    },
+    {
+      "id": "CLAIM-REQ-CP-TESTFLIGHT",
+      "kind": "claim",
+      "statement": "Epic Fury 2026 champion gate: TESTFLIGHT.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-CP-TESTFLIGHT"
+    },
+    {
+      "id": "CLAIM-REQ-ES-001",
+      "kind": "claim",
+      "statement": "The council autonomously dispatches a task to >=2 real model adapters, captures, validates, revises, and updates PERT state with zero founder copy/paste.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-ES-001"
+    },
+    {
+      "id": "CLAIM-REQ-ES-002",
+      "kind": "claim",
+      "statement": "The dispatch loop is the only spawn point for model CLIs.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-ES-002"
+    },
+    {
+      "id": "CLAIM-REQ-ES-003",
+      "kind": "claim",
+      "statement": "The direct-POST model adapter path (OpenAIAdapter.execute) is brought under the spend gate.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-ES-003"
+    },
+    {
+      "id": "CLAIM-REQ-ES-004",
+      "kind": "claim",
+      "statement": "The command center serves runtime truth: the council state endpoint is registered and reachable.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-ES-004"
+    },
+    {
+      "id": "CLAIM-REQ-GOV-001",
+      "kind": "claim",
+      "statement": "Exactly one authorization-eligible H1 candidate exists; test and superseded packages can never be authorized.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-GOV-001"
+    },
+    {
+      "id": "CLAIM-REQ-GOV-002",
+      "kind": "claim",
+      "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-GOV-002"
+    },
+    {
+      "id": "CLAIM-REQ-GOV-003",
+      "kind": "claim",
+      "statement": "Mock or dry-run evidence can never produce frontier quorum, promotion, or safe-to-execute.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-GOV-003"
+    },
+    {
+      "id": "CLAIM-REQ-GOV-004",
+      "kind": "claim",
+      "statement": "No external model call or spend can occur outside a gate that can refuse. Missing budget evidence fails closed.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-GOV-004"
+    },
+    {
+      "id": "CLAIM-REQ-GOV-005",
+      "kind": "claim",
+      "statement": "No fake green: no completion metric may be emitted from a fallback default, and a missing timestamp may not render as fresh.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-GOV-005"
+    },
+    {
+      "id": "CLAIM-REQ-GOV-006",
+      "kind": "claim",
+      "statement": "Every test in the enforcement suites reads real files; no test may substitute a string literal for a file read.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-GOV-006"
+    },
+    {
+      "id": "CLAIM-REQ-NS-001",
+      "kind": "claim",
+      "statement": "Founder is not the routine transport layer between agents, models, IDEs, or execution systems.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-NS-001"
+    },
+    {
+      "id": "CLAIM-REQ-NS-002",
+      "kind": "claim",
+      "statement": "verified_founder_minutes_per_shipped_dollar is measured, not estimated.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-NS-002"
+    },
+    {
+      "id": "CLAIM-REQ-TO-001",
+      "kind": "claim",
+      "statement": "A champion product is selected by the authoritative portfolio prioritization process.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-TO-001"
+    },
+    {
+      "id": "CLAIM-REQ-TO-002",
+      "kind": "claim",
+      "statement": "The champion product ships to production distribution.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-TO-002"
+    },
+    {
+      "id": "CLAIM-REQ-TO-003",
+      "kind": "claim",
+      "statement": "The full autonomous path from intake to DOORSTEP is proven end to end.",
+      "status": "SUPPORTED",
+      "requirement_id": "REQ-TO-003"
+    },
+    {
+      "id": "EV-REQ-CP-APP_STORE_CONNECT",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-APP_STORE_CONNECT"
+    },
+    {
+      "id": "EV-REQ-CP-BUILD",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-BUILD"
+    },
+    {
+      "id": "EV-REQ-CP-MONETIZATION",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-MONETIZATION"
+    },
+    {
+      "id": "EV-REQ-CP-PRIVACY",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-PRIVACY"
+    },
+    {
+      "id": "EV-REQ-CP-SECURITY",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-SECURITY"
+    },
+    {
+      "id": "EV-REQ-CP-SIGNING_READINESS",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-SIGNING_READINESS"
+    },
+    {
+      "id": "EV-REQ-CP-STORE_METADATA",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-STORE_METADATA"
+    },
+    {
+      "id": "EV-REQ-CP-SUBMISSION_PACKAGE",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-SUBMISSION_PACKAGE"
+    },
+    {
+      "id": "EV-REQ-CP-TEST",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-TEST"
+    },
+    {
+      "id": "EV-REQ-CP-TESTFLIGHT",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_gates.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-CP-TESTFLIGHT"
+    },
+    {
+      "id": "EV-REQ-ES-001",
+      "kind": "evidence",
+      "path": "coordination/council/relay/H1D_pert_node.json",
+      "presence": "PRESENT",
+      "age_hours": 24.2,
+      "claim_id": "CLAIM-REQ-ES-001"
+    },
+    {
+      "id": "EV-REQ-ES-002",
+      "kind": "evidence",
+      "path": "scripts/council/dispatch.py",
+      "presence": "PRESENT",
+      "age_hours": 207.35,
+      "claim_id": "CLAIM-REQ-ES-002"
+    },
+    {
+      "id": "EV-REQ-ES-003",
+      "kind": "evidence",
+      "path": "coordination/goal/ungated_egress_report.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-ES-003"
+    },
+    {
+      "id": "EV-REQ-ES-004",
+      "kind": "evidence",
+      "path": "coordination/goal/council_endpoint_report.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-ES-004"
+    },
+    {
+      "id": "EV-REQ-GOV-001",
+      "kind": "evidence",
+      "path": "coordination/council/h1_candidate_registry.json",
+      "presence": "PRESENT",
+      "age_hours": 48.87,
+      "claim_id": "CLAIM-REQ-GOV-001"
+    },
+    {
+      "id": "EV-REQ-GOV-002",
+      "kind": "evidence",
+      "path": "scripts/council/h1_authorization.py",
+      "presence": "PRESENT",
+      "age_hours": 216.35,
+      "claim_id": "CLAIM-REQ-GOV-002"
+    },
+    {
+      "id": "EV-REQ-GOV-003",
+      "kind": "evidence",
+      "path": "scripts/council/aggregate.py",
+      "presence": "PRESENT",
+      "age_hours": 216.35,
+      "claim_id": "CLAIM-REQ-GOV-003"
+    },
+    {
+      "id": "EV-REQ-GOV-004",
+      "kind": "evidence",
+      "path": "hoch_pods/compute/cost_ledger.jsonl",
+      "presence": "PRESENT",
+      "age_hours": 0.01,
+      "claim_id": "CLAIM-REQ-GOV-004"
+    },
+    {
+      "id": "EV-REQ-GOV-005",
+      "kind": "evidence",
+      "path": "coordination/goal/no_fake_green_report.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-GOV-005"
+    },
+    {
+      "id": "EV-REQ-GOV-006",
+      "kind": "evidence",
+      "path": "coordination/goal/tautology_report.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-GOV-006"
+    },
+    {
+      "id": "EV-REQ-NS-001",
+      "kind": "evidence",
+      "path": "coordination/council/relay/dispatch_ledger.jsonl",
+      "presence": "PRESENT",
+      "age_hours": 136.57,
+      "claim_id": "CLAIM-REQ-NS-001"
+    },
+    {
+      "id": "EV-REQ-NS-002",
+      "kind": "evidence",
+      "path": "coordination/goal/founder_minutes_metric_report.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-NS-002"
+    },
+    {
+      "id": "EV-REQ-TO-001",
+      "kind": "evidence",
+      "path": "coordination/goal/champion_selection.json",
+      "presence": "PRESENT",
+      "age_hours": 206.65,
+      "claim_id": "CLAIM-REQ-TO-001"
+    },
+    {
+      "id": "EV-REQ-TO-002",
+      "kind": "evidence",
+      "path": "coordination/goal/shipped_report.json",
+      "presence": "PRESENT",
+      "age_hours": 0.34,
+      "claim_id": "CLAIM-REQ-TO-002"
+    },
+    {
+      "id": "EV-REQ-TO-003",
+      "kind": "evidence",
+      "path": "coordination/goal/intake_to_doorstep.json",
+      "presence": "PRESENT",
+      "age_hours": 0.0,
+      "claim_id": "CLAIM-REQ-TO-003"
+    },
+    {
+      "id": "GOAL-CP",
+      "kind": "goal",
+      "ref": "config/canonical_goal_contract.json",
+      "layer": "CP",
+      "parent": "GOAL-NS"
+    },
+    {
+      "id": "GOAL-ES",
+      "kind": "goal",
+      "ref": "config/canonical_goal_contract.json",
+      "layer": "ES",
+      "parent": "GOAL-NS"
+    },
+    {
+      "id": "GOAL-GOV",
+      "kind": "goal",
+      "ref": "config/canonical_goal_contract.json",
+      "layer": "GOV",
+      "parent": "GOAL-NS"
+    },
+    {
+      "id": "GOAL-NS",
+      "kind": "goal",
+      "ref": "config/canonical_goal_contract.json",
+      "statement": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete.",
+      "layer": "NS"
+    },
+    {
+      "id": "GOAL-TO",
+      "kind": "goal",
+      "ref": "config/canonical_goal_contract.json",
+      "layer": "TO",
+      "parent": "GOAL-NS"
+    },
+    {
+      "id": "REQ-CP-APP_STORE_CONNECT",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: APP_STORE_CONNECT."
+    },
+    {
+      "id": "REQ-CP-BUILD",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: BUILD."
+    },
+    {
+      "id": "REQ-CP-MONETIZATION",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: MONETIZATION."
+    },
+    {
+      "id": "REQ-CP-PRIVACY",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: PRIVACY."
+    },
+    {
+      "id": "REQ-CP-SECURITY",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: SECURITY."
+    },
+    {
+      "id": "REQ-CP-SIGNING_READINESS",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: SIGNING_READINESS."
+    },
+    {
+      "id": "REQ-CP-STORE_METADATA",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: STORE_METADATA."
+    },
+    {
+      "id": "REQ-CP-SUBMISSION_PACKAGE",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: SUBMISSION_PACKAGE."
+    },
+    {
+      "id": "REQ-CP-TEST",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: TEST."
+    },
+    {
+      "id": "REQ-CP-TESTFLIGHT",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: TESTFLIGHT."
+    },
+    {
+      "id": "REQ-ES-001",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "ES",
+      "statement": "The council autonomously dispatches a task to >=2 real model adapters, captures, validates, revises, and updates PERT state with zero founder copy/paste."
+    },
+    {
+      "id": "REQ-ES-002",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "ES",
+      "statement": "The dispatch loop is the only spawn point for model CLIs."
+    },
+    {
+      "id": "REQ-ES-003",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "ES",
+      "statement": "The direct-POST model adapter path (OpenAIAdapter.execute) is brought under the spend gate."
+    },
+    {
+      "id": "REQ-ES-004",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "ES",
+      "statement": "The command center serves runtime truth: the council state endpoint is registered and reachable."
+    },
+    {
+      "id": "REQ-GOV-001",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "GOV",
+      "statement": "Exactly one authorization-eligible H1 candidate exists; test and superseded packages can never be authorized."
+    },
+    {
+      "id": "REQ-GOV-002",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "GOV",
+      "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible."
+    },
+    {
+      "id": "REQ-GOV-003",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "GOV",
+      "statement": "Mock or dry-run evidence can never produce frontier quorum, promotion, or safe-to-execute."
+    },
+    {
+      "id": "REQ-GOV-004",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "GOV",
+      "statement": "No external model call or spend can occur outside a gate that can refuse. Missing budget evidence fails closed."
+    },
+    {
+      "id": "REQ-GOV-005",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "GOV",
+      "statement": "No fake green: no completion metric may be emitted from a fallback default, and a missing timestamp may not render as fresh."
+    },
+    {
+      "id": "REQ-GOV-006",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "GOV",
+      "statement": "Every test in the enforcement suites reads real files; no test may substitute a string literal for a file read."
+    },
+    {
+      "id": "REQ-NS-001",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "NS",
+      "statement": "Founder is not the routine transport layer between agents, models, IDEs, or execution systems."
+    },
+    {
+      "id": "REQ-NS-002",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "NS",
+      "statement": "verified_founder_minutes_per_shipped_dollar is measured, not estimated."
+    },
+    {
+      "id": "REQ-TO-001",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "TO",
+      "statement": "A champion product is selected by the authoritative portfolio prioritization process."
+    },
+    {
+      "id": "REQ-TO-002",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "TO",
+      "statement": "The champion product ships to production distribution."
+    },
+    {
+      "id": "REQ-TO-003",
+      "kind": "requirement",
+      "ref": "config/goal_requirements.json",
+      "layer": "TO",
+      "statement": "The full autonomous path from intake to DOORSTEP is proven end to end."
+    }
+  ],
+  "edges": [
+    {
+      "from": "CLAIM-REQ-CP-APP_STORE_CONNECT",
+      "to": "REQ-CP-APP_STORE_CONNECT",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-BUILD",
+      "to": "REQ-CP-BUILD",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-MONETIZATION",
+      "to": "REQ-CP-MONETIZATION",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-PRIVACY",
+      "to": "REQ-CP-PRIVACY",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-SECURITY",
+      "to": "REQ-CP-SECURITY",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-SIGNING_READINESS",
+      "to": "REQ-CP-SIGNING_READINESS",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-STORE_METADATA",
+      "to": "REQ-CP-STORE_METADATA",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-SUBMISSION_PACKAGE",
+      "to": "REQ-CP-SUBMISSION_PACKAGE",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-TEST",
+      "to": "REQ-CP-TEST",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-CP-TESTFLIGHT",
+      "to": "REQ-CP-TESTFLIGHT",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-ES-001",
+      "to": "REQ-ES-001",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-ES-002",
+      "to": "REQ-ES-002",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-ES-003",
+      "to": "REQ-ES-003",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-ES-004",
+      "to": "REQ-ES-004",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-GOV-001",
+      "to": "REQ-GOV-001",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-GOV-002",
+      "to": "REQ-GOV-002",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-GOV-003",
+      "to": "REQ-GOV-003",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-GOV-004",
+      "to": "REQ-GOV-004",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-GOV-005",
+      "to": "REQ-GOV-005",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-GOV-006",
+      "to": "REQ-GOV-006",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-NS-001",
+      "to": "REQ-NS-001",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-NS-002",
+      "to": "REQ-NS-002",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-TO-001",
+      "to": "REQ-TO-001",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-TO-002",
+      "to": "REQ-TO-002",
+      "rel": "asserts"
+    },
+    {
+      "from": "CLAIM-REQ-TO-003",
+      "to": "REQ-TO-003",
+      "rel": "asserts"
+    },
+    {
+      "from": "EV-REQ-CP-APP_STORE_CONNECT",
+      "to": "CLAIM-REQ-CP-APP_STORE_CONNECT",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-BUILD",
+      "to": "CLAIM-REQ-CP-BUILD",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-MONETIZATION",
+      "to": "CLAIM-REQ-CP-MONETIZATION",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-PRIVACY",
+      "to": "CLAIM-REQ-CP-PRIVACY",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-SECURITY",
+      "to": "CLAIM-REQ-CP-SECURITY",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-SIGNING_READINESS",
+      "to": "CLAIM-REQ-CP-SIGNING_READINESS",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-STORE_METADATA",
+      "to": "CLAIM-REQ-CP-STORE_METADATA",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-SUBMISSION_PACKAGE",
+      "to": "CLAIM-REQ-CP-SUBMISSION_PACKAGE",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-TEST",
+      "to": "CLAIM-REQ-CP-TEST",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-CP-TESTFLIGHT",
+      "to": "CLAIM-REQ-CP-TESTFLIGHT",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-ES-001",
+      "to": "CLAIM-REQ-ES-001",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-ES-002",
+      "to": "CLAIM-REQ-ES-002",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-ES-003",
+      "to": "CLAIM-REQ-ES-003",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-ES-004",
+      "to": "CLAIM-REQ-ES-004",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-GOV-001",
+      "to": "CLAIM-REQ-GOV-001",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-GOV-002",
+      "to": "CLAIM-REQ-GOV-002",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-GOV-003",
+      "to": "CLAIM-REQ-GOV-003",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-GOV-004",
+      "to": "CLAIM-REQ-GOV-004",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-GOV-005",
+      "to": "CLAIM-REQ-GOV-005",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-GOV-006",
+      "to": "CLAIM-REQ-GOV-006",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-NS-001",
+      "to": "CLAIM-REQ-NS-001",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-NS-002",
+      "to": "CLAIM-REQ-NS-002",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-TO-001",
+      "to": "CLAIM-REQ-TO-001",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-TO-002",
+      "to": "CLAIM-REQ-TO-002",
+      "rel": "proves"
+    },
+    {
+      "from": "EV-REQ-TO-003",
+      "to": "CLAIM-REQ-TO-003",
+      "rel": "proves"
+    },
+    {
+      "from": "GOAL-CP",
+      "to": "GOAL-NS",
+      "rel": "supports"
+    },
+    {
+      "from": "GOAL-ES",
+      "to": "GOAL-NS",
+      "rel": "supports"
+    },
+    {
+      "from": "GOAL-GOV",
+      "to": "GOAL-NS",
+      "rel": "supports"
+    },
+    {
+      "from": "GOAL-TO",
+      "to": "GOAL-NS",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-APP_STORE_CONNECT",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-APP_STORE_CONNECT",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-BUILD",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-BUILD",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-MONETIZATION",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-MONETIZATION",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-PRIVACY",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-PRIVACY",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-SECURITY",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-SECURITY",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-SIGNING_READINESS",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-SIGNING_READINESS",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-STORE_METADATA",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-STORE_METADATA",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-SUBMISSION_PACKAGE",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-SUBMISSION_PACKAGE",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-TEST",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-TEST",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-CP-TESTFLIGHT",
+      "to": "GOAL-CP",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-CP-TESTFLIGHT",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-ES-001",
+      "to": "GOAL-ES",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-ES-001",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-ES-002",
+      "to": "GOAL-ES",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-ES-002",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-ES-003",
+      "to": "GOAL-ES",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-ES-003",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-ES-004",
+      "to": "GOAL-ES",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-ES-004",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-GOV-001",
+      "to": "GOAL-GOV",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-GOV-001",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-GOV-002",
+      "to": "GOAL-GOV",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-GOV-002",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-GOV-003",
+      "to": "GOAL-GOV",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-GOV-003",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-GOV-004",
+      "to": "GOAL-GOV",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-GOV-004",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-GOV-005",
+      "to": "GOAL-GOV",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-GOV-005",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-GOV-006",
+      "to": "GOAL-GOV",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-GOV-006",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-NS-001",
+      "to": "GOAL-NS",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-NS-002",
+      "to": "GOAL-NS",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-TO-001",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-TO-001",
+      "to": "GOAL-TO",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-TO-002",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-TO-002",
+      "to": "GOAL-TO",
+      "rel": "supports"
+    },
+    {
+      "from": "REQ-TO-003",
+      "to": "GOAL-NS",
+      "rel": "supports_goal"
+    },
+    {
+      "from": "REQ-TO-003",
+      "to": "GOAL-TO",
+      "rel": "supports"
+    }
+  ],
+  "orphans": [],
+  "link_status": {
+    "missing_links": [],
+    "note": "Missing links render UNKNOWN, never PASS"
+  },
+  "coverage": {
+    "goals_with_requirement": 1,
+    "requirements_with_claim": 25,
+    "claims_with_evidence": 25,
+    "orphan_count": 0,
+    "requirement_total": 25,
+    "claim_total": 25,
+    "evidence_total": 25
+  },
+  "provenance": {
+    "generated_at": "2026-07-21T14:38:07Z",
+    "git_commit": null,
+    "binding_state": "PENDING_BASELINE_COMMIT"
+  }
+}

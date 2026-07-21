@@ -1,0 +1,49 @@
+{
+  "schema": "HELM_MISSION_TRACE_INTERFACE_v1",
+  "status": "FROZEN",
+  "frozen_at": "2026-07-21T14:35:00Z",
+  "frozen_by_role": "auditor",
+  "frozen_by_actor": "Grok",
+  "edr": "EDR-0011",
+  "audit_verdict": "docs/evidence/audit/MISSION_TRACE_PHASE1_AUDITOR_VERDICT_20260721.md",
+  "public_contract": {
+    "schema": "HELM_MISSION_TRACE_GRAPH_v1",
+    "schema_version": "1.0",
+    "graph_hash_algorithm": "sha256",
+    "compatibility": "backward-compatible"
+  },
+  "artifact": "coordination/governance/mission_trace_graph.json",
+  "builder": "scripts/goal/build_mission_trace_graph.py",
+  "verifier": "scripts/goal/verify_mission_trace.py",
+  "extension": "backend/helm_runtime/extensions/mission_traceability.py",
+  "rules": {
+    "consumption": "OBSERVE_ONLY until a later EDR/amendment explicitly authorizes consumers",
+    "semantic_stability": "Consumers MUST NOT change graph semantics; they may only read fields under public_contract",
+    "breaking_change": "Requires schema_version bump and new freeze record",
+    "no_goal_requirements_wiring": true,
+    "no_completion_percent": true,
+    "no_prioritization": true,
+    "no_promotion": true
+  },
+  "allowed_next_milestones": [
+    "governed_commit_phase1_artifacts_only",
+    "read_only_mission_control_projection",
+    "read_only_dashboard_card",
+    "read_only_voice_surface"
+  ],
+  "forbidden_until_explicit_approval": [
+    "goal_requirements_registration",
+    "completion_percent_consumer",
+    "prioritization_consumer",
+    "promotion_consumer",
+    "automatic_mav_enforcement_on_commits"
+  ],
+  "reference_graph_hash_at_freeze": "3648caa4ef2583d06f0a11acad8352143f65641ff605f269bdb6954eea8c9734",
+  "note": "reference_graph_hash is the audit-time snapshot; live rebuilds may change hash when goal sources change. Interface contract fields remain stable.",
+  "provenance": {
+    "generated_at": "2026-07-21T14:38:07Z",
+    "git_commit": null,
+    "binding_state": "PENDING_BASELINE_COMMIT",
+    "note": "git_commit is the full 40-character object ID of the Phase 1 baseline commit; filled by post-commit stamp so the identifier is immutable and unambiguous."
+  }
+}
