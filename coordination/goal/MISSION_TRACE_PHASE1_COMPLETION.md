@@ -9,9 +9,9 @@
 
 ```json
 {
-  "generated_at": "2026-07-21T14:38:07Z",
-  "git_commit": null,
-  "binding_state": "PENDING_BASELINE_COMMIT"
+  "generated_at": "2026-07-21T14:38:25Z",
+  "git_commit": "b8a98a9afc62d7454a32714fa0d491aa90477580",
+  "binding_state": "BOUND"
 }
 ```
 
