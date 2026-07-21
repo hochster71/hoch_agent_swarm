@@ -12,8 +12,8 @@ Document Type:              Architecture Doctrine
 Normative Authority:        Founder
 Evidence Authority:         Governance Register + Runtime Evidence
 Normative Revision:         1
-Evidence Snapshot:          Register rev 20
-Last Evidence Regeneration: 2026-07-20T00:00:00Z
+Evidence Snapshot:          Register rev 28
+Last Evidence Regeneration: 2026-07-21 (Traversal 2)
 ```
 
 **Two independent revision streams.** The Normative Revision advances only when the founder
@@ -187,7 +187,12 @@ Build/Verify/Package with a factory that could not execute.
 | Traversal | Date | Result | Notes |
 |---|---|---|---|
 | 1 | 2026-07-20 | Negative | HRF returned `NOT_OPERATIONAL`; blocker classified; remediation routed to HASF. |
-| 2 | — | — | Recorded after the next governed execution. |
+| 2 | 2026-07-21 | Positive | `OPERATIONAL_PROVEN`. All 4 declared components executed; offline validator passed. $0.001438. |
+| 3 | — | — | Recorded after the next governed execution. |
+
+Traversal 2 closed the blocker Traversal 1 classified — by building the missing runtime
+(HRF-RUNTIME-001), not by revising the finding. The loop's remediation edge has now been
+walked end to end. Evidence: `coordination/evidence/hrf_traversals/traversal_002.json`.
 
 **Append only.** A negative traversal is never removed once a positive one is recorded.
 This log makes the orchestration model falsifiable over time: if later traversals succeed,
@@ -209,20 +214,29 @@ log that only accumulates successes would be a marketing artifact.
 
 ---
 
-## 3. Current Evidence — EVIDENTIARY, as of 2026-07-20
+## 3. Current Evidence — EVIDENTIARY, as of 2026-07-21
 
 ### Demonstrated
 
 - Runtime truth doctrine established
-- Governance register through rev 19
+- Governance register through rev 28
 - Evidence-first methodology (challenge → re-verify → record)
 - `presence ≠ capability` control family identified across four independent controls
 - Executable governance lifecycle (`governance_states.py`, state derived not declared)
-- Failure branch exercised in practice (HRF proof halted correctly)
+- Failure branch exercised in practice (Traversal 1 halted correctly)
+- **Remediation branch closed** — Traversal 2 `OPERATIONAL_PROVEN` after HRF-RUNTIME-001
+- **Governed HRF execution path** — intake, 3 roles, offline validator, budget,
+  `SANDBOX_STRICT`, provenance; 20 tests asserting it cannot report unobserved success
+- **Independent verification implemented, not just documented** — the Evidence Auditor
+  runs on a different model (grok) than Researcher and Synthesis Writer (llama3.2), and
+  the fact-check validator is offline and deterministic (ARCH-001 Level 2 in the runtime)
+- Canonical repository history established and published (`ebad74ec`)
 
 ### Not Yet Demonstrated
 
-- Operational HRF
+- HRF **reliability** — capability shown once; behaviour under repeated execution, load,
+  adversarial input, and model outage is UNKNOWN
+- HRF correctness for mission types other than the one exercised
 - Validated promotion controls (0 of 5)
 - End-to-end autonomous delegation
 - Complete actor attribution
@@ -235,10 +249,16 @@ Mission completion              90.0% (9/10)
 Agent-controllable              UNKNOWN
 Promotion-control validation     0.0% (0/5)
 Promotion                       HOLD
-HRF capability                  NOT_OPERATIONAL
+HRF capability                  OPERATIONAL_PROVEN (1 traversal; reliability UNKNOWN)
+HRF registry readiness          DEGRADED — deliberately untouched by Traversal 2
 Council participation           NOT AUTHORIZED
-Working factories               1 of 8 (HASF)
+Working factories               1 of 8 verified (HASF) + HRF path proven once
 ```
+
+**Registry state was not derived from this run.** `readiness_basis` still reads
+`on_disk=True`. Producing execution evidence and updating registry-derived readiness are
+separate operations; collapsing them would reintroduce exactly the proxy-for-property
+defect GOV-017 recorded.
 
 ### The gap, stated plainly
 

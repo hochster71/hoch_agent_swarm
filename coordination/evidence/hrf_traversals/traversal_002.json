@@ -1,0 +1,108 @@
+{
+  "run_id": "c97d56dc-dedf-4c0d-b0dd-114c21a97dec",
+  "factory": "HRF",
+  "started_at": "2026-07-21T10:54:21Z",
+  "finished_at": "2026-07-21T10:55:46Z",
+  "outcome": "OPERATIONAL_PROVEN",
+  "halted_reason": null,
+  "steps": [
+    {
+      "component": "Researcher",
+      "executed": true,
+      "ok": true,
+      "detail": "",
+      "cost_usd": 0.0,
+      "model": "llama3.2:3b",
+      "output_sha256": "5c63e0e6de225ac48520a36bb316e78cc324f4cbc8a62de3a2beda775e139c37",
+      "at": "2026-07-21T10:55:32Z"
+    },
+    {
+      "component": "Evidence Auditor",
+      "executed": true,
+      "ok": true,
+      "detail": "",
+      "cost_usd": 0.001438,
+      "model": "grok (xai)",
+      "output_sha256": "aa5a4ed30a4c689e9e111fae88736b01ef42df154b3ab0ab154f57fbaf898df5",
+      "at": "2026-07-21T10:55:45Z"
+    },
+    {
+      "component": "Synthesis Writer",
+      "executed": true,
+      "ok": true,
+      "detail": "",
+      "cost_usd": 0.0,
+      "model": "llama3.2:3b",
+      "output_sha256": "f9a172b285d965b324a8e05f0687622d0efa5b372030f7ed94be6f82b82fb85c",
+      "at": "2026-07-21T10:55:46Z"
+    },
+    {
+      "component": "fact_check_verifier",
+      "executed": true,
+      "ok": true,
+      "detail": "",
+      "cost_usd": 0.0,
+      "model": "",
+      "output_sha256": "",
+      "at": "2026-07-21T10:55:46Z"
+    }
+  ],
+  "verifier": {
+    "passed": true,
+    "findings": [],
+    "checked_unsupported": 0
+  },
+  "total_cost_usd": 0.001438,
+  "components_declared": [
+    "Researcher",
+    "Evidence Auditor",
+    "Synthesis Writer",
+    "fact_check_verifier"
+  ],
+  "components_executed": [
+    "Researcher",
+    "Evidence Auditor",
+    "Synthesis Writer",
+    "fact_check_verifier"
+  ],
+  "provenance": {
+    "run_id": "c97d56dc-dedf-4c0d-b0dd-114c21a97dec",
+    "content_hash": "6f9b233fe2964c0bc2886e42201d7280c417dd6c2795dd7606dc0b3792b17133",
+    "schema_version": "HRF_RUN_EVIDENCE_v1",
+    "generated_by": "backend.helm_runtime.hrf_runtime.run",
+    "generated_at": "2026-07-21T10:55:46Z",
+    "canonicalization": "json.dumps(sort_keys=True,default=str)",
+    "proof_record": {
+      "authorized": {
+        "authority": "HRF-RUNTIME-001",
+        "decision_id": "c97d56dc-dedf-4c0d-b0dd-114c21a97dec",
+        "gate": "govern_decision"
+      },
+      "explanation": "HRF governed run -> OPERATIONAL_PROVEN",
+      "trace": {
+        "correlation_id": "c97d56dc-dedf-4c0d-b0dd-114c21a97dec",
+        "input_digests": [
+          "sha256:f06e9d283ddb16e32c4c3fe9d419eda5481c7f0d049e5abf5af597eebc7249f6"
+        ]
+      },
+      "proven": {
+        "proof_command": "backend.helm_runtime.hrf_runtime.run",
+        "exit_code": 0,
+        "evidence_hash": "sha256:06df40934569c3a8473ba50e7922f18898b5b5badbb14ca29e5f42cd0e42c10d"
+      },
+      "reproducibility": {
+        "tested_commit": "ebad74ecf7f9de54775b82cf25e40a5e9faf639f",
+        "environment": "local_only"
+      },
+      "evidence_class": "DERIVED",
+      "audit": {
+        "record_hash": "sha256:a3011f8465d311e5cc34dceba5b9fbb89382cef96aa210a429cba304a33440cd",
+        "prev_hash": null
+      }
+    }
+  },
+  "traversal_number": 2,
+  "mission": "Determine the authoritative provenance contract for generated HELM state artifacts",
+  "implements": "HRF-RUNTIME-001",
+  "closes_finding": "GOV-017 (implementation gap) \u2014 for the EXERCISED path only"
+}
