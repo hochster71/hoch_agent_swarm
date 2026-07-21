@@ -288,3 +288,110 @@ def test_integrity_not_presence_only(ledger_path: Path):
     integrity = eng.verify_closed_loop_ledger_integrity(ledger_path)
     assert integrity["status"] != "VERIFIED_INTEGRITY"
     assert integrity["chain_verified"] is False
+
+
+def _mp_ledger_worker(ledger: str, wid: int, m: int) -> None:
+    """Independent process using production append_closed_loop_ledger_entry."""
+    import scripts.helm_assurance_engine as hae
+    from pathlib import Path
+
+    hae.CLOSED_LOOP_LEDGER_PATH = Path(ledger)
+    for j in range(m):
+        hae.append_closed_loop_ledger_entry(
+            worker_id=f"P{wid}-A{j}",
+            evaluation_digest_sha256="d" * 64,
+            graph_manifest_sha256="g" * 64,
+            policy_version="2.2",
+            reasoning_model="2.2",
+            canonicalization={"spec": "RFC8785"},
+            produced_artifacts=[],
+            refreshed_telemetry=[],
+            previous_confidence_score=0.1,
+            new_confidence_score=0.2,
+            previous_status="REDUCED",
+            new_status="REDUCED",
+            evidence_snapshot=["E1"],
+            technical_authorization={"ok": True},
+            operational_authorization={"ok": False},
+        )
+
+
+def test_multiprocess_production_append_api(ledger_path: Path):
+    """N separate OS processes → same ledger → production append API.
+
+    Thread stress is not final concurrency proof; this is the flock deployment model.
+    """
+    import multiprocessing
+
+    n, m = 12, 4
+    expected = n * m
+    procs = [
+        multiprocessing.Process(target=_mp_ledger_worker, args=(str(ledger_path), i, m))
+        for i in range(n)
+    ]
+    for p in procs:
+        p.start()
+    for p in procs:
+        p.join(timeout=60)
+        assert p.exitcode == 0
+
+    lines = [ln for ln in ledger_path.read_text().splitlines() if ln.strip()]
+    assert len(lines) == expected
+    records = [json.loads(ln) for ln in lines]
+    assert len({r["transaction_id"] for r in records}) == expected
+
+    prev = "GENESIS_ROOT"
+    for r in records:
+        assert r["previous_transaction_hash"] == prev
+        prev = r["current_transaction_hash"]
+
+    integrity = eng.verify_closed_loop_ledger_integrity(ledger_path)
+    assert integrity["status"] == "VERIFIED_INTEGRITY"
+    assert integrity["chain_verified"] is True
+    assert not integrity.get("parse_errors")
+
+    replay = eng.replay_closed_loop_ledger(ledger_path)
+    assert replay["replay_status"] == "DETERMINISTIC_REPLAY_SUCCESS"
+    assert replay["total_chained_transactions"] == expected
+
+
+def test_extended_burnin_thousands_of_appends(ledger_path: Path):
+    """Longer operational evidence: thousands of appends + integrity + replay + fault re-check.
+
+    Methodology unchanged from short burn-in; only scale. Default 2000 for CI time;
+    set HELM_LEDGER_BURNIN_N for tens of thousands in overnight runs.
+    """
+    import os
+
+    n = int(os.environ.get("HELM_LEDGER_BURNIN_N", "2000"))
+    for i in range(n):
+        _append(f"L{i}")
+
+    integrity = eng.verify_closed_loop_ledger_integrity(ledger_path)
+    assert integrity["status"] == "VERIFIED_INTEGRITY"
+    assert integrity["total_transactions"] == n
+    assert integrity["chain_verified"] is True
+
+    replay = eng.replay_closed_loop_ledger(ledger_path)
+    assert replay["replay_status"] == "DETERMINISTIC_REPLAY_SUCCESS"
+    assert replay["total_chained_transactions"] == n
+
+    # Same tamper checks after long run
+    lines = ledger_path.read_text().splitlines()
+    rec = json.loads(lines[n // 2])
+    rec["current_transaction_hash"] = "a" * 64
+    lines[n // 2] = json.dumps(rec)
+    torn_path = ledger_path.with_name("post_burnin_tampered.jsonl")
+    torn_path.write_text("\n".join(lines) + "\n")
+    ti = eng.verify_closed_loop_ledger_integrity(torn_path)
+    assert ti["status"] == "HASH_CHAIN_BROKEN"
+
+
+def test_filesystem_deployment_assumptions_documented():
+    """Supported storage assumptions are explicit (local APFS/ext4/xfs; not NFS-by-default)."""
+    a = eng.FILESYSTEM_DEPLOYMENT_ASSUMPTIONS
+    assert a["supported_storage_scope"] == "LOCAL_POSIX_COMPLIANT_FS_ONLY"
+    assert "apfs" in a["supported_filesystems"]
+    assert "ext4" in a["supported_filesystems"]
+    assert "nfs" in a["unsupported_until_separately_validated"]
+    assert "INTER_PROCESS" in a["concurrency_guarantee"]

@@ -34,6 +34,45 @@ sys.path.insert(0, str(ROOT))
 
 CLOSED_LOOP_LEDGER_PATH = ROOT / "coordination" / "governance" / "closed_loop_execution_ledger.jsonl"
 
+FILESYSTEM_DEPLOYMENT_ASSUMPTIONS: Dict[str, Any] = {
+    "supported_storage_scope": "LOCAL_POSIX_COMPLIANT_FS_ONLY",
+    "required_primitives": [
+        "fcntl_flock_ex_advisory_locking",
+        "atomic_append_open_mode_a",
+        "kernel_page_cache_fsync",
+    ],
+    # Validated intent: local developer/server disks (macOS APFS; Linux ext4/xfs/btrfs).
+    "supported_filesystems": ["apfs", "ext4", "xfs", "btrfs"],
+    "unsupported_until_separately_validated": {
+        "nfs": "Advisory flock semantics differ / may be non-local; validate before production",
+        "smb_cifs": "Locking not equivalent to local POSIX flock; validate before production",
+        "fuse_cloud_bucket": "Object-store mounts are not a single coherent append log",
+        "shared_container_volume_remote": "Depends on host FS + runtime; validate per deploy",
+        "distributed_storage": "Out of scope for current ledger; requires different design",
+    },
+    "concurrency_guarantee": "INTER_PROCESS_FLOCK_MUTEX_LOCKING_REQUIRED",
+    "advisory_lock_note": (
+        "flock/fcntl only protects writers that honor the same protocol. "
+        "Thread stress is useful but not final proof; multi-process tests exercise "
+        "the intended deployment model (independent processes, same ledger path)."
+    ),
+    "obsolescence": "Re-validate locks + fsync if storage backend changes.",
+}
+
+
+def reject_duplicate_json_keys(pairs: List[Tuple[str, Any]]) -> Dict[str, Any]:
+    """I-JSON / RFC 8785-aligned: reject duplicate property names at parse time.
+
+    Using object_pairs_hook means duplicates are detected before Python collapses
+    them into a dict (post-construction detection is ambiguous).
+    """
+    d: Dict[str, Any] = {}
+    for k, v in pairs:
+        if k in d:
+            raise ValueError(f"Duplicate key detected: {k}")
+        d[k] = v
+    return d
+
 class ScopeAlignment:
     EXACT_MATCH = "EXACT_MATCH"
     PARTIAL_MATCH = "PARTIAL_MATCH"
@@ -1798,16 +1837,12 @@ def verify_jcs_conformance_vectors() -> Dict[str, Any]:
         rejection_reason = "NONE"
 
         if "raw_json" in neg:
-            # Check duplicate keys / surrogates
+            # Check duplicate keys / surrogates at parser layer (object_pairs_hook)
             try:
-                def reject_duplicates(pairs):
-                    d = {}
-                    for k, v in pairs:
-                        if k in d:
-                            raise ValueError(f"Duplicate key detected: {k}")
-                        d[k] = v
-                    return d
-                parsed = json.loads(neg["raw_json"], object_pairs_hook=reject_duplicates)
+                parsed = json.loads(
+                    neg["raw_json"],
+                    object_pairs_hook=reject_duplicate_json_keys,
+                )
                 if "\uD800" in neg["raw_json"] or r"\uD800" in neg["raw_json"]:
                     parsed["text"].encode("utf-8")
             except ValueError as err:
