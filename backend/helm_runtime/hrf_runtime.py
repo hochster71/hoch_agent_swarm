@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -48,6 +49,27 @@ def _sha(obj: Any) -> str:
     ).hexdigest()
 
 
+# HRF-DEFECT-002 (Traversal 3, 2026-07-21). Provider CLIs emit ANSI/OSC control sequences
+# and spinner frames on stderr ("pulling manifest ⠋"). Those landed verbatim in StepRecord
+# .detail, which is hashed into provenance — so two semantically identical failures could
+# produce DIFFERENT content hashes depending on terminal configuration. That is hashing
+# presentation, not evidence. Canonicalise BEFORE hashing:
+#     tool output -> normalise -> strip control sequences -> canonical evidence -> hash
+_ANSI = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~]|\][^\x07\x1B]*(?:\x07|\x1B\\))")
+_SPINNER = re.compile(r"[⠀-⣿─-╿■-◿]+")
+
+
+def canonicalize_detail(text: Any, *, limit: int = 200) -> str:
+    """Strip terminal control sequences and collapse whitespace. Deterministic: identical
+    failures must yield identical evidence regardless of how they were rendered."""
+    s = "" if text is None else str(text)
+    s = _ANSI.sub("", s)
+    s = _SPINNER.sub("", s)
+    s = s.replace("\r", "\n")
+    s = " ".join(s.split())
+    return s[:limit]
+
+
 class Outcome(str, Enum):
     """The five founder-specified classes. UNKNOWN is a real answer, not a placeholder."""
 
@@ -64,11 +86,18 @@ class SandboxViolation(RuntimeError):
 
 @dataclass
 class StepRecord:
-    """One observed execution. Immutable evidence (ARCH-002) — callers append, never edit."""
+    """One observed execution. Immutable evidence (ARCH-002) — callers append, never edit.
+
+    HRF-DEFECT-001 (Traversal 3): `executed` alone cannot distinguish a role that RAN AND
+    FAILED from one that NEVER RAN — both were recorded executed=True, collapsing 'no
+    progress' into 'some progress'. `produced_output` records whether the step actually
+    contributed usable work, which is what progress classification needs.
+    """
 
     component: str
     executed: bool
     ok: bool
+    produced_output: bool = False
     detail: str = ""
     cost_usd: float = 0.0
     model: str = ""
@@ -186,16 +215,26 @@ def _classify(steps: List[StepRecord], verifier: Optional[Dict[str, Any]],
               halted: Optional[str]) -> Outcome:
     """DERIVED. There is deliberately no way to assert an outcome directly.
 
-    OPERATIONAL_PROVEN requires: nothing halted, every declared component executed and
-    succeeded, and the validator passed. Anything less is reported as what it was.
+    HRF-DEFECT-001 REPAIR (Traversal 3, 2026-07-21). The prior version keyed on `executed`,
+    but a role that ran and failed also sets executed=True — so the NOT_OPERATIONAL branch
+    was unreachable and every degraded run collapsed to PARTIAL, whether it completed
+    two-thirds of the work or none of it. Classification now keys on OBSERVED PROGRESS:
+
+        no progress      -> NOT_OPERATIONAL   attempted, produced nothing usable
+        some progress    -> PARTIAL
+        full progress    -> OPERATIONAL_PROVEN (only with a passing validator)
+
+    "Attempted" is not "progressed". That distinction is invisible under cooperative
+    execution and only appeared under real degradation.
     """
     if halted:
         return Outcome.BLOCKED
     if not steps:
         return Outcome.UNKNOWN
-    executed = [s for s in steps if s.executed]
-    if not executed:
-        return Outcome.NOT_OPERATIONAL
+    if not any(s.executed for s in steps):
+        return Outcome.UNKNOWN          # nothing was even attempted — we observed nothing
+    if not any(s.produced_output for s in steps):
+        return Outcome.NOT_OPERATIONAL  # attempted, zero usable output
     if verifier is None:
         return Outcome.PARTIAL
     if all(s.executed and s.ok for s in steps) and verifier.get("passed") is True:
@@ -241,7 +280,9 @@ def run(payload: Dict[str, Any], *, factory_id: str = "HRF",
             budget.record(res.get("cost") or 0.0)
             steps.append(StepRecord(
                 component=role, executed=True, ok=ok,
-                detail="" if ok else str(res.get("message") or res.get("status") or "")[:200],
+                produced_output=bool(ok and text),   # ran+failed != produced work
+                detail="" if ok else canonicalize_detail(
+                    res.get("message") or res.get("status") or ""),
                 cost_usd=float(res.get("cost") or 0.0), model=str(res.get("model") or ""),
                 output_sha256=_sha(text),
             ))
@@ -256,7 +297,8 @@ def run(payload: Dict[str, Any], *, factory_id: str = "HRF",
             )
             steps.append(StepRecord(
                 component="fact_check_verifier", executed=True,
-                ok=bool(verifier["passed"]), detail="; ".join(verifier["findings"]),
+                ok=bool(verifier["passed"]), produced_output=True,
+                detail=canonicalize_detail("; ".join(verifier["findings"])),
             ))
     except SandboxViolation as e:
         halted = str(e)

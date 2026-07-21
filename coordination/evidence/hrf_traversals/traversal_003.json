@@ -1,0 +1,94 @@
+{
+  "traversal_number": 3,
+  "date": "2026-07-21",
+  "evidence_class": "DEGRADED_INFRASTRUCTURE",
+  "question": "Can HRF remain evidence-correct when one execution assumption is intentionally violated?",
+  "method": "REAL degradation via unreachable models (env), not mocked failures",
+  "result": "MIXED \u2014 safety properties held; two implementation defects exposed",
+  "held": [
+    "no degraded run reported OPERATIONAL_PROVEN",
+    "each run halted at first failure rather than continuing on empty output",
+    "provenance emitted on every run including failures",
+    "verifier correctly None (never ran) rather than a passing verdict on nothing"
+  ],
+  "defects_found": [
+    "HRF-DEFECT-001 classification conflates tried-and-failed with never-ran",
+    "HRF-DEFECT-002 ANSI control codes contaminate detail -> provenance hash"
+  ],
+  "cases": [
+    {
+      "case": "3a_auditor_model_unreachable",
+      "violated": [
+        "HELM_COUNCIL_PROVIDER_AUDITOR",
+        "HELM_COUNCIL_MODEL_AUDITOR"
+      ],
+      "outcome": "PARTIAL",
+      "halted": null,
+      "executed": [
+        "Researcher",
+        "Evidence Auditor"
+      ],
+      "steps": [
+        {
+          "c": "Researcher",
+          "ok": true,
+          "m": "llama3.2:3b",
+          "d": ""
+        },
+        {
+          "c": "Evidence Auditor",
+          "ok": false,
+          "m": "does-not-exist:0b",
+          "d": "\u001b[?2026h\u001b[?25l\u001b[1Gpulling manifest \u280b \u001b[K\u001b[?25h\u001b[?2026l\u001b[?2026h\u001b[?25l\u001b[1Gpulling "
+        }
+      ],
+      "verifier": null,
+      "provenance_present": true
+    },
+    {
+      "case": "3b_researcher_model_unreachable",
+      "violated": [
+        "HELM_COUNCIL_MODEL_LOCAL"
+      ],
+      "outcome": "PARTIAL",
+      "halted": null,
+      "executed": [
+        "Researcher"
+      ],
+      "steps": [
+        {
+          "c": "Researcher",
+          "ok": false,
+          "m": "does-not-exist:0b",
+          "d": "\u001b[?2026h\u001b[?25l\u001b[1Gpulling manifest \u280b \u001b[K\u001b[?25h\u001b[?2026l\u001b[?2026h\u001b[?25l\u001b[1Gpulling "
+        }
+      ],
+      "verifier": null,
+      "provenance_present": true
+    },
+    {
+      "case": "3c_all_models_unreachable",
+      "violated": [
+        "HELM_COUNCIL_PROVIDER_AUDITOR",
+        "HELM_COUNCIL_MODEL_AUDITOR",
+        "HELM_COUNCIL_MODEL_LOCAL",
+        "HELM_COUNCIL_MODEL_DEFAULT"
+      ],
+      "outcome": "PARTIAL",
+      "halted": null,
+      "executed": [
+        "Researcher"
+      ],
+      "steps": [
+        {
+          "c": "Researcher",
+          "ok": false,
+          "m": "does-not-exist:0b",
+          "d": "\u001b[?2026h\u001b[?25l\u001b[1Gpulling manifest \u280b \u001b[K\u001b[?25h\u001b[?2026l\u001b[?2026h\u001b[?25l\u001b[1Gpulling "
+        }
+      ],
+      "verifier": null,
+      "provenance_present": true
+    }
+  ]
+}

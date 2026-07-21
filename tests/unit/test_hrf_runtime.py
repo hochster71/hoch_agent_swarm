@@ -189,3 +189,89 @@ def test_run_does_not_write_readiness_or_health():
     run(GOOD, dispatch=_fake([_ok("a"), _ok("a SUPPORTED"), _ok("b")]))
     after = (ROOT / "coordination/council/factory_registry.json").read_bytes()
     assert before == after
+
+
+# =============================================================================
+# TRAVERSAL 3 REGRESSIONS (2026-07-21)
+# Both defects were unreachable by the tests above: stubs return CLEAN failures, real
+# degradation returns dirty ones. These test the two hypotheses the repair asserts.
+# =============================================================================
+
+from backend.helm_runtime.hrf_runtime import canonicalize_detail  # noqa: E402
+
+
+# --- HRF-DEFECT-001 — classification reflects observed PROGRESS, not attempts ---
+
+def test_attempted_but_zero_output_is_NOT_OPERATIONAL_not_PARTIAL():
+    """T3 case 3b/3c: the first role ran and failed. Nothing usable was produced.
+    Reporting PARTIAL would claim progress that did not occur."""
+    d = _fake([{"ok": False, "status": "GATEWAY_ERROR", "message": "model absent"}])
+    r = run(GOOD, dispatch=d)
+    assert r["outcome"] == Outcome.NOT_OPERATIONAL.value
+
+
+def test_some_progress_then_failure_is_PARTIAL():
+    """T3 case 3a: Researcher produced work, Auditor failed. Materially different from
+    3b/3c — and must no longer classify identically."""
+    d = _fake([_ok("1. claim A"), {"ok": False, "status": "GATEWAY_ERROR", "message": "down"}])
+    r = run(GOOD, dispatch=d)
+    assert r["outcome"] == Outcome.PARTIAL.value
+
+
+def test_3a_and_3b_no_longer_collapse_to_the_same_class():
+    """The defect in one line: two runs with different amounts of completed work must not
+    receive the same classification."""
+    partial = run(GOOD, dispatch=_fake([_ok("work"), {"ok": False, "message": "x"}]))
+    none = run(GOOD, dispatch=_fake([{"ok": False, "message": "x"}]))
+    assert partial["outcome"] != none["outcome"]
+
+
+def test_ok_but_empty_output_does_not_count_as_progress():
+    """A provider can return ok with empty text. Empty output is not work."""
+    r = run(GOOD, dispatch=_fake([{"ok": True, "text": "", "cost": 0.0}]))
+    assert r["outcome"] == Outcome.NOT_OPERATIONAL.value
+
+
+def test_produced_output_is_recorded_per_step():
+    r = run(GOOD, dispatch=_fake([_ok("a"), {"ok": False, "message": "x"}]))
+    assert r["steps"][0]["produced_output"] is True
+    assert r["steps"][1]["produced_output"] is False
+
+
+# --- HRF-DEFECT-002 — provenance must not depend on terminal formatting ---
+
+DIRTY = "\x1b[?2026h\x1b[?25l\x1b[1G\x1b[K\x1b[?25h model not found"
+# Same message, rendered with terminal decoration. NOTE the test below was initially
+# written comparing a decorated message that ALSO carried extra provider chatter
+# ("pulling manifest") against a plain one, and failed — correctly. Those are not the
+# same failure: one contains additional real output. canonicalize_detail removes
+# PRESENTATION, not content. Stripping provider progress text by pattern would be
+# discarding evidence, so it deliberately does not.
+
+
+def test_ansi_and_spinner_frames_are_stripped():
+    c = canonicalize_detail(DIRTY)
+    assert "\x1b" not in c and "⠋" not in c
+    assert "model not found" in c
+
+
+def test_identical_failures_hash_identically_regardless_of_rendering():
+    """THE hypothesis. Two semantically identical failures, one rendered with terminal
+    control codes — provenance must not diverge on presentation."""
+    clean = run(GOOD, dispatch=_fake([{"ok": False, "message": "model not found"}]))
+    dirty = run(GOOD, dispatch=_fake([{"ok": False, "message": DIRTY}]))
+    assert clean["steps"][0]["detail"] == dirty["steps"][0]["detail"]
+
+
+def test_canonicalize_is_idempotent():
+    once = canonicalize_detail(DIRTY)
+    assert canonicalize_detail(once) == once
+
+
+def test_canonicalize_collapses_whitespace_and_carriage_returns():
+    assert canonicalize_detail("a\r\n  b\t\tc") == "a b c"
+
+
+def test_canonicalize_handles_none_and_non_string():
+    assert canonicalize_detail(None) == ""
+    assert canonicalize_detail(1234) == "1234"

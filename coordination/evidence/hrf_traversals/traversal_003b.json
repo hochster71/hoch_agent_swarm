@@ -1,0 +1,84 @@
+{
+  "traversal_number": "3b",
+  "date": "2026-07-21",
+  "evidence_class": "REPAIR_CONFIRMATION",
+  "relationship_to_003": "SEPARATE EXPERIMENT. traversal_003.json records the PRE-REPAIR observation and is NOT superseded. Observations accumulate; they are not corrected.",
+  "hypotheses_stated_before_run": {
+    "H1": "classification reflects observed PROGRESS: 3a->PARTIAL, 3b/3c->NOT_OPERATIONAL",
+    "H2": "provenance independent of terminal presentation: no ANSI/spinner in detail"
+  },
+  "result": "BOTH CONFIRMED",
+  "H1_confirmed": true,
+  "H2_confirmed": true,
+  "repairs_validated": [
+    "HRF-DEFECT-001 progress-based classification",
+    "HRF-DEFECT-002 canonicalize_detail before hashing"
+  ],
+  "incidental_finding": {
+    "id": "HRF-OBS-003",
+    "observed": "degraded-path completion latency under unreachable-model conditions is nondeterministic",
+    "evidence": "T3b ran ~45min vs ~1min cooperative path; T3 pre-repair completed faster with identical degradation",
+    "cause": "UNKNOWN",
+    "possible_contributors": [
+      "ollama retry/backoff",
+      "transport timeout policy",
+      "provider resolution",
+      "HRF timeout config"
+    ],
+    "NOT_inferred": "HRF performance regression \u2014 the repair changed classification and string handling, not dispatch",
+    "status": "OPEN \u2014 needs its own hypothesis"
+  },
+  "cases": [
+    {
+      "case": "3a_auditor_unreachable",
+      "expected": "PARTIAL",
+      "observed": "PARTIAL",
+      "H1_progress_class": true,
+      "H2_no_control_codes": true,
+      "steps": [
+        {
+          "c": "Researcher",
+          "ok": true,
+          "produced_output": true,
+          "detail": ""
+        },
+        {
+          "c": "Evidence Auditor",
+          "ok": false,
+          "produced_output": false,
+          "detail": "pulling manifest pulling manifest Error: pull model manifest: file doe"
+        }
+      ]
+    },
+    {
+      "case": "3b_researcher_unreachable",
+      "expected": "NOT_OPERATIONAL",
+      "observed": "NOT_OPERATIONAL",
+      "H1_progress_class": true,
+      "H2_no_control_codes": true,
+      "steps": [
+        {
+          "c": "Researcher",
+          "ok": false,
+          "produced_output": false,
+          "detail": "pulling manifest pulling manifest Error: pull model manifest: file doe"
+        }
+      ]
+    },
+    {
+      "case": "3c_all_unreachable",
+      "expected": "NOT_OPERATIONAL",
+      "observed": "NOT_OPERATIONAL",
+      "H1_progress_class": true,
+      "H2_no_control_codes": true,
+      "steps": [
+        {
+          "c": "Researcher",
+          "ok": false,
+          "produced_output": false,
+          "detail": "pulling manifest Error: pull model manifest: file does not exist"
+        }
+      ]
+    }
+  ]
+}

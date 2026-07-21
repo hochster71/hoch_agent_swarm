@@ -12,8 +12,8 @@ Document Type:              Architecture Doctrine
 Normative Authority:        Founder
 Evidence Authority:         Governance Register + Runtime Evidence
 Normative Revision:         1
-Evidence Snapshot:          Register rev 28
-Last Evidence Regeneration: 2026-07-21 (Traversal 2)
+Evidence Snapshot:          Register rev 29
+Last Evidence Regeneration: 2026-07-21 (Traversal 3b)
 ```
 
 **Two independent revision streams.** The Normative Revision advances only when the founder
@@ -188,7 +188,14 @@ Build/Verify/Package with a factory that could not execute.
 |---|---|---|---|
 | 1 | 2026-07-20 | Negative | HRF returned `NOT_OPERATIONAL`; blocker classified; remediation routed to HASF. |
 | 2 | 2026-07-21 | Positive | `OPERATIONAL_PROVEN`. All 4 declared components executed; offline validator passed. $0.001438. |
-| 3 | — | — | Recorded after the next governed execution. |
+| 3 | 2026-07-21 | Mixed | Degraded infrastructure. Safety properties held; exposed HRF-DEFECT-001 (progress vs. attempt) and -002 (ANSI in provenance hash). |
+| 3b | 2026-07-21 | Positive | Repair confirmation. Both hypotheses held live: progress-based classification, provenance invariant to terminal formatting. |
+| 4 | — | — | Recorded after the next governed execution. |
+
+Traversal 3 is recorded as a **success that found defects** — those are not in tension. It
+exercised a failure class cooperative runs cannot reach, and the model got richer as a
+result. Traversal 3b is a **separate experiment**, not a correction: `traversal_003.json`
+retains the pre-repair observation permanently.
 
 Traversal 2 closed the blocker Traversal 1 classified — by building the missing runtime
 (HRF-RUNTIME-001), not by revising the finding. The loop's remediation edge has now been
@@ -219,7 +226,7 @@ log that only accumulates successes would be a marketing artifact.
 ### Demonstrated
 
 - Runtime truth doctrine established
-- Governance register through rev 28
+- Governance register through rev 29
 - Evidence-first methodology (challenge → re-verify → record)
 - `presence ≠ capability` control family identified across four independent controls
 - Executable governance lifecycle (`governance_states.py`, state derived not declared)
@@ -230,12 +237,16 @@ log that only accumulates successes would be a marketing artifact.
 - **Independent verification implemented, not just documented** — the Evidence Auditor
   runs on a different model (grok) than Researcher and Synthesis Writer (llama3.2), and
   the fact-check validator is offline and deterministic (ARCH-001 Level 2 in the runtime)
-- Canonical repository history established and published (`ebad74ec`)
+- Canonical repository history established and published (`dcb0338b`)
+- **Degraded-execution safety** — under real model unavailability the runtime never
+  reported `OPERATIONAL_PROVEN`, halted at first failure, and emitted provenance on
+  every failed run (T3, confirmed T3b)
 
 ### Not Yet Demonstrated
 
 - HRF **reliability** — capability shown once; behaviour under repeated execution, load,
-  adversarial input, and model outage is UNKNOWN
+  and adversarial input is UNKNOWN. Model-outage behaviour is now PARTIALLY characterised
+  (T3/T3b): classification and provenance hold; **latency does not** (HRF-OBS-003, OPEN)
 - HRF correctness for mission types other than the one exercised
 - Validated promotion controls (0 of 5)
 - End-to-end autonomous delegation
@@ -249,7 +260,9 @@ Mission completion              90.0% (9/10)
 Agent-controllable              UNKNOWN
 Promotion-control validation     0.0% (0/5)
 Promotion                       HOLD
-HRF capability                  OPERATIONAL_PROVEN (1 traversal; reliability UNKNOWN)
+HRF capability                  OPERATIONAL_PROVEN (1 cooperative traversal)
+HRF degraded behaviour          SAFE — classification + provenance confirmed (T3b)
+HRF degraded latency            NONDETERMINISTIC — HRF-OBS-003 OPEN, cause UNKNOWN
 HRF registry readiness          DEGRADED — deliberately untouched by Traversal 2
 Council participation           NOT AUTHORIZED
 Working factories               1 of 8 verified (HASF) + HRF path proven once
