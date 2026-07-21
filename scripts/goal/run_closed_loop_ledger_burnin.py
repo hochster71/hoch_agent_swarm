@@ -206,8 +206,13 @@ def checkpoint_verify(
     expected_count: int,
     lock_failures: int,
     recovery_events: int,
+    checkpoint_number: int,
+    checkpoint_at: int,
+    elapsed_runtime_s: float,
+    provenance: Dict[str, Any],
+    run_id: str,
 ) -> Dict[str, Any]:
-    """Run the same invariant suite at a growth checkpoint."""
+    """Run the same invariant suite at a growth checkpoint — full structured audit record."""
     t0 = time.perf_counter()
     integrity = eng.verify_closed_loop_ledger_integrity(ledger)
     t_integrity = time.perf_counter() - t0
@@ -220,42 +225,99 @@ def checkpoint_verify(
     malformed = len(parse_errors)
     chain_ok = bool(integrity.get("chain_verified"))
     record_count = int(integrity.get("total_transactions") or 0)
+    ledger_size = ledger.stat().st_size if ledger.exists() else 0
 
-    status_ok = (
-        integrity.get("status") == "VERIFIED_INTEGRITY"
-        and replay.get("replay_status") == "DETERMINISTIC_REPLAY_SUCCESS"
-        and record_count == expected_count
-        and chain_ok
-        and malformed == 0
-        and lock_failures == 0
-        and recovery_events == 0
-        and int(replay.get("total_chained_transactions") or -1) == expected_count
-    )
+    # Empty start is a valid checkpoint (no ledger yet)
+    if expected_count == 0 and (not ledger.exists() or ledger_size == 0):
+        status_ok = lock_failures == 0 and recovery_events == 0 and malformed == 0
+        integrity_status = "EMPTY_AT_START"
+        replay_status = "NO_LEDGER_OR_EMPTY"
+        replay_det = True
+        chain_ok = True
+        record_count = 0
+    else:
+        status_ok = (
+            integrity.get("status") == "VERIFIED_INTEGRITY"
+            and replay.get("replay_status") == "DETERMINISTIC_REPLAY_SUCCESS"
+            and record_count == expected_count
+            and chain_ok
+            and malformed == 0
+            and lock_failures == 0
+            and recovery_events == 0
+            and int(replay.get("total_chained_transactions") or -1) == expected_count
+        )
+        integrity_status = integrity.get("status")
+        replay_status = replay.get("replay_status")
+        replay_det = replay.get("replay_status") == "DETERMINISTIC_REPLAY_SUCCESS"
 
-    return {
+    # Structured audit trail entry (not console-only)
+    record = {
+        "schema": "HELM_LEDGER_BURNIN_CHECKPOINT_v1",
+        "run_id": run_id,
+        "checkpoint_number": checkpoint_number,
+        "checkpoint_at": checkpoint_at,
+        "recorded_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "elapsed_runtime_s": round(elapsed_runtime_s, 6),
+        "ledger_size_bytes": ledger_size,
         "expected_record_count": expected_count,
         "record_count": record_count,
         "record_count_exact": record_count == expected_count,
-        "replay_status": replay.get("replay_status"),
-        "replay_deterministic": replay.get("replay_status") == "DETERMINISTIC_REPLAY_SUCCESS",
-        "chain_continuity": chain_ok,
-        "integrity_status": integrity.get("status"),
+        "replay_status": replay_status,
+        "replay_deterministic": replay_det,
+        "replay_duration_s": round(t_replay, 6),
+        "integrity_result": {
+            "status": integrity_status,
+            "chain_verified": chain_ok,
+            "valid_transactions": integrity.get("valid_transactions"),
+            "total_transactions": integrity.get("total_transactions"),
+            "parse_errors": parse_errors,
+            "chain_error": integrity.get("chain_error"),
+            "integrity_duration_s": round(t_integrity, 6),
+        },
+        "fault_recheck_results": None,  # filled only on final fault phase; per-checkpoint N/A
         "malformed_entries": malformed,
         "lock_failures": lock_failures,
         "recovery_events": recovery_events,
-        "integrity_duration_s": round(t_integrity, 6),
-        "replay_duration_s": round(t_replay, 6),
+        "git_commit": provenance.get("git_commit"),
+        "environment_metadata": {
+            "python_version": provenance.get("python_version"),
+            "os": provenance.get("os"),
+            "os_version": provenance.get("os_version"),
+            "filesystem": provenance.get("filesystem"),
+            "cpu_model": provenance.get("cpu_model"),
+            "memory_gib": provenance.get("memory_gib"),
+            "platform": provenance.get("platform"),
+        },
         "ok": status_ok,
         "metrics_table": {
             "Record count": "Exact" if record_count == expected_count else f"FAIL got {record_count}",
-            "Replay": "Deterministic" if replay.get("replay_status") == "DETERMINISTIC_REPLAY_SUCCESS" else "FAIL",
+            "Replay": "Deterministic" if replay_det else "FAIL",
             "Chain continuity": "Intact" if chain_ok else "FAIL",
             "Malformed entries": malformed,
             "Lock failures": lock_failures,
             "Recovery events": recovery_events,
             "Replay duration_s": round(t_replay, 6),
+            "Ledger size_bytes": ledger_size,
+            "Elapsed runtime_s": round(elapsed_runtime_s, 6),
         },
     }
+    return record
+
+
+def write_checkpoint_artifact(
+    report_dir: Path,
+    run_id: str,
+    checkpoint: Dict[str, Any],
+) -> Path:
+    """Persist each checkpoint as its own JSON file for progressive audit trail."""
+    report_dir.mkdir(parents=True, exist_ok=True)
+    cp_dir = report_dir / f"run_{run_id}" / "checkpoints"
+    cp_dir.mkdir(parents=True, exist_ok=True)
+    n = checkpoint.get("checkpoint_number", 0)
+    at = checkpoint.get("checkpoint_at", 0)
+    path = cp_dir / f"checkpoint_{n:02d}_at_{at}.json"
+    path.write_text(json.dumps(checkpoint, indent=2) + "\n", encoding="utf-8")
+    return path
 
 
 def resolve_checkpoints(n: int) -> List[int]:
@@ -298,58 +360,45 @@ def main() -> int:
     print()
 
     checkpoints = resolve_checkpoints(n)
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "_" + provenance["git_commit"][:12]
     report: Dict[str, Any] = {
         "schema": "HELM_CLOSED_LOOP_LEDGER_BURNIN_v1",
+        "run_id": run_id,
         "result": "RUNNING",
         "provenance": provenance,
         "sequential_checkpoints": [],
         "multiprocess": None,
         "fault_rechecks": {},
+        "note": (
+            "Operational confidence only. Does not change architecture, recovery policy, "
+            "canonicalization claims, governance, or production validation status."
+        ),
     }
 
     lock_failures = 0
     recovery_events = 0  # clean sequential path must stay 0
+    t_run0 = time.perf_counter()
 
     with tempfile.TemporaryDirectory(prefix="helm_ledger_burnin_") as td:
         td_path = Path(td)
         ledger = td_path / "burnin.jsonl"
         eng.CLOSED_LOOP_LEDGER_PATH = ledger
 
-        # Checkpoint 0 (empty ledger)
+        # Checkpoint 0 (empty ledger) — full structured record + progressive file
         cp0 = checkpoint_verify(
             ledger,
             expected_count=0,
             lock_failures=lock_failures,
             recovery_events=recovery_events,
+            checkpoint_number=0,
+            checkpoint_at=0,
+            elapsed_runtime_s=0.0,
+            provenance=provenance,
+            run_id=run_id,
         )
-        # Empty ledger is EMPTY_LEDGER / NO_LEDGER — special-case expected
-        if not ledger.exists() or ledger.stat().st_size == 0:
-            cp0 = {
-                "expected_record_count": 0,
-                "record_count": 0,
-                "record_count_exact": True,
-                "replay_status": "NO_LEDGER_OR_EMPTY",
-                "replay_deterministic": True,
-                "chain_continuity": True,
-                "integrity_status": "EMPTY_AT_START",
-                "malformed_entries": 0,
-                "lock_failures": 0,
-                "recovery_events": 0,
-                "integrity_duration_s": 0.0,
-                "replay_duration_s": 0.0,
-                "ok": True,
-                "metrics_table": {
-                    "Record count": "Exact",
-                    "Replay": "N/A empty",
-                    "Chain continuity": "Intact",
-                    "Malformed entries": 0,
-                    "Lock failures": 0,
-                    "Recovery events": 0,
-                    "Replay duration_s": 0.0,
-                },
-            }
-        report["sequential_checkpoints"].append({"at": 0, **cp0})
-        print(f"checkpoint @0: ok={cp0['ok']} metrics={cp0['metrics_table']}")
+        report["sequential_checkpoints"].append(cp0)
+        cp0_path = write_checkpoint_artifact(report_dir, run_id, cp0)
+        print(f"checkpoint @0: ok={cp0['ok']} metrics={cp0['metrics_table']} file={cp0_path}")
         if not cp0["ok"]:
             report["result"] = "FAIL_CHECKPOINT_0"
             return _write_report(report_dir, report, 1)
@@ -358,6 +407,7 @@ def main() -> int:
         t_seq0 = time.perf_counter()
         last_cp_time = t_seq0
         append_latencies_ms: List[float] = []
+        cp_index = 0
 
         for target in checkpoints:
             if target == 0:
@@ -376,36 +426,46 @@ def main() -> int:
                 append_latencies_ms.append((time.perf_counter() - t_a0) * 1000.0)
                 written += 1
 
-            cp = checkpoint_verify(
-                ledger,
-                expected_count=target,
-                lock_failures=lock_failures,
-                recovery_events=recovery_events,
-            )
+            cp_index += 1
             since = time.perf_counter() - last_cp_time
             last_cp_time = time.perf_counter()
-            # Latency since previous checkpoint (batch of appends)
-            batch = append_latencies_ms[-max(1, target - (checkpoints[checkpoints.index(target) - 1] if target in checkpoints else target)):] if append_latencies_ms else []
-            # Simpler: appends from previous checkpoint to now
             prev_at = 0
             for c in checkpoints:
                 if c < target:
                     prev_at = c
             batch_n = target - prev_at
             batch_lat = append_latencies_ms[-batch_n:] if batch_n <= len(append_latencies_ms) else append_latencies_ms
+
+            cp = checkpoint_verify(
+                ledger,
+                expected_count=target,
+                lock_failures=lock_failures,
+                recovery_events=recovery_events,
+                checkpoint_number=cp_index,
+                checkpoint_at=target,
+                elapsed_runtime_s=time.perf_counter() - t_run0,
+                provenance=provenance,
+                run_id=run_id,
+            )
             cp["segment_wall_s"] = round(since, 4)
             cp["append_latency_ms_avg"] = round(sum(batch_lat) / len(batch_lat), 4) if batch_lat else None
             cp["append_latency_ms_p50"] = round(sorted(batch_lat)[len(batch_lat) // 2], 4) if batch_lat else None
             cp["append_latency_ms_max"] = round(max(batch_lat), 4) if batch_lat else None
             cp["throughput_appends_per_s"] = round(batch_n / since, 2) if since > 0 else None
 
-            report["sequential_checkpoints"].append({"at": target, **cp})
+            report["sequential_checkpoints"].append(cp)
+            cp_path = write_checkpoint_artifact(report_dir, run_id, cp)
+            # Progressive rollup so a crash still leaves the trail
+            _write_report(report_dir, {**report, "result": "RUNNING"}, 0, quiet=True)
+
             print(
                 f"checkpoint @{target}: ok={cp['ok']} "
+                f"elapsed_s={cp['elapsed_runtime_s']} "
+                f"ledger_bytes={cp['ledger_size_bytes']} "
                 f"replay_s={cp['replay_duration_s']} "
                 f"append_avg_ms={cp['append_latency_ms_avg']} "
                 f"tps={cp['throughput_appends_per_s']} "
-                f"table={cp['metrics_table']}"
+                f"file={cp_path}"
             )
             if not cp["ok"]:
                 report["result"] = f"FAIL_CHECKPOINT_{target}"
@@ -508,19 +568,42 @@ def main() -> int:
             report["result"] = "FAIL_TAMPER"
             return _write_report(report_dir, report, 1)
 
+        # Attach fault rechecks to final checkpoint record for audit completeness
+        if report["sequential_checkpoints"]:
+            report["sequential_checkpoints"][-1]["fault_recheck_results"] = report["fault_rechecks"]
+
         report["result"] = "BURNIN_PASS"
         report["completed_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        report["total_elapsed_runtime_s"] = round(time.perf_counter() - t_run0, 4)
         print("BURNIN_PASS")
         return _write_report(report_dir, report, 0)
 
 
-def _write_report(report_dir: Path, report: Dict[str, Any], code: int) -> int:
+def _write_report(
+    report_dir: Path,
+    report: Dict[str, Any],
+    code: int,
+    *,
+    quiet: bool = False,
+) -> int:
     report_dir.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    sha = (report.get("provenance") or {}).get("git_commit", "UNKNOWN")[:12]
-    path = report_dir / f"burnin_{ts}_{sha}_{report.get('result', 'UNKNOWN')}.json"
-    path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    print(f"report: {path}")
+    run_id = report.get("run_id") or "unknown"
+    # Stable path for progressive updates + final snapshot
+    rollup = report_dir / f"run_{run_id}" / "burnin_rollup.json"
+    rollup.parent.mkdir(parents=True, exist_ok=True)
+    rollup.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
+    if report.get("result") not in (None, "RUNNING"):
+        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        sha = (report.get("provenance") or {}).get("git_commit", "UNKNOWN")[:12]
+        path = report_dir / f"burnin_{ts}_{sha}_{report.get('result', 'UNKNOWN')}.json"
+        path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        if not quiet:
+            print(f"report: {path}")
+            print(f"rollup: {rollup}")
+            print(f"checkpoints_dir: {report_dir / f'run_{run_id}' / 'checkpoints'}")
+    elif not quiet:
+        print(f"rollup: {rollup}")
     return code
 
 
