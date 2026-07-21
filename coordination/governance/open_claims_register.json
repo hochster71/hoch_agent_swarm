@@ -1,8 +1,8 @@
 {
   "schema": "HELM_OPEN_CLAIMS_REGISTER_v1",
-  "revision": 31,
+  "revision": 32,
   "created_at": "2026-07-20T17:05:00Z",
-  "revised_at": "2026-07-21T12:59:28Z",
+  "revised_at": "2026-07-21T13:29:52Z",
   "created_by": "claude:builder",
   "binding": "Founder decisions 2026-07-20: (1) oracle mode = DUAL-HASHED; (2) Wave 1 target branch = helm/execution-schedule-wave-1; (3) TEL-001 demoted INTEGRATED -> REMOTE_DELIVERED pending target-branch reachability; (4) five-state delivery vocabulary adopted. Revision 2 was incomplete (REQ-GOV-003, REQ-ES-002 absent) and used a vocabulary that could not express 'delivered but not to the declared target'.",
   "purpose": "Persist open claims as governed state rather than conversational memory.",
@@ -1916,6 +1916,55 @@
         "caught_by": "the test written in the same session, not by self-review",
         "count": "fifth incomplete-search error of this engagement; all five were caught by something other than the builder re-reading its own work"
       }
+    },
+    "CYB-004_execution_environment_redefines_operation_semantics": {
+      "status": "CONTROL BUILT \u2014 mutation gate fail-closed; damage fully restored",
+      "found": "2026-07-21, attempting the vite patch",
+      "class": "EXECUTION ENVIRONMENT BOUNDARY \u2014 distinct from the three OBSERVER boundaries",
+      "principle": "An operation's semantics are partly defined by its execution environment. A correct command in the wrong environment is a different operation.",
+      "preserved_failure_evidence": {
+        "intent": "install vite@^6.4.3 as a devDependency",
+        "command": "npm install --save-dev vite@^6.4.3",
+        "environment": {
+          "NODE_ENV": "production",
+          "npm_config_omit": "dev"
+        },
+        "expected": "vite 5.4.21 -> 6.4.3 installed",
+        "observed": [
+          "package.json rewritten to ^6.4.3 (manifest mutated)",
+          "0 packages added",
+          "64 dev packages REMOVED including vite itself",
+          "exit code 0",
+          "stdout: 'removed 64 packages in 3s'"
+        ],
+        "why": "NODE_ENV=production makes npm default to omit=dev; --save-dev edited the manifest while the install omitted the very class of dependency being added",
+        "not_the_lesson": "npm did not misbehave \u2014 it did exactly what it documents"
+      },
+      "restore_also_failed_the_same_way": {
+        "attempt_1": "npm install     -> inherited omit=dev, tree still broken",
+        "attempt_2": "npm ci          -> reported 'up to date' while vite was ABSENT; 15 of 126 packages",
+        "attempt_3": "npm ci --include=dev -> RESTORED vite 5.4.21, esbuild 0.21.5",
+        "lesson": "the defect propagated into the recovery path; a restore that inherits the fault that caused the damage will report success while leaving it broken"
+      },
+      "builder_errors": [
+        "did not inspect the execution environment before mutating it \u2014 NODE_ENV was observable beforehand",
+        "read 'removed 64 packages, 0 added' as noise rather than as a destructive result",
+        "ran two restores without first diagnosing why the first one silently failed"
+      ],
+      "control": {
+        "path": "scripts/mutation_precondition.py",
+        "invariant": "A mutating operation may not execute until its execution environment has been demonstrated compatible with the intended semantics.",
+        "companion_to": "CYB-003 observer invariant (prove detection before reporting absence)",
+        "verified_against_the_causing_environment": "BLOCKED",
+        "blocks_on": [
+          "NODE_ENV=production",
+          "npm omit contains dev",
+          "npm production=true",
+          "missing lockfile (no rollback anchor)"
+        ]
+      },
+      "damage": "NONE PERSISTING \u2014 package.json and package-lock.json byte-restored from pre-change backups; git status clean; vite 5.4.21 / esbuild 0.21.5 reinstalled; PRE observation window untouched",
+      "vite_patch_status": "NOT APPLIED \u2014 deliberately deferred until the gate existed"
     }
   }
 }
