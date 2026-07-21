@@ -36,6 +36,21 @@ from typing import Any, Callable, Dict, List, Optional, Set
 
 ROOT = Path(__file__).resolve().parents[2]
 
+# CYB-003 (2026-07-21). THE OBSERVER MUST DECLARE WHAT IT CANNOT SEE.
+# A vite/esbuild update was almost validated by comparing two Python observation windows.
+# They would have been byte-identical — not because the change was safe, but because an
+# npm package can never appear in sys.modules. An artifact that does not state its scope
+# will be read as covering the whole system.
+RUNTIME = "python"
+OBSERVES = ["python interpreter module loading (sys.modules)"]
+DOES_NOT_OBSERVE = [
+    "node/npm packages (frontend/, vite, esbuild) — different interpreter entirely",
+    "swift/iOS runtime",
+    "subprocesses spawned during the window",
+    "container or OS-level activity",
+    "network egress",
+]
+
 # Packages whose LOADING is security-relevant. Presence here does not mean "banned" —
 # it means "if this loads, the evidence must say so out loud".
 WATCHED: Dict[str, str] = {
@@ -95,8 +110,15 @@ class ExecutionObservation:
 
     def to_evidence(self) -> Dict[str, Any]:
         ev = {
-            "schema_version": "HELM_EXECUTION_OBSERVATION_v1",
+            "schema_version": "HELM_EXECUTION_OBSERVATION_v2",
             "evidence_class": "OBSERVED_EXECUTION",
+            "runtime": RUNTIME,
+            "observes": OBSERVES,
+            "DOES_NOT_OBSERVE": DOES_NOT_OBSERVE,
+            "scope_warning": (
+                f"this artifact covers the {RUNTIME} runtime ONLY. Absence of a package "
+                "here is NOT evidence about any other runtime. Comparing two of these "
+                "across a change in a different runtime proves nothing."),
             "label": self.label,
             "started_at": self.started_at,
             "finished_at": self.finished_at,
@@ -223,8 +245,10 @@ def accumulate(obs_dir: Optional[Path] = None) -> Dict[str, Any]:
 
     n = len(windows)
     return {
-        "schema_version": "HELM_EXECUTION_ACCUMULATION_v1",
+        "schema_version": "HELM_EXECUTION_ACCUMULATION_v2",
         "evidence_class": "OBSERVED_EXECUTION_HISTORY",
+        "runtime": RUNTIME,
+        "DOES_NOT_OBSERVE": DOES_NOT_OBSERVE,
         "observation_windows": n,
         "window_labels": [w.get("label") for w in windows],
         "per_package": tally,

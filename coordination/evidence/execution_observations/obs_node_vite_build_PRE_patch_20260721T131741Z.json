@@ -1,0 +1,53 @@
+{
+  "schema_version": "HELM_EXECUTION_OBSERVATION_v2",
+  "evidence_class": "OBSERVED_EXECUTION",
+  "runtime": "node",
+  "observes": [
+    "node CommonJS resolution (Module._load hook)",
+    "node ESM resolution (module.register resolve hook)"
+  ],
+  "DOES_NOT_OBSERVE": [
+    "python imports \u2014 see backend/helm_runtime/execution_observer.py",
+    "modules loaded by child processes the command spawns",
+    "swift/iOS runtime",
+    "browser-side execution of the built bundle",
+    "network egress",
+    "packages loaded by build phases outside this window"
+  ],
+  "scope_warning": "this artifact covers the node runtime ONLY. Absence of a package here is NOT evidence about the python runtime, and vice versa.",
+  "assurance_lane": "BUILD/DEV \u2014 vite and esbuild are devDependencies and do not execute inside a deployed HELM artifact",
+  "label": "vite_build_PRE_patch",
+  "command": [
+    "npx",
+    "vite",
+    "build",
+    "--logLevel",
+    "error"
+  ],
+  "started_at": "2026-07-21T13:17:41Z",
+  "observation_windows": 1,
+  "method": "node --require hook on Module._load; no package patched",
+  "generated_by": "backend.helm_runtime.node_execution_observer.observe_node",
+  "outcome": "COMPLETED",
+  "node_version": "v26.3.1",
+  "exit_code": 0,
+  "stderr_tail": "",
+  "modules_resolved_during_window": 826,
+  "resolved_via_commonjs": 634,
+  "resolved_via_esm": 192,
+  "distinct_packages_resolved": 161,
+  "watched_LOADED": {
+    "vite": {
+      "why_watched": "dev-server CVEs: server.fs.deny bypass, path traversal in optimized deps"
+    },
+    "esbuild": {
+      "why_watched": "dev server accepts any-origin requests and returns the response"
+    }
+  },
+  "watched_NOT_LOADED_in_this_run": [
+    "launch-editor"
+  ],
+  "claim_this_supports": "OBSERVED_ABSENT_IN_THIS_RUN for the not-loaded set \u2014 NOT 'unreachable'. One window is one observation, in one runtime.",
+  "finished_at": "2026-07-21T13:17:41Z",
+  "content_hash": "8f33954f700c896cddb85a6f6b0e650c48e4bf65469f73d7ec0324e703fc1a2b"
+}
