@@ -1,8 +1,8 @@
 {
   "schema": "HELM_OPEN_CLAIMS_REGISTER_v1",
-  "revision": 29,
+  "revision": 30,
   "created_at": "2026-07-20T17:05:00Z",
-  "revised_at": "2026-07-21T11:30:57Z",
+  "revised_at": "2026-07-21T11:37:46Z",
   "created_by": "claude:builder",
   "binding": "Founder decisions 2026-07-20: (1) oracle mode = DUAL-HASHED; (2) Wave 1 target branch = helm/execution-schedule-wave-1; (3) TEL-001 demoted INTEGRATED -> REMOTE_DELIVERED pending target-branch reachability; (4) five-state delivery vocabulary adopted. Revision 2 was incomplete (REQ-GOV-003, REQ-ES-002 absent) and used a vocabulary that could not express 'delivered but not to the declared target'.",
   "purpose": "Persist open claims as governed state rather than conversational memory.",
@@ -1570,6 +1570,29 @@
         "inferred": "epistemic decorrelation increased review quality",
         "NOT_inferred": "role separation alone would have achieved the same outcome",
         "founder_2026_07_20": "'avoids a subtle but common mistake: attributing success to the wrong control.' Citing the four corrections as Level 1 evidence would have claimed a capability that was never demonstrated."
+      },
+      "evidence_independence_ladder": {
+        "authored_by": "founder 2026-07-21",
+        "status": "INSTANCE of ARCH-001 applied to TEST evidence \u2014 not a new principle. Framework Change Criterion NOT invoked.",
+        "layers": [
+          {
+            "layer": "unit tests",
+            "independence": "LOW",
+            "establishes": "the implementation matches the intended logic"
+          },
+          {
+            "layer": "live confirmation",
+            "independence": "MODERATE",
+            "establishes": "the implementation survives the real execution environment"
+          },
+          {
+            "layer": "blind / independently authored prediction",
+            "independence": "HIGH",
+            "establishes": "evidence against correlated reasoning"
+          }
+        ],
+        "hazard": "developers gravitate to tests confirming their own mental model; the same holds when one reasoner authors both implementation and tests",
+        "applied_to": "T3b \u2014 recorded at MODERATE, not HIGH"
       }
     },
     "ARCH-003_prefer_recomputation_over_correction": {
@@ -1828,5 +1851,27 @@
       "status": "OPEN"
     }
   },
-  "evidence_ledger_rule": "observations ACCUMULATE, they are not corrected. traversal_003.json (pre-repair) and traversal_003b.json (post-repair confirmation) are two experiments and both remain. A repaired system does not retroactively change what was observed."
+  "evidence_ledger_rule": "observations ACCUMULATE, they are not corrected. traversal_003.json (pre-repair) and traversal_003b.json (post-repair confirmation) are two experiments and both remain. A repaired system does not retroactively change what was observed.",
+  "engineering_protocol": {
+    "status": "REUSABLE CAPABILITY \u2014 the durable output of PROC-001 + HRF-RUNTIME-001",
+    "authored_by": "founder 2026-07-21",
+    "stages": [
+      "Observation",
+      "Persist",
+      "Bounded repair",
+      "Unit verification",
+      "Live confirmation",
+      "Evidence regeneration",
+      "Canonicalization"
+    ],
+    "portable_to": [
+      "other HELM factories",
+      "governance controls",
+      "runtime services",
+      "infrastructure components"
+    ],
+    "validation_rule": "the protocol is a demonstrated capability only once a SECOND subsystem passes through it unchanged. One application is an instance, not a capability.",
+    "first_application": "HRF (T1 -> T3b, 2026-07-20/21)",
+    "second_application": "NONE YET \u2014 protocol reusability is UNOBSERVED"
+  }
 }

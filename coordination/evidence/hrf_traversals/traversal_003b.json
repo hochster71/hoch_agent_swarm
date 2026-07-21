@@ -80,5 +80,13 @@
         }
       ]
     }
-  ]
+  ],
+  "inference_refinement_2026_07_21": {
+    "authority": "founder",
+    "supersedes_inference": "BOTH CONFIRMED (read as independent confirmation)",
+    "narrowed_claim": "The repaired implementation, whose behaviour was already specified by the unit tests, exhibited the same behaviour in the live runtime.",
+    "why": "the predictions were authored AFTER the unit tests encoded the same expectations. Same reasoner, correlated expectations \u2014 ARCH-001 at the scale of test evidence.",
+    "observations_unchanged": "predicted PARTIAL / NOT_OPERATIONAL / NOT_OPERATIONAL; observed exactly those. That record is immutable. Only what it LICENSES has narrowed.",
+    "what_the_run_DOES_establish": "the repaired logic survives contact with the real environment \u2014 dispatch, provider failure, transport timing, terminal output, process interaction. Clean stubs could not show this, which is why HRF-OBS-003 emerged despite H1/H2 holding: the live system contributed genuinely new information, it did not merely replay the unit tests."
+  }
 }
