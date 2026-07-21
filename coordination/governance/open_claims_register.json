@@ -1,8 +1,8 @@
 {
   "schema": "HELM_OPEN_CLAIMS_REGISTER_v1",
-  "revision": 30,
+  "revision": 31,
   "created_at": "2026-07-20T17:05:00Z",
-  "revised_at": "2026-07-21T11:37:46Z",
+  "revised_at": "2026-07-21T12:59:28Z",
   "created_by": "claude:builder",
   "binding": "Founder decisions 2026-07-20: (1) oracle mode = DUAL-HASHED; (2) Wave 1 target branch = helm/execution-schedule-wave-1; (3) TEL-001 demoted INTEGRATED -> REMOTE_DELIVERED pending target-branch reachability; (4) five-state delivery vocabulary adopted. Revision 2 was incomplete (REQ-GOV-003, REQ-ES-002 absent) and used a vocabulary that could not express 'delivered but not to the declared target'.",
   "purpose": "Persist open claims as governed state rather than conversational memory.",
@@ -1873,5 +1873,49 @@
     "validation_rule": "the protocol is a demonstrated capability only once a SECOND subsystem passes through it unchanged. One application is an instance, not a capability.",
     "first_application": "HRF (T1 -> T3b, 2026-07-20/21)",
     "second_application": "NONE YET \u2014 protocol reusability is UNOBSERVED"
+  },
+  "cyber_findings": {
+    "CYB-001_metadata_does_not_equal_execution": {
+      "status": "REMEDIATED (metadata) \u2014 reachability analysis recorded",
+      "found": "2026-07-21, triaging 10 Dependabot alerts",
+      "principle": "METADATA != EXECUTION (founder). Treat a descriptive artifact as evidence to be verified, never as the property it describes.",
+      "instances_of_the_same_error": [
+        "runtime truth != dashboard state",
+        "observation != inference",
+        "presence != capability",
+        "lockfile != executing environment",
+        "CVE severity != exploitability in this deployment",
+        "search results != program behaviour"
+      ],
+      "defect": {
+        "artifact": "dummy_mcp/pyproject.toml",
+        "was": "version = \"1.28.2\" \u2014 an upstream RELEASE number, on an empty stub",
+        "effect": "uv.lock recorded `mcp 1.28.2`, which reads as PATCHED to any scanner. Nothing was patched. Real mcp on this machine is 1.23.3 with vulnerable transports present.",
+        "propagation": "src/ report functions emit mcp.__version__ into RELEASE ARTIFACTS \u2014 the false version reached release records, not just the lockfile",
+        "mislabelled_commit": "b9798a45 'remediation(deps): ... bump dummy_mcp to 1.28.2' \u2014 bumping a stub version reduces no exposure. Recorded, not rewritten.",
+        "now": "version = \"0.0.0+localstub\" (PEP 440 local identifier \u2014 cannot impersonate a release, cannot satisfy >= on a patched version)"
+      },
+      "reachability_analysis": {
+        "method": "AST import-site scan + behaviour check, after grep proved unreliable",
+        "backend_scripts_runtime": "ZERO mcp imports",
+        "dormant_crewai_lane": "2 sites, version introspection only (_mcp_stub_version, _mcp_version), try/except guarded, modules not importable",
+        "vulnerable_transports_loaded": false,
+        "verdict": "the 3 HIGH mcp CVEs are NOT reachable \u2014 but on the basis of what the imports DO, not on their absence"
+      },
+      "alerts_by_reachability": {
+        "chromadb CRITICAL": "legacy-crewai-factory extra only, not installed, no fix available \u2014 NOT REACHABLE",
+        "mcp HIGH x3": "no runtime imports; dormant version reads only \u2014 NOT REACHABLE",
+        "json-repair HIGH": "crewai extra only \u2014 NOT REACHABLE",
+        "vite/esbuild x4": "frontend dev server \u2014 REACHABLE IN DEV ONLY, patches available",
+        "pillow MEDIUM": "already at 12.3.0 \u2014 ALREADY FIXED"
+      },
+      "honest_bound": "reachability was assessed by static analysis, NOT by runtime instrumentation or an executed exploit attempt. No adversarial test has been run. 'Not reachable' is an inference from import structure, not a proven property.",
+      "builder_error_corrected": {
+        "claim": "'ZERO first-party imports of mcp'",
+        "wrong_because": "grep anchored on '^import mcp' missed indented imports inside functions; a --include glob also silently matched nothing under zsh",
+        "caught_by": "the test written in the same session, not by self-review",
+        "count": "fifth incomplete-search error of this engagement; all five were caught by something other than the builder re-reading its own work"
+      }
+    }
   }
 }

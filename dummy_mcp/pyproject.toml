@@ -1,6 +1,25 @@
+# LOCAL RESOLUTION STUB — NOT the upstream `mcp` package.
+#
+# SECURITY-RELEVANT METADATA FIX 2026-07-21 (CYB-001).
+# This stub previously declared version = "1.28.2", chosen to match an upstream RELEASE
+# number. Effect: uv.lock recorded `mcp 1.28.2`, which reads as "patched against
+# GHSA advisories affecting <1.28.1" to any scanner or engineer inspecting the lockfile.
+# It patched nothing — it is an empty stub, and the real `mcp` on this machine is 1.23.3.
+#
+# Commit b9798a45 labelled bumping this number "remediation(deps)". Bumping a stub's
+# version does not reduce exposure in the executing environment.
+#
+# The version is now 0.0.0+localstub: a local version identifier (PEP 440) that can
+# never be confused with an upstream release and will not satisfy a >= constraint
+# targeting a real patched version.
+#
+# HELM has ZERO first-party imports of `mcp` (verified 2026-07-21 across backend/,
+# scripts/, src/). This stub exists solely to satisfy CrewAI's optional transitive
+# resolution in the legacy-crewai-factory extra. If HELM ever imports `mcp` for real,
+# DELETE this stub and depend on upstream — do not extend it.
 [project]
 name = "mcp"
-version = "1.28.2"
-description = "Dummy mcp package to resolve dependencies without installing real mcp"
+version = "0.0.0+localstub"
+description = "LOCAL STUB — empty placeholder for CrewAI transitive resolution. NOT upstream mcp. Provides no MCP functionality and no security patches."
 requires-python = ">=3.10"
 dependencies = []
