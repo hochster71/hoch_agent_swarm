@@ -1,0 +1,70 @@
+{
+  "schema_version": "HELM_EXECUTION_OBSERVATION_v2",
+  "evidence_class": "OBSERVED_EXECUTION",
+  "runtime": "node",
+  "observes": [
+    "node CommonJS resolution (Module._load hook)",
+    "node ESM resolution (module.register resolve hook)"
+  ],
+  "DOES_NOT_OBSERVE": [
+    "python imports \u2014 see backend/helm_runtime/execution_observer.py",
+    "modules loaded by child processes the command spawns",
+    "swift/iOS runtime",
+    "browser-side execution of the built bundle",
+    "network egress",
+    "packages loaded by build phases outside this window"
+  ],
+  "scope_warning": "this artifact covers the node runtime ONLY. Absence of a package here is NOT evidence about the python runtime, and vice versa.",
+  "assurance_lane": "BUILD/DEV \u2014 vite and esbuild are devDependencies and do not execute inside a deployed HELM artifact",
+  "label": "vite_build_POST_patch",
+  "command": [
+    "npx",
+    "vite",
+    "build",
+    "--logLevel",
+    "error"
+  ],
+  "started_at": "2026-07-21T13:31:34Z",
+  "observation_windows": 1,
+  "observer_capability": {
+    "runtime": "node",
+    "module_systems": [
+      "CommonJS",
+      "ESM"
+    ],
+    "coverage": [
+      "require()",
+      "import / dynamic import()"
+    ],
+    "positive_control": [
+      "vite",
+      "esbuild"
+    ],
+    "negative_reporting_gated_on": "run_positive_control()"
+  },
+  "method": "node --require (CJS Module._load) + --import module.register (ESM resolve); no package patched",
+  "hook_api_note": "module.register() is used here. Newer Node exposes module.registerHooks() as a synchronous alternative; the observer should stay abstracted from the hook API so a Node upgrade does not silently reduce coverage \u2014 the failure mode would look exactly like a clean result.",
+  "generated_by": "backend.helm_runtime.node_execution_observer.observe_node",
+  "outcome": "COMPLETED",
+  "node_version": "v26.3.1",
+  "exit_code": 0,
+  "stderr_tail": "",
+  "modules_resolved_during_window": 841,
+  "resolved_via_commonjs": 634,
+  "resolved_via_esm": 207,
+  "distinct_packages_resolved": 165,
+  "watched_LOADED": {
+    "vite": {
+      "why_watched": "dev-server CVEs: server.fs.deny bypass, path traversal in optimized deps"
+    },
+    "esbuild": {
+      "why_watched": "dev server accepts any-origin requests and returns the response"
+    }
+  },
+  "watched_NOT_LOADED_in_this_run": [
+    "launch-editor"
+  ],
+  "claim_this_supports": "OBSERVED_ABSENT_IN_THIS_RUN for the not-loaded set \u2014 NOT 'unreachable'. One window is one observation, in one runtime.",
+  "finished_at": "2026-07-21T13:31:34Z",
+  "content_hash": "427a6e0b2cf8642b72a64274569291afa2422d3fb93b361b15ab49634cf8d50c"
+}
