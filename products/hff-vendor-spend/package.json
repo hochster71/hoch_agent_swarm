@@ -1,0 +1,12 @@
+{
+  "name": "hff-vendor-spend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HFF — Vendor Spend Rollup: deterministic expense/bill CSV -> per-vendor net spend, share and concentration, payment cadence and dormancy, amount drift, monthly and category rollups (XLSX + one-page PDF) + Stripe one-time checkout scaffold. Organizational tooling only, not advice.",
+  "scripts": {
+    "test": "node test/engine.test.js && node test/buyloop.test.js"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your Vendor Spend Rollup</title>
+<style>
+  :root { --ink:#12151a; --muted:#5b6472; --line:#e2e6ec; --accent:#1f5f4b; --bg:#fbfcfd; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:760px; margin:0 auto; padding:48px 22px 96px; }
+  h1 { font-size:30px; margin:0 0 12px; letter-spacing:-0.02em; }
+  p { margin:0 0 14px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px; margin:26px 0; }
+  textarea { width:100%; min-height:150px; font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; padding:12px; border:1px solid var(--line); border-radius:8px; resize:vertical; }
+  button { font:inherit; font-weight:600; padding:11px 20px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; }
+  button:disabled { opacity:.55; cursor:default; }
+  a.dl { display:inline-block; margin:6px 10px 6px 0; padding:11px 18px; border-radius:8px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:600; background:#fff; }
+  .out { white-space:pre-wrap; font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; background:#f4f6f8; border:1px solid var(--line); border-radius:8px; padding:14px; margin-top:16px; display:none; }
+  .out.show { display:block; }
+  .note { font-size:13px; color:var(--muted); }
+  .disclaimer { border-left:3px solid var(--accent); padding:12px 16px; background:#fff; font-size:13.5px; color:var(--muted); border-radius:0 8px 8px 0; margin-top:32px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Payment received — let's build your rollup.</h1>
+  <p class="note" id="sessionNote">Checking your purchase…</p>
+
+  <div class="card">
+    <p>Your CSV is below if your browser kept it from the previous page. If not, paste or re-upload it — it never left your session.</p>
+    <input type="file" id="file" accept=".csv,text/csv" />
+    <textarea id="csv" placeholder="Date,Vendor,Amount,Category"></textarea>
+    <div style="margin-top:14px"><button id="go" type="button">Generate my report</button></div>
+    <div id="downloads" style="margin-top:16px"></div>
+    <div class="out" id="out"></div>
+  </div>
+
+  <div class="disclaimer">
+    This report is organizational tooling only. It describes the vendor payments recorded in the file you uploaded, exactly as that file states them. It is not financial, tax, or legal advice, it does not tell you which vendors to cut, keep, or renegotiate, and it does not judge whether any amount is reasonable. Verify every line against your own records before acting.
+  </div>
+</div>
+
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var sessionId = params.get('session_id');
+  var csvEl = document.getElementById('csv');
+  var out = document.getElementById('out');
+  var go = document.getElementById('go');
+  var dls = document.getElementById('downloads');
+  var note = document.getElementById('sessionNote');
+
+  try {
+    var saved = sessionStorage.getItem('hff_vendor_spend_csv');
+    if (saved) csvEl.value = saved;
+  } catch (e) {}
+
+  document.getElementById('file').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () { csvEl.value = String(r.result || ''); };
+    r.readAsText(f);
+  });
+
+  function show(msg) { out.textContent = msg; out.className = 'out show'; }
+
+  if (!sessionId) {
+    note.textContent = 'No checkout session id in the URL. If you have just paid, use the link Stripe sent you.';
+  } else {
+    fetch('/api/entitlement?session_id=' + encodeURIComponent(sessionId))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        note.textContent = j.paid
+          ? 'Purchase confirmed. Generate your report below — you can re-run it on the same session.'
+          : 'Purchase not confirmed yet. Stripe webhooks can take a moment; try Generate anyway, or refresh shortly.';
+      })
+      .catch(function () { note.textContent = 'Could not check entitlement right now. Try Generate below.'; });
+  }
+
+  function dataUrl(b64, mime) { return 'data:' + mime + ';base64,' + b64; }
+
+  go.addEventListener('click', function () {
+    var csv = csvEl.value.trim();
+    if (!csv) { show('Paste or upload your CSV first.'); return; }
+    go.disabled = true;
+    dls.innerHTML = '';
+    show('Building your report…');
+    fetch('/api/generate-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ csv: csv, session_id: sessionId })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        go.disabled = false;
+        if (!res.ok) { show('Could not generate the report.\n\n' + (res.j.message || res.j.error || 'Unknown error.')); return; }
+        var j = res.j;
+        var f = j.files || {};
+        var html = '';
+        if (f.xlsx) html += '<a class="dl" download="' + f.xlsx.filename + '" href="' + dataUrl(f.xlsx.base64, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') + '">Download workbook (.xlsx)</a>';
+        if (f.pdf) html += '<a class="dl" download="' + f.pdf.filename + '" href="' + dataUrl(f.pdf.base64, 'application/pdf') + '">Download one-page summary (.pdf)</a>';
+        dls.innerHTML = html;
+        var s = j.report.summary;
+        var lines = [];
+        lines.push('Window      ' + s.window.start + ' to ' + s.window.end);
+        lines.push('Vendors     ' + s.counts.vendors + '   Payments ' + s.counts.payments + '   Flagged ' + s.counts.skippedRows);
+        lines.push('Net spend   $' + Number(s.spend.net).toFixed(2));
+        lines.push('');
+        s.notes.forEach(function (n) { lines.push('• ' + n); });
+        show(lines.join('\n'));
+      })
+      .catch(function () { go.disabled = false; show('Network error. Please try again.'); });
+  });
+})();
+</script>
+</body>
+</html>

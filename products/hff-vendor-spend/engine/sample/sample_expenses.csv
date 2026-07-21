@@ -1,0 +1,27 @@
+Date,Vendor,Amount,Category,Reference,Memo
+2026-01-05,Acme Hosting LLC,$120.00,Infrastructure,INV-1001,January hosting
+2026-01-07,Northwind Supplies Inc,340.50,Office,INV-2201,Paper and toner
+2026-01-12,Bright Legal Co,1500.00,Professional services,BL-880,Contract review
+2026-01-19,SQ *CORNER CAFE 00412,42.75,Meals,,Team coffee
+2026-02-05,Acme Hosting LLC,$120.00,Infrastructure,INV-1042,February hosting
+2026-02-09,Northwind Supplies,289.10,Office,INV-2260,Restock
+2026-02-14,Cloudline Data Ltd,899.00,Infrastructure,CL-77,Data platform
+2026-02-21,SQ *CORNER CAFE 00412,38.20,Meals,,Team coffee
+2026-02-28,Northwind Supplies Inc,(45.00),Office,CR-2260,Returned toner
+2026-03-05,Acme Hosting LLC,$132.00,Infrastructure,INV-1090,March hosting
+2026-03-11,Cloudline Data Ltd,899.00,Infrastructure,CL-91,Data platform
+2026-03-16,Bright Legal Co,750.00,Professional services,BL-914,Trademark filing
+2026-03-22,Vellum Print & Co,215.40,Marketing,VP-33,Brochures
+2026-04-06,Acme Hosting LLC,$132.00,Infrastructure,INV-1131,April hosting
+2026-04-10,Cloudline Data Ltd,949.00,Infrastructure,CL-104,Data platform
+2026-04-18,Northwind Supplies Inc,412.00,Office,INV-2331,Quarterly restock
+2026-04-25,SQ *CORNER CAFE 00412,51.30,Meals,,Client meeting
+2026-05-05,Acme Hosting LLC,$145.00,Infrastructure,INV-1177,May hosting
+2026-05-13,Cloudline Data Ltd,949.00,Infrastructure,CL-120,Data platform
+2026-05-20,Harbor Insurance Group,2400.00,Insurance,HIG-7,Annual premium
+2026-05-29,Vellum Print & Co,180.00,Marketing,VP-51,Event signage
+2026-06-04,Acme Hosting LLC,$145.00,Infrastructure,INV-1220,June hosting
+2026-06-11,Cloudline Data Ltd,949.00,Infrastructure,CL-137,Data platform
+2026-06-17,Northwind Supplies Inc,301.25,Office,INV-2404,Restock
+not a date,Ledgerly Books,88.00,Office,,unreadable date on purpose
+2026-06-26,Freight Forward,,Logistics,FF-9,missing amount on purpose

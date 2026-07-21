@@ -146,6 +146,21 @@
       "slug": "hcf-secret-scan",
       "built_at": "2026-07-20",
       "tests": "59 engine + 26 buyloop, all pass (node v22.22.3)"
+    },
+    {
+      "id": "HFF_VENDOR_SPEND",
+      "factory": "HFF",
+      "name": "Vendor Spend Rollup",
+      "what_it_is": "Upload an expense/bill/card CSV -> what each vendor was actually paid, net of credits: per-vendor gross/credits/net and share, min/median/max payment, the median gap between that vendor's own payments, how quiet it has gone relative to its own rhythm, first-to-last amount drift, top 1/3/5/10 share, HHI on the 0-10,000 scale, effective vendor count, monthly series, category rollup, and disclosed multi-spelling merges (corporate suffixes, card-processor prefixes). 6-sheet XLSX + one-page PDF. Organizational tooling only.",
+      "buyer": "Solo operators and small shops who want to see where the money actually went by vendor, without connecting a bank account or buying accounting software.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "guardrail": "organizational tooling only; no financial/tax/legal advice; never tells the user which vendors to cut, keep, or renegotiate",
+      "generated_by": "autonomous factory loop 2026-07-21 (all prior candidates already BUILT)",
+      "status": "BUILT",
+      "slug": "hff-vendor-spend",
+      "built_at": "2026-07-21",
+      "tests": "94 engine + 45 buyloop, all pass (node v22.22.3)"
     }
   ]
 }

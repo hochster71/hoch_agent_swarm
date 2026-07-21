@@ -339,6 +339,29 @@
       "webhook_config_note": "api/webhook.js assigns module.exports.config AFTER module.exports = handler (the sibling ordering bug is NOT present here) and carries the regression test.",
       "guardrail": "heuristic only; never claim certainty; no real-world security decision advice; matched values always masked (all enforced by the fail-closed report linter + masking layer; a hostile variable name that trips the linter yields 422 with no report - fail-closed by design)",
       "rung_note": "NO FAKE GREEN: code-complete at the doorstep only. Engine, guardrail linter, free preview and the full checkout->webhook->entitlement->gated-delivery loop are built and tested; Stripe is MOCKED in tests and there are no live keys, no price, and no deployment. $0 earned. ONLY A FOUNDER DEPLOY REMAINS (create $5 one-time price, set STRIPE_SECRET_KEY / STRIPE_PRICE_SCAN / STRIPE_WEBHOOK_SECRET / BASE_URL + Vercel KV, add the webhook endpoint, deploy via scripts/factory_deploy.sh)."
+    },
+    {
+      "product_id": "HFF_VENDOR_SPEND",
+      "factory": "HFF",
+      "name": "Vendor Spend Rollup",
+      "what_it_is": "Deterministic expense/bill/card CSV -> per-vendor net spend and share, payment cadence and dormancy against each vendor's own rhythm, first-to-last amount drift, concentration (top-N share, HHI 0-10,000, effective vendor count), monthly series and category rollup. 6-sheet XLSX + one-page PDF. Organizational tooling only, explicitly NOT financial, tax, or legal advice.",
+      "buyer": "Solo operators and small shops who want to see where the money actually went by vendor, without connecting a bank account or buying accounting software.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "merchant_of_record": "stripe_managed_payments",
+      "checkout_url": null,
+      "checkout_blocked_by": "FOUNDER GATE: no Stripe price created, no env vars set, not deployed. Code is complete and tested; only a founder deploy remains.",
+      "entitlement_source": "signed stripe webhook only (checkout.session.completed -> sess:<id>)",
+      "source_dir": "products/hff-vendor-spend",
+      "revenue_gross_usd": 0.0,
+      "revenue_settled_usd": 0.0,
+      "revenue_state": "NOT_STARTED",
+      "monetization_rung": "3_PRODUCTIZED_CODE_COMPLETE",
+      "built_at": "2026-07-21",
+      "built_by": "autonomous factory loop",
+      "tests": "94 engine + 45 buyloop, all pass (node v22.22.3)",
+      "rung_note": "NO FAKE GREEN: engine, free preview, checkout scaffold, signature-verified webhook, entitlement store and gated delivery are REAL and tested. NOT deployed, no Stripe price exists, $0 earned. Without KV credentials the entitlement store is an in-memory Map that does not survive a cold start. Currency conversion and vendor identity resolution are deliberately NOT implemented and are disclosed in-product. Only a founder deploy remains.",
+      "guardrail": "organizational tooling only; no financial/tax/legal advice; never tells the user which vendors to cut, keep, or renegotiate (enforced by a fail-closed advice linter that runs before any artifact bytes are produced)"
     }
   ],
   "non_monetized_factories": {
