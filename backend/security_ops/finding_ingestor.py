@@ -28,7 +28,7 @@ class FindingIngestor:
 
     def ingest_finding(self, finding_id: str, source_tool: str, severity: str, file_path: str, line_number: int, description: str) -> Dict[str, Any]:
         import datetime
-        detected_at = datetime.datetime.now(datetime.UTC).isoformat() + "Z"
+        detected_at = datetime.datetime.now(datetime.timezone.utc).isoformat() + "Z"
         conn = sqlite3.connect(self.db_path)
         conn.execute("""
             INSERT OR REPLACE INTO security_findings (finding_id, source_tool, severity, file_path, line_number, description, status, detected_at)

@@ -1,5 +1,11 @@
 # test_autonomy_engines.py
 import pytest
+from pathlib import Path
+
+# FIXTURE DEFECT FIXED 2026-07-20: hardcoded host path. The control under test
+# CORRECTLY rejected it — the path is outside the real repo root anywhere but one
+# machine. The failure was the security boundary working, misread as a regression.
+REPO_ROOT = str(Path(__file__).resolve().parents[3])
 from backend.brain.confidence_engine import ConfidenceEngine
 from backend.brain.theory_proof_engine import TheoryProofEngine
 from backend.brain.constraint_engine import ConstraintEngine
@@ -51,7 +57,7 @@ def test_adversarial_reviewer_rules():
     assert any("public" in f.lower() for f in res_public["findings"])
 
     # 4. Test safe approved proposal
-    res_safe = reviewer.scan_proposal("Implement unit tests for local reliability dashboard", file_path="/Users/michaelhoch/hoch_agent_swarm/tests/unit/brain/test_autonomy_engines.py")
+    res_safe = reviewer.scan_proposal("Implement unit tests for local reliability dashboard", file_path=f"{REPO_ROOT}/tests/unit/brain/test_autonomy_engines.py")
     assert res_safe["status"] == "APPROVED"
     assert len(res_safe["findings"]) == 0
 

@@ -218,3 +218,6 @@ data/runtime/voice_command_audit_reconstructed_20260719.jsonl
 # untracked stageable content and can silently widen a scoped commit — the exact defect
 # that produced the three-file commit on 2026-07-20.
 .helm_worktrees/
+
+# machine-local Claude permission cache (absolute paths, per-machine grants)
+.claude/

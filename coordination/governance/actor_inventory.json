@@ -1,6 +1,6 @@
 {
   "artifact": "ACTOR-001 — Actor Inventory",
-  "status": "PARTIAL — builder-observable half only (remains PARTIAL by design)",
+  "status": "ACTOR-F2 LOCAL BOUNDARY RESOLVED; GLOBAL INVENTORY IN PROGRESS; ACTOR-F3 PARTIAL",
   "compiled_at": "2026-07-20",
   "compiled_by": "claude/builder session stoic-loving-babbage",
   "scope_limit": {
@@ -173,9 +173,11 @@
         "any local agent or shell",
         "UNIDENTIFIED CONCURRENT WRITER"
       ],
-      "isolation": "UNOBSERVED — not 'absent'",
-      "consequence": "IF these members share one OS account, THEN a per-actor signing key placed in it MAY be accessible across those contexts — SUBJECT TO the operating system's credential protections. Shared account is NECESSARY but NOT SUFFICIENT for shared custody: Secure Enclave, Keychain access controls, and separate security principals can partition key access within a single account. Both the antecedent (shared account, ACTOR-F2) and the qualifier (effective credential protections, ACTOR-F3) are UNDETERMINED.",
-      "correction": "Previously recorded as 'NONE OBSERVED', which reads as a negative finding. No host-side collector record existed, so isolation was never examined. UNOBSERVED, not FALSE. Same distinction as UNKNOWN vs FAIL — applied here to the builder's own artifact."
+      "isolation": "OBSERVED_ABSENT — examined via ACTOR-F2, none found",
+      "consequence": "Shared account is now PROVEN. Credential custody remains UNKNOWN — Keychain ACLs and Secure Enclave can still partition key access within one account. That is ACTOR-F3 and requires its own observation.",
+      "correction": "Previously recorded as 'NONE OBSERVED', which reads as a negative finding. No host-side collector record existed, so isolation was never examined. UNOBSERVED, not FALSE. Same distinction as UNKNOWN vs FAIL — applied here to the builder's own artifact.",
+      "evidence": "5 host contexts collected 2026-07-20, all reporting host=Michaels-MacBook-Pro.local, os_user=michaelhoch, uid=501, Darwin, identical git identity, signingkey UNSET: michael-interactive-shell, gemini-antigravity, grok-cli, claude-host-context, other-local-writer",
+      "transition": "UNOBSERVED -> OBSERVED_ABSENT. The antecedent open for this entire review is now settled by measurement, not inference."
     },
     "domain_2_builder_sandbox": {
       "members": [
@@ -289,5 +291,64 @@
     "OBSERVED_ABSENT": "evidence demonstrates the property does not exist",
     "UNOBSERVED": "no evidence collected; neither presence nor absence established",
     "rule": "'Not observed' != 'observed not to exist'. Use UNOBSERVED unless an examination actually occurred and returned a negative result."
+  },
+  "revised_at": "2026-07-20T20:04:26Z",
+  "actor_f2_result": {
+    "status": {
+      "local_account_boundary": "RESOLVED",
+      "complete_actor_inventory": "IN PROGRESS — GitHub Actions context not ingested",
+      "note": "Do NOT label ACTOR-F2 globally resolved. The defined scope includes GitHub Actions."
+    },
+    "github_actions_context": "NOT INGESTED",
+    "commit_level_attribution": "STRUCTURALLY INDETERMINATE — five contexts present identically at the git layer, so commits from them are indistinguishable by construction",
+    "classifications": {
+      "michael-interactive-shell": "SAME_HOST_ACCOUNT",
+      "gemini-antigravity": "SAME_HOST_ACCOUNT",
+      "grok-cli": "SAME_HOST_ACCOUNT",
+      "claude-host-context": "SAME_HOST_ACCOUNT",
+      "other-local-writer": "SAME_HOST_ACCOUNT",
+      "claude-cowork-sandbox": "NAMESPACE_ONLY"
+    }
+  },
+  "actor_f3_status": {
+    "state": "PARTIAL",
+    "shared_account": "PROVEN",
+    "shared_credential_custody": "NOT PROVEN",
+    "keychain_acl_partitioning": "UNKNOWN",
+    "secure_enclave_partitioning": "UNKNOWN",
+    "note": "Prior silent credential retrieval is strong evidence at least one agent context could reach the GitHub credential, but the custody model needs explicit ACL and key-protection observation."
+  },
+  "risk_register": [
+    {
+      "id": "RISK-DEP-001",
+      "source": "GitHub Dependabot",
+      "findings": {
+        "critical": 1,
+        "high": 5,
+        "moderate": 3
+      },
+      "status": "OPEN",
+      "governance_dependency": "NONE — independent track",
+      "promotion_impact": "assess separately; do not fold into the governance sequence"
+    }
+  ],
+  "push_evidence": {
+    "observed": "2096e19b..578f7317 helm-runtime-bridge-v1 accepted by server",
+    "proves": [
+      "credential can perform remote writes",
+      "helm-runtime-bridge-v1 accepts UNSIGNED commits"
+    ],
+    "does_NOT_prove": "GOV-007. boundary_exercised=true for the NETWORK path, but no POLICY boundary exists on that ref — the rejection that would validate the control was never possible."
+  },
+  "gov007_probe_design": {
+    "closure_rule": "GOV-007 closes ONLY on VALIDATED_IDENTITY_BOUNDARY.",
+    "why": "A generic protected-branch or PR-required rejection is AUTHOR-INDEPENDENT — it would reject any direct push regardless of asserted identity. It demonstrates change-path enforcement, not impersonation resistance.",
+    "probe_A": "unsigned commit authored as another actor",
+    "probe_B": "validly signed commit, signing key not authorized for the asserted identity — tests whether GitHub BINDS signature to identity or merely recognises validity",
+    "separation_reason": "combining impersonation and missing-signature in one probe makes an ambiguous rejection uninterpretable",
+    "other_classes_close": {
+      "VALIDATED_BRANCH_WORKFLOW": "change-path control",
+      "VALIDATED_OTHER_POLICY": "CI/review gates"
+    }
   }
 }

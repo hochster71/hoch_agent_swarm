@@ -15,7 +15,15 @@ class SecurityRedactor:
             r"(?i)token\s*[:=]\s*['\"][^'\"]+['\"]",
             r"(?i)password\s*[:=]\s*['\"][^'\"]+['\"]",
             r"(?i)private_key\s*[:=]\s*['\"][^'\"]+['\"]",
-            r"sk-[a-zA-Z0-9]{32,}"
+            # SECURITY FIX 2026-07-20. Was r"sk-[a-zA-Z0-9]{32,}" — no hyphen or
+            # underscore in the character class, so it could NOT match modern OpenAI
+            # keys (sk-proj-…, sk-svcacct-…): the hyphen after the prefix terminates
+            # the match. Effect: if config/monetization_audit_policy.yaml is absent or
+            # unreadable, load_policy() leaves these defaults in place and redaction
+            # silently degrades to a NO-OP for the most common live key format.
+            # A redactor that fails open is worse than none — callers believe output
+            # is safe. Fallback must be at least as strong as the policy pattern.
+            r"sk-[a-zA-Z0-9_-]{20,}",
         ]
         self.load_policy()
 

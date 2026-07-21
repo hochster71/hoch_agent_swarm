@@ -29,7 +29,7 @@ class DefectRegistry:
     def register_defect(self, defect_id: str, description: str, severity: str, domain: str, file_path: str = None, owner_agent: str = None) -> Dict[str, Any]:
         import datetime
         conn = sqlite3.connect(self.db_path)
-        created_at = datetime.datetime.now(datetime.UTC).isoformat() + "Z"
+        created_at = datetime.datetime.now(datetime.timezone.utc).isoformat() + "Z"
         conn.execute("""
             INSERT OR REPLACE INTO coding_defects (defect_id, description, severity, domain, file_path, owner_agent, status, created_at)
             VALUES (?, ?, ?, ?, ?, ?, 'OPEN', ?)

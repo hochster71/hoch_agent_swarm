@@ -12,6 +12,17 @@ jobs:
   linux-qa:
     name: Linux QA / Backend / Gates
     runs-on: ubuntu-latest
+
+    # PYTHON FLOOR ENFORCEMENT (added 2026-07-20).
+    # pyproject.toml declares requires-python = ">=3.10,<3.14", but every workflow
+    # pinned 3.13 only. That masked a real contract violation: six modules used
+    # `datetime.UTC` (3.11+), which raises AttributeError on 3.10 — invisible in CI,
+    # broken on any 3.10 deployment. A declared floor that is never exercised is not
+    # a floor, it is a comment. Matrix now tests BOTH ends of the declared range.
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.13"]
     timeout-minutes: 30
     steps:
       - name: Checkout
@@ -19,7 +30,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: ${{ matrix.python-version }}
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

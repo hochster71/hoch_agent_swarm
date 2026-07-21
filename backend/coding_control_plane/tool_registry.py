@@ -200,7 +200,7 @@ class ToolRegistry:
                 "executable_path": path,
                 "version": version,
                 "verification_command": verify_cmd,
-                "last_verified": datetime.datetime.now(datetime.UTC).isoformat() + "Z",
+                "last_verified": datetime.datetime.now(datetime.timezone.utc).isoformat() + "Z",
                 "status": status,
                 "category": t["category"],
                 "sandbox": t["sandbox"]

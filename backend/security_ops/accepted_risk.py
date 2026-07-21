@@ -24,7 +24,7 @@ class AcceptedRisk:
 
     def record_accepted_risk(self, risk_id: str, defect_id: str, justification: str, expiration_date: str = None) -> Dict[str, Any]:
         import datetime
-        ts = datetime.datetime.now(datetime.UTC).isoformat() + "Z"
+        ts = datetime.datetime.now(datetime.timezone.utc).isoformat() + "Z"
         conn = sqlite3.connect(self.db_path)
         conn.execute("""
             INSERT OR REPLACE INTO accepted_risks (risk_id, defect_id, justification, operator_approval, expiration_date, approved_at)

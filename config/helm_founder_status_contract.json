@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "canonical_command": "bash scripts/helm-status",
+  "implementation": "scripts/helm_founder_status.py",
+  "baseline_sections": [
+    "HELM FOUNDER CONSOLE",
+    "MISSION",
+    "BURNDOWN TO 100%",
+    "CRITICAL CONTROLS",
+    "CRITICAL PATH",
+    "FOUNDER-ONLY GATES",
+    "RUNTIME AND EVIDENCE",
+    "SECURITY AND RISK",
+    "PROMOTION",
+    "NEXT FOUNDER ACTION",
+    "EVIDENCE SOURCES",
+    "NO FAKE GREEN"
+  ],
+  "required_controls": [
+    {
+      "id": "ACTOR-001",
+      "weight": 20,
+      "required": true,
+      "description": "Host-account isolation and actor attribution"
+    },
+    {
+      "id": "ACTOR-F2",
+      "weight": 20,
+      "required": true,
+      "description": "Local actor and account-boundary resolution"
+    },
+    {
+      "id": "ACTOR-F3",
+      "weight": 20,
+      "required": true,
+      "description": "Credential-custody isolation"
+    },
+    {
+      "id": "GOV-007",
+      "weight": 25,
+      "required": true,
+      "description": "Protected identity or signing boundary validation"
+    },
+    {
+      "id": "RISK-DEP-001",
+      "weight": 15,
+      "required": true,
+      "description": "Dependency-vulnerability disposition"
+    }
+  ],
+  "green_states": [
+    "PASS",
+    "PASSED",
+    "COMPLETE",
+    "COMPLETED",
+    "CLOSED",
+    "RESOLVED",
+    "VALIDATED",
+    "VERIFIED",
+    "SATISFIED",
+    "GO"
+  ],
+  "blocked_states": [
+    "BLOCKED",
+    "BLOCKED_EXTERNAL",
+    "HOLD",
+    "NO_GO",
+    "FAILED",
+    "FAIL",
+    "OPEN",
+    "PARTIAL",
+    "IN_PROGRESS",
+    "PENDING",
+    "UNKNOWN",
+    "UNOBSERVED",
+    "UNRESOLVED",
+    "UNTESTED",
+    "INCONCLUSIVE",
+    "DISPROVEN",
+    "OBSERVED_ABSENT"
+  ]
+}

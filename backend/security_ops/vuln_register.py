@@ -25,7 +25,7 @@ class VulnRegister:
 
     def register_vuln(self, vuln_id: str, cve_id: str, package_name: str, severity: str, status: str = "OPEN") -> Dict[str, Any]:
         import datetime
-        ts = datetime.datetime.now(datetime.UTC).isoformat() + "Z"
+        ts = datetime.datetime.now(datetime.timezone.utc).isoformat() + "Z"
         conn = sqlite3.connect(self.db_path)
         conn.execute("""
             INSERT OR REPLACE INTO security_vulns (vuln_id, cve_id, package_name, severity, status, last_updated)

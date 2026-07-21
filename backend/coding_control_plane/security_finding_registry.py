@@ -28,7 +28,7 @@ class SecurityFindingRegistry:
             pass
 
     def record_finding(self, finding_id: str, title: str, severity: str, file_path: str, line_number: int, description: str) -> Dict[str, Any]:
-        created_at = datetime.datetime.now(datetime.UTC).isoformat()
+        created_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
         try:
             with sqlite3.connect(self.db_path, timeout=60) as conn:
                 conn.execute("""

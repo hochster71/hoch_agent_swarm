@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 import os
 import shutil
 from backend.monetization.read_only_guard import ReadOnlyGuard
@@ -6,19 +7,23 @@ from backend.monetization.security_redactor import SecurityRedactor
 from backend.monetization.evidence_validator import EvidenceValidator
 from backend.monetization.audit_harness import AuditHarness
 
-ROOT_DIR = "/Users/michaelhoch/hoch_agent_swarm"
+# FIXTURE DEFECT FIXED 2026-07-20: was hardcoded f"{ROOT_DIR}".
+# That path exists on exactly one machine. Elsewhere the policy YAML silently fails to
+# load (masking the weak-default redaction bug) and mkdir under /Users raises
+# PermissionError. Resolve from the test file instead.
+ROOT_DIR = str(Path(__file__).resolve().parents[2])
 
 def test_read_only_guard_allowed_paths():
     guard = ReadOnlyGuard(ROOT_DIR)
     
     # Allowed writes
-    guard.verify_write_path("/Users/michaelhoch/hoch_agent_swarm/data/monetization/test.json")
-    guard.verify_write_path("/Users/michaelhoch/hoch_agent_swarm/docs/evidence/monetization/report.md")
-    guard.verify_write_path("/Users/michaelhoch/hoch_agent_swarm/docs/planning/monetization/package.md")
+    guard.verify_write_path(f"{ROOT_DIR}/data/monetization/test.json")
+    guard.verify_write_path(f"{ROOT_DIR}/docs/evidence/monetization/report.md")
+    guard.verify_write_path(f"{ROOT_DIR}/docs/planning/monetization/package.md")
 
     # Blocked writes (outside allowlist)
     with pytest.raises(PermissionError):
-        guard.verify_write_path("/Users/michaelhoch/hoch_agent_swarm/backend/main.py")
+        guard.verify_write_path(f"{ROOT_DIR}/backend/main.py")
         
     with pytest.raises(PermissionError):
         guard.verify_write_path("/Users/michaelhoch/Documents/secrets.txt")
