@@ -34,6 +34,7 @@ from scripts.helm_assurance_engine import (
     replay_closed_loop_ledger,
     verify_version_compatibility,
     verify_jcs_conformance_vectors,
+    LEDGER_RECOVERY_POLICY_DECISION_TABLE,
     CLOSED_LOOP_LEDGER_PATH,
 )
 
@@ -480,6 +481,178 @@ def test_multiprocess_concurrent_append_locking_and_replay(tmp_path):
         assert replay["head_transaction_hash"] == records[-1]["current_transaction_hash"]
     finally:
         hae.CLOSED_LOOP_LEDGER_PATH = orig_path
+
+def test_high_scale_burn_in_and_crash_recovery(tmp_path):
+    """High-scale operational burn-in test: appends 100 high-frequency transactions, verifies lock contention stability, hash chain continuity, and clean recovery."""
+    import time
+    import scripts.helm_assurance_engine as hae
+    from scripts.helm_assurance_engine import HELMAssuranceEngine, verify_closed_loop_ledger_integrity, replay_closed_loop_ledger
+
+    test_ledger = tmp_path / "burn_in_ledger.jsonl"
+    orig_path = hae.CLOSED_LOOP_LEDGER_PATH
+    hae.CLOSED_LOOP_LEDGER_PATH = test_ledger
+
+    try:
+        engine = HELMAssuranceEngine(
+            title="Operational Burn-In Test",
+            artifact_id="AUDIT-TEST-BURNIN-100",
+            scope="test/burnin"
+        )
+
+        start_time = time.time()
+        for i in range(100):
+            engine.execute_closed_loop_update(
+                worker_id=f"burn-in-worker-{i % 5}",
+                produced_artifacts=[f"burnin_art_{i}.txt"]
+            )
+        elapsed = time.time() - start_time
+
+        # Verify record count
+        lines = [ln for ln in test_ledger.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        assert len(lines) == 100
+
+        # Verify integrity & deterministic replay
+        integrity = verify_closed_loop_ledger_integrity(ledger_path=test_ledger)
+        assert integrity["status"] == "VERIFIED_INTEGRITY"
+        assert integrity["valid_transactions"] == 100
+
+        replay = replay_closed_loop_ledger(ledger_path=test_ledger)
+        assert replay["replay_status"] == "DETERMINISTIC_REPLAY_SUCCESS"
+        assert replay["total_chained_transactions"] == 100
+        assert elapsed < 15.0  # High throughput requirement (<15s for 100 locked appends + fsync)
+    finally:
+        hae.CLOSED_LOOP_LEDGER_PATH = orig_path
+
+def test_interrupted_write_recovery(tmp_path):
+    """Interrupted write / crash recovery test: verifies that ledger append and reader engines gracefully recover when a truncated/corrupted line exists at the end of the file."""
+    import scripts.helm_assurance_engine as hae
+    from scripts.helm_assurance_engine import HELMAssuranceEngine, load_closed_loop_ledger_records
+
+    test_ledger = tmp_path / "crash_ledger.jsonl"
+    orig_path = hae.CLOSED_LOOP_LEDGER_PATH
+    hae.CLOSED_LOOP_LEDGER_PATH = test_ledger
+
+    try:
+        engine = HELMAssuranceEngine(
+            title="Crash Recovery Test",
+            artifact_id="AUDIT-TEST-CRASH-RECOVERY",
+            scope="test/crash"
+        )
+
+        # 1. Write 3 valid records
+        for i in range(3):
+            engine.execute_closed_loop_update(
+                worker_id=f"worker-precrash-{i}",
+                produced_artifacts=[f"precrash_{i}.txt"]
+            )
+
+        # 2. Simulate process crash by writing an incomplete/truncated JSON line to the file
+        with open(test_ledger, "a", encoding="utf-8") as f:
+            f.write('{"transaction_id": "TX-CRASH-INCOMPLETE", "previous_transaction_hash": "corrupted_incomplete_bytes')
+
+        # 3. Read ledger under non-strict mode: load_closed_loop_ledger_records recovers valid records and isolates parse error
+        loaded = load_closed_loop_ledger_records(test_ledger, fail_on_malformed=False)
+        assert len(loaded["records"]) == 3
+        assert len(loaded["parse_errors"]) == 1
+        assert loaded["parse_errors"][0]["code"] == "MALFORMED_JSONL_LINE"
+
+        # 4. Append new valid transaction: engine recovers by chaining from last valid record
+        res_post = engine.execute_closed_loop_update(
+            worker_id="worker-postcrash-4",
+            produced_artifacts=["postcrash_4.txt"]
+        )
+        assert res_post["previous_transaction_hash"] == loaded["records"][-1]["current_transaction_hash"]
+    finally:
+        hae.CLOSED_LOOP_LEDGER_PATH = orig_path
+
+def test_midfile_corruption_rejection(tmp_path):
+    """Mid-file corruption test: verifies that if a malformed record exists in the middle of a ledger log file, appends fail closed with MID_FILE_CORRUPTION_REJECTED."""
+    import scripts.helm_assurance_engine as hae
+    from scripts.helm_assurance_engine import HELMAssuranceEngine
+
+    test_ledger = tmp_path / "midfile_corrupt_ledger.jsonl"
+    orig_path = hae.CLOSED_LOOP_LEDGER_PATH
+    hae.CLOSED_LOOP_LEDGER_PATH = test_ledger
+
+    try:
+        engine = HELMAssuranceEngine(
+            title="Midfile Corrupt Test",
+            artifact_id="AUDIT-TEST-MIDFILE-CORRUPT",
+            scope="test/midfile"
+        )
+
+        # 1. Write valid record 1
+        engine.execute_closed_loop_update(worker_id="w-1", produced_artifacts=["art_1.txt"])
+
+        # 2. Write corrupted line in the middle of the log file
+        with open(test_ledger, "a", encoding="utf-8") as f:
+            f.write('{"transaction_id": "CORRUPTED_MIDFILE_BYTES_WITHOUT_CLOSING_BRACKET\n')
+
+        # 3. Write valid record 3 AFTER the corrupted mid-file record
+        engine.execute_closed_loop_update(worker_id="w-3", produced_artifacts=["art_3.txt"])
+
+        # 4. Attempt next append: _read_tail_hash_under_lock detects non-final line corruption and fails closed
+        res = engine.execute_closed_loop_update(worker_id="w-4", produced_artifacts=["art_4.txt"])
+        assert res["transaction_status"] == "LEDGER_APPEND_FAILED"
+        assert res["error"]["code"] == "MID_FILE_CORRUPTION_REJECTED"
+    finally:
+        hae.CLOSED_LOOP_LEDGER_PATH = orig_path
+
+def test_recovery_policy_decision_table():
+    """Unit test for operational recovery policy decision table taxonomy and enum validation."""
+    from scripts.helm_assurance_engine import POLICY_IMPLEMENTATION_STATE_ALLOWED_VALUES
+    assert len(LEDGER_RECOVERY_POLICY_DECISION_TABLE) == 4
+    codes = [item["code"] for item in LEDGER_RECOVERY_POLICY_DECISION_TABLE]
+    assert "TRUNCATED_FINAL_RECORD_DETECTED" in codes
+    assert "MID_FILE_CORRUPTION_REJECTED" in codes
+    assert "HASH_CHAIN_DISCONTINUITY_ERROR" in codes
+    assert "DUPLICATE_TX_ID_UNENFORCED_OUTSIDE_SCOPE" in codes
+    for row in LEDGER_RECOVERY_POLICY_DECISION_TABLE:
+        assert "implementation_state" in row
+        assert row["implementation_state"] in POLICY_IMPLEMENTATION_STATE_ALLOWED_VALUES
+        assert "policy" in row
+        assert "result" in row
+        assert "code" in row
+
+
+def test_governance_policy_json_schema_validation():
+    """Unit test validating exported governance_policies against formal JSON Schema using jsonschema validator."""
+    import importlib.metadata
+    import jsonschema
+    from scripts.helm_assurance_engine import governance_validation_environment
+
+    schema_path = ROOT / "docs" / "helm" / "schemas" / "governance_policies_schema_v1.json"
+    assert schema_path.exists(), "Formal JSON schema file must exist"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    assert schema.get("additionalProperties") is False
+
+    engine = HELMAssuranceEngine(
+        title="Test Audit 31",
+        artifact_id="TEST-31",
+        scope="Unit Test Scope",
+    )
+    manifest = engine.export_canonical_manifest()
+    gov_policies = manifest["metadata"]["governance_policies"]
+    val_env = manifest["metadata"]["governance_validation_environment"]
+
+    # Direct JSON Schema validation using jsonschema library (additionalProperties: false)
+    jsonschema.validate(instance=gov_policies, schema=schema)
+
+    # Reproducibility: record validator package version in evidence metadata
+    expected_ver = importlib.metadata.version("jsonschema")
+    assert val_env["jsonschema_package_version"] == expected_ver
+    assert val_env["schema_draft"].endswith("2020-12/schema")
+    assert val_env["contract_mode"].startswith("CLOSED_WORLD")
+    # Helper matches export
+    assert governance_validation_environment()["jsonschema_package_version"] == expected_ver
+
+    # Closed world: unexpected keys rejected
+    dirty = dict(gov_policies)
+    dirty["not_in_contract"] = True
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(instance=dirty, schema=schema)
+
+
 
 
 

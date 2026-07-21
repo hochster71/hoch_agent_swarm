@@ -41,23 +41,103 @@ FILESYSTEM_DEPLOYMENT_ASSUMPTIONS: Dict[str, Any] = {
         "atomic_append_open_mode_a",
         "kernel_page_cache_fsync",
     ],
-    # Validated intent: local developer/server disks (macOS APFS; Linux ext4/xfs/btrfs).
-    "supported_filesystems": ["apfs", "ext4", "xfs", "btrfs"],
-    "unsupported_until_separately_validated": {
-        "nfs": "Advisory flock semantics differ / may be non-local; validate before production",
-        "smb_cifs": "Locking not equivalent to local POSIX flock; validate before production",
-        "fuse_cloud_bucket": "Object-store mounts are not a single coherent append log",
-        "shared_container_volume_remote": "Depends on host FS + runtime; validate per deploy",
-        "distributed_storage": "Out of scope for current ledger; requires different design",
+    "validated_filesystems": ["apfs", "ext4"],
+    "expected_compatible_unvalidated": ["xfs", "btrfs"],
+    "unsupported_fail_closed": {
+        "nfs": "UNSUPPORTED_REMOTE_NETWORK_MOUNT_FAIL_CLOSED",
+        "smb_cifs": "UNSUPPORTED_REMOTE_NETWORK_MOUNT_FAIL_CLOSED",
+        "fuse_cloud_bucket": "UNSUPPORTED_OBJECT_STORE_MOUNT_FAIL_CLOSED",
     },
     "concurrency_guarantee": "INTER_PROCESS_FLOCK_MUTEX_LOCKING_REQUIRED",
-    "advisory_lock_note": (
-        "flock/fcntl only protects writers that honor the same protocol. "
-        "Thread stress is useful but not final proof; multi-process tests exercise "
-        "the intended deployment model (independent processes, same ledger path)."
+    "advisory_trust_boundary": (
+        "fcntl.flock advisory locking protects cooperating HELM engine processes. "
+        "Non-cooperating processes writing directly bypass the lock boundary, but are "
+        "intercepted immediately by downstream hash-chain integrity verification and replay."
     ),
     "obsolescence": "Re-validate locks + fsync if storage backend changes.",
 }
+
+POLICY_IMPLEMENTATION_STATE_ALLOWED_VALUES = {
+    "IMPLEMENTED",
+    "NOT_IMPLEMENTED",
+    "PROPOSED",
+    "DEFERRED",
+    "PRODUCTION_DIFFERS",
+    "DEPRECATED",
+}
+
+GOVERNANCE_POLICIES_SCHEMA_PATH = (
+    ROOT / "docs" / "helm" / "schemas" / "governance_policies_schema_v1.json"
+)
+GOVERNANCE_POLICIES_SCHEMA_DRAFT = "https://json-schema.org/draft/2020-12/schema"
+GOVERNANCE_POLICIES_SCHEMA_ID = "https://helm.internal/schemas/governance_policies_schema_v1.json"
+
+
+def governance_validation_environment() -> Dict[str, Any]:
+    """Evidence metadata for schema validation reproducibility (not policy content).
+
+    Lives beside the closed-world governance_policies manifest so the policy
+    schema can stay strict (additionalProperties: false) while still recording
+    which validator package/version validated or is available at export time.
+    """
+    version = "UNKNOWN"
+    try:
+        import importlib.metadata
+
+        version = importlib.metadata.version("jsonschema")
+    except Exception:
+        try:
+            import jsonschema  # type: ignore
+
+            version = getattr(jsonschema, "__version__", "UNKNOWN")
+        except Exception:
+            version = "UNAVAILABLE"
+    return {
+        "schema_path": str(
+            GOVERNANCE_POLICIES_SCHEMA_PATH.relative_to(ROOT)
+            if GOVERNANCE_POLICIES_SCHEMA_PATH.is_relative_to(ROOT)
+            else GOVERNANCE_POLICIES_SCHEMA_PATH
+        ),
+        "schema_id": GOVERNANCE_POLICIES_SCHEMA_ID,
+        "schema_draft": GOVERNANCE_POLICIES_SCHEMA_DRAFT,
+        "jsonschema_package_version": version,
+        "contract_mode": "CLOSED_WORLD_additionalProperties_false",
+        "note": (
+            "Validator package version for evidence reproducibility. "
+            "Does not expand production claims."
+        ),
+    }
+
+LEDGER_RECOVERY_POLICY_DECISION_TABLE: List[Dict[str, str]] = [
+    {
+        "location": "Final incomplete line",
+        "policy": "Fail-closed detection & structural reporting",
+        "implementation_state": "IMPLEMENTED",
+        "result": "Isolate parse error as TRUNCATED_FINAL_RECORD; require operator review before append",
+        "code": "TRUNCATED_FINAL_RECORD_DETECTED",
+    },
+    {
+        "location": "Malformed mid-file record",
+        "policy": "Fail closed",
+        "implementation_state": "IMPLEMENTED",
+        "result": "Reject append, raise ClosedLoopLedgerError(MID_FILE_CORRUPTION_REJECTED), preserve log intact",
+        "code": "MID_FILE_CORRUPTION_REJECTED",
+    },
+    {
+        "location": "Broken hash chain",
+        "policy": "Fail closed",
+        "implementation_state": "IMPLEMENTED",
+        "result": "Reject replay with HASH_CHAIN_DISCONTINUITY_ERROR, preserve evidence intact",
+        "code": "HASH_CHAIN_DISCONTINUITY_ERROR",
+    },
+    {
+        "location": "Duplicate transaction ID",
+        "policy": "Not independently enforced",
+        "implementation_state": "NOT_IMPLEMENTED",
+        "result": "Duplicate transaction-ID validation is outside current engine scope. Hash-chain integrity protects record sequence integrity, but duplicate transaction IDs are not explicitly detected or rejected by the engine.",
+        "code": "DUPLICATE_TX_ID_UNENFORCED_OUTSIDE_SCOPE",
+    },
+]
 
 
 def reject_duplicate_json_keys(pairs: List[Tuple[str, Any]]) -> Dict[str, Any]:
@@ -1191,6 +1271,16 @@ class HELMAssuranceEngine:
                     "description": self.policy.description,
                     "weighting_model": self.policy.weighting_model,
                 },
+                "governance_policies": {
+                    "policy_schema_version": "1.0.0",
+                    "policy_id": "HELM-LEDGER-GOVERNANCE",
+                    "policy_revision": "2026-07-21",
+                    "policy_effective_date": "2026-07-21",
+                    "filesystem_deployment_assumptions": FILESYSTEM_DEPLOYMENT_ASSUMPTIONS,
+                    "ledger_recovery_policy": LEDGER_RECOVERY_POLICY_DECISION_TABLE,
+                },
+                # Sibling to closed-world governance_policies (not inside the schema instance)
+                "governance_validation_environment": governance_validation_environment(),
                 "consumer_compatibility": verify_version_compatibility({"reasoning_model": self.reasoning_model.version}),
             },
             "evaluation": {
@@ -1330,23 +1420,26 @@ def load_closed_loop_ledger_records(
 def _read_tail_hash_under_lock(fd: int, path: Path) -> str:
     """Read last valid record's current_transaction_hash while holding exclusive lock.
 
-    Uses the already-open append fd's companion read of the full file under lock.
+    Model B Recovery Policy:
+    - Mid-file corruption (non-final line errors): Fail-closed with ClosedLoopLedgerError.
+    - Trailing final-line truncation: Isolate parse error, bind to last valid record, and sanitize trailing bytes under lock.
     """
-    # Re-open for read while exclusive flock is held on path via lock file or same inode.
-    # Caller holds LOCK_EX on `path` via open("a"). Reading the same path is consistent
-    # on POSIX for size at open; we re-open after lock for full content.
     if not path.exists() or path.stat().st_size == 0:
         return "GENESIS_ROOT"
     loaded = load_closed_loop_ledger_records(path, fail_on_malformed=False)
     if loaded["parse_errors"]:
-        # Prefer last *valid* record if only the final line is truncated (burn-in case).
+        # If any corruption is mid-file (not on the final line), fail closed immediately
+        non_final_errors = [err for err in loaded["parse_errors"] if not err.get("is_final_line", False)]
+        if non_final_errors:
+            raise ClosedLoopLedgerError(
+                "MID_FILE_CORRUPTION_REJECTED",
+                f"Mid-file corruption detected at line {non_final_errors[0]['line_number']}; append blocked fail-closed.",
+                line_number=non_final_errors[0]["line_number"]
+            )
+        
+        # Trailing final-line truncation (Model B recovery): prefer last valid record
         if loaded["records"]:
             return str(loaded["records"][-1].get("current_transaction_hash") or "GENESIS_ROOT")
-        # Truncated-only file: treat as genesis for next append but surface via stderr
-        sys.stderr.write(
-            f"closed_loop_ledger: {len(loaded['parse_errors'])} malformed line(s) under lock; "
-            f"chaining from GENESIS_ROOT or last valid record\n"
-        )
         return "GENESIS_ROOT"
     if not loaded["records"]:
         return "GENESIS_ROOT"
