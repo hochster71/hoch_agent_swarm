@@ -1,0 +1,26 @@
+{
+  "schema_version": "HELM_EXECUTION_OBSERVATION_v1",
+  "evidence_class": "OBSERVED_EXECUTION",
+  "label": "hrf_mission",
+  "started_at": "2026-07-21T13:03:07Z",
+  "finished_at": "2026-07-21T13:03:07Z",
+  "outcome": "COMPLETED",
+  "error": null,
+  "modules_loaded_during_window": 9,
+  "watched_LOADED": {},
+  "watched_NOT_LOADED_in_this_run": [
+    "mcp",
+    "chromadb",
+    "json_repair",
+    "crewai",
+    "pillow",
+    "PIL"
+  ],
+  "watched_already_resident_before_window": [],
+  "claim_this_supports": "OBSERVED_ABSENT_IN_THIS_RUN for the not-loaded set \u2014 NOT 'unreachable'. One window is one observation. Widening to a general claim requires more windows and is not licensed by this artifact.",
+  "observation_windows": 1,
+  "method": "sys.modules diff around the observed callable; no import hooks, no patching",
+  "generated_by": "backend.helm_runtime.execution_observer.observe",
+  "generated_at": "2026-07-21T13:03:07Z",
+  "content_hash": "5a0399faea12d326d4908da915136d2eda6e9caa7d69fb5410b185c18f82cc73"
+}
