@@ -41,9 +41,9 @@
   "reference_graph_hash_at_freeze": "3648caa4ef2583d06f0a11acad8352143f65641ff605f269bdb6954eea8c9734",
   "note": "reference_graph_hash is the audit-time snapshot; live rebuilds may change hash when goal sources change. Interface contract fields remain stable.",
   "provenance": {
-    "generated_at": "2026-07-21T14:38:07Z",
-    "git_commit": null,
-    "binding_state": "PENDING_BASELINE_COMMIT",
-    "note": "git_commit is the full 40-character object ID of the Phase 1 baseline commit; filled by post-commit stamp so the identifier is immutable and unambiguous."
+    "generated_at": "2026-07-21T14:38:25Z",
+    "git_commit": "b8a98a9afc62d7454a32714fa0d491aa90477580",
+    "binding_state": "BOUND",
+    "note": "git_commit is the full 40-character object ID of the Phase 1 baseline commit (immutable)."
   }
 }
