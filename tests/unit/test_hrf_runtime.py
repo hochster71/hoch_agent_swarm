@@ -275,3 +275,54 @@ def test_canonicalize_collapses_whitespace_and_carriage_returns():
 def test_canonicalize_handles_none_and_non_string():
     assert canonicalize_detail(None) == ""
     assert canonicalize_detail(1234) == "1234"
+
+
+# =============================================================================
+# CYB-002 STEP 2 — the observation window is STRUCTURAL (2026-07-21)
+# Evidence that depends on someone remembering to ask for it is not a control.
+# =============================================================================
+
+def test_every_mission_emits_an_observation_window_without_being_asked():
+    """THE structural property. No flag, no wrapper, no operator discipline."""
+    r = run(GOOD, dispatch=_fake([_ok("a"), _ok("a SUPPORTED"), _ok("brief")]))
+    o = r["execution_observation"]
+    assert o is not None
+    assert o["evidence_class"] == "OBSERVED_EXECUTION"
+    assert o["observation_windows"] == 1
+    assert len(o["content_hash"]) == 64
+
+
+def test_a_BLOCKED_mission_still_carries_its_observation_field():
+    """A halted run must not lose its evidence surface — failures leave traces too."""
+    r = run({}, dispatch=_fake([]))
+    assert r["outcome"] == Outcome.BLOCKED.value
+    assert "execution_observation" in r
+
+
+def test_disabled_observation_is_RECORDED_not_silent():
+    """An absent window and an empty window must never look the same. Turning the
+    observer off is itself evidence."""
+    r = run(GOOD, dispatch=_fake([_ok("a"), _ok("a SUPPORTED"), _ok("b")]),
+            observe_execution=False)
+    o = r["execution_observation"]
+    assert o["observation"] == "DISABLED"
+    assert "observed nothing" in o["note"]
+
+
+def test_observation_does_not_alter_mission_outcome():
+    """The observer must not change what it observes. Same dispatch, same verdict,
+    observed or not."""
+    obs_on = run(GOOD, dispatch=_fake([_ok("a"), _ok("a SUPPORTED"), _ok("b")]))
+    obs_off = run(GOOD, dispatch=_fake([_ok("a"), _ok("a SUPPORTED"), _ok("b")]),
+                  observe_execution=False)
+    assert obs_on["outcome"] == obs_off["outcome"]
+    assert [s["component"] for s in obs_on["steps"]] == \
+           [s["component"] for s in obs_off["steps"]]
+
+
+def test_role_failure_still_stops_the_sequence_after_refactor():
+    """The role loop moved into a closure so the window could wrap it. Guard that the
+    first-failure-stops behaviour survived the refactor."""
+    r = run(GOOD, dispatch=_fake([_ok("a"), {"ok": False, "message": "down"}, _ok("never")]))
+    assert len(r["steps"]) == 2, "execution continued past a failed role"
+    assert r["outcome"] == Outcome.PARTIAL.value

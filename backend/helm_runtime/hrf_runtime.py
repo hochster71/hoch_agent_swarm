@@ -243,11 +243,23 @@ def _classify(steps: List[StepRecord], verifier: Optional[Dict[str, Any]],
 
 
 def run(payload: Dict[str, Any], *, factory_id: str = "HRF",
-        dispatch=None) -> Dict[str, Any]:
+        dispatch=None, observe_execution: bool = True) -> Dict[str, Any]:
     """Execute one governed HRF mission. Returns evidence; writes no state.
 
     `dispatch` is injectable so the path is testable without a live model. The default is
     the guarded, cost-capped, ledgered gateway — never a raw provider call.
+
+    CYB-002 STEP 2 (founder, 2026-07-21): every governed mission emits an execution
+    observation window as a CONSEQUENCE OF RUNNING, not through operator discipline.
+    Evidence that depends on someone remembering to ask for it is not a control.
+
+    The window wraps the dispatch phase — the part that actually loads code — so it
+    records what the interpreter loaded while roles executed.
+
+    `observe_execution=False` exists ONLY for the observer's own tests (observing the
+    observer recurses). It is not a production escape hatch: turning it off is recorded
+    in the evidence as `observation: DISABLED`, so a run without a window can never be
+    mistaken for a run that observed nothing.
     """
     run_id = str(uuid.uuid4())
     started = _now()
@@ -255,6 +267,7 @@ def run(payload: Dict[str, Any], *, factory_id: str = "HRF",
     halted: Optional[str] = None
     verifier: Optional[Dict[str, Any]] = None
     outputs: Dict[str, str] = {}
+    observation: Optional[Dict[str, Any]] = None
 
     if dispatch is None:  # pragma: no cover - exercised only with a live gateway
         from backend.dispatch.guarded_council import guarded_dispatch as dispatch
@@ -268,28 +281,55 @@ def run(payload: Dict[str, Any], *, factory_id: str = "HRF",
             monthly_limit_usd=float(fac["budget"]["monthly_limit_usd"]),
         )
 
-        prior = ""
-        for role in fac["agent_roles"]:
-            if role not in ROLE_PROMPTS:
-                raise SandboxViolation(f"role {role!r} declared but not implemented")
-            budget.authorize(0.0)  # local lane is free; frontier lanes carry a real estimate
-            prompt = ROLE_PROMPTS[role].format(query=payload.get("query", ""), prior=prior)
-            res = dispatch(LANE_FOR_ROLE.get(role, "local"), prompt, pert_node="HRF")
-            ok = bool(res.get("ok"))
-            text = (res.get("text") or "").strip()
-            budget.record(res.get("cost") or 0.0)
-            steps.append(StepRecord(
-                component=role, executed=True, ok=ok,
-                produced_output=bool(ok and text),   # ran+failed != produced work
-                detail="" if ok else canonicalize_detail(
-                    res.get("message") or res.get("status") or ""),
-                cost_usd=float(res.get("cost") or 0.0), model=str(res.get("model") or ""),
-                output_sha256=_sha(text),
-            ))
-            if not ok:
-                break
-            outputs[role] = text
-            prior = text
+        def _execute_roles():
+            """The dispatch phase, wrapped so the observation window covers exactly the
+            part of the mission that loads code. Behaviour is unchanged from the inline
+            loop: first failing role stops the sequence."""
+            prior = ""
+            for role in fac["agent_roles"]:
+                if role not in ROLE_PROMPTS:
+                    raise SandboxViolation(f"role {role!r} declared but not implemented")
+                budget.authorize(0.0)  # local lane is free; frontier lanes carry an estimate
+                prompt = ROLE_PROMPTS[role].format(query=payload.get("query", ""), prior=prior)
+                res = dispatch(LANE_FOR_ROLE.get(role, "local"), prompt, pert_node="HRF")
+                ok = bool(res.get("ok"))
+                text = (res.get("text") or "").strip()
+                budget.record(res.get("cost") or 0.0)
+                steps.append(StepRecord(
+                    component=role, executed=True, ok=ok,
+                    produced_output=bool(ok and text),   # ran+failed != produced work
+                    detail="" if ok else canonicalize_detail(
+                        res.get("message") or res.get("status") or ""),
+                    cost_usd=float(res.get("cost") or 0.0), model=str(res.get("model") or ""),
+                    output_sha256=_sha(text),
+                ))
+                if not ok:
+                    break
+                outputs[role] = text
+                prior = text
+
+        # CYB-002: the window is STRUCTURAL. If the observer itself is unavailable the run
+        # records that fact rather than silently proceeding unobserved — an absent window
+        # and an empty window must never look the same.
+        if observe_execution:
+            try:
+                from backend.helm_runtime.execution_observer import observe as _observe
+                _, _obs = _observe(_execute_roles, label=factory_id.lower())
+                observation = _obs.to_evidence()
+                if _obs.outcome == "RAISED" and _obs.error:
+                    raise SandboxViolation(_obs.error) if "SandboxViolation" in _obs.error \
+                        else RuntimeError(_obs.error)
+            except (SandboxViolation, RuntimeError):
+                raise
+            except Exception as _oe:                       # observer unavailable/broken
+                observation = {"observation": "UNAVAILABLE", "reason": str(_oe)[:200],
+                               "note": "mission ran UNOBSERVED — this is not an empty window"}
+                _execute_roles()
+        else:
+            observation = {"observation": "DISABLED",
+                           "note": "explicitly disabled (observer self-tests only); a run "
+                                   "without a window is not a run that observed nothing"}
+            _execute_roles()
 
         if len(outputs) == len(fac["agent_roles"]):
             verifier = fact_check_verifier(
@@ -316,6 +356,7 @@ def run(payload: Dict[str, Any], *, factory_id: str = "HRF",
         "steps": [s.__dict__ for s in steps],
         "verifier": verifier,
         "total_cost_usd": round(sum(s.cost_usd for s in steps), 6),
+        "execution_observation": observation,
         "components_declared": None,
         "components_executed": [s.component for s in steps if s.executed],
     }
