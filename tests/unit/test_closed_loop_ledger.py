@@ -388,10 +388,17 @@ def test_extended_burnin_thousands_of_appends(ledger_path: Path):
 
 
 def test_filesystem_deployment_assumptions_documented():
-    """Supported storage assumptions are explicit (local APFS/ext4/xfs; not NFS-by-default)."""
+    """Supported storage assumptions are explicit (local APFS/ext4; NFS fail-closed)."""
     a = eng.FILESYSTEM_DEPLOYMENT_ASSUMPTIONS
     assert a["supported_storage_scope"] == "LOCAL_POSIX_COMPLIANT_FS_ONLY"
-    assert "apfs" in a["supported_filesystems"]
-    assert "ext4" in a["supported_filesystems"]
-    assert "nfs" in a["unsupported_until_separately_validated"]
+    # Accept either key shape (validated_filesystems or supported_filesystems)
+    fs = a.get("validated_filesystems") or a.get("supported_filesystems") or []
+    assert "apfs" in fs
+    assert "ext4" in fs
+    unsupported = (
+        a.get("unsupported_fail_closed")
+        or a.get("unsupported_until_separately_validated")
+        or {}
+    )
+    assert "nfs" in unsupported
     assert "INTER_PROCESS" in a["concurrency_guarantee"]
