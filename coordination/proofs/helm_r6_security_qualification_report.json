@@ -3,19 +3,19 @@
   "qualification_tier": "Security Qualified (R6 Baseline)",
   "qualification_status": "EVIDENCE_BOUND",
   "environment_metadata": {
-    "git_commit": "6bfd36b8c981332420942b5ad11c9a40a592a1a8",
+    "git_commit": "ccc7a7da515378b73c49209658febe682ccfdd0f",
     "dirty_tree_status": true,
     "test_command": "python3 -m pytest tests/security/test_helm_security_qualification.py -v",
     "python_version": "Python 3.14.6",
     "platform_architecture": "Darwin arm64 (macOS-26.5.2-arm64-arm-64bit-Mach-O)",
-    "start_time_utc": "2026-07-22T11:51:13.349162+00:00",
-    "completion_time_utc": "2026-07-22T11:51:13.419119+00:00"
+    "start_time_utc": "2026-07-22T11:51:49.838253+00:00",
+    "completion_time_utc": "2026-07-22T11:51:49.906180+00:00"
   },
   "artifact_digests": {
     "test_suite_file_sha256": "59ca93120fcf8ea626f64dc058af3b5bcd4147e28f93cf0120667c5b682fb779",
     "threat_model_file_sha256": "f85f308634171b6d62216fd9112b08ad53ee5cbd43861256e26afc6ecbb6aa33",
     "report_generator_sha256": "7dfebd813bf3cdc499df14baa01196c84a8bde2caa0aa07f20ccc7391758cda8",
-    "evidence_bundle_sha256": "a9755bac0e8a82df1e19749ae4536911081014d71e5b45b2c260d8ceed1ed874"
+    "evidence_bundle_sha256": "5f8351aad693cfe63e9d4c260770071b09e305788acfbe4f2498dbfc1a769264"
   },
   "traceability_matrix": {
     "total_unit_tests": 7,
