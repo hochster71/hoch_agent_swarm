@@ -1,26 +1,34 @@
 {
   "manifest_version": "1.0.0",
   "evidence_id": "GATE-2-STOREKIT-EVIDENCE-20260722",
-  "timestamp_utc": "2026-07-22T19:55:12Z",
-  "helm_commit": "7093579d",
-  "application_repository": "/Users/michaelhoch/epic-fury-build/epic-fury-2026",
-  "application_commit": "a93983e2e161c7b04271b335379e949ca9488fd7",
-  "xcode_test_target": "AppTests",
-  "xcode_scheme": "App-StoreKit-Qualification",
-  "storekit_resource_membership": "AppTests ONLY",
-  "test_configuration_present": true,
-  "storekit_session_initialization": "FAILED",
-  "monthly_product_configured": true,
-  "annual_product_configured": true,
-  "monthly_product_discovered": false,
-  "annual_product_discovered": false,
-  "bootstrap_tests": {
+  "generated_at_utc": "2026-07-22T20:00:15Z",
+  "helm_producer_commit": "b78dbd74d7c452174a0204318a247d187804f6d7",
+  "application_commit": "fbee9933f2a7068edb0d025343cc7dd61bfe6166",
+  "application_worktree_clean": true,
+  "xcode_version": "Xcode 16.0 (16A242d)",
+  "simulator_runtime": "iOS 26.5 (com.apple.CoreSimulator.SimRuntime.iOS-26-5)",
+  "simulator_udid": "04BEA928-96A4-40CD-9836-AEB9F0133893",
+  "test_target": "AppTests",
+  "test_scheme": "App-StoreKit-Qualification",
+  "test_identifier": "AppTests/StoreKitQualificationTests/test00_StoreKitBootstrapAndProductDiscovery",
+  "xcodebuild_exit_code": 65,
+  "xcresult_parses": true,
+  "xcresult_path": "coordination/evidence/build_12/gate_2_purchase/Gate2StoreKit.xcresult",
+  "xcodebuild_log_path": "coordination/evidence/build_12/gate_2_purchase/xcodebuild-test.log",
+  "artifact_digests": {
+    "xcodebuild_log": "7e911b5321198ee6e48f78002cd0a0f1f2cc8bd51fbaf10ff2b836ce1ff20769",
+    "products_storekit": "b1b8f13172a8e56970dec15e0cec028458877b643dceaf95e349d24da71608b4",
+    "shared_scheme": "5417dde8ca84f919f8c03abcfa9ab58ce4529105497dbaccc3d5eca880900c00",
+    "test_suite_swift": "2d0361ce1486942e9f03cfdb56cecd663da897e141c3f1d5d49f63506d738e16",
+    "xcresult_bundle": "c5c68a7d65f647bf91299b86d6da02f9822380ce4f13998be845295c28009eca"
+  },
+  "bootstrap_counts": {
     "implemented": 1,
     "executed": 1,
     "passed": 0,
     "failed": 1
   },
-  "gate_2_scenarios": {
+  "gate_2_counts": {
     "implemented": 9,
     "executed": 0,
     "passed": 0,
@@ -28,8 +36,6 @@
     "skipped": 0,
     "not_run": 9
   },
-  "xcresult_storage_class": "EXTERNAL_ARTIFACT_GIT_IGNORED",
-  "xcresult_path": "coordination/evidence/build_12/gate_2_purchase/Gate2StoreKit.xcresult",
-  "xcodebuild_test_log_path": "coordination/evidence/build_12/gate_2_purchase/xcodebuild-test.log",
+  "failure_classification": "PROJECT_CONFIGURATION_DEFECT",
   "gate_2_replay": "NOT_YET_QUALIFIED"
 }
