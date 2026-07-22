@@ -1,0 +1,37 @@
+{
+  "schema": "ENFORCEMENT_PROOF_v2",
+  "requirement": "REQ-ES-002",
+  "statement": "The dispatch loop is the only spawn point for model CLIs.",
+  "command": "python -m pytest tests/test_h1d_dispatch.py -q",
+  "result": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "returncode": 0,
+    "summary_tail": "..........                                                               [100%]\n10 passed in 0.07s"
+  },
+  "required_min_passes": 1,
+  "executed_at_utc": "2026-07-22T16:19:02.453903+00:00",
+  "git_commit": "93634c17be91e4f653e95e2ca0b19df00b4da146",
+  "git_dirty": true,
+  "validator_digest": "0599771293e2a92af865b2fabd124dbcde3a319ed1bb6847e1fce3cecc6b6305",
+  "config_digest": "53361688a3f312fbe1865ad6f8aba154a915be4c4aa4b04c6bb48facc286d726",
+  "digests": {
+    "tests/test_h1d_dispatch.py": "0599771293e2a92af865b2fabd124dbcde3a319ed1bb6847e1fce3cecc6b6305",
+    "scripts/council/dispatch.py": "4de721fd721c135d3d2024d2a9756002f4c89d0f6cef6f3dd400ae39fb6f5dba",
+    "config/goal_requirements.json": "53361688a3f312fbe1865ad6f8aba154a915be4c4aa4b04c6bb48facc286d726"
+  },
+  "evidence_manifest": [
+    "tests/test_h1d_dispatch.py",
+    "scripts/council/dispatch.py",
+    "config/goal_requirements.json"
+  ],
+  "runner": {
+    "python": "3.13.13",
+    "platform": "darwin",
+    "interpreter": "/Users/michaelhoch/hoch_agent_swarm/.venv/bin/python"
+  },
+  "written_by": "scripts/goal/refresh_enforcement_proofs.py",
+  "doctrine": "no_fake_green: goal engine still re-runs the validator itself; this artifact only evidences a genuine passing run and is never written on failure; verify_enforcement_proofs.py invalidates it on validator/config drift",
+  "immutable_package": "coordination/council/live_proof_packages/REQ-ES-002-20260722T161902Z"
+}

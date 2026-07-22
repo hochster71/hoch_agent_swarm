@@ -1,0 +1,26 @@
+{
+  "schema": "ENFORCEMENT_PROOF_v1",
+  "requirement": "REQ-ES-002",
+  "statement": "The dispatch loop is the only spawn point for model CLIs.",
+  "command": "python -m pytest tests/test_h1d_dispatch.py -q",
+  "result": {
+    "passed": 10,
+    "failed": 0,
+    "returncode": 0,
+    "summary_tail": "..........                                                               [100%]\n10 passed in 0.07s"
+  },
+  "required_min_passes": 1,
+  "executed_at_utc": "2026-07-22T16:08:39.578756+00:00",
+  "git_commit": "93634c17be91e4f653e95e2ca0b19df00b4da146",
+  "git_dirty": true,
+  "digests": {
+    "scripts/council/dispatch.py": "4de721fd721c135d3d2024d2a9756002f4c89d0f6cef6f3dd400ae39fb6f5dba",
+    "tests/test_h1d_dispatch.py": "0599771293e2a92af865b2fabd124dbcde3a319ed1bb6847e1fce3cecc6b6305"
+  },
+  "runner": {
+    "python": "3.13.13",
+    "platform": "darwin"
+  },
+  "written_by": "scripts/goal/refresh_enforcement_proofs.py",
+  "doctrine": "no_fake_green: goal engine still re-runs the validator itself; this artifact only evidences a genuine passing run and is never written on failure"
+}

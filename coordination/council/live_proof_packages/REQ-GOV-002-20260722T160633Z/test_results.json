@@ -1,0 +1,27 @@
+{
+  "schema": "H1B_ENFORCEMENT_PROOF_v1",
+  "requirement": "REQ-GOV-002",
+  "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible.",
+  "suite": "tests/test_h1b_authorization_enforcement.py",
+  "command": "python -m pytest tests/test_h1b_authorization_enforcement.py -q",
+  "result": {
+    "passed": 28,
+    "failed": 0,
+    "returncode": 0,
+    "summary_tail": "\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n28 passed, 77 warnings in 4.44s"
+  },
+  "required_min_passes": 24,
+  "executed_at_utc": "2026-07-22T16:06:33.933324+00:00",
+  "git_commit": "93634c17be91e4f653e95e2ca0b19df00b4da146",
+  "git_dirty": true,
+  "digests": {
+    "tests/test_h1b_authorization_enforcement.py": "88883b915062f1e815b30ebed0880cab8e47c9904df9b3e9ec32397caaa89a5c",
+    "scripts/council/h1_authorization.py": "60659ffd88097f6cbe4659db2401ad3774f7d2c9464aa15ec8887c227ff536f0"
+  },
+  "runner": {
+    "python": "3.13.13",
+    "platform": "darwin"
+  },
+  "written_by": "scripts/goal/refresh_req_gov_002_proof.py",
+  "doctrine": "no_fake_green: goal engine still re-runs the validator itself; this artifact only evidences a genuine passing run and is never written on failure"
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "ENFORCEMENT_PROOF_v2",
+  "requirement": "REQ-GOV-002",
+  "statement": "Founder authorization is fully bound (id, package, digests, providers, models, caps, expiry) and atomically consumed exactly once; replay is impossible.",
+  "command": "python -m pytest tests/test_h1b_authorization_enforcement.py -q",
+  "result": {
+    "passed": 28,
+    "failed": 0,
+    "errors": 0,
+    "returncode": 0,
+    "summary_tail": "\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n28 passed, 77 warnings in 4.48s"
+  },
+  "required_min_passes": 24,
+  "executed_at_utc": "2026-07-22T16:18:56.856505+00:00",
+  "git_commit": "93634c17be91e4f653e95e2ca0b19df00b4da146",
+  "git_dirty": true,
+  "validator_digest": "88883b915062f1e815b30ebed0880cab8e47c9904df9b3e9ec32397caaa89a5c",
+  "config_digest": "53361688a3f312fbe1865ad6f8aba154a915be4c4aa4b04c6bb48facc286d726",
+  "digests": {
+    "tests/test_h1b_authorization_enforcement.py": "88883b915062f1e815b30ebed0880cab8e47c9904df9b3e9ec32397caaa89a5c",
+    "scripts/council/h1_authorization.py": "60659ffd88097f6cbe4659db2401ad3774f7d2c9464aa15ec8887c227ff536f0",
+    "config/goal_requirements.json": "53361688a3f312fbe1865ad6f8aba154a915be4c4aa4b04c6bb48facc286d726"
+  },
+  "evidence_manifest": [
+    "tests/test_h1b_authorization_enforcement.py",
+    "scripts/council/h1_authorization.py",
+    "config/goal_requirements.json"
+  ],
+  "runner": {
+    "python": "3.13.13",
+    "platform": "darwin",
+    "interpreter": "/Users/michaelhoch/hoch_agent_swarm/.venv/bin/python"
+  },
+  "written_by": "scripts/goal/refresh_enforcement_proofs.py",
+  "doctrine": "no_fake_green: goal engine still re-runs the validator itself; this artifact only evidences a genuine passing run and is never written on failure; verify_enforcement_proofs.py invalidates it on validator/config drift",
+  "immutable_package": "coordination/council/live_proof_packages/REQ-GOV-002-20260722T161856Z"
+}
