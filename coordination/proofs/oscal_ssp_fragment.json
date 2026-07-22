@@ -1,0 +1,40 @@
+{
+  "system-security-plan": {
+    "uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "metadata": {
+      "title": "HELM System Security Plan Fragment (cATO Baseline)",
+      "last-modified": "2026-07-22T11:56:20.510790+00:00",
+      "version": "1.0.0",
+      "oscal-version": "1.1.0"
+    },
+    "control-implementation": {
+      "description": "HELM Autonomous Executive Operating System security control implementations",
+      "implemented-requirements": [
+        {
+          "control-id": "au-2",
+          "by-components": [
+            {
+              "component-uuid": "b29381f2-1a2b-4c3d-8e5f-11463524cd2c"
+            }
+          ]
+        },
+        {
+          "control-id": "au-10",
+          "by-components": [
+            {
+              "component-uuid": "b29381f2-1a2b-4c3d-8e5f-11463524cd2c"
+            }
+          ]
+        },
+        {
+          "control-id": "sc-13",
+          "by-components": [
+            {
+              "component-uuid": "b29381f2-1a2b-4c3d-8e5f-11463524cd2c"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "cato_bundle_identifier": "CATO-BUNDLE-HELM-V1.0.0",
+  "qualification_status": "CONTINUOUS_AUTHORIZATION_READY",
+  "timestamp_utc": "2026-07-22T11:56:20.511335+00:00",
+  "git_commit": "ef02c3806854998a1a7db5ee8a481243292411af",
+  "binding_model": "PARENT_COMMIT_ATTESTATION_V1",
+  "security_qualification": {
+    "status": "EVIDENCE_RECORDED",
+    "checks_passed": 6
+  },
+  "performance_qualification": {
+    "status": "EVIDENCE_BOUND",
+    "workloads_evaluated": 7
+  },
+  "governance_qualification": {
+    "status": "COMPLETED",
+    "traceability_matrix_file": "docs/governance/HELM_GOVERNANCE_TRACEABILITY_MATRIX.md"
+  },
+  "oscal_exports": {
+    "component_definition": "coordination/proofs/oscal_component_definition.json",
+    "ssp_fragment": "coordination/proofs/oscal_ssp_fragment.json",
+    "assessment_results": "coordination/proofs/oscal_assessment_results.json",
+    "poam": "coordination/proofs/oscal_poam.json"
+  }
+}

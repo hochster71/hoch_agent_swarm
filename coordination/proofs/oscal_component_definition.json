@@ -1,0 +1,40 @@
+{
+  "component-definition": {
+    "uuid": "439281a0-7b24-4f9a-8a12-6bfd36b8c981",
+    "metadata": {
+      "title": "HELM Autonomous Executive Control Plane Component Definition",
+      "last-modified": "2026-07-22T11:56:20.510623+00:00",
+      "version": "1.0.0",
+      "oscal-version": "1.1.0"
+    },
+    "components": [
+      {
+        "uuid": "b29381f2-1a2b-4c3d-8e5f-11463524cd2c",
+        "type": "software",
+        "title": "HELM Canonicalization & Governance Engine",
+        "description": "Zero-dependency RFC 8785 canonicalizer and SHA-256 decision engine",
+        "purpose": "Deterministic release promotion and governance state verification",
+        "control-implementations": [
+          {
+            "uuid": "c1928374-5f6e-7d8c-9b0a-1234567890ab",
+            "source": "NIST_SP-800-53_rev5",
+            "implemented-requirements": [
+              {
+                "control-id": "cm-2",
+                "description": "RFC 8785 canonical baseline serialization"
+              },
+              {
+                "control-id": "cm-3",
+                "description": "Normative change classification governance"
+              },
+              {
+                "control-id": "si-7",
+                "description": "Domain-tagged SHA-256 transition hash chain"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
