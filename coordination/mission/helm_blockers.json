@@ -1,0 +1,32 @@
+{
+  "mission_run_id": "HELM-GOAL-RUN-20260722-001",
+  "active_blockers": [
+    {
+      "blocker_id": "BLK-NATIVE-RUNT-01",
+      "category": "OPERATIONAL",
+      "gate_id": "GATE-2-PURCHASE",
+      "severity": "HIGH",
+      "description": "StoreKit payment sheet presentation & RevenueCat sandbox execution pending iOS runtime proof",
+      "remediation_swarm": "SWARM-PURCHASE-RUNTIME",
+      "requires_founder_action": false
+    },
+    {
+      "blocker_id": "BLK-DEV-QUAL-01",
+      "category": "OPERATIONAL",
+      "gate_id": "GATE-3-DEVICE",
+      "severity": "HIGH",
+      "description": "Touch target hit-testing pending physical/simulator iPad Air 11\" M3 runtime proof",
+      "remediation_swarm": "SWARM-DEVICE-QUAL",
+      "requires_founder_action": false
+    },
+    {
+      "blocker_id": "BLK-FOUNDER-AUTH-01",
+      "category": "GOVERNANCE",
+      "gate_id": "GATE-5-FOUNDER",
+      "severity": "CRITICAL",
+      "description": "Founder submission authorization withheld until operational evidence is complete",
+      "remediation_swarm": "SWARM-DOORSTEP",
+      "requires_founder_action": true
+    }
+  ]
+}

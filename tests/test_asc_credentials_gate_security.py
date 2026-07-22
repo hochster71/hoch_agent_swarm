@@ -142,7 +142,8 @@ def test_s2_invalid_paste_persists_nothing(tmp_path, monkeypatch, capsys):
     assert code not in (0, None)
     assert not (tmp_path / ".env").exists()
     assert not (tmp_path / "coordination").exists()
-    assert ran == []  # no validator re-runs on failure
+    # no validator re-runs on failure (read-only git provenance calls allowed)
+    assert [c for c in ran if c and c[0] != "git"] == []
 
 
 def test_s3_apple_rejection_persists_nothing(tmp_path, monkeypatch, capsys):
@@ -152,7 +153,7 @@ def test_s3_apple_rejection_persists_nothing(tmp_path, monkeypatch, capsys):
     assert code not in (0, None)
     assert not (tmp_path / ".env").exists()
     assert not (tmp_path / "coordination").exists()
-    assert ran == []
+    assert [c for c in ran if c and c[0] != "git"] == []
     # sys.exit(message) carries the reason in the SystemExit code, not stdout
     assert "FAIL-CLOSED" in str(code)
 
@@ -221,6 +222,52 @@ def test_s7_permissive_p8_warns_but_never_chmods(tmp_path, monkeypatch, capsys):
     assert code == 0
     assert "WARNING" in output and "chmod 600" in output
     assert stat.S_IMODE(key.stat().st_mode) == 0o644  # warn-only: untouched
+
+
+# ---- S9 / S10: ceremony receipt (identity correlation, success-only, no secrets) --
+
+def test_s9_receipt_written_on_success_with_ceremony_id_no_secrets(
+        tmp_path, monkeypatch, capsys):
+    mod, code, _, _ = _run_gate(
+        tmp_path, monkeypatch, capsys, ["KEYID123", "ISSUER456", FAKE_PEM])
+    assert code == 0
+    cdir = tmp_path / "coordination" / "evidence" / "external" / "asc_ceremonies"
+    receipts = [p for p in cdir.glob("*.json") if p.name != "LEDGER.jsonl"]
+    assert len(receipts) == 1
+    rcpt_path = receipts[0]
+    rcpt = json.loads(rcpt_path.read_text())
+    snap = json.loads((tmp_path / "coordination" / "evidence" / "external" /
+                       "asc_epic_fury.json").read_text())
+    assert rcpt["schema"] == "ASC_CEREMONY_RECEIPT_v2"
+    assert mod.CEREMONY_ID_RE.match(rcpt["ceremony_id"])  # strict format
+    assert rcpt_path.stem == rcpt["ceremony_id"]          # filename == id
+    assert rcpt["ceremony_id"] == snap["ceremony_id"]     # identity correlation
+    assert rcpt["snapshot_binding"]["sha256"]             # snapshot digest bound
+    assert rcpt["gate_script_digest"]                     # gate code bound
+    executed = [c for c in rcpt["recompute_chain"] if c.get("cmd")]
+    assert len(executed) == 3
+    assert all(c["returncode"] == 0 for c in executed)
+    deferred = [c for c in rcpt["recompute_chain"]
+                if c.get("status") == "DEFERRED_TO_POST_GATE_LANE"]
+    assert {c["step"] for c in deferred} == {"pert_regeneration",
+                                             "doorstep_regeneration"}
+    # ledger appended with this ceremony as the last (only) entry
+    ledger = (cdir / "LEDGER.jsonl").read_text().strip().splitlines()
+    assert json.loads(ledger[-1])["ceremony_id"] == rcpt["ceremony_id"]
+    # no temp files left by the atomic write
+    assert list(cdir.glob(".receipt.*")) == []
+    blob = rcpt_path.read_text()
+    for secret in ("BEGIN PRIVATE KEY", "FAKEFAKE", "KEYID123", "ISSUER456"):
+        assert secret not in blob
+
+
+def test_s10_no_receipt_on_apple_rejection(tmp_path, monkeypatch, capsys):
+    _, code, _, _ = _run_gate(
+        tmp_path, monkeypatch, capsys,
+        ["KEYID123", "ISSUER456", FAKE_PEM], accept=False)
+    assert code not in (0, None)
+    assert not (tmp_path / "coordination" / "evidence" / "external" /
+                "asc_ceremonies").exists()
 
 
 # ---- S8: signing consumes the key from memory (no tempfile path exists) -----------

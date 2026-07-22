@@ -1,0 +1,119 @@
+{
+  "spec_version": "1.0.0",
+  "effective_date": "2026-07-22",
+  "target_application": "epic-fury-dashboard",
+  "app_version": "1.0.2",
+  "build_number": "12",
+  "git_commit": "6c05d97f91e3ff212f495a0de29697ff7d6f83fc",
+  "git_branch": "main",
+  "timestamp_utc": "2026-07-22T18:14:29Z",
+  "overall_disposition": "WITHHELD",
+  "reason_codes": [
+    {
+      "category": "OPERATIONAL",
+      "code": "NATIVE_RUNTIME_EVIDENCE_PENDING",
+      "description": "StoreKit payment sheet presentation & RevenueCat sandbox execution pending iOS runtime proof"
+    },
+    {
+      "category": "OPERATIONAL",
+      "code": "DEVICE_QUALIFICATION_PENDING",
+      "description": "Touch target hit-testing pending physical/simulator iPad Air 11\" M3 runtime proof"
+    },
+    {
+      "category": "GOVERNANCE",
+      "code": "FOUNDER_APPROVAL_PENDING",
+      "description": "Founder submission authorization withheld until native evidence is recorded"
+    }
+  ],
+  "gates": {
+    "GATE-1-CONFIG": {
+      "name": "Native Configuration Verification",
+      "status": "QUALIFIED",
+      "qualified_at": "2026-07-22T18:14:29Z",
+      "blocking_reason": null,
+      "depends_on": [],
+      "evidence": [
+        "coordination/evidence/build_12/gate_1_config/configuration_report.json"
+      ],
+      "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-1-native-configuration-verification"
+    },
+    "GATE-2-PURCHASE": {
+      "name": "Native RevenueCat / StoreKit Purchase Qualification",
+      "status": "NOT_YET_QUALIFIED",
+      "qualified_at": null,
+      "blocking_reason": "StoreKit payment sheet presentation and sandbox execution pending native iOS runtime proof",
+      "depends_on": ["GATE-1-CONFIG"],
+      "evidence": [],
+      "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-2-native-revenuecat--storekit-purchase-qualification"
+    },
+    "GATE-3-DEVICE": {
+      "name": "Device Qualification (iPad Air 11\" M3)",
+      "status": "NOT_YET_QUALIFIED",
+      "qualified_at": null,
+      "blocking_reason": "Touch target hit-testing and layout validation pending iPad Air 11\" viewport proof",
+      "depends_on": ["GATE-2-PURCHASE"],
+      "evidence": [],
+      "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-3-device-qualification"
+    },
+    "GATE-4-ARCHIVE": {
+      "name": "Xcode Build Archive Generation",
+      "status": "NOT_YET_QUALIFIED",
+      "qualified_at": null,
+      "blocking_reason": "Xcode build archive .xcarchive generation pending pre-archive qualification checks",
+      "depends_on": ["GATE-1-CONFIG", "GATE-2-PURCHASE", "GATE-3-DEVICE"],
+      "evidence": [],
+      "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-4-xcode-archive-generation"
+    },
+    "GATE-5-FOUNDER": {
+      "name": "Founder Submission Authorization",
+      "status": "WITHHELD",
+      "qualified_at": null,
+      "blocking_reason": "Founder submission authorization withheld until all prerequisite operational gates are qualified",
+      "depends_on": ["GATE-4-ARCHIVE"],
+      "evidence": [],
+      "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-5-founder-submission-authorization"
+    }
+  },
+  "qualifications": {
+    "root_cause_identification": "QUALIFIED",
+    "source_remediation": "QUALIFIED",
+    "static_verification": "QUALIFIED",
+    "dynamic_component_qualification_jsdom": "QUALIFIED",
+    "type_safety": "QUALIFIED",
+    "application_smoke": "QUALIFIED",
+    "evidence_integrity": "QUALIFIED",
+    "GATE-1-CONFIG": "QUALIFIED",
+    "GATE-2-PURCHASE": "NOT_YET_QUALIFIED",
+    "GATE-3-DEVICE": "NOT_YET_QUALIFIED",
+    "GATE-4-ARCHIVE": "NOT_YET_QUALIFIED",
+    "GATE-5-FOUNDER": "WITHHELD",
+    "apple_review_outcome": "NOT_YET_DETERMINED"
+  },
+  "artifact_manifest": [
+    {
+      "relative_path": "components/PaywallModal.tsx",
+      "size_bytes": 9789,
+      "sha256": "f38f804495c52900fb1505bd46cfc5a222cd6a4801c2754c3a2cb6cc62947a87"
+    },
+    {
+      "relative_path": "tests/PaywallModal.test.tsx",
+      "size_bytes": 7434,
+      "sha256": "5667e9a02c15c10036cf19c797a53afbcf5f31d518e2b96960261156a8305824"
+    },
+    {
+      "relative_path": "scripts/ci/test-paywall-modal.mjs",
+      "size_bytes": 2724,
+      "sha256": "4a862c2bececa8a8232a709c37c7bf441ebb91d2d2034a818d4958b3d8ea661c"
+    },
+    {
+      "relative_path": "package.json",
+      "size_bytes": 2623,
+      "sha256": "5bce8d7ba4ee8e4c5bbc9ef55be69678fdd090935c0187ad0f39f469ea427ea5"
+    },
+    {
+      "relative_path": "coordination/evidence/build_12/gate_1_config/configuration_report.json",
+      "size_bytes": 352,
+      "sha256": "81c0dbef54ed56e4c73cb439bb7f10574187f5dca3c4db0ef4e37c95e1e1293a"
+    }
+  ]
+}

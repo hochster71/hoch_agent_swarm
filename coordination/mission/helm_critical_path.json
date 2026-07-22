@@ -1,0 +1,41 @@
+{
+  "mission_run_id": "HELM-GOAL-RUN-20260722-001",
+  "generated_at": "2026-07-22T18:07:44Z",
+  "critical_path_sequence": [
+    {
+      "sequence_index": 1,
+      "gate_id": "GATE-1-CONFIG",
+      "assigned_swarm": "SWARM-NATIVE-CONFIG",
+      "status": "IN_PROGRESS",
+      "prerequisites": []
+    },
+    {
+      "sequence_index": 2,
+      "gate_id": "GATE-2-PURCHASE",
+      "assigned_swarm": "SWARM-PURCHASE-RUNTIME",
+      "status": "BLOCKED",
+      "prerequisites": ["GATE-1-CONFIG"]
+    },
+    {
+      "sequence_index": 3,
+      "gate_id": "GATE-3-DEVICE",
+      "assigned_swarm": "SWARM-DEVICE-QUAL",
+      "status": "BLOCKED",
+      "prerequisites": ["GATE-2-PURCHASE"]
+    },
+    {
+      "sequence_index": 4,
+      "gate_id": "GATE-4-ARCHIVE",
+      "assigned_swarm": "SWARM-RELEASE-BUILD",
+      "status": "BLOCKED",
+      "prerequisites": ["GATE-1-CONFIG", "GATE-2-PURCHASE", "GATE-3-DEVICE"]
+    },
+    {
+      "sequence_index": 5,
+      "gate_id": "GATE-5-FOUNDER",
+      "assigned_swarm": "SWARM-DOORSTEP",
+      "status": "BLOCKED",
+      "prerequisites": ["GATE-4-ARCHIVE"]
+    }
+  ]
+}

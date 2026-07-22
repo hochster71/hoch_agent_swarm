@@ -1,0 +1,68 @@
+{
+  "mission_run_id": "HELM-GOAL-RUN-20260722-001",
+  "spec_version": "1.0.0",
+  "fleet_architecture": "1.0.0",
+  "architecture_freeze": "ACTIVE",
+  "target_application": "epic-fury-dashboard",
+  "target_repository": "/Users/michaelhoch/epic-fury-build/epic-fury-2026",
+  "app_version": "1.0.2",
+  "build_number": "12",
+  "candidate_fingerprint": "6c05d97f91e3ff212f495a0de29697ff7d6f83fc",
+  "current_mission_state": "OPERATIONAL_EXECUTION",
+  "overall_disposition": "WITHHELD",
+  "critical_path_stage": "GATE-2-PURCHASE",
+  "mission_health": {
+    "execution_health_percent": 100.0,
+    "evidence_completeness_percent": 60.0,
+    "qualification_progress_percent": 40.0,
+    "operational_risk": "ELEVATED",
+    "governance_compliance_percent": 100.0,
+    "mission_throughput": "MEASURED"
+  },
+  "reproducibility_invariant": {
+    "rule": "No Gate may transition to QUALIFIED unless every required artifact can be regenerated from source",
+    "status": "ENFORCED"
+  },
+  "target_hardware": {
+    "device_class": "iPad Air 11-inch (M3)",
+    "os_version": "iPadOS 26.5.2"
+  },
+  "swarms": [
+    "SWARM-C2-HELM",
+    "SWARM-NATIVE-CONFIG",
+    "SWARM-PURCHASE-RUNTIME",
+    "SWARM-DEVICE-QUAL",
+    "SWARM-RELEASE-BUILD",
+    "SWARM-RED-TEAM-VERIFY",
+    "SWARM-DOORSTEP",
+    "SWARM-ASC-WATCH",
+    "SWARM-MISSION-INTEL",
+    "SWARM-RECOVERY-FLEET",
+    "SWARM-KNOWLEDGE-GRAPH",
+    "SWARM-CONTINUOUS-QUAL",
+    "SWARM-EXEC-INTEL"
+  ],
+  "gate_states": {
+    "GATE-1-CONFIG": "QUALIFIED",
+    "GATE-2-PURCHASE": "NOT_YET_QUALIFIED",
+    "GATE-3-DEVICE": "NOT_YET_QUALIFIED",
+    "GATE-4-ARCHIVE": "NOT_YET_QUALIFIED",
+    "GATE-5-FOUNDER": "WITHHELD"
+  },
+  "active_reasons": [
+    "[OPERATIONAL] NATIVE_RUNTIME_EVIDENCE_PENDING",
+    "[OPERATIONAL] DEVICE_QUALIFICATION_PENDING",
+    "[GOVERNANCE] FOUNDER_APPROVAL_PENDING"
+  ],
+  "goal_completion_criteria": {
+    "gate_1_config": "QUALIFIED",
+    "gate_2_purchase": "QUALIFIED",
+    "gate_3_device": "QUALIFIED",
+    "gate_4_archive": "QUALIFIED",
+    "gate_5_founder": "APPROVED",
+    "independent_verification": "PASS",
+    "candidate_binding": "VERIFIED",
+    "submission_receipt": "VERIFIED",
+    "apple_review_outcome": "APPROVED"
+  }
+}
