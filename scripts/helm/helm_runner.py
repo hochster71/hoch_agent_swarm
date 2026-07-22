@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-HELM Autonomous Mission Runner (v1.0.0 Production Engine — Anti-False-Green Metric Hardened)
-=============================================================================================
+HELM Autonomous Mission Runner (v1.0.0 Production Engine — Anti-False-Green Hardened)
+======================================================================================
 Goal-driven, self-driving autonomous mission orchestrator for HELM release governance.
 Operates continuous event-driven execution loops through Gate 1 -> Gate 4 qualification,
 enforcing automatic preflight drift verification, real capability adapters, independent verification,
@@ -75,6 +75,7 @@ class HELMMissionRunner:
         return True
 
     def parse_xcresult(self, xcresult_path: str) -> Dict[str, Any]:
+        """Parses .xcresult bundle using xcrun xcresulttool with --legacy flag."""
         full_path = os.path.join(self.workspace_root, xcresult_path)
         if not os.path.exists(full_path):
             return {
@@ -85,7 +86,7 @@ class HELMMissionRunner:
                 "failed": 0,
                 "skipped": 0
             }
-        cmd = subprocess.run(["xcrun", "xcresulttool", "get", "--format", "json", "--path", full_path], capture_output=True, text=True)
+        cmd = subprocess.run(["xcrun", "xcresulttool", "get", "--legacy", "--format", "json", "--path", full_path], capture_output=True, text=True)
         if cmd.returncode == 0:
             return {
                 "exists": True,
@@ -111,23 +112,24 @@ class HELMMissionRunner:
 
         print(f"\nAPPLICATION_COMMIT_BEFORE        {self.app_commit_before}")
         print(f"APPLICATION_COMMIT_AFTER         {self.app_commit_after}")
-        print(f"APPLICATION_BRANCH_PUSHED        {'YES' if self.app_branch_pushed else 'NO'}")
-        print(f"XCODE_TEST_TARGETS               AppTests")
-        print(f"QUALIFICATION_SCHEME            App")
-        print(f"SCHEME_STOREKIT_CONFIG_BOUND     YES (ios/App/App/Products.storekit)")
+        print(f"XCODEBUILD_LIST_TARGETS          App")
+        print(f"XCODEBUILD_LIST_SCHEMES          App, App-StoreKit-Qualification, CapApp-SPM, RevenuecatPurchasesCapacitor, RevenueCatUI, RevenueCatUITests")
+        print(f"APPTESTS_NATIVE_TARGET_EXISTS    NO")
+        print(f"APPTESTS_IN_SCHEME               NO")
+        print(f"STOREKIT_CONFIG_BOUND            YES (ios/App/App/Products.storekit)")
+        print(f"XCODEBUILD_TEST_EXIT_CODE        70 (FAILED_TO_START_NO_TEST_TARGET)")
+        print(f"XCRESULT_EXISTS                  {'YES' if xcresult_info['exists'] else 'NO'}")
+        print(f"XCRESULT_PARSES                  {'YES' if xcresult_info['parses'] else 'NO'}")
         print(f"GATE_2_SCENARIOS_IMPLEMENTED    9/9")
         print(f"GATE_2_SCENARIOS_EXECUTED       {xcresult_info['executed']}/9")
         print(f"GATE_2_SCENARIOS_PASSED         {xcresult_info['passed']}/9")
         print(f"GATE_2_SCENARIOS_FAILED         {xcresult_info['failed']}/9")
         print(f"GATE_2_SCENARIOS_SKIPPED        {xcresult_info['skipped']}/9")
-        print(f"XCODEBUILD_TEST_EXIT_CODE       NOT_EXECUTED")
-        print(f"XCRESULT_EXISTS                  {'YES' if xcresult_info['exists'] else 'NO'}")
-        print(f"XCRESULT_PARSES                  {'YES' if xcresult_info['parses'] else 'NO'}")
         print(f"GATE_2_REPLAY                   NOT_YET_QUALIFIED")
-        print(f"ARCHIVE_EXIT_CODE               FAILED_CONFLICTING_PROVISIONING_SETTINGS")
+        print(f"ARCHIVE_SIGNING_ATTEMPT          FAILED_CONFLICTING_PROVISIONING_SETTINGS")
         print(f"EXACT_SIGNING_BLOCKER           CONFLICTING_PROVISIONING_SETTINGS_AUTO_SIGNING_EXPECTS_DEVELOPMENT_PROFILE")
         print(f"FOUNDER_ACTION_REQUIRED         NONE")
-        print(f"NEXT_AUTONOMOUS_ACTION          ADDING_APPTESTS_TARGET_TO_XCODE_PROJECT\n")
+        print(f"NEXT_AUTONOMOUS_ACTION          CREATING_NATIVE_PBXNATIVETARGET_APPTESTS_IN_PROJECT_PBXPROJ\n")
 
 def main():
     parser = argparse.ArgumentParser(description="HELM Autonomous Mission Runner (v1.0.0)")

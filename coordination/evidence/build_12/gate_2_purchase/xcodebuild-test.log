@@ -1,0 +1,18 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ios/App/App.xcodeproj -scheme App-StoreKit-Qualification -destination "platform=iOS Simulator,id=04BEA928-96A4-40CD-9836-AEB9F0133893" -resultBundlePath /Users/michaelhoch/hoch_agent_swarm/coordination/evidence/build_12/gate_2_purchase/Gate2StoreKit.xcresult
+
+2026-07-22 14:13:44.560 xcodebuild[37238:52428949] not able to deal with ivar '_storeKitConfigurationFileReference' of type '@"_TtC13IDEFoundation24IDESchemeOptionReference"' at offset 528
+Resolve Package Graph
+
+
+Resolved source packages:
+  RevenueCat: https://github.com/RevenueCat/purchases-ios-spm @ 5.67.1
+  capacitor-swift-pm: https://github.com/ionic-team/capacitor-swift-pm.git @ 8.3.0
+  RevenuecatPurchasesCapacitor: /Users/michaelhoch/epic-fury-build/epic-fury-2026/node_modules/@revenuecat/purchases-capacitor @ local
+  PurchasesHybridCommon: https://github.com/RevenueCat/purchases-hybrid-common.git @ 17.55.1
+  CapApp-SPM: /Users/michaelhoch/epic-fury-build/epic-fury-2026/ios/App/CapApp-SPM @ local
+
+Writing result bundle at path:
+	/Users/michaelhoch/hoch_agent_swarm/coordination/evidence/build_12/gate_2_purchase/Gate2StoreKit.xcresult
+
+xcodebuild: error: Failed to build project App with scheme App-StoreKit-Qualification.: There are no test bundles available to test.
