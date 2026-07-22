@@ -6,10 +6,11 @@ Manages operational burn-in tracking, append-only observation logging, full-wind
 gap accounting, genuine decision replay verification, and signed release package attestation.
 
 Hardened Features:
+  - Full-window live-tail coverage (when check_live_tail: true): manifest start -> first record -> all records -> audit end (now_dt)
+  - Audit-bounded total window denominator (now_dt - manifest_start_dt)
   - Append-only file mode ("a") with file locking (fcntl)
   - Full hash-chain recomputation from canonical record bytes
   - Separate input_digest vs decision_output_digest genuine replay comparison
-  - Full-window coverage: manifest start -> first record -> all records -> audit time
   - Performance status disambiguation: performance_baseline_status vs current_performance_check
   - Dynamic security and performance status execution integration
 """
@@ -77,7 +78,8 @@ def get_or_create_manifest(source_commit: str) -> dict:
         "configuration_digest": "sha256:11463524cd2cc5449a200d5427ea536e545f9e51ce4cc8950c0a4f9188ae772b",
         "policy_digest": "sha256:5f8351aad693cfe63e9d4c260770071b09e305788acfbe4f2498dbfc1a769264",
         "corpus_manifest_digest": "sha256:a9755bac0e8a82df1e19749ae4536911081014d71e5b45b2c260d8ceed1ed874",
-        "expected_interval_seconds": 300
+        "expected_interval_seconds": 300,
+        "check_live_tail": True
     }
 
     MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -153,7 +155,7 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
     prev_seq = 0
     prev_ts = None
 
-    # Full-window accounting: manifest start to first record
+    # 1. Lead Gap: Manifest start to first record
     first_rec_dt = datetime.fromisoformat(records[0]["timestamp_utc"].replace("Z", "+00:00"))
     lead_delta = (first_rec_dt - manifest_start_dt).total_seconds()
     if lead_delta > (expected_interval * 1.5):
@@ -162,22 +164,19 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
         if lead_delta > longest_gap_sec:
             longest_gap_sec = lead_delta
 
+    # 2. Inter-Record Gaps & Chain Verification
     for idx, r in enumerate(records):
-        # 1. Sequence Continuity
         seq = r.get("sequence_number", 0)
         if seq != prev_seq + 1:
             hash_chain_valid = False
 
-        # 2. Previous Hash Linking
         if r.get("previous_hash") != prev_hash:
             hash_chain_valid = False
 
-        # 3. Hash Recomputation Check
         computed_hash = recompute_record_hash(prev_hash, r)
         if r.get("record_hash") != computed_hash:
             hash_chain_valid = False
 
-        # 4. Temporal Monotonicity & Record-to-Record Gap Accounting
         ts_str = r.get("timestamp_utc", "")
         try:
             curr_dt = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
@@ -196,7 +195,7 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
         except Exception:
             hash_chain_valid = False
 
-        # 5. Genuine Decision Replay Verification
+        # Genuine Decision Replay Verification
         replay_info = r.get("replay_verification", {})
         if replay_info:
             persisted_inp = replay_info.get("input_payload", {})
@@ -219,18 +218,19 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
         prev_hash = r.get("record_hash", "")
         prev_seq = seq
 
-    # Live-tail full window accounting (if explicitly configured)
+    # 3. Live-Tail Full Window Accounting (if check_live_tail enabled)
+    audit_end_dt = now_dt if (manifest and manifest.get("check_live_tail")) else datetime.fromisoformat(records[-1]["timestamp_utc"].replace("Z", "+00:00"))
+    last_rec_dt = datetime.fromisoformat(records[-1]["timestamp_utc"].replace("Z", "+00:00"))
+
     if manifest and manifest.get("check_live_tail"):
-        last_rec_dt = datetime.fromisoformat(records[-1]["timestamp_utc"].replace("Z", "+00:00"))
-        tail_delta = (now_dt - last_rec_dt).total_seconds()
+        tail_delta = (audit_end_dt - last_rec_dt).total_seconds()
         if tail_delta > (expected_interval * 1.5):
             skipped_tail = int(math.floor(tail_delta / expected_interval))
             missing_intervals += skipped_tail
             if tail_delta > longest_gap_sec:
                 longest_gap_sec = tail_delta
 
-    last_dt = datetime.fromisoformat(records[-1]["timestamp_utc"].replace("Z", "+00:00"))
-    total_window_sec = max(1.0, (last_dt - manifest_start_dt).total_seconds())
+    total_window_sec = max(1.0, (audit_end_dt - manifest_start_dt).total_seconds())
     total_expected_intervals = max(1, int(math.ceil(total_window_sec / expected_interval)))
     coverage_pct = (len(records) / total_expected_intervals * 100.0)
 
@@ -281,7 +281,6 @@ def record_burnin_observation(sample_payload: dict, manifest: dict) -> dict:
 
             new_seq = prev_seq + 1
 
-            # Fresh decision engine evaluation
             fresh_engine = HELMDecisionEngine()
             eval_res = fresh_engine.evaluate_release_promotion(sample_payload)
 
@@ -333,7 +332,7 @@ def main():
     parent_commit = get_parent_commit_sha()
 
     print("======================================================================")
-    print("HELM L10 PRODUCTION QUALIFICATION BURN-IN ENGINE (REMEDIATED)")
+    print("HELM L10 PRODUCTION QUALIFICATION BURN-IN ENGINE (HARDENED)")
     print("======================================================================")
 
     manifest = get_or_create_manifest(parent_commit)
@@ -355,7 +354,6 @@ def main():
 
     audit = verify_burnin_ledger(LEDGER_PATH, manifest)
 
-    # 30-Day Gate Verification & Founder Authorization Boundary
     start_dt = datetime.fromisoformat(manifest["start_time_utc"].replace("Z", "+00:00"))
     now_dt = datetime.now(timezone.utc)
     elapsed_days = (now_dt - start_dt).total_seconds() / 86400.0

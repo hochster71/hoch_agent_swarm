@@ -2,7 +2,7 @@
 """
 HELM Formal Safety Invariants Unit Test Suite (Sprint 11 — Milestone R13)
 =======================================================================
-Validates mathematically formal safety invariants:
+Validates mathematically formal safety invariants and machine-checked proof artifacts:
   - FORMAL-001: Invariant 1 (Ledger Append Immutability)
   - FORMAL-002: Invariant 2 (Hash-Chain Tamper Detectability)
   - FORMAL-003: Invariant 3 (Monotonic Sequence Invariant)
@@ -10,14 +10,21 @@ Validates mathematically formal safety invariants:
   - FORMAL-005: Invariant 5 (Decision Replay Invariance)
   - FORMAL-006: Invariant 6 (Fail-Closed Qualification Invariant)
   - FORMAL-007: Invariant 7 (Thirty-Day Elapsed Time Gate Invariant)
+  - FORMAL-008: HELMLedger TLA+ Model Exploration Proof Verification
+  - FORMAL-009: HELMDecisionStateMachine TLA+ Model Exploration Proof Verification
 """
 
+import json
 import pytest
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from scripts.helm.canonical_json import canonical_json_bytes, canonical_sha256_digest, GENESIS_HASH
 from backend.helm.kernel.decision_engine import HELMDecisionEngine
 from scripts.helm.l10_production_burnin_harness import recompute_record_hash
+from scripts.helm.run_tlc_model_checker import explore_ledger_state_space, explore_decision_state_space
+
+PROOFS_DIR = Path(__file__).resolve().parent.parent.parent / "coordination" / "proofs"
 
 
 def test_formal_001_ledger_append_immutability():
@@ -106,3 +113,21 @@ def test_formal_007_thirty_day_elapsed_time_gate_invariant():
 
     assert ((now_29_days - start).total_seconds() / 86400.0 >= 30.0) is False
     assert ((now_30_days - start).total_seconds() / 86400.0 >= 30.0) is True
+
+
+def test_formal_008_tla_ledger_model_exploration_proof():
+    """[FORMAL-008] Asserts HELMLedger TLA+ model exploration generates > 0 distinct states with 0 invariant violations."""
+    res = explore_ledger_state_space()
+    assert res["result"] == "PASS"
+    assert res["states_generated"] >= 100
+    assert res["distinct_states"] >= 50
+    assert len(res["invariants_checked"]) >= 4
+
+
+def test_formal_009_tla_decision_model_exploration_proof():
+    """[FORMAL-009] Asserts HELMDecisionStateMachine TLA+ model exploration generates > 0 distinct states with 0 invariant violations."""
+    res = explore_decision_state_space()
+    assert res["result"] == "PASS"
+    assert res["states_generated"] >= 40
+    assert res["distinct_states"] >= 20
+    assert len(res["invariants_checked"]) >= 3

@@ -196,7 +196,7 @@ def test_prod_011_algorithmic_gap_accounting_detection(tmp_path):
         f.write(json.dumps(obs1) + "\n")
         f.write(json.dumps(obs2) + "\n")
 
-    manifest = {"expected_interval_seconds": 300}
+    manifest = {"expected_interval_seconds": 300, "start_time_utc": "2026-07-22T00:00:00Z"}
     res = verify_burnin_ledger(ledger_file, manifest)
     assert res["missing_intervals"] == 2
     assert res["longest_gap_sec"] == 900.0

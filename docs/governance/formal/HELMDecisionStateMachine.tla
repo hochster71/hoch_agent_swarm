@@ -1,9 +1,11 @@
 --------------------------- MODULE HELMDecisionStateMachine ---------------------------
 EXTENDS Integers, Sequences, TLC
 
-CONSTANTS MinBurnInDays
+CONSTANTS MinBurnInDays, MaxElapsedDays, MaxMissingIntervals, MaxReplayDivergences
 
 VARIABLES elapsedTimeDays, missingIntervals, replayDivergenceCount, qualificationStatus
+
+vars == <<elapsedTimeDays, missingIntervals, replayDivergenceCount, qualificationStatus>>
 
 Init ==
     /\ elapsedTimeDays = 0
@@ -12,6 +14,7 @@ Init ==
     /\ qualificationStatus = "BURNIN_IN_PROGRESS"
 
 AdvanceTime(days) ==
+    /\ elapsedTimeDays < MaxElapsedDays
     /\ elapsedTimeDays' = elapsedTimeDays + days
     /\ UNCHANGED << missingIntervals, replayDivergenceCount >>
     /\ IF elapsedTimeDays' >= MinBurnInDays /\ missingIntervals = 0 /\ replayDivergenceCount = 0
@@ -19,11 +22,13 @@ AdvanceTime(days) ==
        ELSE qualificationStatus' = qualificationStatus
 
 RecordGap ==
+    /\ missingIntervals < MaxMissingIntervals
     /\ missingIntervals' = missingIntervals + 1
     /\ qualificationStatus' = "WITHHELD"
     /\ UNCHANGED << elapsedTimeDays, replayDivergenceCount >>
 
 RecordReplayDivergence ==
+    /\ replayDivergenceCount < MaxReplayDivergences
     /\ replayDivergenceCount' = replayDivergenceCount + 1
     /\ qualificationStatus' = "WITHHELD"
     /\ UNCHANGED << elapsedTimeDays, missingIntervals >>
@@ -46,6 +51,8 @@ Next ==
     \/ RecordReplayDivergence
     \/ RequestFounderAuthorization
     \/ GrantFounderAuthorization
+
+Spec == Init /\ [][Next]_vars
 
 -------------------------------------------------------------------------------------
 (* Safety Invariants *)
