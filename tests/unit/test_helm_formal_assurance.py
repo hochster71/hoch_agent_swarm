@@ -119,7 +119,7 @@ def test_formal_010_native_tlc_command_execution():
 
 def test_formal_011_missing_java_fails_closed():
     """[FORMAL-011] Asserts runner fails closed with FAIL_JAVA_UNAVAILABLE when Java is missing or launcher stub."""
-    has_java, msg = check_java_available()
+    has_java, msg, path = check_java_available()
     if not has_java:
         res = run_tlc_model("HELMLedger.tla", "HELMLedger.cfg")
         assert res["tlc_execution_status"] == "FAIL_JAVA_UNAVAILABLE"
@@ -146,9 +146,11 @@ def test_formal_016_native_tlc_wrapper_process_fails_closed():
 
 
 def test_formal_018_proof_metadata_schema_verification():
-    """[FORMAL-018] Asserts native TLC failure artifact contains java_version, tlc_jar_present, and commit metadata."""
+    """[FORMAL-018] Asserts native TLC failure artifact contains java_version, java_executable_path, tlc_runner_script_sha256, tlc_jar_present, and commit metadata."""
     res = run_tlc_model("HELMLedger.tla", "HELMLedger.cfg")
     assert "java_version" in res
+    assert "java_executable_path" in res
+    assert "tlc_runner_script_sha256" in res
     assert "tlc_jar_present" in res
     assert "qualified_source_commit" in res
 

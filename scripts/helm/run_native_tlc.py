@@ -20,6 +20,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 PROOFS_DIR = REPO_ROOT / "coordination" / "proofs"
 TLA_DIR = REPO_ROOT / "docs" / "governance" / "formal"
 TOOLS_DIR = REPO_ROOT / "tools"
+THIS_SCRIPT = Path(__file__).resolve()
 
 
 def get_git_commit_sha() -> str:
@@ -29,10 +30,10 @@ def get_git_commit_sha() -> str:
         return "UNKNOWN_COMMIT_SHA"
 
 
-def check_java_available() -> tuple[bool, str]:
+def check_java_available() -> tuple[bool, str, str]:
     java_bin = shutil.which("java")
     if not java_bin:
-        return False, "Java binary not found on PATH"
+        return False, "Java binary not found on PATH", ""
     try:
         res = subprocess.run(
             [java_bin, "-version"],
@@ -42,12 +43,12 @@ def check_java_available() -> tuple[bool, str]:
         )
         output = (res.stderr or res.stdout).strip()
         if res.returncode != 0:
-            return False, output or f"java -version exited {res.returncode}"
+            return False, output or f"java -version exited {res.returncode}", java_bin
         if "unable to locate a java runtime" in output.lower():
-            return False, output
-        return True, output.splitlines()[0]
+            return False, output, java_bin
+        return True, output.splitlines()[0], java_bin
     except Exception as exc:
-        return False, f"Java check failed: {exc}"
+        return False, f"Java check failed: {exc}", java_bin or ""
 
 
 def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
@@ -56,8 +57,9 @@ def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
 
     tla_b = tla_path.read_bytes()
     cfg_b = cfg_path.read_bytes()
+    script_b = THIS_SCRIPT.read_bytes()
 
-    has_java, java_ver = check_java_available()
+    has_java, java_ver, java_path = check_java_available()
     tla2tools_jar = TOOLS_DIR / "tla2tools.jar"
 
     base_artifact = {
@@ -65,6 +67,8 @@ def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
         "qualified_source_commit": get_git_commit_sha(),
         "model_sha256": hashlib.sha256(tla_b).hexdigest(),
         "cfg_sha256": hashlib.sha256(cfg_b).hexdigest(),
+        "tlc_runner_script_sha256": hashlib.sha256(script_b).hexdigest(),
+        "java_executable_path": java_path,
         "java_version": java_ver,
         "tlc_jar_path": str(tla2tools_jar),
         "tlc_jar_present": tla2tools_jar.exists(),
@@ -96,7 +100,7 @@ def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
 
     start_t = time.time()
     cmd = [
-        "java",
+        java_path or "java",
         "-cp",
         str(tla2tools_jar),
         "tlc2.TLC",
@@ -162,8 +166,8 @@ def main():
     print("HELM NATIVE JAVA TLC MODEL CHECKER RUNNER (HARDENED FAIL-CLOSED)")
     print("======================================================================")
 
-    has_java, java_ver = check_java_available()
-    print(f"Java Available: {has_java} [{java_ver}]")
+    has_java, java_ver, java_path = check_java_available()
+    print(f"Java Available: {has_java} [{java_path}] [{java_ver}]")
 
     ledger_proof = run_tlc_model("HELMLedger.tla", "HELMLedger.cfg")
     with open(PROOFS_DIR / "helm_native_tlc_ledger_proof.json", "w", encoding="utf-8") as f:
