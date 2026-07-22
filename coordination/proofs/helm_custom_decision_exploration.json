@@ -1,0 +1,19 @@
+{
+  "explorer_engine": "HELM_CUSTOM_BOUNDED_MODEL_EXPLORER",
+  "model": "HELMDecisionStateMachine",
+  "specification_formula": "Spec == Init /\\ [][Next]_vars",
+  "source_commit": "17b60a3d389a74985e625c2f029834517882397f",
+  "model_sha256": "6b0f4a1e6f66396727277c7bd1b1898629037f7c7d3190140b421f61291187eb",
+  "cfg_sha256": "d15e7d8ee03481e5630972c481a0ce7c6e85e4623a5ac7ac3addbd22c86141f5",
+  "states_generated": 91,
+  "distinct_states": 45,
+  "maximum_depth": 6,
+  "exploration_time_ms": 0.27,
+  "invariants_checked": [
+    "NoEarlyQualification",
+    "NoQualificationWithGaps",
+    "NoQualificationWithReplayDivergence"
+  ],
+  "result": "CUSTOM_MODEL_EXPLORATION_PASS",
+  "executed_at_utc": "2026-07-22T12:16:06.299106+00:00"
+}

@@ -1,0 +1,20 @@
+{
+  "explorer_engine": "HELM_CUSTOM_BOUNDED_MODEL_EXPLORER",
+  "model": "HELMLedger",
+  "specification_formula": "Spec == Init /\\ [][Next]_vars",
+  "source_commit": "17b60a3d389a74985e625c2f029834517882397f",
+  "model_sha256": "d1596c4b1d846e79c281231372c3fa8bb8fb8a2334d371e80a87972b07b57a5d",
+  "cfg_sha256": "7a0743e9444afff6201b750de23d1483ee6d122f125ea76fff25f1681390650e",
+  "states_generated": 692,
+  "distinct_states": 304,
+  "maximum_depth": 5,
+  "exploration_time_ms": 0.46,
+  "invariants_checked": [
+    "TypeInvariant",
+    "SequencePositionInvariant",
+    "HashLinkInvariant",
+    "TamperingDetected"
+  ],
+  "result": "CUSTOM_MODEL_EXPLORATION_PASS",
+  "executed_at_utc": "2026-07-22T12:16:06.291233+00:00"
+}

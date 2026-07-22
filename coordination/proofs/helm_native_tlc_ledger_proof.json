@@ -1,0 +1,13 @@
+{
+  "model": "HELMLedger",
+  "tlc_execution_status": "FAIL_TLA2TOOLS_JAR_MISSING",
+  "error_detail": "tla2tools.jar missing at /Users/michaelhoch/hoch_agent_swarm/tools/tla2tools.jar",
+  "source_commit": "17b60a3d389a74985e625c2f029834517882397f",
+  "model_sha256": "d1596c4b1d846e79c281231372c3fa8bb8fb8a2334d371e80a87972b07b57a5d",
+  "cfg_sha256": "7a0743e9444afff6201b750de23d1483ee6d122f125ea76fff25f1681390650e",
+  "states_generated": 0,
+  "distinct_states": 0,
+  "maximum_depth": 0,
+  "result": "FAIL_CLOSED_NO_JAR",
+  "executed_at_utc": "2026-07-22T12:15:58.925715+00:00"
+}
