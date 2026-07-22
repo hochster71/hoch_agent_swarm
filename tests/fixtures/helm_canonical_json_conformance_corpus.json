@@ -1,0 +1,108 @@
+{
+  "conformance_corpus_version": "1.0.0",
+  "canonical_json_profile": "HELM-Canonical-JSON-Profile-v1.0",
+  "vectors": [
+    {
+      "vector_id": "VEC-001-APPROVED-BASELINE",
+      "description": "Standard approved preflight vector with valid telemetry and 0 open P0s",
+      "raw_input": {
+        "release_version": "v1.0.0",
+        "provenance_status": "VERIFIED",
+        "slo_status": "PASS",
+        "open_p0_findings": 0,
+        "burn_rate_multiplier": 1.0,
+        "configuration_digest": "c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f",
+        "git_commit_sha": "head-v1.0.0-verified",
+        "generator_version": "v1.0.0",
+        "evidence_proof_package_digests": [
+          "6bd42cfeb5618c2d1a56dcc249b4c97138bf8c8d4c937940329b9bfcad773439"
+        ],
+        "evaluated_inputs": {
+          "availability": 1.0,
+          "replay_success": 1.0
+        },
+        "measurement_results": {
+          "drift_incidents": 0,
+          "split_brain_incidents": 0
+        }
+      },
+      "expected_decision_code": "APPROVED",
+      "expected_decision_digest": "54a7e1987a500cfc2d3a5297789f4ce0d89dfa8dfcaa452ad716c55090ad761d",
+      "expected_prev_hash": "GENESIS_0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_record_hash": "cb43d1ed17243cd853aa6bf8b8584530bce6657eb6c5a823c01b14b3a6f3b139",
+      "expected_canonical_utf8": "{\"config_digest\":\"c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f\",\"decision_code\":\"APPROVED\",\"evaluated_inputs\":{\"availability\":1.0,\"replay_success\":1.0},\"evidence_digests\":[\"6bd42cfeb5618c2d1a56dcc249b4c97138bf8c8d4c937940329b9bfcad773439\"],\"generator_version\":\"v1.0.0\",\"git_commit\":\"head-v1.0.0-verified\",\"measurement_results\":{\"drift_incidents\":0,\"split_brain_incidents\":0},\"policy_version\":\"1.0.0\"}",
+      "expected_canonical_bytes_hex": "7b22636f6e6669675f646967657374223a2263356132386637396431323365343536623738393061316232633364346535663637383930613162326333643465356636373839306131623263336434653566222c226465636973696f6e5f636f6465223a22415050524f564544222c226576616c75617465645f696e70757473223a7b22617661696c6162696c697479223a312e302c227265706c61795f73756363657373223a312e307d2c2265766964656e63655f64696765737473223a5b2236626434326366656235363138633264316135366463633234396234633937313338626638633864346339333739343033323962396266636164373733343339225d2c2267656e657261746f725f76657273696f6e223a2276312e302e30222c226769745f636f6d6d6974223a22686561642d76312e302e302d7665726966696564222c226d6561737572656d656e745f726573756c7473223a7b2264726966745f696e636964656e7473223a302c2273706c69745f627261696e5f696e636964656e7473223a307d2c22706f6c6963795f76657273696f6e223a22312e302e30227d"
+    },
+    {
+      "vector_id": "VEC-002-WITHHELD-UNVERIFIED",
+      "description": "Unverified provenance forces WITHHELD_UNVERIFIED_PROVENANCE regardless of PASS outcome",
+      "raw_input": {
+        "release_version": "v1.0.0",
+        "provenance_status": "NOT_VERIFIED",
+        "slo_status": "PASS",
+        "open_p0_findings": 0,
+        "burn_rate_multiplier": 1.0,
+        "configuration_digest": "c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f",
+        "git_commit_sha": "head-v1.0.0-unverified",
+        "generator_version": "v1.0.0",
+        "evidence_proof_package_digests": [],
+        "evaluated_inputs": {},
+        "measurement_results": {}
+      },
+      "expected_decision_code": "WITHHELD_UNVERIFIED_PROVENANCE",
+      "expected_decision_digest": "94c243bda955e82bac41e5fb9c712b35eb25edf84d0421f6205b66160ffb4bc9",
+      "expected_canonical_utf8": "{\"config_digest\":\"c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f\",\"decision_code\":\"WITHHELD_UNVERIFIED_PROVENANCE\",\"evaluated_inputs\":{},\"evidence_digests\":[],\"generator_version\":\"v1.0.0\",\"git_commit\":\"head-v1.0.0-unverified\",\"measurement_results\":{},\"policy_version\":\"1.0.0\"}",
+      "expected_canonical_bytes_hex": "7b22636f6e6669675f646967657374223a2263356132386637396431323365343536623738393061316232633364346535663637383930613162326333643465356636373839306131623263336434653566222c226465636973696f6e5f636f6465223a225749544848454c445f554e56455249464945445f50524f56454e414e4345222c226576616c75617465645f696e70757473223a7b7d2c2265766964656e63655f64696765737473223a5b5d2c2267656e657261746f725f76657273696f6e223a2276312e302e30222c226769745f636f6d6d6974223a22686561642d76312e302e302d756e7665726966696564222c226d6561737572656d656e745f726573756c7473223a7b7d2c22706f6c6963795f76657273696f6e223a22312e302e30227d"
+    },
+    {
+      "vector_id": "VEC-003-REJECTED-SLO-VIOLATION",
+      "description": "SLO failure forces REJECTED_SLO_VIOLATION",
+      "raw_input": {
+        "release_version": "v1.0.0",
+        "provenance_status": "VERIFIED",
+        "slo_status": "FAIL",
+        "open_p0_findings": 0,
+        "burn_rate_multiplier": 1.0,
+        "configuration_digest": "c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f",
+        "git_commit_sha": "head-v1.0.0-slo-fail",
+        "generator_version": "v1.0.0",
+        "evidence_proof_package_digests": [
+          "6bd42cfeb5618c2d1a56dcc249b4c97138bf8c8d4c937940329b9bfcad773439"
+        ],
+        "evaluated_inputs": {
+          "availability": 0.98
+        },
+        "measurement_results": {
+          "drift_incidents": 1
+        }
+      },
+      "expected_decision_code": "REJECTED_SLO_VIOLATION",
+      "expected_decision_digest": "8905f41968832be7e60250c3608d4f8d455fcec3b277990a1cfec9dc8ab532e7",
+      "expected_canonical_utf8": "{\"config_digest\":\"c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f\",\"decision_code\":\"REJECTED_SLO_VIOLATION\",\"evaluated_inputs\":{\"availability\":0.98},\"evidence_digests\":[\"6bd42cfeb5618c2d1a56dcc249b4c97138bf8c8d4c937940329b9bfcad773439\"],\"generator_version\":\"v1.0.0\",\"git_commit\":\"head-v1.0.0-slo-fail\",\"measurement_results\":{\"drift_incidents\":1},\"policy_version\":\"1.0.0\"}",
+      "expected_canonical_bytes_hex": "7b22636f6e6669675f646967657374223a2263356132386637396431323365343536623738393061316232633364346535663637383930613162326333643465356636373839306131623263336434653566222c226465636973696f6e5f636f6465223a2252454a45435445445f534c4f5f56494f4c4154494f4e222c226576616c75617465645f696e70757473223a7b22617661696c6162696c697479223a302e39387d2c2265766964656e63655f64696765737473223a5b2236626434326366656235363138633264316135366463633234396234633937313338626638633864346339333739343033323962396266636164373733343339225d2c2267656e657261746f725f76657273696f6e223a2276312e302e30222c226769745f636f6d6d6974223a22686561642d76312e302e302d736c6f2d6661696c222c226d6561737572656d656e745f726573756c7473223a7b2264726966745f696e636964656e7473223a317d2c22706f6c6963795f76657273696f6e223a22312e302e30227d"
+    },
+    {
+      "vector_id": "VEC-004-FROZEN-ERROR-BUDGET",
+      "description": "Burn rate >= 5.0 forces FROZEN_ERROR_BUDGET",
+      "raw_input": {
+        "release_version": "v1.0.0",
+        "provenance_status": "VERIFIED",
+        "slo_status": "PASS",
+        "open_p0_findings": 0,
+        "burn_rate_multiplier": 5.5,
+        "configuration_digest": "c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f",
+        "git_commit_sha": "head-v1.0.0-freeze",
+        "generator_version": "v1.0.0",
+        "evidence_proof_package_digests": [
+          "6bd42cfeb5618c2d1a56dcc249b4c97138bf8c8d4c937940329b9bfcad773439"
+        ],
+        "evaluated_inputs": {},
+        "measurement_results": {}
+      },
+      "expected_decision_code": "FROZEN_ERROR_BUDGET",
+      "expected_decision_digest": "f70223811ac28ef7d48a5ba6a7e0866387d69ec5a250f6d0b04c9c3a082f58d5",
+      "expected_canonical_utf8": "{\"config_digest\":\"c5a28f79d123e456b7890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f\",\"decision_code\":\"FROZEN_ERROR_BUDGET\",\"evaluated_inputs\":{},\"evidence_digests\":[\"6bd42cfeb5618c2d1a56dcc249b4c97138bf8c8d4c937940329b9bfcad773439\"],\"generator_version\":\"v1.0.0\",\"git_commit\":\"head-v1.0.0-freeze\",\"measurement_results\":{},\"policy_version\":\"1.0.0\"}",
+      "expected_canonical_bytes_hex": "7b22636f6e6669675f646967657374223a2263356132386637396431323365343536623738393061316232633364346535663637383930613162326333643465356636373839306131623263336434653566222c226465636973696f6e5f636f6465223a2246524f5a454e5f4552524f525f425544474554222c226576616c75617465645f696e70757473223a7b7d2c2265766964656e63655f64696765737473223a5b2236626434326366656235363138633264316135366463633234396234633937313338626638633864346339333739343033323962396266636164373733343339225d2c2267656e657261746f725f76657273696f6e223a2276312e302e30222c226769745f636f6d6d6974223a22686561642d76312e302e302d667265657a65222c226d6561737572656d656e745f726573756c7473223a7b7d2c22706f6c6963795f76657273696f6e223a22312e302e30227d"
+    }
+  ]
+}

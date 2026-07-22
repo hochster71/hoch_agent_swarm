@@ -1,0 +1,101 @@
+{
+  "report_identifier": "REPORT-HELM-R7-PERFORMANCE-QUALIFICATION",
+  "qualification_tier": "Performance Benchmark Baseline (R7 Milestone)",
+  "qualification_status": "EVIDENCE_BOUND",
+  "environment_metadata": {
+    "git_commit": "6bfd36b8c981332420942b5ad11c9a40a592a1a8",
+    "dirty_tree_status": true,
+    "python_version": "Python 3.14.6",
+    "platform_architecture": "Darwin arm64 (macOS-26.5.2-arm64-arm-64bit-Mach-O)",
+    "start_time_utc": "2026-07-22T11:51:28.280374+00:00",
+    "completion_time_utc": "2026-07-22T11:51:28.487992+00:00"
+  },
+  "regression_policy_limits": {
+    "max_allowed_throughput_regression_pct": 5.0,
+    "max_allowed_p50_latency_regression_pct": 5.0,
+    "max_allowed_p95_latency_regression_pct": 7.0,
+    "max_allowed_p99_latency_regression_pct": 10.0,
+    "max_allowed_memory_regression_pct": 10.0,
+    "max_allowed_digest_nondeterminism": 0
+  },
+  "workloads_evaluated": 7,
+  "results": [
+    {
+      "workload_name": "small_governance_record",
+      "iterations": 200,
+      "avg_payload_size_bytes": 920.0,
+      "total_duration_sec": 0.0011268749949522316,
+      "ops_per_second": 177481.97528198594,
+      "throughput_mb_per_sec": 155.7192013353606,
+      "latency_p50_ms": 0.005375011824071407,
+      "latency_p95_ms": 0.006833055522292852,
+      "latency_p99_ms": 0.0070829992182552814
+    },
+    {
+      "workload_name": "medium_evidence_record",
+      "iterations": 200,
+      "avg_payload_size_bytes": 3886.0,
+      "total_duration_sec": 0.007333124987781048,
+      "ops_per_second": 27273.50213357247,
+      "throughput_mb_per_sec": 101.07500962358725,
+      "latency_p50_ms": 0.03645900869742036,
+      "latency_p95_ms": 0.037624966353178024,
+      "latency_p99_ms": 0.03825000021606684
+    },
+    {
+      "workload_name": "large_evidence_bundle",
+      "iterations": 200,
+      "avg_payload_size_bytes": 271434.0,
+      "total_duration_sec": 0.15258662501582876,
+      "ops_per_second": 1310.7308715901722,
+      "throughput_mb_per_sec": 339.29531421585733,
+      "latency_p50_ms": 0.7244580192491412,
+      "latency_p95_ms": 0.8692920091561973,
+      "latency_p99_ms": 1.2866660254076123
+    },
+    {
+      "workload_name": "flat_high_key_count",
+      "iterations": 200,
+      "avg_payload_size_bytes": 7391.0,
+      "total_duration_sec": 0.019795167027041316,
+      "ops_per_second": 10103.476253915347,
+      "throughput_mb_per_sec": 71.21543216008027,
+      "latency_p50_ms": 0.0974999857135117,
+      "latency_p95_ms": 0.10549998842179775,
+      "latency_p99_ms": 0.12220803182572126
+    },
+    {
+      "workload_name": "deep_object_nesting",
+      "iterations": 200,
+      "avg_payload_size_bytes": 377.0,
+      "total_duration_sec": 0.002302916022017598,
+      "ops_per_second": 86846.41475757281,
+      "throughput_mb_per_sec": 31.22434460030074,
+      "latency_p50_ms": 0.01129199517890811,
+      "latency_p95_ms": 0.011583033483475447,
+      "latency_p99_ms": 0.01908303238451481
+    },
+    {
+      "workload_name": "unicode_heavy_payload",
+      "iterations": 200,
+      "avg_payload_size_bytes": 1595.0,
+      "total_duration_sec": 0.0008055830257944763,
+      "ops_per_second": 248267.3959059123,
+      "throughput_mb_per_sec": 377.64215132706653,
+      "latency_p50_ms": 0.003999972250312567,
+      "latency_p95_ms": 0.004124944098293781,
+      "latency_p99_ms": 0.004167028237134218
+    },
+    {
+      "workload_name": "numeric_heavy_payload",
+      "iterations": 200,
+      "avg_payload_size_bytes": 3511.0,
+      "total_duration_sec": 0.012950834003277123,
+      "ops_per_second": 15443.020885712172,
+      "throughput_mb_per_sec": 51.70864708875221,
+      "latency_p50_ms": 0.06462499732151628,
+      "latency_p95_ms": 0.07008301327005029,
+      "latency_p99_ms": 0.0892080133780837
+    }
+  ]
+}

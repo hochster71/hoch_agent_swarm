@@ -1,0 +1,41 @@
+{
+  "conformance_corpus_version": "1.0.0",
+  "canonical_json_profile": "HELM-Canonical-JSON-Profile-v1.0",
+  "edge_case_vectors": [
+    {
+      "vector_id": "EDGE-001-UTF16-CODE-UNIT-ORDERING",
+      "description": "Keys must be sorted lexicographically by UTF-16 code units",
+      "input_json": { "z": 1, "a": 2, "m": 3, "1": 4 },
+      "expected_canonical_utf8": "{\"1\":4,\"a\":2,\"m\":3,\"z\":1}",
+      "expected_sha256": "28568449b1dd05aeaa28d7cf774ae768131fdae6e0f2954679cf32fc77895f17"
+    },
+    {
+      "vector_id": "EDGE-002-NEGATIVE-ZERO-FORMATTING",
+      "description": "Negative floating-point zero (-0.0) must be serialized as 0",
+      "input_json": { "zero": -0.0 },
+      "expected_canonical_utf8": "{\"zero\":0}",
+      "expected_sha256": "33b50e61094f0d59aabcdd47c698ea5d9d120c188b8a49f6451ebc736e28ba45"
+    },
+    {
+      "vector_id": "EDGE-003-NESTED-KEY-ORDERING",
+      "description": "Nested objects and lists must be recursively sorted and formatted",
+      "input_json": { "b": { "y": 2, "x": 1 }, "a": [ { "d": 4, "c": 3 } ] },
+      "expected_canonical_utf8": "{\"a\":[{\"c\":3,\"d\":4}],\"b\":{\"x\":1,\"y\":2}}",
+      "expected_sha256": "97e3fc81fc2f5b216529c1318d29cfa5d768cd82c38e8842196ffb2c9474d8e3"
+    },
+    {
+      "vector_id": "EDGE-004-EMPTY-STRUCTURES",
+      "description": "Empty objects and arrays serialize without whitespace",
+      "input_json": { "empty_arr": [], "empty_obj": {} },
+      "expected_canonical_utf8": "{\"empty_arr\":[],\"empty_obj\":{}}",
+      "expected_sha256": "f41079191d354d8f29da00810acc909b27b42c69fe31d1a8ed5ff7b715055f08"
+    },
+    {
+      "vector_id": "EDGE-005-UNICODE-VERBATIM-PRESERVATION",
+      "description": "String literals must be preserved verbatim without Unicode normalization",
+      "input_json": { "title": "A\u030a" },
+      "expected_canonical_utf8": "{\"title\":\"A\u030a\"}",
+      "expected_sha256": "26918c6862161ec6ca1f392c0b54e1a2e29227c36c308652c155ec196cb438db"
+    }
+  ]
+}

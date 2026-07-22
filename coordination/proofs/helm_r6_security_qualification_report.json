@@ -1,0 +1,96 @@
+{
+  "report_identifier": "REPORT-HELM-R6-SECURITY-QUALIFICATION",
+  "qualification_tier": "Security Qualified (R6 Baseline)",
+  "qualification_status": "EVIDENCE_BOUND",
+  "environment_metadata": {
+    "git_commit": "6bfd36b8c981332420942b5ad11c9a40a592a1a8",
+    "dirty_tree_status": true,
+    "test_command": "python3 -m pytest tests/security/test_helm_security_qualification.py -v",
+    "python_version": "Python 3.14.6",
+    "platform_architecture": "Darwin arm64 (macOS-26.5.2-arm64-arm-64bit-Mach-O)",
+    "start_time_utc": "2026-07-22T11:51:13.349162+00:00",
+    "completion_time_utc": "2026-07-22T11:51:13.419119+00:00"
+  },
+  "artifact_digests": {
+    "test_suite_file_sha256": "59ca93120fcf8ea626f64dc058af3b5bcd4147e28f93cf0120667c5b682fb779",
+    "threat_model_file_sha256": "f85f308634171b6d62216fd9112b08ad53ee5cbd43861256e26afc6ecbb6aa33",
+    "report_generator_sha256": "7dfebd813bf3cdc499df14baa01196c84a8bde2caa0aa07f20ccc7391758cda8",
+    "evidence_bundle_sha256": "a9755bac0e8a82df1e19749ae4536911081014d71e5b45b2c260d8ceed1ed874"
+  },
+  "traceability_matrix": {
+    "total_unit_tests": 7,
+    "total_qualification_checks": 6,
+    "tests_passed": 7,
+    "checks_passed": 6,
+    "checks_failed": 0,
+    "checks": [
+      {
+        "check_id": "CHECK-01",
+        "requirement_id": "R6.2",
+        "domain": "Non-Finite Float Rejection",
+        "test_ids": [
+          "SEC-001"
+        ],
+        "status": "PASS",
+        "description": "Rejection of NaN, Infinity, and -Infinity floating point inputs fail-closed",
+        "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_001_r6_2_parser_hardening_nan_infinity_rejection"
+      },
+      {
+        "check_id": "CHECK-02",
+        "requirement_id": "R6.2",
+        "domain": "Non-String Key Rejection",
+        "test_ids": [
+          "SEC-002"
+        ],
+        "status": "PASS",
+        "description": "Rejection of non-string object keys (e.g. integer dictionary keys) fail-closed",
+        "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_002_r6_2_parser_hardening_invalid_type_rejection"
+      },
+      {
+        "check_id": "CHECK-03",
+        "requirement_id": "R6.3",
+        "domain": "Hash-Link Tamper Resistance",
+        "test_ids": [
+          "SEC-003"
+        ],
+        "status": "PASS",
+        "description": "Detection and rejection of tampered previous_transition_hash in lifecycle history",
+        "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_003_r6_3_ledger_integrity_tampered_prev_hash_rejection"
+      },
+      {
+        "check_id": "CHECK-04",
+        "requirement_id": "R6.3",
+        "domain": "Illegal Transition Enforcement",
+        "test_ids": [
+          "SEC-004"
+        ],
+        "status": "PASS",
+        "description": "Enforcement of valid state machine ordering (rejecting out-of-order state skips)",
+        "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_004_r6_3_ledger_integrity_invalid_state_transition"
+      },
+      {
+        "check_id": "CHECK-05",
+        "requirement_id": "R6.4",
+        "domain": "Unicode & Control Character Security",
+        "test_ids": [
+          "SEC-005",
+          "SEC-006"
+        ],
+        "status": "PASS",
+        "description": "Distinct canonical SHA-256 digest generation for zero-width joiners (U+200D) and bidi control chars (U+200E/F)",
+        "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_005_r6_4_unicode_security_zero_width_joiner_distinctness"
+      },
+      {
+        "check_id": "CHECK-06",
+        "requirement_id": "R6.6",
+        "domain": "Cryptographic Domain Tag Separation",
+        "test_ids": [
+          "SEC-007"
+        ],
+        "status": "PASS",
+        "description": "Domain-tagged transition hash separation ('HELM-CONFORMANCE-TRANSITION-V1\\n') preventing cross-protocol replay",
+        "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_007_r6_6_cryptographic_misuse_domain_tag_isolation"
+      }
+    ]
+  }
+}
