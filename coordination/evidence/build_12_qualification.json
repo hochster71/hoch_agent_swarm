@@ -4,25 +4,25 @@
   "target_application": "epic-fury-dashboard",
   "app_version": "1.0.2",
   "build_number": "12",
-  "git_commit": "ffca4d84853abb4752e8c2d842ba1b6eee20cb85",
+  "git_commit": "ae4ad6432037f6430f72f57eb992f78cd8a3f114",
   "git_branch": "helm-runtime-bridge-v1",
-  "timestamp_utc": "2026-07-22T18:30:15Z",
+  "timestamp_utc": "2026-07-22T18:42:15Z",
   "overall_disposition": "HOLD",
   "reason_codes": [
     {
       "category": "OPERATIONAL",
-      "code": "STOREKIT_TRANSACTION_TRACE_PENDING",
-      "description": "Gate 2 lacks raw StoreKit transaction logs and UI capture"
+      "code": "XCTEST_STOREKIT_HARNESS_PENDING",
+      "description": "Gate 2 requires executable XCTest / StoreKitTest harness with .xcresult output"
     },
     {
       "category": "OPERATIONAL",
       "code": "PHYSICAL_DEVICE_PROOF_PENDING",
-      "description": "Gate 3 simulator layout proof cannot substitute for physical iPad Air hardware proof"
+      "description": "Gate 3 requires physical iPad hardware execution"
     },
     {
       "category": "OPERATIONAL",
-      "code": "RELEASE_XCARCHIVE_PENDING",
-      "description": "Gate 4 requires generic iOS Release .xcarchive bundle generation"
+      "code": "DISTRIBUTION_SIGNING_PENDING",
+      "description": "Gate 4 archive is unsigned (CODE_SIGNING_ALLOWED=NO); distribution signing profile required"
     },
     {
       "category": "GOVERNANCE",
@@ -45,7 +45,7 @@
       "name": "Native RevenueCat / StoreKit Purchase Qualification",
       "status": "NOT_YET_QUALIFIED",
       "qualified_at": null,
-      "blocking_reason": "StoreKit payment sheet presentation and sandbox execution pending raw transaction log proof",
+      "blocking_reason": "Platform-derived XCTest StoreKit test harness output and .xcresult pending",
       "evidence": [],
       "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-2-native-revenuecat--storekit-purchase-qualification"
     },
@@ -53,7 +53,7 @@
       "name": "Device Qualification (iPad Air 11\" M4)",
       "status": "NOT_YET_QUALIFIED",
       "qualified_at": null,
-      "blocking_reason": "Simulator layout qualification cannot substitute for physical iPad Air hardware proof",
+      "blocking_reason": "Physical iPad hardware proof pending",
       "evidence": [],
       "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-3-device-qualification"
     },
@@ -61,7 +61,7 @@
       "name": "Xcode Build Archive Generation",
       "status": "NOT_YET_QUALIFIED",
       "qualified_at": null,
-      "blocking_reason": "Generic iOS Release .xcarchive bundle generation pending pre-archive qualification checks",
+      "blocking_reason": "Generic iOS Release .xcarchive distribution signing and provisioning profile pending",
       "evidence": [],
       "report": "docs/founder/BUILD_12_QUALIFICATION_REPORT.md#gate-4-xcode-archive-generation"
     },

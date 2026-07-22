@@ -221,3 +221,8 @@ data/runtime/voice_command_audit_reconstructed_20260719.jsonl
 
 # machine-local Claude permission cache (absolute paths, per-machine grants)
 .claude/
+
+# HELM Release Archives (Ignore binary .xcarchive bundles)
+coordination/release/*.xcarchive
+coordination/evidence/build_12/gate_2_purchase/storekit_trace.log
+
