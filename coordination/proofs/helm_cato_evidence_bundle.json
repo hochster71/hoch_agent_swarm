@@ -1,8 +1,8 @@
 {
   "cato_bundle_identifier": "CATO-BUNDLE-HELM-V1.0.0",
   "qualification_status": "CONTINUOUS_AUTHORIZATION_READY",
-  "timestamp_utc": "2026-07-22T11:56:20.511335+00:00",
-  "git_commit": "ef02c3806854998a1a7db5ee8a481243292411af",
+  "timestamp_utc": "2026-07-22T11:56:55.681735+00:00",
+  "git_commit": "856fb5799cdfcd8ee10ca193e10e471a465b0414",
   "binding_model": "PARENT_COMMIT_ATTESTATION_V1",
   "security_qualification": {
     "status": "EVIDENCE_RECORDED",

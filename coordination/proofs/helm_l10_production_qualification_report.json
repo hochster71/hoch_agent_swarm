@@ -1,0 +1,35 @@
+{
+  "report_identifier": "REPORT-HELM-L10-PRODUCTION-QUALIFICATION",
+  "qualification_tier": "Production Readiness & Operational Burn-in (R12 Milestone)",
+  "qualification_status": "BURNIN_IN_PROGRESS_OPERATIONAL_BASELINE",
+  "binding_model": "PARENT_COMMIT_ATTESTATION_V1",
+  "evidence_attestation": {
+    "qualified_source_commit": "ef02c3806854998a1a7db5ee8a481243292411af",
+    "evidence_record_commit": "856fb5799cdfcd8ee10ca193e10e471a465b0414"
+  },
+  "burn_in_manifest": {
+    "burn_in_id": "HELM-R12-BURNIN-V1-1784721578",
+    "qualified_source_commit": "ef02c3806854998a1a7db5ee8a481243292411af",
+    "start_time_utc": "2026-07-22T11:59:38.808096+00:00",
+    "planned_end_time_utc": "2026-07-22T11:59:38.808264+00:00",
+    "environment_id": "Darwin-arm64",
+    "configuration_digest": "sha256:11463524cd2cc5449a200d5427ea536e545f9e51ce4cc8950c0a4f9188ae772b",
+    "policy_digest": "sha256:5f8351aad693cfe63e9d4c260770071b09e305788acfbe4f2498dbfc1a769264",
+    "corpus_manifest_digest": "sha256:a9755bac0e8a82df1e19749ae4536911081014d71e5b45b2c260d8ceed1ed874",
+    "expected_interval_seconds": 300
+  },
+  "ledger_audit": {
+    "status": "VALIDATED",
+    "total_records": 10,
+    "hash_chain_valid": true,
+    "replay_divergence_count": 0
+  },
+  "qualification_exit_criteria": {
+    "min_required_burnin_days": 30,
+    "current_elapsed_days": 0.1,
+    "max_allowed_unexplained_gaps": 0,
+    "max_allowed_digest_divergence": 0,
+    "max_allowed_replay_divergence": 0,
+    "burn_in_complete": false
+  }
+}
