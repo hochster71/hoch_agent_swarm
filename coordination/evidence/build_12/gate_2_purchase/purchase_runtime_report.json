@@ -1,7 +1,7 @@
 {
   "gate_id": "GATE-2-PURCHASE",
   "evidence_class": "LOCAL_STOREKIT_TEST",
-  "commit_sha": "14537301bcd9ee6a3594a4c0951ead41c7ad4f4b",
+  "commit_sha": "9499ff38480940840f38761402b9cc803a24ab36",
   "storekit_configuration": "ios/App/App/Products.storekit",
   "scenarios": [
     {
@@ -30,5 +30,5 @@
     }
   ],
   "raw_storekit_log": "coordination/evidence/build_12/gate_2_purchase/storekit_trace.log",
-  "generated_at": "2026-07-22T18:36:53.437139Z"
+  "generated_at": "2026-07-22T18:37:26.139687Z"
 }
