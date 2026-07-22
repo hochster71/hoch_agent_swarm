@@ -2,7 +2,7 @@
   "manifest_version": "1.0.0",
   "evidence_id": "GATE-2-STOREKIT-EVIDENCE-20260722",
   "generated_at_utc": "2026-07-22T20:00:15Z",
-  "helm_producer_commit": "92a764cad6703c924d345479dfd76f30f2f3e792",
+  "helm_producer_commit": "396e771c2d2f5fc074d0b15756a4b3da6a6d8e97",
   "application_commit": "fbee9933f2a7068edb0d025343cc7dd61bfe6166",
   "application_worktree_clean": true,
   "xcode_version": "Xcode 16.0 (16A242d)",
