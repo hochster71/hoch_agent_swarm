@@ -2,15 +2,15 @@
 r"""
 HELM Governance Platform — Sprint 10 Production Qualification Burn-in Engine (`R12` Milestone)
 =============================================================================================
-Manages operational burn-in tracking, append-only observation logging, elapsed time verification,
-algorithmic gap accounting, genuine decision replay verification, and signed release package attestation.
+Manages operational burn-in tracking, append-only observation logging, full-window coverage,
+gap accounting, genuine decision replay verification, and signed release package attestation.
 
 Hardened Features:
   - Append-only file mode ("a") with file locking (fcntl)
   - Full hash-chain recomputation from canonical record bytes
   - Separate input_digest vs decision_output_digest genuine replay comparison
-  - Algorithmic missing interval calculation: missing = floor(delta / expected) - 1
-  - Manifest integrity verification: start + 30 days planned_end validation
+  - Full-window coverage: manifest start -> first record -> all records -> audit time
+  - Performance status disambiguation: performance_baseline_status vs current_performance_check
   - Dynamic security and performance status execution integration
 """
 
@@ -58,7 +58,6 @@ def get_or_create_manifest(source_commit: str) -> dict:
         try:
             with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                # Verify manifest integrity & arithmetic
                 start_dt = datetime.fromisoformat(data["start_time_utc"].replace("Z", "+00:00"))
                 end_dt = datetime.fromisoformat(data["planned_end_time_utc"].replace("Z", "+00:00"))
                 if abs((end_dt - start_dt).total_seconds() - (30 * 86400)) < 10.0:
@@ -108,7 +107,7 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
             "unexplained_gaps": 0,
             "missing_intervals": 0,
             "longest_gap_sec": 0.0,
-            "observation_coverage_pct": 0.0
+            "full_window_coverage_pct": 0.0
         }
 
     records = []
@@ -126,7 +125,7 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
                         "unexplained_gaps": 0,
                         "missing_intervals": 0,
                         "longest_gap_sec": 0.0,
-                        "observation_coverage_pct": 0.0
+                        "full_window_coverage_pct": 0.0
                     }
 
     if not records:
@@ -138,10 +137,13 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
             "unexplained_gaps": 0,
             "missing_intervals": 0,
             "longest_gap_sec": 0.0,
-            "observation_coverage_pct": 0.0
+            "full_window_coverage_pct": 0.0
         }
 
     expected_interval = manifest.get("expected_interval_seconds", 300) if manifest else 300
+    now_dt = datetime.now(timezone.utc)
+    manifest_start_dt = datetime.fromisoformat(manifest["start_time_utc"].replace("Z", "+00:00")) if (manifest and "start_time_utc" in manifest) else datetime.fromisoformat(records[0]["timestamp_utc"].replace("Z", "+00:00"))
+
     hash_chain_valid = True
     replay_divergence_count = 0
     missing_intervals = 0
@@ -150,6 +152,15 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
     prev_hash = GENESIS_HASH
     prev_seq = 0
     prev_ts = None
+
+    # Full-window accounting: manifest start to first record
+    first_rec_dt = datetime.fromisoformat(records[0]["timestamp_utc"].replace("Z", "+00:00"))
+    lead_delta = (first_rec_dt - manifest_start_dt).total_seconds()
+    if lead_delta > (expected_interval * 1.5):
+        skipped_lead = int(math.floor(lead_delta / expected_interval))
+        missing_intervals += skipped_lead
+        if lead_delta > longest_gap_sec:
+            longest_gap_sec = lead_delta
 
     for idx, r in enumerate(records):
         # 1. Sequence Continuity
@@ -166,14 +177,14 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
         if r.get("record_hash") != computed_hash:
             hash_chain_valid = False
 
-        # 4. Temporal Monotonicity & Algorithmic Gap Accounting
+        # 4. Temporal Monotonicity & Record-to-Record Gap Accounting
         ts_str = r.get("timestamp_utc", "")
         try:
             curr_dt = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
             if prev_ts is not None:
                 delta_sec = (curr_dt - prev_ts).total_seconds()
                 if delta_sec < 0:
-                    hash_chain_valid = False  # Clock skew regression
+                    hash_chain_valid = False
                 if delta_sec > longest_gap_sec:
                     longest_gap_sec = delta_sec
 
@@ -193,7 +204,6 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
             persisted_dec_digest = r.get("persisted_decision_digest", "")
             persisted_code = r.get("persisted_decision_code", "")
 
-            # Re-evaluate fresh
             fresh_engine = HELMDecisionEngine()
             fresh_res = fresh_engine.evaluate_release_promotion(persisted_inp)
 
@@ -209,8 +219,20 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
         prev_hash = r.get("record_hash", "")
         prev_seq = seq
 
-    total_expected = len(records) + missing_intervals
-    coverage_pct = (len(records) / total_expected * 100.0) if total_expected > 0 else 100.0
+    # Live-tail full window accounting (if explicitly configured)
+    if manifest and manifest.get("check_live_tail"):
+        last_rec_dt = datetime.fromisoformat(records[-1]["timestamp_utc"].replace("Z", "+00:00"))
+        tail_delta = (now_dt - last_rec_dt).total_seconds()
+        if tail_delta > (expected_interval * 1.5):
+            skipped_tail = int(math.floor(tail_delta / expected_interval))
+            missing_intervals += skipped_tail
+            if tail_delta > longest_gap_sec:
+                longest_gap_sec = tail_delta
+
+    last_dt = datetime.fromisoformat(records[-1]["timestamp_utc"].replace("Z", "+00:00"))
+    total_window_sec = max(1.0, (last_dt - manifest_start_dt).total_seconds())
+    total_expected_intervals = max(1, int(math.ceil(total_window_sec / expected_interval)))
+    coverage_pct = (len(records) / total_expected_intervals * 100.0)
 
     return {
         "status": "VALIDATED" if hash_chain_valid and replay_divergence_count == 0 and missing_intervals == 0 else "CORRUPTED",
@@ -219,8 +241,8 @@ def verify_burnin_ledger(ledger_file: Path, manifest: dict = None) -> dict:
         "replay_divergence_count": replay_divergence_count,
         "missing_intervals": missing_intervals,
         "unexplained_gaps": missing_intervals,
-        "longest_gap_sec": longest_gap_sec,
-        "observation_coverage_pct": round(coverage_pct, 2)
+        "longest_gap_sec": round(longest_gap_sec, 2),
+        "full_window_coverage_pct": round(min(100.0, coverage_pct), 2)
     }
 
 
@@ -283,7 +305,8 @@ def record_burnin_observation(sample_payload: dict, manifest: dict) -> dict:
                 "persisted_decision_digest": dec_digest,
                 "persisted_decision_code": eval_res["decision_code"],
                 "security_suite_status": sec_status,
-                "performance_status": "BASELINE_CAPTURED",
+                "performance_baseline_status": "AVAILABLE",
+                "current_performance_check": "NOT_EXECUTED",
                 "telemetry": {
                     "system": platform.system(),
                     "machine": platform.machine(),
@@ -332,17 +355,22 @@ def main():
 
     audit = verify_burnin_ledger(LEDGER_PATH, manifest)
 
-    # 30-Day Gate Verification
+    # 30-Day Gate Verification & Founder Authorization Boundary
     start_dt = datetime.fromisoformat(manifest["start_time_utc"].replace("Z", "+00:00"))
     now_dt = datetime.now(timezone.utc)
     elapsed_days = (now_dt - start_dt).total_seconds() / 86400.0
 
-    burnin_complete = elapsed_days >= 30.0 and audit["status"] == "VALIDATED" and audit["unexplained_gaps"] == 0
+    if elapsed_days >= 30.0 and audit["status"] == "VALIDATED" and audit["unexplained_gaps"] == 0:
+        qual_status = "FOUNDER_AUTHORIZATION_REQUIRED"
+        burnin_eligible = True
+    else:
+        qual_status = "BURNIN_HARNESS_BOOTSTRAP_IMPLEMENTED"
+        burnin_eligible = False
 
     report = {
         "report_identifier": "REPORT-HELM-L10-PRODUCTION-QUALIFICATION",
         "qualification_tier": "Production Readiness Operational Burn-in (R12 Milestone)",
-        "qualification_status": "BURNIN_HARNESS_BOOTSTRAP_IMPLEMENTED" if not burnin_complete else "QUALIFIED_30DAY_BURNIN",
+        "qualification_status": qual_status,
         "binding_model": "PARENT_COMMIT_ATTESTATION_V1",
         "evidence_attestation": {
             "qualified_source_commit": parent_commit,
@@ -355,10 +383,11 @@ def main():
             "current_elapsed_days": round(elapsed_days, 4),
             "unexplained_gaps": audit["unexplained_gaps"],
             "missing_intervals": audit["missing_intervals"],
-            "observation_coverage_pct": audit["observation_coverage_pct"],
+            "full_window_coverage_pct": audit["full_window_coverage_pct"],
             "replay_divergence_count": audit["replay_divergence_count"],
             "hash_chain_valid": audit["hash_chain_valid"],
-            "burn_in_complete": burnin_complete
+            "burn_in_eligible": burnin_eligible,
+            "burn_in_complete": False  # Preserves Founder Doorstep Gate
         }
     }
 
@@ -373,7 +402,7 @@ def main():
     print(f"Hash-Chain Valid:     {audit['hash_chain_valid']}")
     print(f"Replay Divergence:    {audit['replay_divergence_count']}")
     print(f"Missing Intervals:    {audit['missing_intervals']}")
-    print(f"Observation Coverage: {audit['observation_coverage_pct']}%")
+    print(f"Full Window Coverage: {audit['full_window_coverage_pct']}%")
     print("======================================================================")
 
 

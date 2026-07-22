@@ -4,8 +4,8 @@
   "qualification_status": "BURNIN_HARNESS_BOOTSTRAP_IMPLEMENTED",
   "binding_model": "PARENT_COMMIT_ATTESTATION_V1",
   "evidence_attestation": {
-    "qualified_source_commit": "7c152937b07fbd42e60a3eaf0397175e40ec0689",
-    "evidence_record_commit": "596557b2c92289cce96bf3ac0acb32ec194e4d60"
+    "qualified_source_commit": "596557b2c92289cce96bf3ac0acb32ec194e4d60",
+    "evidence_record_commit": "bee9feb7a0deffca3562fff19bb861a847ef77a4"
   },
   "burn_in_manifest": {
     "burn_in_id": "HELM-R12-BURNIN-V1-1784721954",
@@ -20,22 +20,23 @@
   },
   "ledger_audit": {
     "status": "VALIDATED",
-    "total_records": 1,
+    "total_records": 6,
     "hash_chain_valid": true,
     "replay_divergence_count": 0,
     "missing_intervals": 0,
     "unexplained_gaps": 0,
-    "longest_gap_sec": 0.0,
-    "observation_coverage_pct": 100.0
+    "longest_gap_sec": 174.31,
+    "full_window_coverage_pct": 100.0
   },
   "qualification_exit_criteria": {
     "min_required_burnin_days": 30,
-    "current_elapsed_days": 0.0,
+    "current_elapsed_days": 0.0024,
     "unexplained_gaps": 0,
     "missing_intervals": 0,
-    "observation_coverage_pct": 100.0,
+    "full_window_coverage_pct": 100.0,
     "replay_divergence_count": 0,
     "hash_chain_valid": true,
+    "burn_in_eligible": false,
     "burn_in_complete": false
   }
 }
