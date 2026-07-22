@@ -34,11 +34,20 @@ def check_java_available() -> tuple[bool, str]:
     if not java_bin:
         return False, "Java binary not found on PATH"
     try:
-        res = subprocess.run([java_bin, "-version"], capture_output=True, text=True)
-        version_str = res.stderr if res.stderr else res.stdout
-        return True, version_str.splitlines()[0] if version_str else "Java Available"
-    except Exception as e:
-        return False, f"Java check failed: {str(e)}"
+        res = subprocess.run(
+            [java_bin, "-version"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        output = (res.stderr or res.stdout).strip()
+        if res.returncode != 0:
+            return False, output or f"java -version exited {res.returncode}"
+        if "unable to locate a java runtime" in output.lower():
+            return False, output
+        return True, output.splitlines()[0]
+    except Exception as exc:
+        return False, f"Java check failed: {exc}"
 
 
 def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:

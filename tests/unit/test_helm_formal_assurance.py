@@ -118,7 +118,7 @@ def test_formal_010_native_tlc_command_execution():
 
 
 def test_formal_011_missing_java_fails_closed():
-    """[FORMAL-011] Asserts runner fails closed if Java runtime is missing."""
+    """[FORMAL-011] Asserts runner fails closed with FAIL_JAVA_UNAVAILABLE when Java is missing or launcher stub."""
     has_java, msg = check_java_available()
     if not has_java:
         res = run_tlc_model("HELMLedger.tla", "HELMLedger.cfg")
@@ -126,7 +126,7 @@ def test_formal_011_missing_java_fails_closed():
 
 
 def test_formal_012_missing_tla2tools_jar_fails_closed():
-    """[FORMAL-012] Asserts missing tla2tools.jar fails closed with FAIL_TLA2TOOLS_JAR_MISSING."""
+    """[FORMAL-012] Asserts missing tla2tools.jar fails closed."""
     res = run_tlc_model("HELMLedger.tla", "HELMLedger.cfg")
     assert res["tlc_execution_status"] in ["FAIL_JAVA_UNAVAILABLE", "FAIL_TLA2TOOLS_JAR_MISSING"]
 

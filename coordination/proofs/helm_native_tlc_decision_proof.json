@@ -1,9 +1,9 @@
 {
   "model": "HELMDecisionStateMachine",
-  "qualified_source_commit": "a4df1c42cf0f809ebbbf79c32604ca89649e8e7d",
+  "qualified_source_commit": "bfded5442439ba227f474e59d143c5bd9b0c1dd2",
   "model_sha256": "6b0f4a1e6f66396727277c7bd1b1898629037f7c7d3190140b421f61291187eb",
   "cfg_sha256": "d15e7d8ee03481e5630972c481a0ce7c6e85e4623a5ac7ac3addbd22c86141f5",
-  "java_version": "The operation couldn\u2019t be completed. Unable to locate a Java Runtime.",
+  "java_version": "The operation couldn\u2019t be completed. Unable to locate a Java Runtime.\nPlease visit http://www.java.com for information on installing Java.",
   "tlc_jar_path": "/Users/michaelhoch/hoch_agent_swarm/tools/tla2tools.jar",
   "tlc_jar_present": false,
   "command_attempted": [],
@@ -12,8 +12,8 @@
   "states_generated": 0,
   "distinct_states": 0,
   "maximum_depth": 0,
-  "result": "FAIL_CLOSED_NO_JAR",
-  "executed_at_utc": "2026-07-22T12:18:06.170684+00:00",
-  "tlc_execution_status": "FAIL_TLA2TOOLS_JAR_MISSING",
-  "error_detail": "tla2tools.jar missing at /Users/michaelhoch/hoch_agent_swarm/tools/tla2tools.jar"
+  "result": "FAIL_CLOSED_NO_JAVA",
+  "executed_at_utc": "2026-07-22T12:19:43.539868+00:00",
+  "tlc_execution_status": "FAIL_JAVA_UNAVAILABLE",
+  "error_detail": "Native TLC execution failed: The operation couldn\u2019t be completed. Unable to locate a Java Runtime.\nPlease visit http://www.java.com for information on installing Java."
 }
