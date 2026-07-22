@@ -1,29 +1,35 @@
 {
   "manifest_version": "1.0.0",
   "evidence_id": "GATE-2-STOREKIT-EVIDENCE-20260722",
-  "timestamp_utc": "2026-07-22T19:35:45Z",
-  "helm_commit": "433b6284a7e9b0123456789abcdef0123456789a",
+  "timestamp_utc": "2026-07-22T19:55:12Z",
+  "helm_commit": "7093579d",
   "application_repository": "/Users/michaelhoch/epic-fury-build/epic-fury-2026",
   "application_commit": "a93983e2e161c7b04271b335379e949ca9488fd7",
   "xcode_test_target": "AppTests",
   "xcode_scheme": "App-StoreKit-Qualification",
   "storekit_resource_membership": "AppTests ONLY",
-  "test_bundle_storekit_path": "AppTests.xctest/Products.storekit",
-  "storekit_session_initialization": "SKTestSession(contentsOf: storekitURL)",
-  "monthly_product_discovered": "com.epicfury.dashboard.pro_monthly",
-  "annual_product_discovered": "com.epicfury.dashboard.pro_annual",
-  "bootstrap_test_exit_code": 65,
-  "bootstrap_xcresult_parses": true,
-  "full_suite_executed": false,
+  "test_configuration_present": true,
+  "storekit_session_initialization": "FAILED",
+  "monthly_product_configured": true,
+  "annual_product_configured": true,
+  "monthly_product_discovered": false,
+  "annual_product_discovered": false,
+  "bootstrap_tests": {
+    "implemented": 1,
+    "executed": 1,
+    "passed": 0,
+    "failed": 1
+  },
+  "gate_2_scenarios": {
+    "implemented": 9,
+    "executed": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 9
+  },
   "xcresult_storage_class": "EXTERNAL_ARTIFACT_GIT_IGNORED",
   "xcresult_path": "coordination/evidence/build_12/gate_2_purchase/Gate2StoreKit.xcresult",
   "xcodebuild_test_log_path": "coordination/evidence/build_12/gate_2_purchase/xcodebuild-test.log",
-  "scenarios": {
-    "implemented": 9,
-    "executed": 1,
-    "passed": 0,
-    "failed": 1,
-    "skipped": 0
-  },
   "gate_2_replay": "NOT_YET_QUALIFIED"
 }
