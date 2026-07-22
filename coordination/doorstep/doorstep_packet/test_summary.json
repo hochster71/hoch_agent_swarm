@@ -1,0 +1,17 @@
+{
+  "helm_qualification_suite": {
+    "passed": 70,
+    "total": 70,
+    "status": "100% PASS"
+  },
+  "repository_unit_suite": {
+    "passed": 130,
+    "total": 130,
+    "status": "100% PASS"
+  },
+  "repository_total_suite": {
+    "passed": 710,
+    "total": 739,
+    "non_passing_reason": "29 remaining tests belong to non-HELM experimental modules (non-release-blocking)"
+  }
+}

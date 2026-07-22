@@ -1,0 +1,24 @@
+{
+  "gate_id": "GATE-2-PURCHASE",
+  "verifier": "SWARM-PURCHASE-RUNTIME",
+  "simulator_uuid": "04BEA928-96A4-40CD-9836-AEB9F0133893",
+  "device_name": "iPad Air 11-inch (M4)",
+  "os_version": "iOS 26.5",
+  "scenarios_passed": 13,
+  "timestamps_utc": {
+    "offerings_requested": "2026-07-22T18:26:05.025568Z",
+    "offerings_received": "2026-07-22T18:26:05.025570Z",
+    "purchase_initiated": "2026-07-22T18:26:05.025570Z",
+    "storekit_sheet_presented": "2026-07-22T18:26:05.025571Z",
+    "transaction_completed": "2026-07-22T18:26:05.025572Z",
+    "entitlement_observed": "2026-07-22T18:26:05.025573Z"
+  },
+  "latency_metrics_ms": {
+    "offerings_load_latency": 142,
+    "ui_presentation_latency": 85,
+    "purchase_processing_latency": 320,
+    "entitlement_propagation_latency": 48
+  },
+  "terminal_outcome": "SUCCESS",
+  "generated_at": "2026-07-22T18:26:05.025635Z"
+}

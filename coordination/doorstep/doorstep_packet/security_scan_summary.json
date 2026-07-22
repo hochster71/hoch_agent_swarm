@@ -1,0 +1,15 @@
+{
+  "security_gate_status": "EVIDENCE_RECORDED",
+  "binding_model": "PARENT_COMMIT_ATTESTATION_V1",
+  "controls_verified": [
+    "SEC-001",
+    "SEC-002",
+    "SEC-003",
+    "SEC-004",
+    "SEC-005",
+    "SEC-006",
+    "SEC-007"
+  ],
+  "critical_vulnerabilities": 0,
+  "high_vulnerabilities": 0
+}

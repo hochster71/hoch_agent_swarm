@@ -1,0 +1,14 @@
+{
+  "gate_id": "GATE-1-CONFIG",
+  "verifier": "SWARM-NATIVE-CONFIG",
+  "bundle_id": "com.epicfury.dashboard",
+  "revenuecat_key_env": "NEXT_PUBLIC_REVENUECAT_IOS_KEY",
+  "product_ids": [
+    "com.epicfury.dashboard.pro_monthly",
+    "com.epicfury.dashboard.pro_annual"
+  ],
+  "entitlement": "pro",
+  "secret_leak_check": "PASS",
+  "build_injection_proof": "PASS",
+  "generated_at": "2026-07-22T18:14:29.791209Z"
+}

@@ -1,0 +1,32 @@
+{
+  "mission_run_id": "HELM-GOAL-RUN-20260722-001",
+  "timestamp_utc": "2026-07-22T18:26:04.978094Z",
+  "commit_sha": "ca156ad62996329d70f916e4821e6e1d536e8600",
+  "findings": [
+    {
+      "id": "AUDIT-001",
+      "category": "AUTHORITY_AND_TRUTH",
+      "status": "PASS",
+      "description": "Machine-readable qualification JSON is derived from raw completion events."
+    },
+    {
+      "id": "AUDIT-002",
+      "category": "RUNNER_COMPLETENESS",
+      "status": "PASS",
+      "description": "HELM Runner v1.0 dispatches real capability adapters and enforces preflight drift checks."
+    },
+    {
+      "id": "AUDIT-003",
+      "category": "NATIVE_EXECUTION_CAPABILITY",
+      "status": "PASS",
+      "description": "Xcode project App.xcodeproj and simulator iPad Air 11-inch (M4) discovered."
+    },
+    {
+      "id": "AUDIT-004",
+      "category": "SECURITY_AND_BOUNDARIES",
+      "status": "PASS",
+      "description": "No embedded client secrets detected; GATE-5-FOUNDER remains WITHHELD."
+    }
+  ],
+  "overall_audit_status": "PASS"
+}

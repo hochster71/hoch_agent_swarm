@@ -1,0 +1,80 @@
+{
+  "contract_name": "HELM v1.0 General Availability (GA) Authorization Contract",
+  "version": "1.0",
+  "governance_baseline": {
+    "hei_architecture_version": "v1.0 (Frozen)",
+    "executive_schema_version": "v1.1 (Frozen)",
+    "release_candidate_tag": "v1.0.0-rc1 (Immutable)",
+    "governance_contract_version": "v1.0 (Active)"
+  },
+  "target_release": "v1.0.0-rc1",
+  "controlling_forecast_date": "2026-08-21",
+  "evidence_completeness_matrix": {
+    "qualification_evidence": "COMPLETE",
+    "formal_verification": "COMPLETE",
+    "release_artifacts": "COMPLETE",
+    "governance_records": "COMPLETE",
+    "burn_in_telemetry": "IN_PROGRESS",
+    "founder_doorstep_packet": "PENDING"
+  },
+  "mandatory_evidence_required": [
+    "74/74 HELM Qualification Suite tests passing with zero failures",
+    "134/134 Repository Unit tests passing with zero failures",
+    "30 consecutive days of monotonic operational burn-in telemetry",
+    "Bounded TLA+ formal verification proof generated and verified",
+    "Release Candidate package manifest SHA-256 integrity verified"
+  ],
+  "prohibited_conditions": [
+    "Zero release-blocking defects in defect disposition ledger",
+    "Zero hash-chain divergence or missing telemetry windows in burn-in harness",
+    "Zero unhandled panic/crash regressions in mission runtime engine",
+    "Zero critical or high security vulnerabilities"
+  ],
+  "automatic_blocking_triggers": [
+    "Failure of any HELM qualification test case",
+    "Tampering or hash mismatch in telemetry observation log",
+    "Unauthorized code modification to RC1 candidate binary"
+  ],
+  "qualification_invalidation_reset_hierarchy": [
+    {
+      "event_type": "Telemetry Interruption (<1%)",
+      "burnin_reset": false,
+      "rc_identity_reset": false,
+      "new_rc_required": false,
+      "policy": "Operational Board Review required; telemetry resumed without candidate rebuild."
+    },
+    {
+      "event_type": "Hash-Chain Divergence",
+      "burnin_reset": true,
+      "rc_identity_reset": false,
+      "new_rc_required": false,
+      "policy": "Burn-in window reset; root cause investigation conducted before resuming observation."
+    },
+    {
+      "event_type": "Unauthorized Source Change",
+      "burnin_reset": true,
+      "rc_identity_reset": true,
+      "new_rc_required": true,
+      "policy": "Candidate identity incremented (rc1 -> rc2); 30-day burn-in window restarted from Day 0."
+    },
+    {
+      "event_type": "Documentation-Only Fix",
+      "burnin_reset": false,
+      "rc_identity_reset": false,
+      "new_rc_required": false,
+      "policy": "Governance record updated without candidate rebuild or burn-in reset."
+    }
+  ],
+  "founder_authorization_requirement": "Explicit cryptographic or doorstep approval from Executive Release Authority (Founder) via GOV-G005 gate",
+  "archived_release_artifacts": [
+    "coordination/release/v1.0.0-rc1/release_manifest.json",
+    "coordination/release/v1.0.0-rc1/version_info.json",
+    "coordination/release/v1.0.0-rc1/qualification_summary.json",
+    "coordination/release/v1.0.0-rc1/test_summary.json",
+    "coordination/release/v1.0.0-rc1/formal_verification_evidence.json",
+    "coordination/release/v1.0.0-rc1/sbom.json",
+    "coordination/release/v1.0.0-rc1/security_scan_summary.json",
+    "coordination/release/v1.0.0-rc1/governance_ledger_snapshot.json",
+    "coordination/release/v1.0.0-rc1/reproduction_instructions.md"
+  ]
+}

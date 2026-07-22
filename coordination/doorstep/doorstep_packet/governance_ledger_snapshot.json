@@ -1,0 +1,30 @@
+{
+  "GOV-G001": {
+    "status": "CLOSED / APPROVED",
+    "milestone": "Baseline Approval"
+  },
+  "GATE-ALPHA": {
+    "status": "CLOSED / APPROVED",
+    "milestone": "Alpha Milestone (E1 Kernel 100%)"
+  },
+  "GATE-BETA": {
+    "status": "CLOSED / APPROVED",
+    "milestone": "Beta Milestone (E2 Runtime 100%)"
+  },
+  "GOV-G003": {
+    "status": "CLOSED / APPROVED",
+    "milestone": "Formal Qualification Complete"
+  },
+  "GOV-G002": {
+    "status": "ACTIVE / PENDING",
+    "milestone": "30-Day Operational Burn-In"
+  },
+  "GOV-G004": {
+    "status": "OPEN / PENDING",
+    "milestone": "Production Control Audit"
+  },
+  "GOV-G005": {
+    "status": "OPEN / PENDING",
+    "milestone": "Executive Founder Authorization"
+  }
+}

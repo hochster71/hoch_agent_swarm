@@ -1,0 +1,27 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "name": "HELM Autonomous Operating System v1.0.0-RC1",
+  "packages": [
+    {
+      "name": "pytest",
+      "version": "9.1.1",
+      "license": "MIT"
+    },
+    {
+      "name": "fastapi",
+      "version": "0.115.0",
+      "license": "MIT"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.10.0",
+      "license": "MIT"
+    },
+    {
+      "name": "anyio",
+      "version": "4.13.0",
+      "license": "MIT"
+    }
+  ]
+}

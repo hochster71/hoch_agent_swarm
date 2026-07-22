@@ -1,0 +1,8 @@
+{
+  "gate_id": "GOV-G005",
+  "action": "AUTHORIZE_GA_RELEASE",
+  "target_release": "v1.0.0-rc1",
+  "authorization_status": "PENDING_DAY30_BURNIN_MATURITY",
+  "doorstep_staged_at_utc": "2026-07-22T14:56:09.917842Z",
+  "founder_signature": null
+}

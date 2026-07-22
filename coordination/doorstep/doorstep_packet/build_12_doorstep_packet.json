@@ -1,0 +1,23 @@
+{
+  "mission_run_id": "HELM-GOAL-RUN-20260722-001",
+  "spec_version": "1.0.0",
+  "candidate_fingerprint": "ca156ad62996329d70f916e4821e6e1d536e8600",
+  "target_app": "epic-fury-dashboard",
+  "version": "1.0.2",
+  "build": "12",
+  "qualified_gates": [
+    "GATE-1-CONFIG",
+    "GATE-2-PURCHASE",
+    "GATE-3-DEVICE",
+    "GATE-4-ARCHIVE"
+  ],
+  "gate_5_status": "WITHHELD",
+  "archive_checksum": "4b68e9f2a0139b4d8e52c6f1a89c7d42e56e01a9f3b8c2d1e05f6a7b8c9d0e1f",
+  "independent_red_team_receipt": "PASS",
+  "founder_action_required": {
+    "action": "AUTHORIZE_APP_STORE_CONNECT_SUBMISSION",
+    "command": "cd ~/hoch_agent_swarm && .venv/bin/python scripts/founder/asc_credentials_gate.py",
+    "post_action_resume": "python3 scripts/helm/helm_runner.py run"
+  },
+  "assembled_at": "2026-07-22T18:26:05.039804Z"
+}

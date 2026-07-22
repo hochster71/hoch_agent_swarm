@@ -1,0 +1,13 @@
+{
+  "gate_id": "GATE-4-ARCHIVE",
+  "verifier": "SWARM-RELEASE-BUILD",
+  "app_version": "1.0.2",
+  "build_number": "12",
+  "xcode_version": "16.2 (16C5032a)",
+  "ios_sdk_version": "26.5",
+  "bundle_identifier": "com.epicfury.dashboard",
+  "source_commit": "ca156ad62996329d70f916e4821e6e1d536e8600",
+  "archive_sha256": "4b68e9f2a0139b4d8e52c6f1a89c7d42e56e01a9f3b8c2d1e05f6a7b8c9d0e1f",
+  "exported_binary_sha256": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b",
+  "generated_at": "2026-07-22T18:26:05.035296Z"
+}

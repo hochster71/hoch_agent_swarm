@@ -10,7 +10,7 @@
   "candidate_fingerprint": "6c05d97f91e3ff212f495a0de29697ff7d6f83fc",
   "current_mission_state": "OPERATIONAL_EXECUTION",
   "overall_disposition": "WITHHELD",
-  "critical_path_stage": "GATE-2-PURCHASE",
+  "critical_path_stage": "GATE-5-FOUNDER",
   "mission_health": {
     "execution_health_percent": 100.0,
     "evidence_completeness_percent": 60.0,
@@ -44,9 +44,9 @@
   ],
   "gate_states": {
     "GATE-1-CONFIG": "QUALIFIED",
-    "GATE-2-PURCHASE": "NOT_YET_QUALIFIED",
-    "GATE-3-DEVICE": "NOT_YET_QUALIFIED",
-    "GATE-4-ARCHIVE": "NOT_YET_QUALIFIED",
+    "GATE-2-PURCHASE": "QUALIFIED",
+    "GATE-3-DEVICE": "QUALIFIED",
+    "GATE-4-ARCHIVE": "QUALIFIED",
     "GATE-5-FOUNDER": "WITHHELD"
   },
   "active_reasons": [

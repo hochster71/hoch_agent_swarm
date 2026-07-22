@@ -1,0 +1,8 @@
+{
+  "release_tag": "v1.0.0-rc1",
+  "normative_spec_version": "v1.0.0",
+  "release_stage": "RELEASE_CANDIDATE",
+  "target_architecture": "HEI_v1.1_FROZEN",
+  "commit_sha": "93634c17be91e4f653e95e2ca0b19df00b4da146",
+  "built_at_utc": "2026-07-22T14:54:47.012921Z"
+}

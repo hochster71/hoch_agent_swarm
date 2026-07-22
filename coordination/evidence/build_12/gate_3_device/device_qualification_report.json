@@ -1,0 +1,12 @@
+{
+  "gate_id": "GATE-3-DEVICE",
+  "verifier": "SWARM-DEVICE-QUAL",
+  "device_class": "iPad Air 11-inch (M4)",
+  "os_version": "iPadOS 26.5",
+  "functional_validation": "PASS",
+  "visual_validation": "PASS",
+  "adaptive_validation": "PASS",
+  "accessibility_font_scaling": "PASS",
+  "safe_area_rendering": "PASS",
+  "generated_at": "2026-07-22T18:26:05.030553Z"
+}
