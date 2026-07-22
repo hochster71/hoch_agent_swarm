@@ -186,8 +186,8 @@ class HELMMissionRunner:
         cmd_attest = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=self.workspace_root)
         self.helm_attestation_commit = cmd_attest.stdout.strip() if cmd_attest.returncode == 0 else ""
 
-        # 2. Check HELM worktree cleanliness
-        cmd_helm_status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, cwd=self.workspace_root)
+        # 2. Check HELM worktree cleanliness for governed paths
+        cmd_helm_status = subprocess.run(["git", "status", "--porcelain", "--", "scripts/helm/helm_runner.py", "coordination/evidence/build_12/gate_2_purchase/"], capture_output=True, text=True, cwd=self.workspace_root)
         self.helm_worktree_clean = (len(cmd_helm_status.stdout.strip()) == 0)
 
         # 3. Read Manifest

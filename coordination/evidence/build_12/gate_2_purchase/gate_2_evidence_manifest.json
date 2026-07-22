@@ -2,7 +2,7 @@
   "manifest_version": "1.0.0",
   "evidence_id": "GATE-2-STOREKIT-EVIDENCE-20260722",
   "generated_at_utc": "2026-07-22T20:00:15Z",
-  "helm_producer_commit": "b78dbd74d7c452174a0204318a247d187804f6d7",
+  "helm_producer_commit": "92a764cad6703c924d345479dfd76f30f2f3e792",
   "application_commit": "fbee9933f2a7068edb0d025343cc7dd61bfe6166",
   "application_worktree_clean": true,
   "xcode_version": "Xcode 16.0 (16A242d)",
@@ -20,7 +20,7 @@
     "products_storekit": "b1b8f13172a8e56970dec15e0cec028458877b643dceaf95e349d24da71608b4",
     "shared_scheme": "5417dde8ca84f919f8c03abcfa9ab58ce4529105497dbaccc3d5eca880900c00",
     "test_suite_swift": "2d0361ce1486942e9f03cfdb56cecd663da897e141c3f1d5d49f63506d738e16",
-    "xcresult_bundle": "c5c68a7d65f647bf91299b86d6da02f9822380ce4f13998be845295c28009eca"
+    "xcresult_bundle": "98ecf139344af3524e05e969cd1b99c3af65d9d2a2e725be3de8ffcb7004e1f3"
   },
   "bootstrap_counts": {
     "implemented": 1,
@@ -36,6 +36,6 @@
     "skipped": 0,
     "not_run": 9
   },
-  "failure_classification": "PROJECT_CONFIGURATION_DEFECT",
+  "failure_classification": "UNRESOLVED_SKTESTSESSION_INITIALIZATION_FAILURE",
   "gate_2_replay": "NOT_YET_QUALIFIED"
 }
