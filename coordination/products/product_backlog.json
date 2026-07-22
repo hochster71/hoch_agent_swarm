@@ -161,6 +161,21 @@
       "slug": "hff-vendor-spend",
       "built_at": "2026-07-21",
       "tests": "94 engine + 45 buyloop, all pass (node v22.22.3)"
+    },
+    {
+      "id": "HFF_PAYMENT_TIMING",
+      "factory": "HFF",
+      "name": "Getting-Paid Speed Report",
+      "what_it_is": "Upload an invoice CSV (issue date, client, amount, paid date) -> how fast clients actually pay once billed: per-client and overall median/mean/fastest/slowest days-to-pay, on-time vs late against each invoice's own due basis (due-date column > parseable terms > assumed net-30, all disclosed), amount outstanding and oldest-open detail, a monthly payment-speed series, billed concentration (top-N share, HHI 0-10,000, effective client count), and disclosed multi-spelling client merges. 5-sheet XLSX + one-page PDF. Blank paid date = still open. Unreadable rows flagged with CSV line numbers, never dropped; negative amounts treated as credit notes and disclosed. Organizational tooling only.",
+      "buyer": "Freelancers, agencies and solo consultants who want to see how fast each client pays once billed, without connecting a bank or accounting system.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "guardrail": "organizational tooling only; no financial/tax/legal/collections advice; never tells the user which clients to chase, how to collect, or which clients to keep or drop",
+      "generated_by": "autonomous factory loop 2026-07-22 (all prior candidates already BUILT)",
+      "status": "BUILT",
+      "slug": "hff-payment-timing",
+      "built_at": "2026-07-22",
+      "tests": "58 engine + 25 buyloop, all pass (node v22.22.3)"
     }
   ]
 }

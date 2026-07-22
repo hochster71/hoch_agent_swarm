@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your Getting-Paid Speed Report</title>
+<style>
+  :root { --ink:#14231b; --mut:#5b6b62; --line:#dfe7e1; --acc:#1f7a52; --acc2:#155e3e; --bg:#f6faf7; --card:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 72px; }
+  h1 { font-size:26px; margin:.2em 0 .3em; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px; margin:18px 0; }
+  button { font-size:15px; font-weight:600; border:0; border-radius:8px; padding:11px 18px; cursor:pointer; background:var(--acc); color:#fff; }
+  button:hover { background:var(--acc2); }
+  button.dl { background:#eef4f0; color:var(--acc2); margin-right:10px; }
+  .muted { color:var(--mut); font-size:13px; }
+  .err { color:#8a1c1c; background:#fdecec; border:1px solid #f4c9c9; border-radius:8px; padding:10px; margin-top:10px; display:none; }
+  textarea { width:100%; min-height:120px; font:12.5px/1.45 ui-monospace,Menlo,Consolas,monospace; border:1px solid var(--line); border-radius:8px; padding:10px; }
+  .disc { font-size:12px; color:var(--mut); border-top:1px solid var(--line); margin-top:22px; padding-top:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Thank you — your report is ready to build</h1>
+  <div class="card" id="main">
+    <p id="status">Checking your purchase…</p>
+    <div id="paidArea" style="display:none;">
+      <p class="muted">Your upload was kept in this browser only. Confirm it below and generate your files.</p>
+      <textarea id="csv"></textarea>
+      <div style="margin-top:12px;">
+        <button id="genBtn" type="button">Generate my report</button>
+      </div>
+      <div id="files" style="margin-top:16px;"></div>
+    </div>
+    <div class="err" id="err"></div>
+  </div>
+  <div class="disc" id="disc"></div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+const sessionId = params.get('session_id');
+
+function showErr(m){ const e=$('#err'); e.textContent=m; e.style.display='block'; }
+
+(async function init(){
+  const saved = sessionStorage.getItem('paytiming_csv') || '';
+  $('#csv').value = saved;
+  if (!sessionId) { $('#status').textContent = 'No checkout session found. Return to the start page and try again.'; return; }
+  try {
+    const r = await fetch('/api/entitlement?session_id='+encodeURIComponent(sessionId));
+    const j = await r.json();
+    if (j.paid) {
+      $('#status').textContent = 'Purchase confirmed. Generate your report below.';
+      $('#paidArea').style.display = 'block';
+    } else {
+      $('#status').textContent = 'We could not confirm this purchase yet. If you just paid, refresh in a moment.';
+    }
+  } catch(e){ $('#status').textContent = 'Could not reach the entitlement check. Refresh to retry.'; }
+})();
+
+function b64ToBlob(b64, type){
+  const bin = atob(b64); const arr = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+  return new Blob([arr], { type });
+}
+function dlButton(label, filename, b64, type){
+  const b = document.createElement('button'); b.className='dl'; b.textContent=label;
+  b.onclick = () => {
+    const url = URL.createObjectURL(b64ToBlob(b64, type));
+    const a = document.createElement('a'); a.href=url; a.download=filename; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  };
+  return b;
+}
+
+$('#genBtn').addEventListener('click', async () => {
+  $('#err').style.display='none';
+  const csv = $('#csv').value.trim();
+  if (!csv) { showErr('Your CSV is empty — paste it back in.'); return; }
+  $('#genBtn').disabled=true; $('#genBtn').textContent='Building…';
+  try {
+    const r = await fetch('/api/generate-report', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ csv, session_id: sessionId }) });
+    const j = await r.json();
+    if (!r.ok || !j.ok) { showErr(j.message || 'Could not build the report.'); return; }
+    const files = $('#files'); files.innerHTML='';
+    files.appendChild(dlButton('Download XLSX', j.files.xlsx.filename, j.files.xlsx.base64, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
+    files.appendChild(dlButton('Download PDF', j.files.pdf.filename, j.files.pdf.base64, 'application/pdf'));
+    $('#disc').textContent = j.report.disclaimer;
+  } catch(e){ showErr('Network error building the report.'); }
+  finally { $('#genBtn').disabled=false; $('#genBtn').textContent='Generate my report'; }
+});
+</script>
+</body>
+</html>

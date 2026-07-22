@@ -1,0 +1,23 @@
+invoice date,client,invoice amount,paid date,terms,status,invoice
+2026-01-05,Acme Co,1200.00,2026-01-30,Net 30,Paid,INV-1001
+2026-01-12,Beta LLC,800.00,2026-02-20,Net 15,Paid,INV-1002
+2026-01-20,Gamma Studios,450.00,,Net 30,Open,INV-1003
+2026-01-28,Delta Partners,2600.00,2026-03-05,Net 45,Paid,INV-1004
+2026-02-03,Acme Company,1500.00,2026-02-18,Net 30,Paid,INV-1005
+2026-02-09,Beta LLC,950.00,2026-03-15,Net 15,Paid,INV-1006
+2026-02-14,Gamma Studios,500.00,2026-02-28,,Paid,INV-1007
+2026-02-22,Epsilon Group,3200.00,,Due on receipt,Open,INV-1008
+2026-03-01,Acme Co,1100.00,2026-03-20,Net 30,Paid,INV-1009
+2026-03-06,Delta Partners,2750.00,,Net 45,Open,INV-1010
+2026-03-11,Beta LLC,600.00,2026-03-25,Net 15,Paid,INV-1011
+2026-03-18,Gamma Studios,-150.00,2026-03-19,,Credit,CN-2001
+2026-03-24,Epsilon Group,2900.00,2026-04-10,Due on receipt,Paid,INV-1012
+2026-04-02,Acme Company,1350.00,2026-04-14,Net 30,Paid,INV-1013
+2026-04-08,Beta LLC,875.00,,Net 15,Open,INV-1014
+2026-04-15,Delta Partners,3100.00,2026-06-02,Net 45,Paid,INV-1015
+2026-04-21,Gamma Studios,525.00,2026-05-05,,Paid,INV-1016
+2026-04-29,Zeta Freelance,300.00,2026-05-01,,Paid,INV-1017
+2026-05-04,Acme Co,1250.00,,Net 30,Open,INV-1018
+2026-05-11,Epsilon Group,3050.00,2026-05-12,Due on receipt,Paid,INV-1019
+not-a-date,Theta Co,700.00,,Net 30,Open,INV-BAD
+2026-05-26,Zeta Freelance,325.00,2026-07-01,,Open,INV-1020

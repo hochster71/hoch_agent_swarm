@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Getting-Paid Speed Report — see how fast your clients actually pay</title>
+<style>
+  :root { --ink:#14231b; --mut:#5b6b62; --line:#dfe7e1; --acc:#1f7a52; --acc2:#155e3e; --bg:#f6faf7; --card:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:860px; margin:0 auto; padding:28px 20px 72px; }
+  header h1 { font-size:30px; margin:.2em 0 .1em; letter-spacing:-.01em; }
+  header p.sub { color:var(--mut); font-size:17px; margin:.2em 0 0; }
+  .badge { display:inline-block; font-size:12px; color:var(--acc2); background:#e6f3ec; border:1px solid #cbe6d6; border-radius:999px; padding:2px 10px; margin-bottom:10px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin:18px 0; }
+  h2 { font-size:18px; margin:.2em 0 .6em; }
+  ul { margin:.3em 0 .3em 1.1em; padding:0; } li { margin:.25em 0; }
+  label { font-weight:600; display:block; margin:.4em 0 .3em; }
+  textarea { width:100%; min-height:150px; font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; border:1px solid var(--line); border-radius:8px; padding:10px; resize:vertical; }
+  input[type=file] { font-size:14px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  button { font-size:15px; font-weight:600; border:0; border-radius:8px; padding:11px 18px; cursor:pointer; }
+  .primary { background:var(--acc); color:#fff; }
+  .primary:hover { background:var(--acc2); }
+  .ghost { background:#eef4f0; color:var(--acc2); }
+  .price { font-size:15px; color:var(--mut); }
+  .muted { color:var(--mut); font-size:13px; }
+  table { border-collapse:collapse; width:100%; margin-top:8px; font-size:13.5px; }
+  th,td { text-align:left; border-bottom:1px solid var(--line); padding:6px 8px; }
+  th { color:var(--mut); font-weight:600; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .stat { display:flex; gap:22px; flex-wrap:wrap; margin:8px 0 0; }
+  .stat div { min-width:120px; } .stat .k { color:var(--mut); font-size:12px; } .stat .v { font-size:22px; font-weight:700; }
+  .err { color:#8a1c1c; background:#fdecec; border:1px solid #f4c9c9; border-radius:8px; padding:10px; margin-top:10px; display:none; }
+  .disc { font-size:12px; color:var(--mut); border-top:1px solid var(--line); margin-top:22px; padding-top:14px; }
+  code { background:#eef4f0; padding:1px 5px; border-radius:5px; font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">Hoch Finance Factory · organizational tooling</div>
+    <h1>Getting-Paid Speed Report</h1>
+    <p class="sub">Upload your invoice history and see how fast each client actually pays once billed — median days-to-pay, on-time vs late, and what's still open — as a spreadsheet and a one-page PDF. Nothing to connect.</p>
+  </header>
+
+  <div class="card">
+    <h2>What you get for $9</h2>
+    <ul>
+      <li><strong>Per client:</strong> median / mean / fastest / slowest days to pay, on-time vs late counts, amount billed, amount still outstanding, oldest open invoice.</li>
+      <li><strong>Overall:</strong> median days-to-pay across everything, on-time share, % of billing collected, total still open and how much of it is past due.</li>
+      <li><strong>Monthly trend</strong> of payment speed by the month each invoice was issued.</li>
+      <li>A 5-sheet <strong>XLSX</strong> workbook (Summary · Clients · Monthly · All Invoices · Flagged Rows) and a one-page <strong>PDF</strong>.</li>
+    </ul>
+    <p class="muted">It describes only the invoices in your file, arithmetically. It is not financial, tax, legal, or collections advice, and it never tells you which clients to chase or how to collect.</p>
+  </div>
+
+  <div class="card">
+    <h2>1 · Your invoice CSV</h2>
+    <p class="muted">Needs an <strong>issue date</strong>, a <strong>client</strong>, an <strong>amount</strong>, and a <strong>paid-date</strong> column (leave the paid date blank for invoices that are still open). A <code>terms</code> (e.g. "Net 30") or <code>due date</code> column is used if present; otherwise on-time is measured against an assumed net-30, disclosed in the report.</p>
+    <div class="row">
+      <input id="file" type="file" accept=".csv,text/csv" />
+      <button class="ghost" id="sampleBtn" type="button">Use sample data</button>
+    </div>
+    <label for="csv">…or paste CSV</label>
+    <textarea id="csv" placeholder="invoice date,client,amount,paid date,terms
+2026-01-05,Acme Co,1200.00,2026-01-30,Net 30
+2026-01-20,Beta LLC,800.00,,Net 15"></textarea>
+    <div class="row" style="margin-top:12px;">
+      <button class="primary" id="previewBtn" type="button">See a free preview</button>
+      <span class="price">then $9 one-time for the full workbook + PDF</span>
+    </div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="card" id="previewCard" style="display:none;">
+    <h2>2 · Free preview</h2>
+    <div class="stat" id="stat"></div>
+    <p class="muted" id="win" style="margin-top:10px;"></p>
+    <h2 style="margin-top:16px;">Top clients by amount billed</h2>
+    <table id="tc"><thead><tr><th>Client</th><th class="num">Billed</th><th class="num">Share</th><th class="num">Median days to pay</th><th class="num">Invoices</th></tr></thead><tbody></tbody></table>
+    <p class="muted" id="withheld" style="margin-top:12px;"></p>
+    <div class="row" style="margin-top:8px;">
+      <button class="primary" id="buyBtn" type="button">Unlock the full report — $9</button>
+      <span class="price" id="buyNote"></span>
+    </div>
+  </div>
+
+  <div class="disc" id="disc"></div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let lastCsv = '';
+
+async function loadSample() {
+  try {
+    const r = await fetch('/engine/sample/sample_invoices.csv');
+    if (r.ok) { $('#csv').value = await r.text(); return; }
+  } catch (e) {}
+  $('#csv').value = 'invoice date,client,amount,paid date,terms\n2026-01-05,Acme Co,1200.00,2026-01-30,Net 30\n2026-01-20,Beta LLC,800.00,,Net 15';
+}
+$('#sampleBtn').addEventListener('click', loadSample);
+
+$('#file').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => { $('#csv').value = String(reader.result || ''); };
+  reader.readAsText(f);
+});
+
+function money(n) { const v = Number(n)||0; return (v<0?'-':'')+'$'+Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function showErr(m) { const e=$('#err'); e.textContent=m; e.style.display='block'; }
+function hideErr() { $('#err').style.display='none'; }
+
+async function preview() {
+  hideErr();
+  const csv = $('#csv').value.trim();
+  if (!csv) { showErr('Paste your CSV or choose a file first.'); return; }
+  lastCsv = csv;
+  $('#previewBtn').disabled = true; $('#previewBtn').textContent = 'Reading…';
+  try {
+    const r = await fetch('/api/preview', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ csv }) });
+    const j = await r.json();
+    if (!r.ok || !j.ok) { showErr(j.message || 'Could not read that file.'); return; }
+    renderPreview(j);
+  } catch (e) { showErr('Network error — please try again.'); }
+  finally { $('#previewBtn').disabled = false; $('#previewBtn').textContent = 'See a free preview'; }
+}
+$('#previewBtn').addEventListener('click', preview);
+
+function renderPreview(j) {
+  const t = j.timing, c = j.counts;
+  const med = t.medianDaysToPay===null? 'n/a' : t.medianDaysToPay+'d';
+  const ot = t.onTimePct===null? 'n/a' : t.onTimePct.toFixed(1)+'%';
+  $('#stat').innerHTML =
+    `<div><div class="k">Median days to pay</div><div class="v">${med}</div></div>`+
+    `<div><div class="k">On-time</div><div class="v">${ot}</div></div>`+
+    `<div><div class="k">Outstanding</div><div class="v">${money(t.outstanding)}</div></div>`+
+    `<div><div class="k">Invoices</div><div class="v">${c.invoices}</div></div>`;
+  $('#win').textContent = `Issue dates ${j.window.start} to ${j.window.end} · ${c.paid} paid, ${c.open} open · `+
+    `${money(t.billed)} billed, ${t.pctPaidByValue.toFixed(1)}% of it collected · due basis: `+
+    `${j.dueBasisMix.due_column} from a due column, ${j.dueBasisMix.terms} from terms, ${j.dueBasisMix.assumed_net_30} assumed net-30.`;
+  const tb = $('#tc tbody'); tb.innerHTML = '';
+  (j.topClients||[]).forEach((v) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${v.label}</td><td class="num">${money(v.billed)}</td><td class="num">${v.billedSharePct.toFixed(1)}%</td>`+
+      `<td class="num">${v.medianDaysToPay===null?'—':v.medianDaysToPay}</td><td class="num">${v.invoiceCount}</td>`;
+    tb.appendChild(tr);
+  });
+  $('#withheld').textContent = j.withheld;
+  $('#disc').textContent = j.disclaimer;
+  $('#previewCard').style.display = 'block';
+  $('#previewCard').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+async function buy() {
+  hideErr();
+  $('#buyBtn').disabled = true; $('#buyBtn').textContent = 'Starting checkout…';
+  try {
+    sessionStorage.setItem('paytiming_csv', lastCsv || $('#csv').value.trim());
+    const r = await fetch('/api/create-checkout-session', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tier:'report' }) });
+    const j = await r.json();
+    if (r.status === 501) { $('#buyNote').textContent = 'Checkout is not live yet (founder go-live step).'; return; }
+    if (!r.ok || !j.url) { showErr(j.message || 'Could not start checkout.'); return; }
+    window.location.href = j.url;
+  } catch (e) { showErr('Network error starting checkout.'); }
+  finally { $('#buyBtn').disabled = false; $('#buyBtn').textContent = 'Unlock the full report — $9'; }
+}
+$('#buyBtn').addEventListener('click', buy);
+</script>
+</body>
+</html>

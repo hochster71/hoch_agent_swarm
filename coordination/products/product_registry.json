@@ -362,6 +362,31 @@
       "tests": "94 engine + 45 buyloop, all pass (node v22.22.3)",
       "rung_note": "NO FAKE GREEN: engine, free preview, checkout scaffold, signature-verified webhook, entitlement store and gated delivery are REAL and tested. NOT deployed, no Stripe price exists, $0 earned. Without KV credentials the entitlement store is an in-memory Map that does not survive a cold start. Currency conversion and vendor identity resolution are deliberately NOT implemented and are disclosed in-product. Only a founder deploy remains.",
       "guardrail": "organizational tooling only; no financial/tax/legal advice; never tells the user which vendors to cut, keep, or renegotiate (enforced by a fail-closed advice linter that runs before any artifact bytes are produced)"
+    },
+    {
+      "product_id": "HFF_PAYMENT_TIMING",
+      "factory": "HFF",
+      "name": "Getting-Paid Speed Report",
+      "what_it_is": "Deterministic invoice CSV (issue date, client, amount, paid date) -> how fast clients pay once billed: per-client and overall median/mean/fastest/slowest days-to-pay, on-time vs late against each invoice's own due basis, amount outstanding and oldest-open detail, monthly payment-speed series, and billed concentration (top-N share, HHI 0-10,000, effective client count). 5-sheet XLSX + one-page PDF. Organizational tooling only, explicitly NOT financial, tax, legal, or collections advice.",
+      "buyer": "Freelancers, agencies and solo consultants who want to see how fast each client pays once billed, without connecting a bank or accounting system.",
+      "price_usd": 9,
+      "billing": "one_time",
+      "merchant_of_record": "stripe_managed_payments",
+      "checkout_url": null,
+      "checkout_blocked_by": "FOUNDER GATE: no Stripe price created, no env vars set, not deployed. Code is complete and tested; only a founder deploy remains. Every payment path returns 501 not_configured.",
+      "entitlement_source": "signed stripe webhook only (checkout.session.completed -> sess:<id> via lib/store.js; Vercel KV when configured, in-memory otherwise)",
+      "source_dir": "products/hff-payment-timing",
+      "revenue_gross_usd": 0.0,
+      "revenue_settled_usd": 0.0,
+      "revenue_state": "NOT_STARTED",
+      "monetization_rung": "3_PRODUCTIZED_CODE_COMPLETE",
+      "built_at": "2026-07-22",
+      "built_by": "autonomous factory loop",
+      "tests": "engine.test.js 58/58 pass; buyloop.test.js 25/25 pass (node v22.22.3, no install, no network, no keys)",
+      "real_vs_stub": "REAL: RFC4180 ingest with header aliasing + ISO/US/UK date auto-detection + EU decimals + parenthesised negatives, required paid-date column (blank = still open), issue-vs-paid days-to-pay arithmetic verified against hand-computed cases (Acme merge: dtp [10,42] -> median 26; overall median 10, mean 17.7; a same-day payment counted after a due-on-receipt due date), per-invoice due basis (due column > parseable terms 'Net 30'/'Due on receipt' > assumed net-30, all disclosed and counted), on-time vs late against each invoice's own due basis, per-client and overall median/mean/fastest/slowest days-to-pay, outstanding + overdue + oldest-open age, monthly series that reconciles to file totals, billed concentration (HHI hand-checked to 6033.1 on the two-client case), client-key normalization with disclosed multi-spelling merges, credit-note and paid-before-issued and unreadable-row flagging with CSV line numbers, fail-closed advice linter with <client>-substituted lint-safe twins, DEPENDENCY-FREE byte-deterministic XLSX writer and one-page PDF renderer (XLSX verified by inflating every part; PDF verified by matching declared /Length to real stream bytes), full checkout->webhook->entitlement->gated-delivery loop, free ungated preview proven to be a genuine subset of the paid run. STUB: no live Stripe account/price/keys and nothing deployed (all payment paths 501 until env is set); Stripe is MOCKED in tests and the store runs in-memory (NOT a live or Stripe-test-mode run); all arithmetic is over the uploaded file only -- no bank/accounting connection, no client database, no benchmarking or market comparison; client grouping is string matching only; the in-memory store is not durable across serverless cold starts (KV required before real money).",
+      "webhook_config_note": "api/webhook.js assigns module.exports.config AFTER module.exports = handler (the sibling ordering bug is NOT present here) and carries the regression test.",
+      "guardrail": "organizational tooling only; no financial/tax/legal/collections advice; never tells the user which clients to chase, how to collect, or which clients to keep or drop (enforced by a fail-closed advice linter that runs before any artifact bytes are rendered; neutral factual descriptors like 'paid late'/'overdue' are allowed)",
+      "rung_note": "NO FAKE GREEN: code-complete at the doorstep only. Engine, guardrail linter, free preview and the full checkout->webhook->entitlement->gated-delivery loop are built and tested; Stripe is MOCKED in tests and there are no live keys, no price, and no deployment. $0 earned. ONLY A FOUNDER DEPLOY REMAINS (create $9 one-time price, set STRIPE_SECRET_KEY / STRIPE_PRICE_REPORT / STRIPE_WEBHOOK_SECRET / BASE_URL + Vercel KV before real money, add the webhook endpoint, deploy via scripts/factory_deploy.sh)."
     }
   ],
   "non_monetized_factories": {
