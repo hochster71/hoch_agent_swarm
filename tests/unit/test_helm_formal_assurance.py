@@ -8,6 +8,8 @@ and fail-closed native TLC model checker execution rules (FORMAL-001 through FOR
 
 import json
 import pytest
+import subprocess
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -18,6 +20,7 @@ from scripts.helm.run_native_tlc import run_tlc_model, check_java_available
 from scripts.helm.run_custom_model_explorer import explore_ledger_state_space, explore_decision_state_space
 
 PROOFS_DIR = Path(__file__).resolve().parent.parent.parent / "coordination" / "proofs"
+SCRIPTS_DIR = Path(__file__).resolve().parent.parent.parent / "scripts" / "helm"
 
 
 def test_formal_001_ledger_append_immutability():
@@ -133,6 +136,21 @@ def test_formal_015_tlc_nonzero_exit_code_cannot_emit_pass():
     res = run_tlc_model("HELMLedger.tla", "HELMLedger.cfg")
     if res.get("exit_code", -1) != 0:
         assert res["result"] != "PASS"
+
+
+def test_formal_016_native_tlc_wrapper_process_fails_closed():
+    """[FORMAL-016] Asserts run_native_tlc.py script exits with non-zero process status when native execution fails."""
+    script_path = SCRIPTS_DIR / "run_native_tlc.py"
+    res = subprocess.run([sys.executable, str(script_path)], capture_output=True, text=True)
+    assert res.returncode != 0, "Native TLC script must exit non-zero when Java or tla2tools.jar is missing"
+
+
+def test_formal_018_proof_metadata_schema_verification():
+    """[FORMAL-018] Asserts native TLC failure artifact contains java_version, tlc_jar_present, and commit metadata."""
+    res = run_tlc_model("HELMLedger.tla", "HELMLedger.cfg")
+    assert "java_version" in res
+    assert "tlc_jar_present" in res
+    assert "qualified_source_commit" in res
 
 
 def test_formal_019_custom_model_explorer_verification():

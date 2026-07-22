@@ -3,7 +3,7 @@ r"""
 HELM Governance Platform — Native Java TLC Model Checker Runner (Sprint 11)
 ========================================================================
 Executes native TLA+ TLC model checker (tlc2.TLC) via Java runtime on HELMLedger.tla and HELMDecisionStateMachine.tla.
-Fails closed with explicit diagnostic logs if Java or tla2tools.jar is unavailable or if invariant violations occur.
+Fails closed with exit code 1 if Java or tla2tools.jar is missing or if any model execution fails.
 """
 
 import hashlib
@@ -51,35 +51,39 @@ def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
     has_java, java_ver = check_java_available()
     tla2tools_jar = TOOLS_DIR / "tla2tools.jar"
 
+    base_artifact = {
+        "model": tla_filename.replace(".tla", ""),
+        "qualified_source_commit": get_git_commit_sha(),
+        "model_sha256": hashlib.sha256(tla_b).hexdigest(),
+        "cfg_sha256": hashlib.sha256(cfg_b).hexdigest(),
+        "java_version": java_ver,
+        "tlc_jar_path": str(tla2tools_jar),
+        "tlc_jar_present": tla2tools_jar.exists(),
+        "command_attempted": [],
+        "exit_code": None,
+        "raw_output_sha256": None,
+        "states_generated": 0,
+        "distinct_states": 0,
+        "maximum_depth": 0,
+        "result": "FAIL",
+        "executed_at_utc": datetime.now(timezone.utc).isoformat()
+    }
+
     if not has_java:
-        return {
-            "model": tla_filename.replace(".tla", ""),
+        base_artifact.update({
             "tlc_execution_status": "FAIL_JAVA_UNAVAILABLE",
             "error_detail": f"Native TLC execution failed: {java_ver}",
-            "source_commit": get_git_commit_sha(),
-            "model_sha256": hashlib.sha256(tla_b).hexdigest(),
-            "cfg_sha256": hashlib.sha256(cfg_b).hexdigest(),
-            "states_generated": 0,
-            "distinct_states": 0,
-            "maximum_depth": 0,
-            "result": "FAIL_CLOSED_NO_JAVA",
-            "executed_at_utc": datetime.now(timezone.utc).isoformat()
-        }
+            "result": "FAIL_CLOSED_NO_JAVA"
+        })
+        return base_artifact
 
     if not tla2tools_jar.exists():
-        return {
-            "model": tla_filename.replace(".tla", ""),
+        base_artifact.update({
             "tlc_execution_status": "FAIL_TLA2TOOLS_JAR_MISSING",
             "error_detail": f"tla2tools.jar missing at {tla2tools_jar}",
-            "source_commit": get_git_commit_sha(),
-            "model_sha256": hashlib.sha256(tla_b).hexdigest(),
-            "cfg_sha256": hashlib.sha256(cfg_b).hexdigest(),
-            "states_generated": 0,
-            "distinct_states": 0,
-            "maximum_depth": 0,
-            "result": "FAIL_CLOSED_NO_JAR",
-            "executed_at_utc": datetime.now(timezone.utc).isoformat()
-        }
+            "result": "FAIL_CLOSED_NO_JAR"
+        })
+        return base_artifact
 
     start_t = time.time()
     cmd = [
@@ -94,6 +98,8 @@ def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
         str(tla_path)
     ]
 
+    base_artifact["command_attempted"] = cmd
+
     try:
         res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
         elapsed_sec = round(time.time() - start_t, 3)
@@ -101,7 +107,6 @@ def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
         raw_out = res.stdout + "\n" + res.stderr
         raw_digest = hashlib.sha256(raw_out.encode("utf-8")).hexdigest()
 
-        # Parse TLC Output
         success = res.returncode == 0 and "Model checking completed. No error has been found." in res.stdout
 
         states_gen = 0
@@ -122,39 +127,30 @@ def run_tlc_model(tla_filename: str, cfg_filename: str) -> dict:
                 except Exception:
                     pass
 
-        return {
-            "model": tla_filename.replace(".tla", ""),
+        base_artifact.update({
             "tlc_execution_status": "NATIVE_TLC_PASS" if success else "NATIVE_TLC_FAIL",
-            "java_version": java_ver,
-            "source_commit": get_git_commit_sha(),
-            "model_sha256": hashlib.sha256(tla_b).hexdigest(),
-            "cfg_sha256": hashlib.sha256(cfg_b).hexdigest(),
             "raw_output_sha256": raw_digest,
             "exit_code": res.returncode,
             "states_generated": states_gen,
             "distinct_states": distinct_st,
             "maximum_depth": depth,
             "exploration_time_sec": elapsed_sec,
-            "result": "PASS" if success else "FAIL",
-            "executed_at_utc": datetime.now(timezone.utc).isoformat()
-        }
+            "result": "PASS" if success else "FAIL"
+        })
+        return base_artifact
     except Exception as e:
-        return {
-            "model": tla_filename.replace(".tla", ""),
+        base_artifact.update({
             "tlc_execution_status": "FAIL_EXECUTION_ERROR",
             "error_detail": str(e),
-            "source_commit": get_git_commit_sha(),
-            "model_sha256": hashlib.sha256(tla_b).hexdigest(),
-            "cfg_sha256": hashlib.sha256(cfg_b).hexdigest(),
-            "result": "FAIL",
-            "executed_at_utc": datetime.now(timezone.utc).isoformat()
-        }
+            "result": "FAIL"
+        })
+        return base_artifact
 
 
 def main():
     PROOFS_DIR.mkdir(parents=True, exist_ok=True)
     print("======================================================================")
-    print("HELM NATIVE JAVA TLC MODEL CHECKER RUNNER")
+    print("HELM NATIVE JAVA TLC MODEL CHECKER RUNNER (HARDENED FAIL-CLOSED)")
     print("======================================================================")
 
     has_java, java_ver = check_java_available()
@@ -169,7 +165,18 @@ def main():
     with open(PROOFS_DIR / "helm_native_tlc_decision_proof.json", "w", encoding="utf-8") as f:
         json.dump(decision_proof, f, indent=2)
     print(f"HELMDecisionStateMachine Native TLC Result: {decision_proof['tlc_execution_status']}")
+
+    ledger_pass = ledger_proof.get("result") == "PASS"
+    decision_pass = decision_proof.get("result") == "PASS"
+
     print("======================================================================")
+    if not (ledger_pass and decision_pass):
+        print("FAIL-CLOSED: Native TLC execution incomplete (Java / JAR missing or model check failed)")
+        print("Exiting with non-zero status 1")
+        sys.exit(1)
+    else:
+        print("SUCCESS: Native TLC model checking passed cleanly")
+        sys.exit(0)
 
 
 if __name__ == "__main__":
