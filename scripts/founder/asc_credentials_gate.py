@@ -62,6 +62,17 @@ def _prompt_hidden(label: str, current_env: str) -> str:
 
 
 def _upsert_env_file(env_path: Path, kv: dict[str, str]) -> None:
+    """Atomically upsert keys into env_path, 0600 from the moment of creation.
+
+    2026-07-22 hardening (founder pre-ceremony checklist item 6): the previous
+    write_text-then-chmod sequence (a) was not atomic — a crash mid-write could
+    corrupt .env — and (b) briefly created a new .env with umask-default
+    permissions before the chmod landed. Now the content is written to a
+    mkstemp file (unpredictable name, 0600 at creation, same directory) and
+    atomically os.replace()d over the target; the temp file is guaranteed
+    removed on any failure. Existing unrelated lines are preserved verbatim.
+    """
+    import tempfile
     lines: list[str] = []
     if env_path.exists():
         lines = env_path.read_text(encoding="utf-8").splitlines()
@@ -77,8 +88,19 @@ def _upsert_env_file(env_path: Path, kv: dict[str, str]) -> None:
     for k, v in kv.items():
         if k not in seen:
             out.append(f"{k}={v}")
-    env_path.write_text("\n".join(out) + "\n", encoding="utf-8")
-    os.chmod(env_path, 0o600)
+    env_path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_name = tempfile.mkstemp(dir=str(env_path.parent),
+                                    prefix=".env.", suffix=".tmp")  # 0600 by mkstemp
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write("\n".join(out) + "\n")
+        os.replace(tmp_name, env_path)  # atomic on POSIX; inherits the 0600 inode
+    except BaseException:
+        try:
+            os.unlink(tmp_name)
+        except OSError:
+            pass
+        raise
 
 
 def main() -> int:
@@ -97,8 +119,16 @@ def main() -> int:
     iss = _prompt_hidden("APP_STORE_CONNECT_ISSUER_ID (issuer id)", "APP_STORE_CONNECT_ISSUER_ID")
     p8 = _prompt_hidden("Path to your AuthKey_*.p8 file", "ASC_API_KEY")
     p8_path = Path(os.path.expanduser(p8))
-    if not p8_path.exists() and "BEGIN PRIVATE KEY" not in p8:
+    p8_is_raw_pem = not p8_path.exists() and "BEGIN PRIVATE KEY" in p8
+    if not p8_path.exists() and not p8_is_raw_pem:
         sys.exit("FAIL-CLOSED: that .p8 path does not exist; nothing persisted.")
+    # 2026-07-22 founder pre-ceremony checklist: warn if the .p8 is readable by
+    # group/other. Warn-only — this script never changes permissions itself.
+    if p8_path.exists():
+        mode = p8_path.stat().st_mode & 0o777
+        if mode & 0o077:
+            print(f"WARNING: {p8_path} has permissions {oct(mode)} — readable "
+                  f"beyond your user. Recommend: chmod 600 '{p8_path}'")
 
     os.environ["APP_STORE_CONNECT_KEY_ID"] = kid
     os.environ["APP_STORE_CONNECT_ISSUER_ID"] = iss
@@ -115,12 +145,24 @@ def main() -> int:
     print(f"OK — authenticated; app found for {bundle_id}.")
 
     # --- persist to gitignored .env (0600) ------------------------------------------
-    _upsert_env_file(ROOT / ".env", {
+    # 2026-07-22 fix (founder pre-ceremony checklist): NEVER persist raw private-key
+    # material. Only the key id, issuer id, and a *path* to the .p8 are written.
+    # If PEM contents were pasted, they stay in this process's environment for this
+    # run only and are gone when it exits.
+    env_kv = {
         "APP_STORE_CONNECT_KEY_ID": kid,
         "APP_STORE_CONNECT_ISSUER_ID": iss,
-        "ASC_API_KEY": str(p8_path) if p8_path.exists() else p8,
-    })
-    print("Credentials persisted to .env (gitignored, mode 600).")
+    }
+    if p8_path.exists():
+        env_kv["ASC_API_KEY"] = str(p8_path)
+    _upsert_env_file(ROOT / ".env", env_kv)
+    if p8_is_raw_pem:
+        print("Key id + issuer id persisted to .env (gitignored, mode 600). "
+              "Raw PEM was NOT persisted anywhere — future gate recomputes will "
+              "need the .p8 path; re-run this gate with the file path when ready.")
+    else:
+        print("Credentials persisted to .env (gitignored, mode 600; .p8 stored "
+              "as PATH only — key material never written).")
 
     # --- write the authoritative ASC evidence snapshot ------------------------------
     observed_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
