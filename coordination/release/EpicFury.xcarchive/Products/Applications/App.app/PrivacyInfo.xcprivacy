@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  PrivacyInfo.xcprivacy — Apple Privacy Manifest (required since May 2024)
+  https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
+
+  Epic Fury 2026 is a Capacitor WKWebView shell app.
+  The native layer itself does NOT:
+    • Track users (ATT not used)
+    • Collect user data by itself (all content is served from the remote URL)
+    • Access camera, microphone, contacts, location, health data, etc.
+
+  The Capacitor runtime (CapApp-SPM) does use the following system APIs
+  that must be declared per Apple policy:
+
+  1. NSPrivacyAccessedAPICategoryUserDefaults
+     NSUserDefaults is used by the Capacitor bridge to store plugin
+     preferences and configuration data across launches.
+     Reason: CA92.1 — data accessed only to read/write on behalf of the user
+     within the same app, not sent off-device.
+
+  2. NSPrivacyAccessedAPICategoryFileTimestamp
+     File modification/creation timestamps are accessed when Capacitor
+     reads and writes cached configuration data in the app's container
+     using standard NSFileManager APIs.
+     Reason: C617.1 — file attribute accessed only to operate on the
+     specific resource identified by that path.
+-->
+<plist version="1.0">
+<dict>
+
+    <!-- ── Tracking ────────────────────────────────────────────────────── -->
+    <!-- We do NOT use ATT; no cross-app/cross-site tracking. -->
+    <key>NSPrivacyTracking</key>
+    <false/>
+
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+
+    <!-- ── Data collection ──────────────────────────────────────────────── -->
+    <!-- The native shell collects no user data.                             -->
+    <!-- The web app (served from Vercel) uses only standard browser APIs.   -->
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array/>
+
+    <!-- ── Required Reason API usage ──────────────────────────────────────── -->
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+
+        <!-- NSUserDefaults — Capacitor plugin configuration storage -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <!-- CA92.1: Read/write own app defaults; data not sent off-device -->
+                <string>CA92.1</string>
+            </array>
+        </dict>
+
+        <!-- File timestamps — Capacitor configuration and cache file operations -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <!-- C617.1: Timestamp used only to operate on that specific file -->
+                <string>C617.1</string>
+            </array>
+        </dict>
+
+    </array>
+
+</dict>
+</plist>
