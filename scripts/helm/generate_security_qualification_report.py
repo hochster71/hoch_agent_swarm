@@ -2,9 +2,13 @@
 r"""
 HELM Automated Security Qualification Report Generator (v1.0.0 Normative) — Sprint 6
 ======================================================================================
-Generates `coordination/proofs/helm_r6_security_qualification_report.json` capturing:
-  - Requirement Traceability Matrix (R6.1 - R6.6 mapped to SEC-001..SEC-007)
-  - Self-Authenticating Evidence Metadata (Git Commit SHA, Dirty Tree Status, Environment, File Digests)
+Generates `coordination/proofs/helm_r6_security_qualification_report.json` utilizing the
+`PARENT_COMMIT_ATTESTATION_V1` evidence binding model:
+  - `qualified_source_commit`: HEAD commit SHA of qualified code.
+  - `evidence_record_commit`: Commit SHA storing this attestation proof package.
+  - `source_tree_clean_before_execution`: Boolean verifying clean working tree prior to report generation.
+  - `generated_artifacts_pending_commit`: Boolean marking proof artifacts awaiting commit.
+  - `unexpected_dirty_paths`: List of dirty files excluding expected proof output paths.
 """
 
 import hashlib
@@ -25,6 +29,12 @@ TEST_FILE_PATH = REPO_ROOT / "tests" / "security" / "test_helm_security_qualific
 THREAT_MODEL_PATH = REPO_ROOT / "docs" / "security" / "HELM_THREAT_MODEL_STRIDE.md"
 GENERATOR_SCRIPT_PATH = Path(__file__).resolve()
 
+EXPECTED_OUTPUT_PATHS = [
+    "coordination/proofs/helm_r6_security_qualification_report.json",
+    "coordination/proofs/helm_r7_performance_qualification_report.json",
+    "docs/helm/HELM_PERFORMANCE_BENCHMARK_REPORT.md"
+]
+
 
 def file_sha256(path: Path) -> str:
     if not path.exists():
@@ -43,20 +53,30 @@ def get_git_commit_sha() -> str:
         return "UNKNOWN_COMMIT_SHA"
 
 
-def get_dirty_tree_status() -> bool:
+def get_dirty_paths() -> list:
     try:
         out = subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO_ROOT, text=True).strip()
-        return len(out) > 0
+        if not out:
+            return []
+        lines = out.splitlines()
+        dirty = []
+        for line in lines:
+            parts = line.strip().split(maxsplit=1)
+            if len(parts) == 2:
+                dirty.append(parts[1])
+        return dirty
     except Exception:
-        return True
+        return ["GIT_STATUS_FAILED"]
 
 
 def generate_security_report() -> dict:
     start_time = datetime.now(timezone.utc).isoformat()
-    git_sha = get_git_commit_sha()
-    is_dirty = get_dirty_tree_status()
+    head_commit = get_git_commit_sha()
+    dirty_paths = get_dirty_paths()
 
-    # Reconciled 7 Tests (SEC-001..SEC-007) -> 6 Requirement Checks (CHECK-01..CHECK-06)
+    unexpected_dirty = [p for p in dirty_paths if p not in EXPECTED_OUTPUT_PATHS]
+    source_clean_before = len(unexpected_dirty) == 0
+
     traceability_matrix = [
         {
             "check_id": "CHECK-01",
@@ -101,7 +121,7 @@ def generate_security_report() -> dict:
             "test_ids": ["SEC-005", "SEC-006"],
             "status": "PASS",
             "description": "Distinct canonical SHA-256 digest generation for zero-width joiners (U+200D) and bidi control chars (U+200E/F)",
-            "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_005_r6_4_unicode_security_zero_width_joiner_distinctness"
+            "verification_artifact": "tests/security/test_helm_security_qualification.py::test_sec_005_... & test_sec_006_..."
         },
         {
             "check_id": "CHECK-06",
@@ -120,17 +140,21 @@ def generate_security_report() -> dict:
     threat_model_hash = file_sha256(THREAT_MODEL_PATH)
     generator_script_hash = file_sha256(GENERATOR_SCRIPT_PATH)
 
-    # Compute Evidence Bundle Digest
-    bundle_str = f"{git_sha}:{is_dirty}:{test_file_hash}:{threat_model_hash}:{generator_script_hash}"
+    bundle_str = f"{head_commit}:{source_clean_before}:{test_file_hash}:{threat_model_hash}:{generator_script_hash}"
     bundle_digest = hashlib.sha256(bundle_str.encode("utf-8")).hexdigest()
 
     report = {
         "report_identifier": "REPORT-HELM-R6-SECURITY-QUALIFICATION",
         "qualification_tier": "Security Qualified (R6 Baseline)",
-        "qualification_status": "EVIDENCE_BOUND",
+        "qualification_status": "EVIDENCE_RECORDED",
+        "binding_model": "PARENT_COMMIT_ATTESTATION_V1",
+        "evidence_attestation": {
+            "qualified_source_commit": head_commit,
+            "source_tree_clean_before_execution": source_clean_before,
+            "generated_artifacts_pending_commit": True,
+            "unexpected_dirty_paths": unexpected_dirty
+        },
         "environment_metadata": {
-            "git_commit": git_sha,
-            "dirty_tree_status": is_dirty,
             "test_command": "python3 -m pytest tests/security/test_helm_security_qualification.py -v",
             "python_version": f"Python {sys.version.split()[0]}",
             "platform_architecture": f"{platform.system()} {platform.machine()} ({platform.platform()})",
@@ -164,13 +188,13 @@ def main():
         json.dump(report_data, f, indent=2)
 
     print("======================================================================")
-    print("HELM SECURITY QUALIFICATION REPORT GENERATED SUCCESSFULLY")
-    print(f"Path:            {REPORT_OUTPUT_PATH}")
-    print(f"Status:          {report_data['qualification_status']}")
-    print(f"Commit:          {report_data['environment_metadata']['git_commit']}")
-    print(f"Dirty Tree:      {report_data['environment_metadata']['dirty_tree_status']}")
-    print(f"Traceability:    7 Tests -> 6 Checks (100% PASS)")
-    print(f"Bundle Digest:   {report_data['artifact_digests']['evidence_bundle_sha256']}")
+    print("HELM SECURITY QUALIFICATION REPORT GENERATED (PARENT_COMMIT_ATTESTATION_V1)")
+    print(f"Path:                      {REPORT_OUTPUT_PATH}")
+    print(f"Status:                    {report_data['qualification_status']}")
+    print(f"Qualified Source Commit:   {report_data['evidence_attestation']['qualified_source_commit']}")
+    print(f"Source Clean Before:       {report_data['evidence_attestation']['source_tree_clean_before_execution']}")
+    print(f"Unexpected Dirty Paths:    {report_data['evidence_attestation']['unexpected_dirty_paths']}")
+    print(f"Bundle Digest:             {report_data['artifact_digests']['evidence_bundle_sha256']}")
     print("======================================================================")
 
 
