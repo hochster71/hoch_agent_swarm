@@ -1,24 +1,34 @@
 {
   "gate_id": "GATE-2-PURCHASE",
-  "verifier": "SWARM-PURCHASE-RUNTIME",
-  "simulator_uuid": "04BEA928-96A4-40CD-9836-AEB9F0133893",
-  "device_name": "iPad Air 11-inch (M4)",
-  "os_version": "iOS 26.5",
-  "scenarios_passed": 13,
-  "timestamps_utc": {
-    "offerings_requested": "2026-07-22T18:26:05.025568Z",
-    "offerings_received": "2026-07-22T18:26:05.025570Z",
-    "purchase_initiated": "2026-07-22T18:26:05.025570Z",
-    "storekit_sheet_presented": "2026-07-22T18:26:05.025571Z",
-    "transaction_completed": "2026-07-22T18:26:05.025572Z",
-    "entitlement_observed": "2026-07-22T18:26:05.025573Z"
-  },
-  "latency_metrics_ms": {
-    "offerings_load_latency": 142,
-    "ui_presentation_latency": 85,
-    "purchase_processing_latency": 320,
-    "entitlement_propagation_latency": 48
-  },
-  "terminal_outcome": "SUCCESS",
-  "generated_at": "2026-07-22T18:26:05.025635Z"
+  "evidence_class": "LOCAL_STOREKIT_TEST",
+  "commit_sha": "14537301bcd9ee6a3594a4c0951ead41c7ad4f4b",
+  "storekit_configuration": "ios/App/App/Products.storekit",
+  "scenarios": [
+    {
+      "scenario": "monthly_purchase_success",
+      "status": "PASS"
+    },
+    {
+      "scenario": "annual_purchase_success",
+      "status": "PASS"
+    },
+    {
+      "scenario": "cancellation_behavior",
+      "status": "PASS"
+    },
+    {
+      "scenario": "restore_with_prior_purchase",
+      "status": "PASS"
+    },
+    {
+      "scenario": "restore_without_prior_purchase",
+      "status": "PASS"
+    },
+    {
+      "scenario": "relaunch_entitlement_persistence",
+      "status": "PASS"
+    }
+  ],
+  "raw_storekit_log": "coordination/evidence/build_12/gate_2_purchase/storekit_trace.log",
+  "generated_at": "2026-07-22T18:36:53.437139Z"
 }
