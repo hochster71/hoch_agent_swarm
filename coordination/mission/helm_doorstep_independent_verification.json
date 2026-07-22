@@ -1,0 +1,49 @@
+{
+  "verification_timestamp_utc": "2026-07-22T18:30:15Z",
+  "verifier": "SWARM-RED-TEAM-INDEPENDENT-AUDITOR",
+  "claimed_commit_input": "ffca4d84a7e9b0123456789abcdef0123456789a",
+  "actual_git_commit_sha": "ffca4d84853abb4752e8c2d842ba1b6eee20cb85",
+  "claimed_commit_resolves": "NO",
+  "git_branch": "helm-runtime-bridge-v1",
+  "remote_name": "github",
+  "remote_url": "https://github.com/hochster71/hoch_agent_swarm.git",
+  "remote_head_sha": "93634c17be91e4f653e95e2ca0b19df00b4da146",
+  "branch_pushed": "NO",
+  "worktree_clean": "NO",
+  "gate_replays": {
+    "GATE-1-CONFIG": {
+      "status": "PASS",
+      "evidence_class": "NATIVE_REPO_AST_OBSERVATION"
+    },
+    "GATE-2-PURCHASE": {
+      "status": "NOT_YET_QUALIFIED",
+      "evidence_class": "SYNTHETIC_SIMULATOR_TELEMETRY",
+      "reason": "Lacks raw StoreKit transaction trace logs and simulator UI capture"
+    },
+    "GATE-3-DEVICE": {
+      "status": "NOT_YET_QUALIFIED",
+      "evidence_class": "SIMULATOR_ONLY_NO_PHYSICAL_HARDWARE",
+      "reason": "Simulator layout qualification cannot substitute for physical iPad Air hardware proof"
+    },
+    "GATE-4-ARCHIVE": {
+      "status": "NOT_YET_QUALIFIED",
+      "evidence_class": "DEBUG_SIMULATOR_BUILD",
+      "reason": "xcodebuild build for iphonesimulator is not a generic/platform=iOS Release .xcarchive bundle"
+    },
+    "GATE-5-FOUNDER": {
+      "status": "WITHHELD",
+      "evidence_class": "FOUNDER_DOORSTEP_BOUNDARY"
+    }
+  },
+  "xcarchive_path": "NONE",
+  "archive_signing_status": "UNARCHIVED",
+  "independent_disposition": "HOLD",
+  "founder_ceremony_authorized": "NO",
+  "exact_remaining_blockers": [
+    "Commit SHA mismatch in report (synthetic placeholder vs real SHA ffca4d84853abb4752e8c2d842ba1b6eee20cb85)",
+    "Local branch helm-runtime-bridge-v1 is 2 commits ahead of github remote",
+    "Gate 2 lacks raw StoreKit native transaction trace logs",
+    "Gate 3 physical iPad Air hardware proof is absent",
+    "Gate 4 generic iOS Release .xcarchive has not been generated"
+  ]
+}
